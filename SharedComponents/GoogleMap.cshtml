@@ -1,0 +1,23 @@
+﻿@using Maps
+
+<div id="@Id" style="height: 600px"></div>
+
+@functions {
+    [Parameter]
+    private string Id { get; set; }
+
+    [Parameter]
+    private MapOptions Options { get; set; }
+
+    public Action OnIdle { get; set; }
+
+    protected async override Task OnAfterRenderAsync()
+    {
+        await GoogleMapJsInterop.Init(Id, Options);
+    }
+
+    //protected override Task OnInitAsync()
+    //{
+    //    return GoogleMapJsInterop.Init(Id, Options);
+    //}
+}

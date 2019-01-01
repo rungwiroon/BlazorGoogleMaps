@@ -1,0 +1,22 @@
+﻿@page "/map"
+@using SharedComponents
+
+<h1>Google Map</h1>
+
+<div Id="map1" style="height: 600px"></div>
+
+<GoogleMap ref="@googleMap" Id="map2" ></GoogleMap>
+
+@functions {
+    private GoogleMap googleMap;
+
+    void OnSomething()
+    {
+
+    }
+
+    protected override void OnAfterRender()
+    {
+        GoogleMapJsInterop.Init("map1", null);
+    }
+}
