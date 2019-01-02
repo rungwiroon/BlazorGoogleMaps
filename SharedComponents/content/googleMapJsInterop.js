@@ -1,25 +1,22 @@
 ﻿
 window.googleMapJsFunctions = {
-    init: function (id, options) {
+    init: function (jsonArgs) {
         //return prompt(message, 'Type anything here');
-        console.log("init google map " + id);
+        let args = JSON.parse(jsonArgs);
+        let id = args[0];
+        let mapOptions = args[1];
+
+        console.log("init google map " + id + " with options : " + mapOptions);
 
         window._blazorGoogleMaps = [];
         //console.log("init google map 2 " + id);
 
-        window._blazorGoogleMaps[id] = new google.maps.Map(document.getElementById(id),
-            {
-                zoom: 5,
-                center: new google.maps.LatLng(13.505892, 100.8162),
-                mapTypeId: google.maps.MapTypeId.ROADMAP,
-                //styles: mapStyles
-            });
+        window._blazorGoogleMaps[id] = new google.maps.Map(document.getElementById(id), mapOptions);
+
         //console.log(document.getElementById(id));
 
         //let gMap = new google.maps.Map(document.getElementById(id));
-        //console.log("init google map 2 " + id);
-
-        window._blazorGoogleMaps[id].setZoom(10);
+        console.log("init google map 2 " + id);
 
         return true;
     },

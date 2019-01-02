@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SharedComponents.Maps.Controls
+namespace SharedComponents.Maps
 {
-    public class StreetViewControlOptions
+    public class StreetViewPanoramaOptions
     {
     }
 }

@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
 namespace SharedComponents.Maps
@@ -8,26 +11,32 @@ namespace SharedComponents.Maps
     /// <summary>
     /// Identifiers for common MapTypes
     /// </summary>
-    public class MapTypeId
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum MapTypeId
     {
         /// <summary>
         /// This map type displays a transparent layer of major streets on satellite images.
         /// </summary>
-        public const string HYBRID = "HYBRID";
+        [EnumMember(Value = "hybrid")]
+        Hybrid,
 
         /// <summary>
         /// This map type displays a normal street map.
         /// </summary>
-        public const string ROADMAP = "ROADMAP";
+        //ROADMAP,
+        [EnumMember(Value = "roadmap")]
+        Roadmap,
 
         /// <summary>
         /// This map type displays satellite images.
         /// </summary>
-        public const string SATELLITE = "SATELLITE";
+        [EnumMember(Value = "satellite")]
+        Sattellite,
 
         /// <summary>
         /// This map type displays maps with physical features such as terrain and vegetation.
         /// </summary>
-        public const string TERRAIN = "TERRAIN";
+        [EnumMember(Value = "terrain")]
+        Terrain
     }
 }

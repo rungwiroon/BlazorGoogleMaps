@@ -11,7 +11,7 @@ namespace SharedComponents
     {
         public static Task Init(string id, MapOptions options)
         {
-            return JSRuntime.Current.InvokeAsync<object>(
+            return Helper.MyInvokeAsync<object>(
                 "googleMapJsFunctions.init",
                 id,
                 options);
@@ -19,8 +19,10 @@ namespace SharedComponents
 
         public static Task FitBounds(string id, LatLngBoundsLiteral bounds)
         {
-            return JSRuntime.Current.InvokeAsync<object>(
-                "window._blazorGoogleMaps[id].fitBounds(bounds);");
+            return Helper.MyInvokeAsync<object>(
+                "googleMapJsFunctions.fitBounds",
+                id,
+                bounds);
         }
     }
 }

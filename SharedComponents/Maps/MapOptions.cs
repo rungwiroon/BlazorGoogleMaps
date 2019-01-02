@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -27,22 +29,22 @@ namespace SharedComponents.Maps
         /// A map icon represents a point of interest, also known as a POI. 
         /// By default map icons are clickable.
         /// </summary>
-        public bool clickableIcons { get; set; }
+        public bool? clickableIcons { get; set; }
 
         /// <summary>
         /// Enables/disables all default UI. May be overridden individually.
         /// </summary>
-        public bool disableDefaultUI { get; set; }
+        public bool? disableDefaultUI { get; set; }
 
         /// <summary>
         /// Enables/disables zoom and center on double click. Enabled by default.
         /// </summary>
-        public bool disableDoubleClickZoom { get; set; }
+        public bool? disableDoubleClickZoom { get; set; }
 
         /// <summary>
         /// If false, prevents the map from being dragged. Dragging is enabled by default.
         /// </summary>
-        public bool draggable { get; set; }
+        public bool? draggable { get; set; }
 
         /// <summary>
         /// The name or url of the cursor to display when mousing over a draggable map. 
@@ -63,7 +65,7 @@ namespace SharedComponents.Maps
         /// <summary>
         /// The enabled/disabled state of the Fullscreen control.
         /// </summary>
-        public bool fullscreenControl { get; set; }
+        public bool? fullscreenControl { get; set; }
 
         /// <summary>
         /// The display options for the Fullscreen control.
@@ -83,18 +85,18 @@ namespace SharedComponents.Maps
         /// The heading for aerial imagery in degrees measured clockwise from cardinal direction North. 
         /// Headings are snapped to the nearest available angle for which imagery is available.
         /// </summary>
-        public int heading { get; set; }
+        public int? heading { get; set; }
 
         /// <summary>
         /// The heading for aerial imagery in degrees measured clockwise from cardinal direction North. 
         /// Headings are snapped to the nearest available angle for which imagery is available.
         /// </summary>
-        public bool keyboardShortcuts { get; set; }
+        public bool? keyboardShortcuts { get; set; }
 
         /// <summary>
         /// The initial enabled/disabled state of the Map type control.
         /// </summary>
-        public bool mapTypeControl { get; set; }
+        public bool? mapTypeControl { get; set; }
 
         /// <summary>
         /// The initial display options for the Map type control.
@@ -104,6 +106,7 @@ namespace SharedComponents.Maps
         /// <summary>
         /// The initial Map mapTypeId. Defaults to ROADMAP.
         /// </summary>
+        //[JsonConverter(typeof(StringEnumConverter))]
         public MapTypeId mapTypeId { get; set; }
 
         /// <summary>
@@ -111,24 +114,24 @@ namespace SharedComponents.Maps
         /// If omitted, or set to null, the maximum zoom from the current map type is used instead. 
         /// Valid values: Integers between zero, and up to the supported maximum zoom level.
         /// </summary>
-        public int maxZoom { get; set; }
+        public int? maxZoom { get; set; }
 
         /// <summary>
         /// The minimum zoom level which will be displayed on the map. 
         /// If omitted, or set to null, the minimum zoom from the current map type is used instead. 
         /// Valid values: Integers between zero, and up to the supported maximum zoom level.
         /// </summary>
-        public int minZoom { get; set; }
+        public int? minZoom { get; set; }
 
         /// <summary>
         /// If true, do not clear the contents of the Map div.
         /// </summary>
-        public bool noClear { get; set; }
+        public bool? noClear { get; set; }
 
         /// <summary>
         /// The enabled/disabled state of the Pan control.
         /// </summary>
-        public bool panControl { get; set; }
+        public bool? panControl { get; set; }
 
         /// <summary>
         /// The display options for the Pan control.
@@ -144,7 +147,7 @@ namespace SharedComponents.Maps
         /// <summary>
         /// The enabled/disabled state of the Rotate control.
         /// </summary>
-        public bool rotateControl { get; set; }
+        public bool? rotateControl { get; set; }
 
         /// <summary>
         /// The display options for the Rotate control.
@@ -154,13 +157,65 @@ namespace SharedComponents.Maps
         /// <summary>
         /// The initial enabled/disabled state of the Scale control.
         /// </summary>
-        public bool scaleControl { get; set; }
+        public bool? scaleControl { get; set; }
 
         /// <summary>
         /// The initial display options for the Scale control.
         /// </summary>
         public ScaleControlOptions scaleControlOptions { get; set; }
 
+        /// <summary>
+        /// If false, disables zooming on the map using a mouse scroll wheel. 
+        /// The scrollwheel is enabled by default.
+        /// </summary>
+        public bool? scrollwheel  { get; set; }
 
+        /// <summary>
+        /// A StreetViewPanorama to display when the Street View pegman is dropped on the map. 
+        /// If no panorama is specified, a default StreetViewPanorama will be displayed in the map's div when the pegman is dropped.
+        /// </summary>
+        public StreetViewPanorama streetView { get; set; }
+
+        /// <summary>
+        /// The initial enabled/disabled state of the Street View Pegman control. 
+        /// This control is part of the default UI, and should be set to false when displaying a map type on which the Street View road overlay should not appear (e.g. a non-Earth map type).
+        /// </summary>
+        public bool? streetViewControl { get; set; }
+
+        /// <summary>
+        /// The initial display options for the Street View Pegman control.
+        /// </summary>
+        public StreetViewControlOptions streetViewControlOptions { get; set; }
+
+        /// <summary>
+        /// Styles to apply to each of the default map types. 
+        /// Note that for satellite/hybrid and terrain modes, these styles will only apply to labels and geometry.
+        /// </summary>
+        public MapTypeStyle[] styles { get; set; }
+
+        /// <summary>
+        /// Controls the automatic switching behavior for the angle of incidence of the map. 
+        /// The only allowed values are 0 and 45. The value 0 causes the map to always use a 0° overhead view regardless of the zoom level and viewport. 
+        /// The value 45 causes the tilt angle to automatically switch to 45 whenever 45° imagery is available for the current zoom level and viewport, and switch back to 0 whenever 45° imagery is not available (this is the default behavior). 45° imagery is only available for satellite and hybrid map types, within some locations, and at some zoom levels. 
+        /// Note: getTilt returns the current tilt angle, not the value specified by this option. 
+        /// </summary>
+        public int? tilt { get; set; }
+
+        /// <summary>
+        /// The initial Map zoom level. 
+        /// Required. 
+        /// Valid values: Integers between zero, and up to the supported maximum zoom level.
+        /// </summary>
+        public int? zoom { get; set; }
+
+        /// <summary>
+        /// The enabled/disabled state of the Zoom control.
+        /// </summary>
+        public bool? zoomControl { get; set; }
+
+        /// <summary>
+        /// The display options for the Zoom control.
+        /// </summary>
+        public ZoomControlOptions zoomControlOptions { get; set; }
     }
 }
