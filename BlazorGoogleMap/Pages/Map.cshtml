@@ -8,6 +8,7 @@
 <GoogleMap ref="@map2" Id="map2" Options="@mapOptions"></GoogleMap>
 
 <button onclick="@SyncBounds">Sync map bounds</button>
+<button onclick="@SyncMapCenter">Sync map center</button>
 
 @functions {
     private GoogleMap map1;
@@ -33,5 +34,11 @@
     {
         var bounds = await map1.GetBounds();
         await map2.FitBounds(bounds);
+    }
+
+    private async Task SyncMapCenter()
+    {
+        var latLng = await map1.GetCenter();
+        await map2.SetCenter(latLng);
     }
 }

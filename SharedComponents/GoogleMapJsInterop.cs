@@ -11,7 +11,7 @@ namespace SharedComponents
     {
         public static Task Init(string id, MapOptions options)
         {
-            return Helper.MyInvokeAsync<object>(
+            return Helper.MyInvokeAsync<bool>(
                 "googleMapJsFunctions.init",
                 id,
                 options);
@@ -19,7 +19,7 @@ namespace SharedComponents
 
         public static Task FitBounds(string id, LatLngBoundsLiteral bounds)
         {
-            return Helper.MyInvokeAsync<object>(
+            return Helper.MyInvokeAsync<bool>(
                 "googleMapJsFunctions.fitBounds",
                 id,
                 bounds);
@@ -30,6 +30,21 @@ namespace SharedComponents
             return Helper.MyInvokeAsync<LatLngBoundsLiteral>(
                 "googleMapJsFunctions.getBounds",
                 id);
+        }
+
+        public static Task<LatLngLiteral> GetCenter(string id)
+        {
+            return Helper.MyInvokeAsync<LatLngLiteral>(
+                "googleMapJsFunctions.getCenter",
+                id);
+        }
+
+        public static Task SetCenter(string id, LatLngLiteral latLng)
+        {
+            return Helper.MyInvokeAsync<bool>(
+                "googleMapJsFunctions.setCenter",
+                id,
+                latLng);
         }
     }
 }

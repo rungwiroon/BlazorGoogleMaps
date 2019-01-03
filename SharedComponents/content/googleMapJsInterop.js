@@ -39,7 +39,9 @@ window.googleMapJsFunctions = {
         let args = JSON.parse(jsonArgs);
         let id = args[0];
 
-        return window._blazorGoogleMaps[id].getCenter();
+        console.log("Get center : " + id);
+
+        return window._blazorGoogleMaps[id].getCenter().toJSON();
     },
 
     getClickableIcons: function (jsonArgs) {
@@ -103,8 +105,14 @@ window.googleMapJsFunctions = {
         return window._blazorGoogleMaps[id].getHeading(latLngBounds);
     },
 
-    setCenter: function (id, latlng) {
-        return window._blazorGoogleMaps[id].setCenter(latlng);
+    setCenter: function (jsonArgs) {
+        let args = JSON.parse(jsonArgs);
+        let id = args[0];
+        let latLng = args[1];
+
+        console.log("Set center : " + id);
+
+        return window._blazorGoogleMaps[id].setCenter(latLng);
     },
 
     setClickableIcons: function (id, value) {

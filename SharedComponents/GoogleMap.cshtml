@@ -43,4 +43,19 @@
     {
         return await GoogleMapJsInterop.GetBounds(Id);
     }
+
+    /// <summary>
+    /// Returns the position displayed at the center of the map. 
+    /// Note that this LatLng object is not wrapped.
+    /// </summary>
+    /// <returns></returns>
+    public async Task<LatLngLiteral> GetCenter()
+    {
+        return await GoogleMapJsInterop.GetCenter(Id);
+    }
+
+    public async Task SetCenter(LatLngLiteral latLng)
+    {
+        await GoogleMapJsInterop.SetCenter(Id, latLng);
+    }
 }
