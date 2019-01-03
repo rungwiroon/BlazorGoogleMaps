@@ -1,63 +1,93 @@
 ﻿
 window.googleMapJsFunctions = {
     init: function (jsonArgs) {
-        //return prompt(message, 'Type anything here');
         let args = JSON.parse(jsonArgs);
         let id = args[0];
         let mapOptions = args[1];
 
         console.log("init google map " + id + " with options : " + mapOptions);
 
-        window._blazorGoogleMaps = [];
-        //console.log("init google map 2 " + id);
+        window._blazorGoogleMaps = window._blazorGoogleMaps || [];
 
         window._blazorGoogleMaps[id] = new google.maps.Map(document.getElementById(id), mapOptions);
-
-        //console.log(document.getElementById(id));
-
-        //let gMap = new google.maps.Map(document.getElementById(id));
-        console.log("init google map 2 " + id);
 
         return true;
     },
 
-    fitBounds: function (id, bounds) {
+    fitBounds: function (jsonArgs) {
+        let args = JSON.parse(jsonArgs);
+        let id = args[0];
+        let bounds = args[1];
+
+        console.log("Fit bounds : " + id + " " + bounds);
+
         window._blazorGoogleMaps[id].fitBounds(bounds);
+
+        return true;
     },
 
-    getBounds: function (id) {
-        return window._blazorGoogleMaps[id].getBounds();
+    getBounds: function (jsonArgs) {
+        let args = JSON.parse(jsonArgs);
+        let id = args[0];
+
+        console.log("Get bounds : " + id);
+
+        return window._blazorGoogleMaps[id].getBounds().toJSON();
     },
 
-    getCenter: function (id) {
+    getCenter: function (jsonArgs) {
+        let args = JSON.parse(jsonArgs);
+        let id = args[0];
+
         return window._blazorGoogleMaps[id].getCenter();
     },
 
-    getClickableIcons: function (id) {
+    getClickableIcons: function (jsonArgs) {
+        let args = JSON.parse(jsonArgs);
+        let id = args[0];
+
         return window._blazorGoogleMaps[id].getClickableIcons();
     },
 
-    getHeading: function (id) {
+    getHeading: function (jsonArgs) {
+        let args = JSON.parse(jsonArgs);
+        let id = args[0];
+
         return window._blazorGoogleMaps[id].getHeading();
     },
 
-    getMapTypeId: function (id) {
+    getMapTypeId: function (jsonArgs) {
+        let args = JSON.parse(jsonArgs);
+        let id = args[0];
+
         return window._blazorGoogleMaps[id].getMapTypeId();
     },
 
-    getProjection: function (id) {
+    getProjection: function (jsonArgs) {
+        let args = JSON.parse(jsonArgs);
+        let id = args[0];
+
         return window._blazorGoogleMaps[id].getProjection();
     },
 
-    getStreetView: function (id) {
+    getStreetView: function (jsonArgs) {
+        let args = JSON.parse(jsonArgs);
+        let id = args[0];
+
         return window._blazorGoogleMaps[id].getStreetView();
     },
 
-    getTilt: function (id) {
+    getTilt: function (jsonArgs) {
+        let args = JSON.parse(jsonArgs);
+        let id = args[0];
+
         return window._blazorGoogleMaps[id].getTilt();
     },
 
-    getZoom: function (id) {
+    getZoom: function (jsonArgs) {
+        let args = JSON.parse(jsonArgs);
+        let id = args[0];
+
         return window._blazorGoogleMaps[id].getZoom();
     },
 

@@ -24,5 +24,12 @@ namespace SharedComponents
                 id,
                 bounds);
         }
+
+        public static Task<LatLngBoundsLiteral> GetBounds(string id)
+        {
+            return Helper.MyInvokeAsync<LatLngBoundsLiteral>(
+                "googleMapJsFunctions.getBounds",
+                id);
+        }
     }
 }

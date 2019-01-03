@@ -1,6 +1,6 @@
 ﻿@using Maps
 
-<div id="@Id" style="height: 600px"></div>
+<div id="@Id" style="height: 500px"></div>
 
 @functions {
     [Parameter]
@@ -14,5 +14,33 @@
     protected async override Task OnAfterRenderAsync()
     {
         await GoogleMapJsInterop.Init(Id, Options);
+    }
+
+    protected override bool ShouldRender()
+    {
+        var renderUI = false;
+
+        return renderUI;
+    }
+
+    /// <summary>
+    /// Sets the viewport to contain the given bounds.
+    /// </summary>
+    /// <param name="bounds"></param>
+    /// <returns></returns>
+    public async Task FitBounds(LatLngBoundsLiteral bounds)
+    {
+        await GoogleMapJsInterop.FitBounds(Id, bounds);
+    }
+
+    /// <summary>
+    /// Returns the lat/lng bounds of the current viewport. 
+    /// If more than one copy of the world is visible, the bounds range in longitude from -180 to 180 degrees inclusive. 
+    /// If the map is not yet initialized (i.e. the mapType is still null), or center and zoom have not been set then the result is null.
+    /// </summary>
+    /// <returns></returns>
+    public async Task<LatLngBoundsLiteral> GetBounds()
+    {
+        return await GoogleMapJsInterop.GetBounds(Id);
     }
 }
