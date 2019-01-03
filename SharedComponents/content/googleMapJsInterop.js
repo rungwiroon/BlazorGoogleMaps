@@ -115,12 +115,24 @@ window.googleMapJsFunctions = {
         return window._blazorGoogleMaps[id].setCenter(latLng);
     },
 
-    setClickableIcons: function (id, value) {
+    setClickableIcons: function (jsonArgs) {
+        let args = JSON.parse(jsonArgs);
+        let id = args[0];
+        let value = args[1];
+
         return window._blazorGoogleMaps[id].setClickableIcons(value);
     },
 
-    setHeading: function (id, heading) {
-        return window._blazorGoogleMaps[id].setHeading(heading);
+    setHeading: function (jsonArgs) {
+        let args = JSON.parse(jsonArgs);
+        let id = args[0];
+        let heading = args[1];
+
+        console.log("Set heading : " + id + " : " + heading);
+
+        window._blazorGoogleMaps[id].setHeading(heading);
+
+        return true;
     },
 
     setMapTypeId: function (id, mapTypeId) {

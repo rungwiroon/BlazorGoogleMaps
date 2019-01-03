@@ -46,5 +46,35 @@ namespace SharedComponents
                 id,
                 latLng);
         }
+
+        public static Task<bool> GetClickableIcons(string id)
+        {
+            return Helper.MyInvokeAsync<bool>(
+                "googleMapJsFunctions.getClickableIcons",
+                id);
+        }
+
+        public static Task SetClickableIcons(string id, bool value)
+        {
+            return Helper.MyInvokeAsync<bool>(
+                "googleMapJsFunctions.setClickableIcons",
+                id,
+                value);
+        }
+
+        public static Task<int> GetHeading(string id)
+        {
+            return Helper.MyInvokeAsync<int>(
+                "googleMapJsFunctions.getHeading",
+                id);
+        }
+
+        public static Task SetHeading(string id, int heading)
+        {
+            return Helper.MyInvokeAsync<int>(
+                "googleMapJsFunctions.setHeading",
+                id,
+                heading);
+        }
     }
 }

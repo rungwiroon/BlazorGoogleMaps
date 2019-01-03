@@ -58,4 +58,24 @@
     {
         await GoogleMapJsInterop.SetCenter(Id, latLng);
     }
+
+    /// <summary>
+    /// Returns the compass heading of aerial imagery. 
+    /// The heading value is measured in degrees (clockwise) from cardinal direction North.
+    /// </summary>
+    /// <returns></returns>
+    public async Task<int> GetHeading()
+    {
+        return await GoogleMapJsInterop.GetHeading(Id);
+    }
+
+    /// <summary>
+    /// Sets the compass heading for aerial imagery measured in degrees from cardinal direction North.
+    /// </summary>
+    /// <param name="heading"></param>
+    /// <returns></returns>
+    public async Task SetHeading(int heading)
+    {
+        await GoogleMapJsInterop.SetHeading(Id, heading);
+    }
 }
