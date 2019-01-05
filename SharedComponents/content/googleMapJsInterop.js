@@ -62,6 +62,8 @@ window.googleMapJsFunctions = {
         let args = JSON.parse(jsonArgs);
         let id = args[0];
 
+        console.log("Get map type for ID : " + id);
+
         return window._blazorGoogleMaps[id].getMapTypeId();
     },
 
@@ -135,7 +137,13 @@ window.googleMapJsFunctions = {
         return true;
     },
 
-    setMapTypeId: function (id, mapTypeId) {
+    setMapTypeId: function (jsonArgs) {
+        let args = JSON.parse(jsonArgs);
+        let id = args[0];
+        let mapTypeId = args[1];
+
+        console.log("Set map type : " + id + " : " + mapTypeId);
+
         return window._blazorGoogleMaps[id].setMapTypeId(mapTypeId);
     },
 

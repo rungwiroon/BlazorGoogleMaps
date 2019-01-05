@@ -2,6 +2,7 @@
 using SharedComponents.Maps;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -75,6 +76,25 @@ namespace SharedComponents
                 "googleMapJsFunctions.setHeading",
                 id,
                 heading);
+        }
+
+        public static async Task<MapTypeId> GetMapTypeId(string id)
+        {
+            var str = await Helper.MyInvokeAsync<string>(
+                "googleMapJsFunctions.getMapTypeId",
+                id);
+
+            Debug.WriteLine($"Get map type {str}");
+
+            return Helper.ToEnum<MapTypeId>(str);
+        }
+
+        public static Task SetMapTypeId(string id, MapTypeId mapTypeId)
+        {
+            return Helper.MyInvokeAsync<int>(
+                "googleMapJsFunctions.setMapTypeId",
+                id,
+                mapTypeId);
         }
     }
 }

@@ -78,4 +78,14 @@
     {
         await GoogleMapJsInterop.SetHeading(Id, heading);
     }
+
+    public async Task<MapTypeId> GetMapTypeId()
+    {
+        return await GoogleMapJsInterop.GetMapTypeId(Id);
+    }
+
+    public async Task SetMapTypeId(MapTypeId mapTypeId)
+    {
+        await GoogleMapJsInterop.SetMapTypeId(Id, mapTypeId);
+    }
 }

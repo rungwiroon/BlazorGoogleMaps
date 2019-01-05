@@ -10,6 +10,7 @@
 <button onclick="@SyncBounds">Sync map bounds</button>
 <button onclick="@SyncMapCenter">Sync map center</button>
 <button onclick="@SetMapHeading">Set map heading</button>
+<button onclick="@ToggleMapType">Toggle map type</button>
 
 @functions {
     private GoogleMap map1;
@@ -62,5 +63,21 @@
         var heading = await map2.GetHeading();
 
         Console.WriteLine($"Map2 heading is {heading}");
+    }
+
+    private async Task ToggleMapType()
+    {
+        var mapTypeId = await map1.GetMapTypeId();
+
+        Console.WriteLine($"Map type is {mapTypeId}");
+
+        if(mapTypeId != MapTypeId.Sattellite)
+        {
+            await map1.SetMapTypeId(MapTypeId.Sattellite);
+        }
+        else
+        {
+            await map1.SetMapTypeId(MapTypeId.Roadmap);
+        }
     }
 }
