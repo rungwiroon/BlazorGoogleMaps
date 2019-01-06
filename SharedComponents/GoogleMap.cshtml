@@ -34,6 +34,41 @@
     }
 
     /// <summary>
+    /// Changes the center of the map by the given distance in pixels. 
+    /// If the distance is less than both the width and height of the map, the transition will be smoothly animated. 
+    /// Note that the map coordinate system increases from west to east (for x values) and north to south (for y values).
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
+    public async Task PanBy(int x, int y)
+    {
+        await GoogleMapJsInterop.PanBy(Id, x, y);
+    }
+
+    /// <summary>
+    /// Changes the center of the map to the given LatLng. 
+    /// If the change is less than both the width and height of the map, the transition will be smoothly animated.
+    /// </summary>
+    /// <param name="latLng"></param>
+    /// <returns></returns>
+    public async Task PanTo(LatLngLiteral latLng)
+    {
+        await GoogleMapJsInterop.PanTo(Id, latLng);
+    }
+
+    /// <summary>
+    /// Pans the map by the minimum amount necessary to contain the given LatLngBounds. 
+    /// It makes no guarantee where on the map the bounds will be, except that the map will be panned to show as much of the bounds as possible inside {currentMapSizeInPx} - {padding}.
+    /// </summary>
+    /// <param name="latLngBounds"></param>
+    /// <returns></returns>
+    public async Task PanToBounds(LatLngBoundsLiteral latLngBounds)
+    {
+        await GoogleMapJsInterop.PanToBounds(Id, latLngBounds);
+    }
+
+    /// <summary>
     /// Returns the lat/lng bounds of the current viewport. 
     /// If more than one copy of the world is visible, the bounds range in longitude from -180 to 180 degrees inclusive. 
     /// If the map is not yet initialized (i.e. the mapType is still null), or center and zoom have not been set then the result is null.

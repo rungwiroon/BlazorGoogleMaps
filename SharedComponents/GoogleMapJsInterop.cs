@@ -26,6 +26,31 @@ namespace SharedComponents
                 bounds);
         }
 
+        public static Task PanBy(string id, int x, int y)
+        {
+            return Helper.MyInvokeAsync<bool>(
+                "googleMapJsFunctions.panBy",
+                id,
+                x,
+                y);
+        }
+
+        public static Task PanTo(string id, LatLngLiteral latLng)
+        {
+            return Helper.MyInvokeAsync<bool>(
+                "googleMapJsFunctions.panTo",
+                id,
+                latLng);
+        }
+
+        public static Task PanToBounds(string id, LatLngBoundsLiteral latLngBounds)
+        {
+            return Helper.MyInvokeAsync<bool>(
+                "googleMapJsFunctions.panToBounds",
+                id,
+                latLngBounds);
+        }
+
         public static Task<LatLngBoundsLiteral> GetBounds(string id)
         {
             return Helper.MyInvokeAsync<LatLngBoundsLiteral>(

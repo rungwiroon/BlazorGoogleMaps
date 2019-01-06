@@ -97,15 +97,28 @@ window.googleMapJsFunctions = {
         return window._blazorGoogleMaps[id].getZoom();
     },
 
-    panBy: function (id, x, y) {
+    panBy: function (jsonArgs) {
+        let args = JSON.parse(jsonArgs);
+        let id = args[0];
+        let x = args[1];
+        let y = args[2];
+
         return window._blazorGoogleMaps[id].panBy(x, y);
     },
 
-    panTo: function (id, latLng) {
+    panTo: function (jsonArgs) {
+        let args = JSON.parse(jsonArgs);
+        let id = args[0];
+        let latLng = args[1];
+
         return window._blazorGoogleMaps[id].panTo(latLng);
     },
 
-    panToBounds: function (id, latLngBounds) {
+    panToBounds: function (jsonArgs) {
+        let args = JSON.parse(jsonArgs);
+        let id = args[0];
+        let latLngBounds = args[1];
+
         return window._blazorGoogleMaps[id].getHeading(latLngBounds);
     },
 
