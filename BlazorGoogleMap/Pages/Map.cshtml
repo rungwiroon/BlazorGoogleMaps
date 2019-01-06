@@ -12,6 +12,7 @@
 <button onclick="@SetMapHeading">Set map heading</button>
 <button onclick="@ToggleMapType">Toggle map type</button>
 <button onclick="@ToggleTilt">Toggle map tilt</button>
+<button onclick="@ZoomIn">Zoom in</button>
 
 @functions {
     private GoogleMap map1;
@@ -72,7 +73,7 @@
         var tilt = await map2.GetTilt();
 
         Console.WriteLine($"Map2 tilt is {tilt}");
-    
+
         if (tilt > 0)
         {
             await map2.SetTilt(0);
@@ -81,6 +82,12 @@
         {
             await map2.SetTilt(45);
         }
+    }
+
+    private async Task ZoomIn()
+    {
+        var zoom = await map1.GetZoom();
+        await map1.SetZoom(zoom + 1);
     }
 
     private async Task ToggleMapType()

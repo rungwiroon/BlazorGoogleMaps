@@ -115,4 +115,14 @@
     {
         await GoogleMapJsInterop.SetTilt(Id, tilt);
     }
+
+    public async Task<int> GetZoom()
+    {
+        return await GoogleMapJsInterop.GetZoom(Id);
+    }
+
+    public async Task SetZoom(int zoom)
+    {
+        await GoogleMapJsInterop.SetZoom(Id, zoom);
+    }
 }

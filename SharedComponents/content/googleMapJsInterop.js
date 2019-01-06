@@ -167,7 +167,13 @@ window.googleMapJsFunctions = {
         return window._blazorGoogleMaps[id].setTilt(tilt);
     },
 
-    setZoom: function (id, zoom) {
+    setZoom: function (jsonArgs) {
+        let args = JSON.parse(jsonArgs);
+        let id = args[0];
+        let zoom = args[1];
+
+        console.log("Set map zoom for ID : " + id + " : " + zoom);
+
         return window._blazorGoogleMaps[id].setZoom(zoom);
     }
 };

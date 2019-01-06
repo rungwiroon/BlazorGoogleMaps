@@ -111,5 +111,20 @@ namespace SharedComponents
                 id,
                 tilt);
         }
+
+        public static Task<int> GetZoom(string id)
+        {
+            return Helper.MyInvokeAsync<int>(
+                "googleMapJsFunctions.getZoom",
+                id);
+        }
+
+        public static Task SetZoom(string id, int zoom)
+        {
+            return Helper.MyInvokeAsync<bool>(
+                "googleMapJsFunctions.setZoom",
+                id,
+                zoom);
+        }
     }
 }
