@@ -11,6 +11,7 @@
 <button onclick="@SyncMapCenter">Sync map center</button>
 <button onclick="@SetMapHeading">Set map heading</button>
 <button onclick="@ToggleMapType">Toggle map type</button>
+<button onclick="@ToggleTilt">Toggle map tilt</button>
 
 @functions {
     private GoogleMap map1;
@@ -34,14 +35,15 @@
 
         mapOptions2 = new MapOptions()
         {
-            zoom = 13,
+            zoom = 18,
             center = new LatLngLiteral()
             {
-                lat = 13.505892,
-                lng = 100.8162
+                lat = 45.518,
+                lng = -122.672
             },
             mapTypeId = MapTypeId.Sattellite,
-            heading = 45
+            heading = 90,
+            tilt = 45
         };
     }
 
@@ -59,10 +61,26 @@
 
     private async Task SetMapHeading()
     {
-        await map2.SetHeading(90);
+        await map2.SetHeading(await map2.GetHeading() + 90);
         var heading = await map2.GetHeading();
 
         Console.WriteLine($"Map2 heading is {heading}");
+    }
+
+    private async Task ToggleTilt()
+    {
+        var tilt = await map2.GetTilt();
+
+        Console.WriteLine($"Map2 tilt is {tilt}");
+    
+        if (tilt > 0)
+        {
+            await map2.SetTilt(0);
+        }
+        else
+        {
+            await map2.SetTilt(45);
+        }
     }
 
     private async Task ToggleMapType()
@@ -71,7 +89,7 @@
 
         Console.WriteLine($"Map type is {mapTypeId}");
 
-        if(mapTypeId != MapTypeId.Sattellite)
+        if (mapTypeId != MapTypeId.Sattellite)
         {
             await map1.SetMapTypeId(MapTypeId.Sattellite);
         }

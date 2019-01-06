@@ -96,5 +96,20 @@ namespace SharedComponents
                 id,
                 mapTypeId);
         }
+        
+        public static Task<int> GetTilt(string id)
+        {
+            return Helper.MyInvokeAsync<int>(
+                "googleMapJsFunctions.getTilt",
+                id);
+        }
+
+        public static Task SetTilt(string id, int tilt)
+        {
+            return Helper.MyInvokeAsync<bool>(
+                "googleMapJsFunctions.setTilt",
+                id,
+                tilt);
+        }
     }
 }

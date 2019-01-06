@@ -85,6 +85,8 @@ window.googleMapJsFunctions = {
         let args = JSON.parse(jsonArgs);
         let id = args[0];
 
+        console.log("Get tilt for ID : " + id);
+
         return window._blazorGoogleMaps[id].getTilt();
     },
 
@@ -155,7 +157,13 @@ window.googleMapJsFunctions = {
         return window._blazorGoogleMaps[id].setStreetView(panorama);
     },
 
-    setTilt: function (id, tilt) {
+    setTilt: function (jsonArgs) {
+        let args = JSON.parse(jsonArgs);
+        let id = args[0];
+        let tilt = args[1];
+
+        console.log("Set map tilt for ID : " + id + " : " + tilt);
+
         return window._blazorGoogleMaps[id].setTilt(tilt);
     },
 
