@@ -1,0 +1,41 @@
+﻿@page "/mapEvent"
+@using SharedComponents
+@using SharedComponents.Maps
+
+<h1>Google Map Event</h1>
+
+<GoogleMap ref="@map1" Id="map1" Options="@mapOptions" OnBoundsChanged="@OnBoundsChanged"></GoogleMap>
+
+<MapEventList ref="@eventList" Events="@_events"></MapEventList>
+
+@functions {
+    private GoogleMap map1;
+    private MapEventList eventList;
+
+    private MapOptions mapOptions;
+
+    private List<String> _events = new List<String>();
+
+    protected override void OnInit()
+    {
+        mapOptions = new MapOptions()
+        {
+            zoom = 13,
+            center = new LatLngLiteral()
+            {
+                lat = 13.505892,
+                lng = 100.8162
+            },
+            mapTypeId = MapTypeId.Roadmap
+        };
+    }
+
+    private void OnBoundsChanged()
+    {
+        Console.WriteLine("Bounds changed.");
+
+        _events.Add("Bounds changed.");
+
+        StateHasChanged();
+    }
+}

@@ -1,4 +1,5 @@
 ﻿@using Maps
+@using System.Threading
 
 <div id="@Id" style="height: 500px"></div>
 
@@ -11,9 +12,18 @@
 
     public Action OnIdle { get; set; }
 
+    [Parameter]
+    private Action OnBoundsChanged { get; set; }
+    private Guid? boundsChangedEventRef;
+
     protected async override Task OnAfterRenderAsync()
     {
-        await GoogleMapJsInterop.Init(Id, Options);
+        await MapFunctionJsInterop.Init(Id, Options);
+
+        Thread.Sleep(1000);
+
+        if(OnBoundsChanged != null)
+            boundsChangedEventRef = await MapEventJsInterop.SubscribeEvent(Id, "bounds_changed", OnBoundsChanged);
     }
 
     protected override bool ShouldRender()
@@ -30,7 +40,7 @@
     /// <returns></returns>
     public async Task FitBounds(LatLngBoundsLiteral bounds)
     {
-        await GoogleMapJsInterop.FitBounds(Id, bounds);
+        await MapFunctionJsInterop.FitBounds(Id, bounds);
     }
 
     /// <summary>
@@ -43,7 +53,7 @@
     /// <returns></returns>
     public async Task PanBy(int x, int y)
     {
-        await GoogleMapJsInterop.PanBy(Id, x, y);
+        await MapFunctionJsInterop.PanBy(Id, x, y);
     }
 
     /// <summary>
@@ -54,7 +64,7 @@
     /// <returns></returns>
     public async Task PanTo(LatLngLiteral latLng)
     {
-        await GoogleMapJsInterop.PanTo(Id, latLng);
+        await MapFunctionJsInterop.PanTo(Id, latLng);
     }
 
     /// <summary>
@@ -65,7 +75,7 @@
     /// <returns></returns>
     public async Task PanToBounds(LatLngBoundsLiteral latLngBounds)
     {
-        await GoogleMapJsInterop.PanToBounds(Id, latLngBounds);
+        await MapFunctionJsInterop.PanToBounds(Id, latLngBounds);
     }
 
     /// <summary>
@@ -76,7 +86,7 @@
     /// <returns></returns>
     public async Task<LatLngBoundsLiteral> GetBounds()
     {
-        return await GoogleMapJsInterop.GetBounds(Id);
+        return await MapFunctionJsInterop.GetBounds(Id);
     }
 
     /// <summary>
@@ -86,12 +96,12 @@
     /// <returns></returns>
     public async Task<LatLngLiteral> GetCenter()
     {
-        return await GoogleMapJsInterop.GetCenter(Id);
+        return await MapFunctionJsInterop.GetCenter(Id);
     }
 
     public async Task SetCenter(LatLngLiteral latLng)
     {
-        await GoogleMapJsInterop.SetCenter(Id, latLng);
+        await MapFunctionJsInterop.SetCenter(Id, latLng);
     }
 
     /// <summary>
@@ -101,7 +111,7 @@
     /// <returns></returns>
     public async Task<int> GetHeading()
     {
-        return await GoogleMapJsInterop.GetHeading(Id);
+        return await MapFunctionJsInterop.GetHeading(Id);
     }
 
     /// <summary>
@@ -111,17 +121,17 @@
     /// <returns></returns>
     public async Task SetHeading(int heading)
     {
-        await GoogleMapJsInterop.SetHeading(Id, heading);
+        await MapFunctionJsInterop.SetHeading(Id, heading);
     }
 
     public async Task<MapTypeId> GetMapTypeId()
     {
-        return await GoogleMapJsInterop.GetMapTypeId(Id);
+        return await MapFunctionJsInterop.GetMapTypeId(Id);
     }
 
     public async Task SetMapTypeId(MapTypeId mapTypeId)
     {
-        await GoogleMapJsInterop.SetMapTypeId(Id, mapTypeId);
+        await MapFunctionJsInterop.SetMapTypeId(Id, mapTypeId);
     }
 
     /// <summary>
@@ -133,7 +143,7 @@
     /// <returns></returns>
     public async Task<int> GetTilt()
     {
-        return await GoogleMapJsInterop.GetTilt(Id);
+        return await MapFunctionJsInterop.GetTilt(Id);
     }
 
     /// <summary>
@@ -148,16 +158,16 @@
     /// <returns></returns>
     public async Task SetTilt(int tilt)
     {
-        await GoogleMapJsInterop.SetTilt(Id, tilt);
+        await MapFunctionJsInterop.SetTilt(Id, tilt);
     }
 
     public async Task<int> GetZoom()
     {
-        return await GoogleMapJsInterop.GetZoom(Id);
+        return await MapFunctionJsInterop.GetZoom(Id);
     }
 
     public async Task SetZoom(int zoom)
     {
-        await GoogleMapJsInterop.SetZoom(Id, zoom);
+        await MapFunctionJsInterop.SetZoom(Id, zoom);
     }
 }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SharedComponents
 {
-    public class GoogleMapJsInterop
+    public class MapFunctionJsInterop
     {
         public static Task Init(string id, MapOptions options)
         {
