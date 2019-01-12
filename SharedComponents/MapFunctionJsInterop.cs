@@ -18,6 +18,13 @@ namespace SharedComponents
                 options);
         }
 
+        public static Task Dispose(string id)
+        {
+            return JSRuntime.Current.InvokeAsync<bool>(
+                "googleMapJsFunctions.dispose",
+                id);
+        }
+
         public static Task FitBounds(string id, LatLngBoundsLiteral bounds)
         {
             return Helper.MyInvokeAsync<bool>(

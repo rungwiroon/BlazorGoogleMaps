@@ -14,6 +14,14 @@ window.googleMapJsFunctions = {
         return true;
     },
 
+    dispose: function (id) {
+        console.log("Dispose map " + id);
+
+        delete window._blazorGoogleMaps[id];
+
+        return true;
+    },
+
     fitBounds: function (jsonArgs) {
         let args = JSON.parse(jsonArgs);
         let id = args[0];

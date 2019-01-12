@@ -18,6 +18,7 @@
   <ItemGroup>
     <None Remove="content\googleMapJsInterop.js" />
     <None Remove="content\MapEventJsInterop.js" />
+    <None Remove="content\markerJsInterop.js" />
   </ItemGroup>
 
   <ItemGroup>
