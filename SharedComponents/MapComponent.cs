@@ -11,25 +11,6 @@ namespace SharedComponents
     {
         public string DivId { get; private set; }
 
-        //private Guid? boundsChangedEventRef;
-        //private Guid? centerChangedEventRef { get; set; }
-        //private Guid? clickEventRef { get; set; }
-        //private Guid? doubleClickEventRef { get; set; }
-        //private Guid? dragEventRef { get; set; }
-        //private Guid? dragEndEventRef { get; set; }
-        //private Guid? dragStartEventRef { get; set; }
-        //private Guid? headingChangedEventRef { get; set; }
-        //private Guid? idleEventRef { get; set; }
-        //private Guid? mapTypeIdChangedEventRef { get; set; }
-        //private Guid? mouseMoveEventRef { get; set; }
-        //private Guid? mouseOutEventRef { get; set; }
-        //private Guid? mouseOverEventRef { get; set; }
-        //private Guid? projectionChangedEventRef { get; set; }
-        //private Guid? rightClickEventRef { get; set; }
-        //private Guid? tilesLoadedEventRef { get; set; }
-        //private Guid? tiltChangedEventRef { get; set; }
-        //private Guid? zoomChangedEventRef { get; set; }
-
         public async Task InitAsync(string id, MapOptions options)
         {
             DivId = id;
@@ -41,6 +22,7 @@ namespace SharedComponents
 
         public void Dispose()
         {
+            ClearListeners();
             MapFunctionJsInterop.Dispose(DivId);
             MapComponentInstances.Remove(DivId);
         }
@@ -181,6 +163,32 @@ namespace SharedComponents
         public async Task SetZoom(int zoom)
         {
             await MapFunctionJsInterop.SetZoom(DivId, zoom);
+        }
+
+        public async Task<MapEventListener> AddListener(string eventName, Action<MapEventArgs> handler)
+        {
+            var guid = await MapEventJsInterop.SubscribeMapEvent(DivId, eventName, (dict) => handler(MapEventArgs.Empty));
+            return new MapEventListener(guid);
+        }
+
+        public MapEventListener AddListenerOnce(string eventName, Action<MapEventArgs> handler)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ClearListeners()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void clearListeners(string eventName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveListener(MapEventListener listerner)
+        {
+            throw new NotImplementedException();
         }
     }
 }

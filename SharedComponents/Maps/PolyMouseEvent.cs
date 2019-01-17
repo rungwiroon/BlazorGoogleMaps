@@ -5,7 +5,13 @@ using System.Threading.Tasks;
 
 namespace SharedComponents.Maps
 {
-    public class PolyMouseEvent
+    /// <summary>
+    /// This object is returned from mouse events on polylines and polygons.
+    /// </summary>
+    public class PolyMouseEvent : MouseEvent
     {
+        public PolyMouseEvent(Guid guid) : base(guid)
+        {
+        }
     }
 }

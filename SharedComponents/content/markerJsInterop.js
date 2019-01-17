@@ -17,6 +17,12 @@ window.googleMapMarkerJsFunctions = {
         return true;
     },
 
+    dispose: function (guid) {
+        let marker = window._blazoeGoogleMapsMarkers[guid]
+        marker.setMap(null);
+        delete window._blazoeGoogleMapsMarkers[guid];
+    },
+
     getAnimation: function (guid) {
         let marker = window._blazoeGoogleMapsMarkers[guid];
         return marker.getAnimation();

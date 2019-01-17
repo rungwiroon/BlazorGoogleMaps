@@ -15,15 +15,13 @@
     /// This event is fired when the viewport bounds have changed.
     /// </summary>
     [Parameter]
-    private Action OnBoundsChanged { get; set; }
-    private Guid? boundsChangedEventRef;
+    private Action<MapEventArgs> OnBoundsChanged { get; set; }
 
     /// <summary>
     /// This event is fired when the map center property changes.
     /// </summary>
     [Parameter]
-    private Action OnCenterChanged { get; set; }
-    private Guid? centerChangedEventRef { get; set; }
+    private Action<MapEventArgs> OnCenterChanged { get; set; }
 
     /// <summary>
     /// This event is fired when the user clicks on the map. An ApiMouseEvent with properties for the clicked location is returned unless a place icon was clicked, in which case an IconMouseEvent with a placeid is returned.
@@ -32,118 +30,102 @@
     /// The click event is not fired if a marker or infowindow was clicked.
     /// </summary>
     [Parameter]
-    private Action OnClick { get; set; }
-    private Guid? clickEventRef { get; set; }
+    private Action<MapEventArgs> OnClick { get; set; }
 
     /// <summary>
     /// This event is fired when the user double-clicks on the map.
     /// Note that the click event will also fire, right before this one.
     /// </summary>
     [Parameter]
-    private Action OnDoubleClick { get; set; }
-    private Guid? doubleClickEventRef { get; set; }
+    private Action<MapEventArgs> OnDoubleClick { get; set; }
 
     /// <summary>
     /// This event is repeatedly fired while the user drags the map.
     /// </summary>
     [Parameter]
-    private Action OnDrag { get; set; }
-    private Guid? dragEventRef { get; set; }
+    private Action<MapEventArgs> OnDrag { get; set; }
 
     /// <summary>
     /// This event is fired when the user stops dragging the map.
     /// </summary>
     [Parameter]
-    private Action OnDragEnd { get; set; }
-    private Guid? dragEndEventRef { get; set; }
+    private Action<MapEventArgs> OnDragEnd { get; set; }
 
     /// <summary>
     /// This event is fired when the user starts dragging the map.
     /// </summary>
     [Parameter]
-    private Action OnDragStart { get; set; }
-    private Guid? dragStartEventRef { get; set; }
+    private Action<MapEventArgs> OnDragStart { get; set; }
 
     /// <summary>
     /// This event is fired when the map heading property changes.
     /// </summary>
     [Parameter]
-    private Action OnHeadingChanged { get; set; }
-    private Guid? headingChangedEventRef { get; set; }
+    private Action<MapEventArgs> OnHeadingChanged { get; set; }
 
     /// <summary>
     /// This event is fired when the map becomes idle after panning or zooming.
     /// </summary>
     [Parameter]
-    private Action OnIdle { get; set; }
-    private Guid? idleEventRef { get; set; }
+    private Action<MapEventArgs> OnIdle { get; set; }
 
     /// <summary>
     /// This event is fired when the mapTypeId property changes.
     /// </summary>
     [Parameter]
-    private Action OnMapTypeIdChanged { get; set; }
-    private Guid? mapTypeIdChangedEventRef { get; set; }
+    private Action<MapEventArgs> OnMapTypeIdChanged { get; set; }
 
     /// <summary>
     /// This event is fired whenever the user's mouse moves over the map container.
     /// </summary>
     [Parameter]
-    private Action OnMouseMove { get; set; }
-    private Guid? mouseMoveEventRef { get; set; }
+    private Action<MapEventArgs> OnMouseMove { get; set; }
 
     /// <summary>
     /// This event is fired when the user's mouse exits the map container.
     /// </summary>
     [Parameter]
-    private Action OnMouseOut { get; set; }
-    private Guid? mouseOutEventRef { get; set; }
+    private Action<MapEventArgs> OnMouseOut { get; set; }
 
     /// <summary>
     /// This event is fired when the user's mouse enters the map container.
     /// </summary>
     [Parameter]
-    private Action OnMouseOver { get; set; }
-    private Guid? mouseOverEventRef { get; set; }
+    private Action<MapEventArgs> OnMouseOver { get; set; }
 
     /// <summary>
     /// This event is fired when the DOM contextmenu event is fired on the map container.
     /// </summary>
     [Parameter]
-    private Action OnProjectionChanged { get; set; }
-    private Guid? projectionChangedEventRef { get; set; }
+    private Action<MapEventArgs> OnProjectionChanged { get; set; }
 
     /// <summary>
     /// This event is fired when the DOM contextmenu event is fired on the map container.
     /// </summary>
     [Parameter]
-    private Action OnRightClick { get; set; }
-    private Guid? rightClickEventRef { get; set; }
+    private Action<MapEventArgs> OnRightClick { get; set; }
 
     /// <summary>
     /// This event is fired when the visible tiles have finished loading.
     /// </summary>
     [Parameter]
-    private Action OnTilesLoaded { get; set; }
-    private Guid? tilesLoadedEventRef { get; set; }
+    private Action<MapEventArgs> OnTilesLoaded { get; set; }
 
     /// <summary>
     /// This event is fired when the map tilt property changes.
     /// </summary>
     [Parameter]
-    private Action OnTiltChanged { get; set; }
-    private Guid? tiltChangedEventRef { get; set; }
+    private Action<MapEventArgs> OnTiltChanged { get; set; }
 
     /// <summary>
     /// This event is fired when the map zoom property changes.
     /// </summary>
     [Parameter]
-    private Action OnZoomChanged { get; set; }
-    private Guid? zoomChangedEventRef { get; set; }
+    private Action<MapEventArgs> OnZoomChanged { get; set; }
 
     protected override void OnInit()
     {
-        
+
     }
 
     protected async override Task OnAfterRenderAsync()
@@ -151,58 +133,58 @@
         await InitAsync(Id, Options);
 
         if (OnBoundsChanged != null)
-            boundsChangedEventRef = await MapEventJsInterop.SubscribeEvent(Id, "bounds_changed", OnBoundsChanged);
+            await AddListener("bounds_changed", OnBoundsChanged);
 
         if (OnCenterChanged != null)
-            centerChangedEventRef = await MapEventJsInterop.SubscribeEvent(Id, "center_changed", OnCenterChanged);
+            await AddListener("center_changed", OnCenterChanged);
 
         if (OnClick != null)
-            clickEventRef = await MapEventJsInterop.SubscribeEvent(Id, "click", OnClick);
+            await AddListener("click", OnClick);
 
         if (OnDoubleClick != null)
-            doubleClickEventRef = await MapEventJsInterop.SubscribeEvent(Id, "dblclick", OnDoubleClick);
+            await AddListener("dblclick", OnDoubleClick);
 
         if (OnDrag != null)
-            dragEventRef = await MapEventJsInterop.SubscribeEvent(Id, "drag", OnDrag);
+            await AddListener("drag", OnDrag);
 
         if (OnDragEnd != null)
-            dragEndEventRef = await MapEventJsInterop.SubscribeEvent(Id, "dragend", OnDragEnd);
+            await AddListener("dragend", OnDragEnd);
 
         if (OnDragStart != null)
-            dragStartEventRef = await MapEventJsInterop.SubscribeEvent(Id, "dragstart", OnDragStart);
+            await AddListener("dragstart", OnDragStart);
 
         if (OnHeadingChanged != null)
-            headingChangedEventRef = await MapEventJsInterop.SubscribeEvent(Id, "heading_changed", OnHeadingChanged);
+            await AddListener("heading_changed", OnHeadingChanged);
 
         if (OnIdle != null)
-            idleEventRef = await MapEventJsInterop.SubscribeEvent(Id, "idle", OnIdle);
+            await AddListener("idle", OnIdle);
 
         if (OnMapTypeIdChanged != null)
-            mapTypeIdChangedEventRef = await MapEventJsInterop.SubscribeEvent(Id, "maptypeid_changed", OnMapTypeIdChanged);
+            await AddListener("maptypeid_changed", OnMapTypeIdChanged);
 
         if (OnMouseMove != null)
-            mouseMoveEventRef = await MapEventJsInterop.SubscribeEvent(Id, "mousemove", OnMouseMove);
+            await AddListener("mousemove", OnMouseMove);
 
         if (OnMouseOut != null)
-            mouseOutEventRef = await MapEventJsInterop.SubscribeEvent(Id, "mouseout", OnMouseOut);
+            await AddListener("mouseout", OnMouseOut);
 
         if (OnMouseOver != null)
-            mouseOverEventRef = await MapEventJsInterop.SubscribeEvent(Id, "mouseover", OnMouseOver);
+            await AddListener("mouseover", OnMouseOver);
 
         if (OnProjectionChanged != null)
-            projectionChangedEventRef = await MapEventJsInterop.SubscribeEvent(Id, "projection_changed", OnProjectionChanged);
+            await AddListener("projection_changed", OnProjectionChanged);
 
         if (OnRightClick != null)
-            rightClickEventRef = await MapEventJsInterop.SubscribeEvent(Id, "rightclick", OnRightClick);
+            await AddListener("rightclick", OnRightClick);
 
         if (OnTilesLoaded != null)
-            tilesLoadedEventRef = await MapEventJsInterop.SubscribeEvent(Id, "tilesloaded", OnTilesLoaded);
+            await AddListener("tilesloaded", OnTilesLoaded);
 
         if (OnTiltChanged != null)
-            tiltChangedEventRef = await MapEventJsInterop.SubscribeEvent(Id, "tilt_changed", OnTiltChanged);
+            await AddListener("tilt_changed", OnTiltChanged);
 
         if (OnZoomChanged != null)
-            zoomChangedEventRef = await MapEventJsInterop.SubscribeEvent(Id, "zoom_changed", OnZoomChanged);
+            await AddListener("zoom_changed", OnZoomChanged);
     }
 
     protected override bool ShouldRender()

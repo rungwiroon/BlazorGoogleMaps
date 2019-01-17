@@ -19,4 +19,10 @@
     <ProjectReference Include="..\SharedComponents\SharedComponents.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Pages\MapMarkerEvent.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+  </ItemGroup>
+
 </Project>

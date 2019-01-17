@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SharedComponents.Maps
 {
-    public class Marker
+    public class Marker : IDisposable
     {
         private MapComponent _map;
         public Guid Guid { get; private set; }
@@ -23,6 +23,13 @@ namespace SharedComponents.Maps
                 "googleMapMarkerJsFunctions.init",
                 Guid,
                 opt);
+        }
+
+        public void Dispose()
+        {
+            JSRuntime.Current.InvokeAsync<bool>(
+                "googleMapMarkerJsFunctions.dispose",
+                Guid);
         }
 
         public async Task<Animation> GetAnimation()
@@ -261,6 +268,12 @@ namespace SharedComponents.Maps
                    "googleMapMarkerJsFunctions.setZIndex",
                    Guid,
                    zIndex);
+        }
+
+        public async Task<MapEventListener> AddListener(string eventName, Action<MapEventArgs> handler)
+        {
+            var guid = await MapEventJsInterop.SubscribeMarkerEvent(Guid.ToString(), eventName, (dict) => handler(MapEventArgs.Empty));
+            return new MapEventListener(guid);
         }
     }
 }

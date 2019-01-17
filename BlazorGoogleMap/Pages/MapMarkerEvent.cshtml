@@ -1,0 +1,67 @@
+﻿@page "/mapMarkerEvent"
+@using SharedComponents
+@using SharedComponents.Maps
+
+<h1>Google Map Marker Events</h1>
+
+<GoogleMap ref="@map1" Id="map1" Options="@mapOptions"></GoogleMap>
+<button onclick="@AddMarker">Add marker</button>
+<button onclick="@RemoveMarker">Remove marker</button>
+
+<MapEventList ref="@eventList" Events="@_events"></MapEventList>
+
+@functions {
+    private GoogleMap map1;
+
+    private MapOptions mapOptions;
+
+    private MapEventList eventList;
+
+    private List<Marker> markers = new List<Marker>();
+
+    private List<String> _events = new List<String>();
+
+    protected override void OnInit()
+    {
+        mapOptions = new MapOptions()
+        {
+            zoom = 13,
+            center = new LatLngLiteral()
+            {
+                lat = 13.505892,
+                lng = 100.8162
+            },
+            mapTypeId = MapTypeId.Roadmap
+        };
+    }
+
+    private async Task AddMarker()
+    {
+        var marker = new Marker(new MarkerOptions()
+        {
+            Position = await map1.GetCenter(),
+            Map = map1,
+            Label = $"Test {markers.Count()}"
+        });
+
+        markers.Add(marker);
+
+        await marker.AddListener("click", _ =>
+        {
+            _events.Add("click");
+            StateHasChanged();
+        });
+    }
+
+    private async Task RemoveMarker()
+    {
+        if (!markers.Any())
+            return;
+
+        var lastMarker = markers.Last();
+        await lastMarker.SetMap(null);
+
+        markers.RemoveAt(markers.Count - 1);
+    }
+
+}
