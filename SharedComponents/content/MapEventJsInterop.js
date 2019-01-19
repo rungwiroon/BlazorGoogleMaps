@@ -42,14 +42,14 @@ window.googleMapEventJsFunctions = {
     addMarkerListener: function (eventGuid, markerGuid, eventName) {
         console.log("Add listener for marker : " + markerGuid + ", event : " + eventGuid + ", " + eventName);
 
-        if (window._blazoeGoogleMapsMarkers === null || window._blazoeGoogleMapsMarkers === 'undefined') {
+        if (window._blazorGoogleMapsMarkers === null || window._blazorGoogleMapsMarkers === 'undefined') {
             console.log("markers collection is not initialize.");
             return false;
         }
 
         window._blazorMapEvents = window._blazorMapEvents || [];
 
-        window._blazorMapEvents[eventGuid] = window._blazoeGoogleMapsMarkers[markerGuid].addListener(eventName, async function (args) {
+        window._blazorMapEvents[eventGuid] = window._blazorGoogleMapsMarkers[markerGuid].addListener(eventName, async function (args) {
             console.log("Event " + eventName + " fired.");
 
             let timestamp = + new Date();

@@ -20,6 +20,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Pages\MapInfoWindow.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Pages\MapMarkerEvent.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

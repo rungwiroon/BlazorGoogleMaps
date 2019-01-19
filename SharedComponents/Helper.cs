@@ -24,6 +24,34 @@ namespace SharedComponents
             return JSRuntime.Current.InvokeAsync<TRes>(identifier, argsJson);
         }
 
+        internal static Task<TRes> InvokeWithDefinedGuidAsync<TRes>(
+            string identifier, string guid, params object[] args)
+        {
+            var argsJson = JsonConvert.SerializeObject(args,
+                            Formatting.None,
+                            new JsonSerializerSettings
+                            {
+                                NullValueHandling = NullValueHandling.Ignore,
+                                ContractResolver = new CamelCasePropertyNamesContractResolver()
+                            });
+
+            return JSRuntime.Current.InvokeAsync<TRes>(identifier, guid, argsJson);
+        }
+
+        internal static Task<TRes> InvokeWithDefinedGuidAndMethodAsync<TRes>(
+            string identifier, string guid, string method, params object[] args)
+        {
+            var argsJson = JsonConvert.SerializeObject(args,
+                            Formatting.None,
+                            new JsonSerializerSettings
+                            {
+                                NullValueHandling = NullValueHandling.Ignore,
+                                ContractResolver = new CamelCasePropertyNamesContractResolver()
+                            });
+
+            return JSRuntime.Current.InvokeAsync<TRes>(identifier, guid, method, argsJson);
+        }
+
         internal static T ToEnum<T>(string str)
         {
             var enumType = typeof(T);

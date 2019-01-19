@@ -1,0 +1,57 @@
+﻿@page "/mapInfoWindow"
+@using SharedComponents
+@using SharedComponents.Maps
+@using System.Threading
+
+<h1>Google Map Info Window</h1>
+
+<GoogleMap ref="@map1" Id="map1" Options="@mapOptions"></GoogleMap>
+<button onclick="@AddMarker">Add marker</button>
+
+@functions {
+    private GoogleMap map1;
+
+    private MapOptions mapOptions;
+
+    private List<Marker> markers = new List<Marker>();
+
+    protected override void OnInit()
+    {
+        mapOptions = new MapOptions()
+        {
+            zoom = 13,
+            center = new LatLngLiteral()
+            {
+                lat = 13.505892,
+                lng = 100.8162
+            },
+            mapTypeId = MapTypeId.Roadmap
+        };
+    }
+
+    private async Task AddMarker()
+    {
+        var marker = new Marker(new MarkerOptions()
+        {
+            Position = await map1.GetCenter(),
+            Map = map1,
+            Label = $"Test {markers.Count()}"
+        });
+
+        var infoWindow = new InfoWindow(new InfoWindowOptions()
+        {
+            Position = new LatLngLiteral()
+            {
+                lat = 13.505892,
+                lng = 100.8162
+            },
+            //Content = "Test"
+        });
+
+        await marker.AddListener("click", async e =>
+        {
+            await infoWindow.SetContent("Test111");
+            await infoWindow.Open(map1);
+        });
+    }
+}
