@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.JSInterop;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,16 +11,16 @@ namespace SharedComponents.Maps
     /// </summary>
     public class MouseEvent : MapEventArgs
     {
-        internal Guid Guid { get; private set; }
+        internal string Id { get; private set; }
 
         /// <summary>
         /// The latitude/longitude that was below the cursor when the event occurred.
         /// </summary>
         public LatLngLiteral LatLng { get; set; }
 
-        public MouseEvent(Guid guid)
+        public MouseEvent(string id)
         {
-            Guid = guid;
+            Id = id;
         }
 
         /// <summary>
@@ -27,7 +28,10 @@ namespace SharedComponents.Maps
         /// </summary>
         public void Stop()
         {
-
+            JSRuntime.Current.InvokeAsync<bool>(
+                   "googleMapEventJsFunctions.invokeEventArgsFunction",
+                   Id, 
+                   "stop");
         }
     }
 }

@@ -10,7 +10,7 @@ namespace SharedComponents.Maps
     /// </summary>
     public class PolyMouseEvent : MouseEvent
     {
-        public PolyMouseEvent(Guid guid) : base(guid)
+        public PolyMouseEvent(string id) : base(id)
         {
         }
     }

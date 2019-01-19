@@ -2,6 +2,7 @@
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -272,7 +273,32 @@ namespace SharedComponents.Maps
 
         public async Task<MapEventListener> AddListener(string eventName, Action<MapEventArgs> handler)
         {
-            var guid = await MapEventJsInterop.SubscribeMarkerEvent(Guid.ToString(), eventName, (dict) => handler(MapEventArgs.Empty));
+            var guid = await MapEventJsInterop.SubscribeMarkerEvent(Guid.ToString(), eventName, (dict) =>
+            {
+                if(dict != null)
+                {
+                    Debug.WriteLine($"{eventName} triggered.");
+                    foreach (var val in dict)
+                    {
+                        Debug.WriteLine(val);
+                    }
+                }
+
+                switch(eventName)
+                {
+                    case "click":
+                        handler(new MouseEvent((string)dict["id"])
+                        {
+
+                        });
+                        break;
+
+                    default:
+                        handler(MapEventArgs.Empty);
+                        break;
+                }
+            });
+
             return new MapEventListener(guid);
         }
     }

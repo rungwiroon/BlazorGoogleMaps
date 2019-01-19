@@ -1,7 +1,11 @@
-﻿using Microsoft.AspNetCore.Blazor.Components;
+﻿using Microsoft.AspNetCore.Blazor;
+using Microsoft.AspNetCore.Blazor.Components;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using SharedComponents.Maps;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,6 +22,27 @@ namespace SharedComponents
             await MapFunctionJsInterop.Init(id, options);
 
             MapComponentInstances.Add(id, this);
+        }
+
+        public async Task InitAsync(ElementRef element, MapOptions options)
+        {
+            DivId = Guid.NewGuid().ToString();
+
+            var optionsJson = JsonConvert.SerializeObject(options,
+                            Formatting.None,
+                            new JsonSerializerSettings
+                            {
+                                NullValueHandling = NullValueHandling.Ignore,
+                                ContractResolver = new CamelCasePropertyNamesContractResolver()
+                            });
+
+            await Helper.MyInvokeAsync<bool>(
+                "googleMapJsFunctions.init",
+                DivId,
+                element,
+                optionsJson);
+
+            MapComponentInstances.Add(DivId, this);
         }
 
         public void Dispose()
@@ -167,7 +192,32 @@ namespace SharedComponents
 
         public async Task<MapEventListener> AddListener(string eventName, Action<MapEventArgs> handler)
         {
-            var guid = await MapEventJsInterop.SubscribeMapEvent(DivId, eventName, (dict) => handler(MapEventArgs.Empty));
+            var guid = await MapEventJsInterop.SubscribeMapEvent(DivId, eventName, (dict) =>
+            {
+                if (dict != null)
+                {
+                    Debug.WriteLine($"{eventName} triggered.");
+                    foreach (var val in dict)
+                    {
+                        Debug.WriteLine(val);
+                    }
+                }
+
+                switch (eventName)
+                {
+                    case "click":
+                        handler(new MouseEvent((string)dict["id"])
+                        {
+
+                        });
+                        break;
+
+                    default:
+                        handler(MapEventArgs.Empty);
+                        break;
+                }
+            });
+
             return new MapEventListener(guid);
         }
 

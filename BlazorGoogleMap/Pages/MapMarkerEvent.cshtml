@@ -46,10 +46,13 @@
 
         markers.Add(marker);
 
-        await marker.AddListener("click", _ =>
+        await marker.AddListener("click", e =>
         {
             _events.Add("click");
             StateHasChanged();
+
+            var mouseEvent = e as MouseEvent;
+            mouseEvent.Stop();
         });
     }
 

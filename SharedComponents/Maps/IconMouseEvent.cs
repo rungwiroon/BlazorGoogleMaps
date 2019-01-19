@@ -14,8 +14,8 @@ namespace SharedComponents.Maps
     {
         public string PlaceId { get; set; }
 
-        public IconMouseEvent(Guid guid)
-            : base(guid)
+        public IconMouseEvent(string id)
+            : base(id)
         {
 
         }
