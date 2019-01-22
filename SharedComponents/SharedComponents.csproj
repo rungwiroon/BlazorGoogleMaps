@@ -16,10 +16,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="content\circleJsInterop.js" />
     <None Remove="content\googleMapJsInterop.js" />
     <None Remove="content\infoWindowJsInterop.js" />
     <None Remove="content\MapEventJsInterop.js" />
     <None Remove="content\markerJsInterop.js" />
+    <None Remove="content\polygonJsInterop.js" />
+    <None Remove="content\polylineJsInterop.js" />
+    <None Remove="content\rectangleJsInterop.js" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,6 +34,12 @@
 
   <ItemGroup>
     <Folder Include="Maps\Data\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="content\circleJsInterop.js">
+      <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

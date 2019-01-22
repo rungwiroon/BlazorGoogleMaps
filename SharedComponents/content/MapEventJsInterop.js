@@ -24,7 +24,9 @@ window.googleMapEventJsFunctions = {
                 window._blazorMapEventArgs[eventArgsId] = args;
             }
 
-            await DotNet.invokeMethodAsync('SharedComponents', 'NotifyMapEvent', guid, args)
+            let jsonString = JSON.stringify(args);
+
+            await DotNet.invokeMethodAsync('SharedComponents', 'NotifyMapEvent', guid, jsonString)
                 .then(_ => {
                     console.log("Remove event args : " + eventArgsId);
                     delete window._blazorMapEventArgs[eventArgsId];

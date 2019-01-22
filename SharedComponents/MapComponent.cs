@@ -192,24 +192,23 @@ namespace SharedComponents
 
         public async Task<MapEventListener> AddListener(string eventName, Action<MapEventArgs> handler)
         {
-            var guid = await MapEventJsInterop.SubscribeMapEvent(DivId, eventName, (dict) =>
+            var guid = await MapEventJsInterop.SubscribeMapEvent(DivId, eventName, (jObject) =>
             {
-                if (dict != null)
+                if (jObject != null)
                 {
                     Debug.WriteLine($"{eventName} triggered.");
-                    foreach (var val in dict)
-                    {
-                        Debug.WriteLine(val);
-                    }
+                    //foreach (var val in dict)
+                    //{
+                        Debug.WriteLine(jObject);
+                    //}
                 }
 
                 switch (eventName)
                 {
                     case "click":
-                        handler(new MouseEvent((string)dict["id"])
-                        {
-
-                        });
+                        var e = jObject.ToObject<MouseEventArgs>();
+                        Debug.WriteLine($"Click lat lng : {e.LatLng}");
+                        handler(e);
                         break;
 
                     default:

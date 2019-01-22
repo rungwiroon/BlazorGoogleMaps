@@ -51,7 +51,7 @@
             _events.Add("click");
             StateHasChanged();
 
-            var mouseEvent = e as MouseEvent;
+            var mouseEvent = e as MouseEventArgs;
             mouseEvent.Stop();
         });
     }

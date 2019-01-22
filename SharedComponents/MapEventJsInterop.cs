@@ -1,4 +1,5 @@
 ﻿using Microsoft.JSInterop;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,10 +9,10 @@ namespace SharedComponents
 {
     public static class MapEventJsInterop
     {
-        private static readonly Dictionary<Guid, Action<Dictionary<string, object>>> registeredEvents 
-            = new Dictionary<Guid, Action<Dictionary<string, object>>>();
+        private static readonly Dictionary<Guid, Action<JObject>> registeredEvents 
+            = new Dictionary<Guid, Action<JObject>>();
 
-        public static async Task<Guid> SubscribeMapEvent(string mapId, string eventName, Action<Dictionary<string, object>> action)
+        public static async Task<Guid> SubscribeMapEvent(string mapId, string eventName, Action<JObject> action)
         {
             var guid = Guid.NewGuid();
 
@@ -34,10 +35,10 @@ namespace SharedComponents
         }
 
         [JSInvokable]
-        public static Task NotifyMapEvent(string guidString, Dictionary<string, object> eventArgs)
+        public static Task NotifyMapEvent(string guidString, string eventArgs)
         {
             var guid = new Guid(guidString);
-            registeredEvents[guid].Invoke(eventArgs);
+            registeredEvents[guid].Invoke(JObject.Parse(eventArgs));
 
             return Task.FromResult(true);
         }
@@ -45,7 +46,7 @@ namespace SharedComponents
         public static async Task<Guid> SubscribeMarkerEvent(
             string markerGuid, 
             string eventName, 
-            Action<Dictionary<string, object>> action)
+            Action<JObject> action)
         {
             var eventGuid = Guid.NewGuid();
 
@@ -71,7 +72,7 @@ namespace SharedComponents
         public static Task NotifyMarkerEvent(string guidString, Dictionary<string, object> eventArgs)
         {
             var guid = new Guid(guidString);
-            registeredEvents[guid].Invoke(eventArgs);
+            registeredEvents[guid].Invoke(new JObject(eventArgs));
 
             return Task.FromResult(true);
         }

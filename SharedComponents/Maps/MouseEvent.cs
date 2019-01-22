@@ -7,21 +7,21 @@ using System.Threading.Tasks;
 namespace SharedComponents.Maps
 {
     /// <summary>
-    /// This object is returned from various mouse events on the map and overlays, and contains all the fields shown below.
+    /// This object is returned from various mouse events on the map and overlays.
     /// </summary>
-    public class MouseEvent : MapEventArgs
+    public class MouseEventArgs : MapEventArgs
     {
-        internal string Id { get; private set; }
+        public string Id { get; set; }
 
         /// <summary>
         /// The latitude/longitude that was below the cursor when the event occurred.
         /// </summary>
         public LatLngLiteral LatLng { get; set; }
 
-        public MouseEvent(string id)
-        {
-            Id = id;
-        }
+        //public MouseEventArgs(string id)
+        //{
+        //    Id = id;
+        //}
 
         /// <summary>
         /// Prevents this event from propagating further.

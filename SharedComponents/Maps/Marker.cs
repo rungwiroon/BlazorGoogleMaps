@@ -275,23 +275,23 @@ namespace SharedComponents.Maps
         {
             var guid = await MapEventJsInterop.SubscribeMarkerEvent(Guid.ToString(), eventName, (dict) =>
             {
-                if(dict != null)
-                {
-                    Debug.WriteLine($"{eventName} triggered.");
-                    foreach (var val in dict)
-                    {
-                        Debug.WriteLine(val);
-                    }
-                }
+                //if(dict != null)
+                //{
+                //    Debug.WriteLine($"{eventName} triggered.");
+                //    foreach (var val in dict)
+                //    {
+                //        Debug.WriteLine(val);
+                //    }
+                //}
 
                 switch(eventName)
                 {
-                    case "click":
-                        handler(new MouseEvent((string)dict["id"])
-                        {
+                    //case "click":
+                    //    handler(new MouseEventArgs((string)dict["id"])
+                    //    {
 
-                        });
-                        break;
+                    //    });
+                    //    break;
 
                     default:
                         handler(MapEventArgs.Empty);

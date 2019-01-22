@@ -1,0 +1,157 @@
+﻿@page "/mapPolyline"
+@using SharedComponents
+@using SharedComponents.Maps
+@using System.Diagnostics
+
+<h1>Google Map Markers</h1>
+
+<GoogleMap ref="@map1" Id="map1" Options="@mapOptions" OnClick="async (e) => await OnClick(e)"></GoogleMap>
+<button onclick="@StartDrawingPolyline">Start drawing polyline</button>
+<button onclick="@EndDrawingPolyline">End drawing polyline</button>
+<br />
+<button onclick="@StartDrawingPolygon">Start drawing polygon</button>
+<button onclick="@EndDrawingPolygon">End drawing polygon</button>
+<br />
+<button onclick="@DrawingRectangle">Drawing rectangle</button>
+<br />
+<button onclick="@DrawingCircle">Drawing circle</button>
+
+@functions {
+    private GoogleMap map1;
+
+    private MapOptions mapOptions;
+
+    private List<LatLngLiteral> path = new List<LatLngLiteral>();
+
+    private List<Polyline> polylines = new List<Polyline>();
+    private Polyline polyline;
+
+    private List<Polygon> polygons = new List<Polygon>();
+    private Polygon polygon;
+
+    private Rectangle rectangle;
+    private Circle circle;
+
+    protected override void OnInit()
+    {
+        mapOptions = new MapOptions()
+        {
+            zoom = 13,
+            center = new LatLngLiteral()
+            {
+                lat = 13.505892,
+                lng = 100.8162
+            },
+            mapTypeId = MapTypeId.Roadmap
+        };
+    }
+
+    private void StartDrawingPolyline()
+    {
+        polyline = new Polyline(new PolylineOptions()
+        {
+            Draggable = true,
+            Editable = true,
+            Map = map1
+        });
+
+        path.Clear();
+    }
+
+    private void EndDrawingPolyline()
+    {
+        polylines.Add(polyline);
+
+        polyline = null;
+        path.Clear();
+    }
+
+    private void StartDrawingPolygon()
+    {
+        polygon = new Polygon(new PolygonOptions()
+        {
+            Draggable = true,
+            Editable = true,
+            Map = map1
+        });
+
+        path.Clear();
+    }
+
+    private void EndDrawingPolygon()
+    {
+        polygons.Add(polygon);
+
+        polygon = null;
+        path.Clear();
+    }
+
+    private void DrawingRectangle()
+    {
+        rectangle = new Rectangle(new RectangleOptions()
+        {
+            Draggable = true,
+            Editable = true,
+            Map = map1
+        });
+
+        path.Clear();
+    }
+
+    private void DrawingCircle()
+    {
+        circle = new Circle(new CircleOptions()
+        {
+            Draggable = true,
+            Editable = true,
+            Map = map1,
+            Radius = 1000
+        });
+
+        path.Clear();
+    }
+
+    private async Task OnClick(MapEventArgs e)
+    {
+        var mouseEvent = e as MouseEventArgs;
+
+        //Debug.WriteLine($"Onclick : {mouseEvent.LatLng}");
+
+        path.Add(mouseEvent.LatLng);
+
+        if (polyline != null)
+        {
+            //Debug.WriteLine($"Path length : {path.Count()}");
+
+            await polyline.SetPath(path);
+        }
+        else if (polygon != null)
+        {
+            await polygon.SetPath(path);
+        }
+        else if (rectangle != null)
+        {
+            if (path.Count < 2)
+                return;
+
+            var bounds = new LatLngBoundsLiteral()
+            {
+                East = path[1].lng,
+                North = path[0].lat,
+                South = path[1].lat,
+                West = path[0].lng
+            };
+
+            await rectangle.SetBounds(bounds);
+
+            //path.Clear();
+            rectangle = null;
+        }
+        else if(circle != null)
+        {
+            await circle.SetCenter(path.First());
+            circle = null;
+        }
+    }
+
+}

@@ -17,21 +17,21 @@ namespace SharedComponents.Maps
         /// A value of 190 will be converted to -170. 
         /// This reflects the fact that longitudes wrap around the globe.
         /// </summary>
-        public double east { get; set; }
+        public double East { get; set; }
 
         /// <summary>
         /// North latitude in degrees. Values will be clamped to the range [-90, 90]. 
         /// This means that if the value specified is less than -90, it will be set to -90. 
         /// And if the value is greater than 90, it will be set to 90.
         /// </summary>
-        public double north { get; set; }
+        public double North { get; set; }
 
         /// <summary>
         /// South latitude in degrees. Values will be clamped to the range [-90, 90]. 
         /// This means that if the value specified is less than -90, it will be set to -90. 
         /// And if the value is greater than 90, it will be set to 90.
         /// </summary>
-        public double south { get; set; }
+        public double South { get; set; }
 
         /// <summary>
         /// West longitude in degrees. 
@@ -40,6 +40,6 @@ namespace SharedComponents.Maps
         /// A value of 190 will be converted to -170. 
         /// This reflects the fact that longitudes wrap around the globe.
         /// </summary>
-        public double west { get; set; }
+        public double West { get; set; }
     }
 }

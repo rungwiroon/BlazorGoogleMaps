@@ -8,7 +8,7 @@ window.googleMapMarkerJsFunctions = {
         console.log("Init marker" + guid);
         console.dir(options);
 
-        if (options.map !== null && options.map !== 'undefined')
+        if (options.map !== null && typeof options.map !== 'undefined')
             options.map = window._blazorGoogleMaps[options.map];
 
         window._blazorGoogleMapsMarkers = window._blazorGoogleMapsMarkers || [];

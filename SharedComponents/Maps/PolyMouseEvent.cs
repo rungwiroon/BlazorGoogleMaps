@@ -8,9 +8,10 @@ namespace SharedComponents.Maps
     /// <summary>
     /// This object is returned from mouse events on polylines and polygons.
     /// </summary>
-    public class PolyMouseEvent : MouseEvent
+    public class PolyMouseEvent : MouseEventArgs
     {
-        public PolyMouseEvent(string id) : base(id)
+        public PolyMouseEvent(string id) 
+            //: base(id)
         {
         }
     }

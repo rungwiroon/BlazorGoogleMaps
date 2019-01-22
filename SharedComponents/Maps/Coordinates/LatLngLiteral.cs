@@ -24,5 +24,10 @@ namespace SharedComponents.Maps
         /// This reflects the fact that longitudes wrap around the globe.
         /// </summary>
         public double lng { get; set; }
+
+        public override string ToString()
+        {
+            return $"{lat}, {lng}";
+        }
     }
 }
