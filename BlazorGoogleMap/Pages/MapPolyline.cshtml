@@ -39,8 +39,8 @@
             zoom = 13,
             center = new LatLngLiteral()
             {
-                lat = 13.505892,
-                lng = 100.8162
+                Lat = 13.505892,
+                Lng = 100.8162
             },
             mapTypeId = MapTypeId.Roadmap
         };
@@ -136,10 +136,10 @@
 
             var bounds = new LatLngBoundsLiteral()
             {
-                East = path[1].lng,
-                North = path[0].lat,
-                South = path[1].lat,
-                West = path[0].lng
+                East = path[1].Lng,
+                North = path[0].Lat,
+                South = path[1].Lat,
+                West = path[0].Lng
             };
 
             await rectangle.SetBounds(bounds);

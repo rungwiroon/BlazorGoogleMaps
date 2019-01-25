@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Blazor;
 using Microsoft.AspNetCore.Blazor.Components;
+using Microsoft.JSInterop;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using SharedComponents.Maps;
@@ -225,9 +226,11 @@ namespace SharedComponents
             throw new NotImplementedException();
         }
 
-        public void ClearListeners()
+        public Task ClearListeners()
         {
-            throw new NotImplementedException();
+           return JSRuntime.Current.InvokeAsync<bool>(
+                "googleMapEventJsFunctions.clearInstanceListeners",
+                DivId);
         }
 
         public void clearListeners(string eventName)

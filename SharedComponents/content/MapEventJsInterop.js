@@ -41,6 +41,10 @@ window.googleMapEventJsFunctions = {
         eventRef.remove();
     },
 
+    clearInstanceListeners: function (divId) {
+        window._blazorGoogleMaps[divId].clearInstanceListeners();
+    },
+
     addMarkerListener: function (eventGuid, markerGuid, eventName) {
         console.log("Add listener for marker : " + markerGuid + ", event : " + eventGuid + ", " + eventName);
 
@@ -84,5 +88,7 @@ window.googleMapEventJsFunctions = {
         window._blazorMapEventArgs[id][functionName]();
 
         return true;
-    }
+    },
+
+
 };
