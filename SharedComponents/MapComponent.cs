@@ -58,9 +58,13 @@ namespace SharedComponents
         /// </summary>
         /// <param name="bounds"></param>
         /// <returns></returns>
-        public async Task FitBounds(LatLngBoundsLiteral bounds)
+        public Task FitBounds(LatLngBoundsLiteral bounds)
         {
-            await MapFunctionJsInterop.FitBounds(DivId, bounds);
+            return Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
+                "googleMapJsFunctions.invoke",
+                DivId,
+                "fitBounds",
+                bounds);
         }
 
         /// <summary>
@@ -71,9 +75,14 @@ namespace SharedComponents
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        public async Task PanBy(int x, int y)
+        public Task PanBy(int x, int y)
         {
-            await MapFunctionJsInterop.PanBy(DivId, x, y);
+            return Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
+                "googleMapJsFunctions.invoke",
+                DivId,
+                "panBy",
+                x,
+                y);
         }
 
         /// <summary>
@@ -82,9 +91,13 @@ namespace SharedComponents
         /// </summary>
         /// <param name="latLng"></param>
         /// <returns></returns>
-        public async Task PanTo(LatLngLiteral latLng)
+        public Task PanTo(LatLngLiteral latLng)
         {
-            await MapFunctionJsInterop.PanTo(DivId, latLng);
+            return Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
+                "googleMapJsFunctions.invoke",
+                DivId,
+                "panTo",
+                latLng);
         }
 
         /// <summary>
@@ -93,9 +106,13 @@ namespace SharedComponents
         /// </summary>
         /// <param name="latLngBounds"></param>
         /// <returns></returns>
-        public async Task PanToBounds(LatLngBoundsLiteral latLngBounds)
+        public Task PanToBounds(LatLngBoundsLiteral latLngBounds)
         {
-            await MapFunctionJsInterop.PanToBounds(DivId, latLngBounds);
+            return Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
+                "googleMapJsFunctions.invoke",
+                DivId,
+                "panToBounds",
+                latLngBounds);
         }
 
         /// <summary>
@@ -104,9 +121,12 @@ namespace SharedComponents
         /// If the map is not yet initialized (i.e. the mapType is still null), or center and zoom have not been set then the result is null.
         /// </summary>
         /// <returns></returns>
-        public async Task<LatLngBoundsLiteral> GetBounds()
+        public Task<LatLngBoundsLiteral> GetBounds()
         {
-            return await MapFunctionJsInterop.GetBounds(DivId);
+            return Helper.InvokeWithDefinedGuidAndMethodAsync<LatLngBoundsLiteral>(
+                "googleMapJsFunctions.invoke",
+                DivId,
+                "getBounds");
         }
 
         /// <summary>
@@ -114,14 +134,21 @@ namespace SharedComponents
         /// Note that this LatLng object is not wrapped.
         /// </summary>
         /// <returns></returns>
-        public async Task<LatLngLiteral> GetCenter()
+        public Task<LatLngLiteral> GetCenter()
         {
-            return await MapFunctionJsInterop.GetCenter(DivId);
+            return Helper.InvokeWithDefinedGuidAndMethodAsync<LatLngLiteral>(
+                "googleMapJsFunctions.invoke",
+                DivId,
+                "getCenter");
         }
 
-        public async Task SetCenter(LatLngLiteral latLng)
+        public Task SetCenter(LatLngLiteral latLng)
         {
-            await MapFunctionJsInterop.SetCenter(DivId, latLng);
+            return Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
+                "googleMapJsFunctions.invoke",
+                DivId,
+                "setCenter",
+                latLng);
         }
 
         /// <summary>
@@ -129,9 +156,12 @@ namespace SharedComponents
         /// The heading value is measured in degrees (clockwise) from cardinal direction North.
         /// </summary>
         /// <returns></returns>
-        public async Task<int> GetHeading()
+        public Task<int> GetHeading()
         {
-            return await MapFunctionJsInterop.GetHeading(DivId);
+            return Helper.InvokeWithDefinedGuidAndMethodAsync<int>(
+                "googleMapJsFunctions.invoke",
+                DivId,
+                "getHeading");
         }
 
         /// <summary>
@@ -139,19 +169,32 @@ namespace SharedComponents
         /// </summary>
         /// <param name="heading"></param>
         /// <returns></returns>
-        public async Task SetHeading(int heading)
+        public Task SetHeading(int heading)
         {
-            await MapFunctionJsInterop.SetHeading(DivId, heading);
+            return Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
+                "googleMapJsFunctions.invoke",
+                DivId,
+                "setHeading",
+                heading);
         }
 
         public async Task<MapTypeId> GetMapTypeId()
         {
-            return await MapFunctionJsInterop.GetMapTypeId(DivId);
+             var mapTypeIdStr = await Helper.InvokeWithDefinedGuidAndMethodAsync<string>(
+                "googleMapJsFunctions.invoke",
+                DivId,
+                "getMapTypeId");
+
+            return Helper.ToEnum<MapTypeId>(mapTypeIdStr);
         }
 
-        public async Task SetMapTypeId(MapTypeId mapTypeId)
+        public Task SetMapTypeId(MapTypeId mapTypeId)
         {
-            await MapFunctionJsInterop.SetMapTypeId(DivId, mapTypeId);
+            return Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
+                "googleMapJsFunctions.invoke",
+                DivId,
+                "setMapTypeId",
+                mapTypeId);
         }
 
         /// <summary>
@@ -161,9 +204,12 @@ namespace SharedComponents
         /// See setTilt for details.
         /// </summary>
         /// <returns></returns>
-        public async Task<int> GetTilt()
+        public Task<int> GetTilt()
         {
-            return await MapFunctionJsInterop.GetTilt(DivId);
+            return Helper.InvokeWithDefinedGuidAndMethodAsync<int>(
+                "googleMapJsFunctions.invoke",
+                DivId,
+                "getTilt");
         }
 
         /// <summary>
@@ -176,19 +222,30 @@ namespace SharedComponents
         /// </summary>
         /// <param name="tilt"></param>
         /// <returns></returns>
-        public async Task SetTilt(int tilt)
+        public Task SetTilt(int tilt)
         {
-            await MapFunctionJsInterop.SetTilt(DivId, tilt);
+            return Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
+                "googleMapJsFunctions.invoke",
+                DivId,
+                "setTilt",
+                tilt);
         }
 
-        public async Task<int> GetZoom()
+        public Task<int> GetZoom()
         {
-            return await MapFunctionJsInterop.GetZoom(DivId);
+            return Helper.InvokeWithDefinedGuidAndMethodAsync<int>(
+                "googleMapJsFunctions.invoke",
+                DivId,
+                "getZoom");
         }
 
-        public async Task SetZoom(int zoom)
+        public Task SetZoom(int zoom)
         {
-            await MapFunctionJsInterop.SetZoom(DivId, zoom);
+            return Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
+                "googleMapJsFunctions.invoke",
+                DivId,
+                "setZoom",
+                zoom);
         }
 
         public async Task<MapEventListener> AddListener(string eventName, Action<MapEventArgs> handler)
@@ -208,7 +265,7 @@ namespace SharedComponents
                 {
                     case "click":
                         var e = jObject.ToObject<MouseEventArgs>();
-                        Debug.WriteLine($"Click lat lng : {e.LatLng}");
+                        //Debug.WriteLine($"Click lat lng : {e.LatLng}");
                         handler(e);
                         break;
 
@@ -221,9 +278,34 @@ namespace SharedComponents
             return new MapEventListener(guid);
         }
 
-        public MapEventListener AddListenerOnce(string eventName, Action<MapEventArgs> handler)
+        public async Task<MapEventListener> AddListenerOnce(string eventName, Action<MapEventArgs> handler)
         {
-            throw new NotImplementedException();
+            var guid = await MapEventJsInterop.SubscribeMapEventOnce(DivId, eventName, (jObject) =>
+            {
+                if (jObject != null)
+                {
+                    //Debug.WriteLine($"{eventName} triggered.");
+                    //foreach (var val in dict)
+                    //{
+                    //Debug.WriteLine(jObject);
+                    //}
+                }
+
+                switch (eventName)
+                {
+                    case "click":
+                        var e = jObject.ToObject<MouseEventArgs>();
+                        //Debug.WriteLine($"Click lat lng : {e.LatLng}");
+                        handler(e);
+                        break;
+
+                    default:
+                        handler(MapEventArgs.Empty);
+                        break;
+                }
+            });
+
+            return new MapEventListener(guid);
         }
 
         public Task ClearListeners()
@@ -233,14 +315,17 @@ namespace SharedComponents
                 DivId);
         }
 
-        public void clearListeners(string eventName)
+        public Task clearListeners(string eventName)
         {
-            throw new NotImplementedException();
+            return JSRuntime.Current.InvokeAsync<bool>(
+                "googleMapEventJsFunctions.clearListeners",
+                DivId,
+                eventName);
         }
 
-        public void RemoveListener(MapEventListener listerner)
+        public Task RemoveListener(MapEventListener listerner)
         {
-            throw new NotImplementedException();
+            return listerner.Remove();
         }
     }
 }

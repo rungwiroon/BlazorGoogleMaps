@@ -1,7 +1,7 @@
 ﻿
 window.googleMapEventJsFunctions = {
-    addListener: function (guid, mapId, eventName) {
-        console.log("Add listener for map : " + mapId + ", event : " + guid + ", " + eventName);
+    addMapEvent: function (guid, mapId, eventFunctionName, eventName) {
+        console.log("Add event for map : " + mapId + ", event : " + guid + ", " + eventName);
 
         if (window._blazorGoogleMaps === null || window._blazorGoogleMaps === 'undefined') {
             console.log("maps collection is not initialize.");
@@ -10,7 +10,7 @@ window.googleMapEventJsFunctions = {
 
         window._blazorMapEvents = window._blazorMapEvents || [];
 
-        window._blazorMapEvents[guid] = window._blazorGoogleMaps[mapId].addListener(eventName, async function (args) {
+        window._blazorMapEvents[guid] = window._blazorGoogleMaps[mapId][eventFunctionName](eventName, async function (args) {
             console.log("Event " + eventName + " fired.");
             console.dir(args);
 
@@ -36,9 +36,21 @@ window.googleMapEventJsFunctions = {
         return true;
     },
 
+    addListener: function (guid, mapId, eventName) {
+        return window.googleMapEventJsFunctions.addMapEvent(guid, mapId, "addListener", eventName);
+    },
+
+    addListenerOnce: function (guid, mapId, eventName) {
+        return window.googleMapEventJsFunctions.addMapEvent(guid, mapId, "addListenerOnce", eventName);
+    },
+
     removeListener: function (guid) {
         var eventRef = window._blazorMapEvents[guid];
         eventRef.remove();
+    },
+
+    clearListeners: function (divId, eventName) {
+        window._blazorGoogleMaps[divId].clearListeners(eventName);
     },
 
     clearInstanceListeners: function (divId) {
@@ -70,7 +82,9 @@ window.googleMapEventJsFunctions = {
                 window._blazorMapEventArgs[eventArgId] = args;
             }
 
-            await DotNet.invokeMethodAsync('SharedComponents', 'NotifyMarkerEvent', eventGuid, args)
+            let jsonString = JSON.stringify(args);
+
+            await DotNet.invokeMethodAsync('SharedComponents', 'NotifyMarkerEvent', eventGuid, jsonString)
                 .then(_ => {
                     console.log("Remove event args : " + eventArgId);
                     delete window._blazorMapEventArgs[eventArgId];
@@ -88,7 +102,5 @@ window.googleMapEventJsFunctions = {
         window._blazorMapEventArgs[id][functionName]();
 
         return true;
-    },
-
-
+    }
 };

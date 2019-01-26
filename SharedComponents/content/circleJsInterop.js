@@ -31,12 +31,12 @@ window.googleMapCircleJsFunctions = {
         //console.dir(polygon);
 
         if (typeof args === 'undefined') {
-            circle[methodName]();
+            return circle[methodName]();
         } else {
-            circle[methodName](...args);
+            return circle[methodName](...args);
         }
 
-        return true;
+        //return true;
     },
 
     setMap: function (guid, mapDivId) {

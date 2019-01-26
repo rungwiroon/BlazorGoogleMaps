@@ -41,5 +41,10 @@ namespace SharedComponents.Maps
         /// This reflects the fact that longitudes wrap around the globe.
         /// </summary>
         public double West { get; set; }
+
+        public override string ToString()
+        {
+            return $"{North} {East} {South} {West}";
+        }
     }
 }

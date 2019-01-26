@@ -14,9 +14,9 @@ namespace SharedComponents.Maps
             Guid = guid;
         }
 
-        public void Remove()
+        public Task Remove()
         {
-            throw new NotImplementedException();
+            return MapEventJsInterop.UnsubscribeMapEvent(Guid.ToString());
         }
     }
 }

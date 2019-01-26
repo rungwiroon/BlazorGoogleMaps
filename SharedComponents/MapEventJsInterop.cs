@@ -27,6 +27,21 @@ namespace SharedComponents
             return guid;
         }
 
+        public static async Task<Guid> SubscribeMapEventOnce(string mapId, string eventName, Action<JObject> action)
+        {
+            var guid = Guid.NewGuid();
+
+            await JSRuntime.Current.InvokeAsync<bool>(
+                "googleMapEventJsFunctions.addListenerOnce",
+                guid,
+                mapId,
+                eventName);
+
+            registeredEvents.Add(guid, action);
+
+            return guid;
+        }
+
         public static async Task UnsubscribeMapEvent(string guid)
         {
             await Helper.MyInvokeAsync<bool>(
@@ -38,7 +53,15 @@ namespace SharedComponents
         public static Task NotifyMapEvent(string guidString, string eventArgs)
         {
             var guid = new Guid(guidString);
-            registeredEvents[guid].Invoke(JObject.Parse(eventArgs));
+
+            if (eventArgs == null)
+            {
+                registeredEvents[guid].Invoke(null);
+            }
+            else
+            {
+                registeredEvents[guid].Invoke(JObject.Parse(eventArgs));
+            }
 
             return Task.FromResult(true);
         }
@@ -69,10 +92,10 @@ namespace SharedComponents
         //}
 
         [JSInvokable]
-        public static Task NotifyMarkerEvent(string guidString, Dictionary<string, object> eventArgs)
+        public static Task NotifyMarkerEvent(string guidString, string eventArgs)
         {
             var guid = new Guid(guidString);
-            registeredEvents[guid].Invoke(new JObject(eventArgs));
+            registeredEvents[guid].Invoke(JObject.Parse(eventArgs));
 
             return Task.FromResult(true);
         }
