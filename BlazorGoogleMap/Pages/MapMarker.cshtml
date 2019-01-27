@@ -7,6 +7,7 @@
 <GoogleMap ref="@map1" Id="map1" Options="@mapOptions"></GoogleMap>
 <button onclick="@AddMarker">Add marker</button>
 <button onclick="@RemoveMarker">Remove marker</button>
+<button onclick="@Recenter">Re-center marker</button>
 
 @functions {
     private GoogleMap map1;
@@ -50,6 +51,16 @@
         await lastMarker.SetMap(null);
 
         markers.RemoveAt(markers.Count - 1);
+    }
+
+    private async Task Recenter()
+    {
+        if (!markers.Any())
+            return;
+
+        var lastMarker = markers.Last();
+        var center = await map1.GetCenter();
+        await lastMarker.SetPosition(center);
     }
 
 }
