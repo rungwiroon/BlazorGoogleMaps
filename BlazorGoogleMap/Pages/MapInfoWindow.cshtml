@@ -1,6 +1,6 @@
 ﻿@page "/mapInfoWindow"
-@using SharedComponents
-@using SharedComponents.Maps
+@using GoogleMapsComponents
+@using GoogleMapsComponents.Maps
 @using System.Threading
 
 <h1>Google Map Info Window</h1>
@@ -13,7 +13,8 @@
 
     private MapOptions mapOptions;
 
-    private List<Marker> markers = new List<Marker>();
+    //private List<Marker> markers = new List<Marker>();
+    private int markerCount;
 
     protected override void OnInit()
     {
@@ -31,11 +32,13 @@
 
     private async Task AddMarker()
     {
+        var position = await map1.GetCenter();
+
         var marker = new Marker(new MarkerOptions()
         {
-            Position = await map1.GetCenter(),
+            Position = position,
             Map = map1,
-            Label = $"Test {markers.Count()}"
+            Label = $"Test {markerCount}"
         });
 
         var infoWindow = new InfoWindow(new InfoWindowOptions()
@@ -48,10 +51,15 @@
             //Content = "Test"
         });
 
+        var infoWindowContent = $"Test {markerCount}";
+
         await marker.AddListener("click", async e =>
         {
-            await infoWindow.SetContent("Test111");
+            await infoWindow.SetContent(infoWindowContent);
+            await infoWindow.SetPosition(position);
             await infoWindow.Open(map1);
         });
+
+        markerCount++;
     }
 }

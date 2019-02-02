@@ -16,19 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SharedComponents\SharedComponents.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Update="Pages\MapInfoWindow.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Pages\MapPolyline.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Pages\MapMarkerEvent.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
+    <ProjectReference Include="..\GoogleMapsComponents\GoogleMapsComponents.csproj" />
   </ItemGroup>
 
 </Project>

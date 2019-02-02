@@ -1,0 +1,56 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <OutputType>Library</OutputType>
+    <IsPackable>true</IsPackable>
+    <BlazorLinkOnBuild>false</BlazorLinkOnBuild>
+    <LangVersion>7.3</LangVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <AssemblyName>GoogleMapsComponents</AssemblyName>
+    <RootNamespace>GoogleMapsComponents</RootNamespace>
+    <Version>0.1.0</Version>
+    <Company>QueueStack Solution</Company>
+    <Authors>Rungwiroon</Authors>
+    <Description>Blazor GoogleMaps components</Description>
+    <PackageId>BlazorGoogleMaps</PackageId>
+    <Product>BlazorGoogleMaps</Product>
+    <RepositoryUrl>https://github.com/rungwiroon/BlazorGoogleMaps</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/rungwiroon/BlazorGoogleMaps</PackageProjectUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- .js/.css files will be referenced via <script>/<link> tags; other content files will just be included in the app's 'dist' directory without any tags referencing them -->
+    <EmbeddedResource Include="content\**\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
+    <EmbeddedResource Include="content\**\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
+    <EmbeddedResource Include="content\**" Exclude="**\*.js;**\*.css" LogicalName="blazor:file:%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="content\circleJsInterop.js" />
+    <None Remove="content\googleMapJsInterop.js" />
+    <None Remove="content\infoWindowJsInterop.js" />
+    <None Remove="content\MapEventJsInterop.js" />
+    <None Remove="content\markerJsInterop.js" />
+    <None Remove="content\polygonJsInterop.js" />
+    <None Remove="content\polylineJsInterop.js" />
+    <None Remove="content\rectangleJsInterop.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Blazor.Browser" Version="0.7.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Blazor.Build" Version="0.7.0" PrivateAssets="all" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Maps\Data\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="content\circleJsInterop.js">
+      <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>
