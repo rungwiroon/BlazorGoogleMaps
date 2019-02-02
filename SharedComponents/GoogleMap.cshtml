@@ -1,4 +1,5 @@
 ﻿@using Maps
+@using System.Diagnostics
 
 @inherits MapComponent
 
@@ -11,117 +12,8 @@
     [Parameter]
     private MapOptions Options { get; set; }
 
-    /// <summary>
-    /// This event is fired when the viewport bounds have changed.
-    /// </summary>
     [Parameter]
-    private Action<MapEventArgs> OnBoundsChanged { get; set; }
-
-    /// <summary>
-    /// This event is fired when the map center property changes.
-    /// </summary>
-    [Parameter]
-    private Action<MapEventArgs> OnCenterChanged { get; set; }
-
-    /// <summary>
-    /// This event is fired when the user clicks on the map. An ApiMouseEvent with properties for the clicked location is returned unless a place icon was clicked, in which case an IconMouseEvent with a placeid is returned.
-    /// IconMouseEvent and ApiMouseEvent are identical, except that IconMouseEvent has the placeid field.
-    /// The event can always be treated as an ApiMouseEvent when the placeid is not important.
-    /// The click event is not fired if a marker or infowindow was clicked.
-    /// </summary>
-    [Parameter]
-    private Action<MapEventArgs> OnClick { get; set; }
-
-    /// <summary>
-    /// This event is fired when the user double-clicks on the map.
-    /// Note that the click event will also fire, right before this one.
-    /// </summary>
-    [Parameter]
-    private Action<MapEventArgs> OnDoubleClick { get; set; }
-
-    /// <summary>
-    /// This event is repeatedly fired while the user drags the map.
-    /// </summary>
-    [Parameter]
-    private Action<MapEventArgs> OnDrag { get; set; }
-
-    /// <summary>
-    /// This event is fired when the user stops dragging the map.
-    /// </summary>
-    [Parameter]
-    private Action<MapEventArgs> OnDragEnd { get; set; }
-
-    /// <summary>
-    /// This event is fired when the user starts dragging the map.
-    /// </summary>
-    [Parameter]
-    private Action<MapEventArgs> OnDragStart { get; set; }
-
-    /// <summary>
-    /// This event is fired when the map heading property changes.
-    /// </summary>
-    [Parameter]
-    private Action<MapEventArgs> OnHeadingChanged { get; set; }
-
-    /// <summary>
-    /// This event is fired when the map becomes idle after panning or zooming.
-    /// </summary>
-    [Parameter]
-    private Action<MapEventArgs> OnIdle { get; set; }
-
-    /// <summary>
-    /// This event is fired when the mapTypeId property changes.
-    /// </summary>
-    [Parameter]
-    private Action<MapEventArgs> OnMapTypeIdChanged { get; set; }
-
-    /// <summary>
-    /// This event is fired whenever the user's mouse moves over the map container.
-    /// </summary>
-    [Parameter]
-    private Action<MapEventArgs> OnMouseMove { get; set; }
-
-    /// <summary>
-    /// This event is fired when the user's mouse exits the map container.
-    /// </summary>
-    [Parameter]
-    private Action<MapEventArgs> OnMouseOut { get; set; }
-
-    /// <summary>
-    /// This event is fired when the user's mouse enters the map container.
-    /// </summary>
-    [Parameter]
-    private Action<MapEventArgs> OnMouseOver { get; set; }
-
-    /// <summary>
-    /// This event is fired when the DOM contextmenu event is fired on the map container.
-    /// </summary>
-    [Parameter]
-    private Action<MapEventArgs> OnProjectionChanged { get; set; }
-
-    /// <summary>
-    /// This event is fired when the DOM contextmenu event is fired on the map container.
-    /// </summary>
-    [Parameter]
-    private Action<MapEventArgs> OnRightClick { get; set; }
-
-    /// <summary>
-    /// This event is fired when the visible tiles have finished loading.
-    /// </summary>
-    [Parameter]
-    private Action<MapEventArgs> OnTilesLoaded { get; set; }
-
-    /// <summary>
-    /// This event is fired when the map tilt property changes.
-    /// </summary>
-    [Parameter]
-    private Action<MapEventArgs> OnTiltChanged { get; set; }
-
-    /// <summary>
-    /// This event is fired when the map zoom property changes.
-    /// </summary>
-    [Parameter]
-    private Action<MapEventArgs> OnZoomChanged { get; set; }
+    private Action OnAfterInit { get; set; }
 
     protected override void OnInit()
     {
@@ -132,59 +24,10 @@
     {
         await InitAsync(Id, Options);
 
-        if (OnBoundsChanged != null)
-            await AddListener("bounds_changed", OnBoundsChanged);
+        Debug.WriteLine("Init finished");
 
-        if (OnCenterChanged != null)
-            await AddListener("center_changed", OnCenterChanged);
-
-        if (OnClick != null)
-            await AddListener("click", OnClick);
-
-        if (OnDoubleClick != null)
-            await AddListener("dblclick", OnDoubleClick);
-
-        if (OnDrag != null)
-            await AddListener("drag", OnDrag);
-
-        if (OnDragEnd != null)
-            await AddListener("dragend", OnDragEnd);
-
-        if (OnDragStart != null)
-            await AddListener("dragstart", OnDragStart);
-
-        if (OnHeadingChanged != null)
-            await AddListener("heading_changed", OnHeadingChanged);
-
-        if (OnIdle != null)
-            await AddListener("idle", OnIdle);
-
-        if (OnMapTypeIdChanged != null)
-            await AddListener("maptypeid_changed", OnMapTypeIdChanged);
-
-        if (OnMouseMove != null)
-            await AddListener("mousemove", OnMouseMove);
-
-        if (OnMouseOut != null)
-            await AddListener("mouseout", OnMouseOut);
-
-        if (OnMouseOver != null)
-            await AddListener("mouseover", OnMouseOver);
-
-        if (OnProjectionChanged != null)
-            await AddListener("projection_changed", OnProjectionChanged);
-
-        if (OnRightClick != null)
-            await AddListener("rightclick", OnRightClick);
-
-        if (OnTilesLoaded != null)
-            await AddListener("tilesloaded", OnTilesLoaded);
-
-        if (OnTiltChanged != null)
-            await AddListener("tilt_changed", OnTiltChanged);
-
-        if (OnZoomChanged != null)
-            await AddListener("zoom_changed", OnZoomChanged);
+        if(OnAfterInit != null)
+            OnAfterInit();
     }
 
     protected override bool ShouldRender()
