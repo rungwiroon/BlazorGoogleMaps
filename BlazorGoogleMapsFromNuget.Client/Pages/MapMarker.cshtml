@@ -1,0 +1,66 @@
+﻿@page "/mapMarker"
+@using GoogleMapsComponents
+@using GoogleMapsComponents.Maps
+
+<h1>Google Map Markers</h1>
+
+<GoogleMap ref="@map1" Id="map1" Options="@mapOptions"></GoogleMap>
+<button onclick="@AddMarker">Add marker</button>
+<button onclick="@RemoveMarker">Remove marker</button>
+<button onclick="@Recenter">Re-center marker</button>
+
+@functions {
+    private GoogleMap map1;
+
+    private MapOptions mapOptions;
+
+    private List<Marker> markers = new List<Marker>();
+
+    protected override void OnInit()
+    {
+        mapOptions = new MapOptions()
+        {
+            zoom = 13,
+            center = new LatLngLiteral()
+            {
+                Lat = 13.505892,
+                Lng = 100.8162
+            },
+            mapTypeId = MapTypeId.Roadmap
+        };
+    }
+
+    private async Task AddMarker()
+    {
+        var marker = new Marker(new MarkerOptions()
+        {
+            Position = await map1.GetCenter(),
+            Map = map1,
+            Label = $"Test {markers.Count()}"
+        });
+
+        markers.Add(marker);
+    }
+
+    private async Task RemoveMarker()
+    {
+        if (!markers.Any())
+            return;
+
+        var lastMarker = markers.Last();
+        await lastMarker.SetMap(null);
+
+        markers.RemoveAt(markers.Count - 1);
+    }
+
+    private async Task Recenter()
+    {
+        if (!markers.Any())
+            return;
+
+        var lastMarker = markers.Last();
+        var center = await map1.GetCenter();
+        await lastMarker.SetPosition(center);
+    }
+
+}

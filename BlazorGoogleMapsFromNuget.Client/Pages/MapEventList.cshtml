@@ -1,0 +1,12 @@
+﻿
+<ul>
+    @foreach (var evnt in Events)
+    {
+        <li>@evnt</li>
+    }
+</ul>
+
+@functions {
+    [Parameter]
+    private List<string> Events { get; set; }
+}
