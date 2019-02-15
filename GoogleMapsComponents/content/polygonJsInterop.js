@@ -4,8 +4,8 @@ window.googleMapPolygonJsFunctions = {
         let args = JSON.parse(jsonArgs);
         let options = args[0];
 
-        console.log("Init polyline" + guid);
-        console.dir(options);
+        //console.log("Init polyline" + guid);
+        //console.dir(options);
 
         if (options.map !== null && typeof options.map !== 'undefined')
             options.map = window._blazorGoogleMaps[options.map];

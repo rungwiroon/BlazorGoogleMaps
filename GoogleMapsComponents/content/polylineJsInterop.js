@@ -4,8 +4,8 @@ window.googleMapPolylineJsFunctions = {
         let args = JSON.parse(jsonArgs);
         let options = args[0];
 
-        console.log("Init polyline " + guid);
-        console.dir(options);
+        //console.log("Init polyline " + guid);
+        //console.dir(options);
 
         if (options.map !== null && typeof options.map !== 'undefined')
             options.map = window._blazorGoogleMaps[options.map];
@@ -28,9 +28,9 @@ window.googleMapPolylineJsFunctions = {
         let args = JSON.parse(jsonArgs);
         let polyline = window._blazorGoogleMapsPolylines[guid];
 
-        console.log(polyline);
-        console.log(methodName);
-        console.dir(args);
+        //console.log(polyline);
+        //console.log(methodName);
+        //console.dir(args);
 
         if (typeof args === 'undefined') {
             polyline[methodName]();

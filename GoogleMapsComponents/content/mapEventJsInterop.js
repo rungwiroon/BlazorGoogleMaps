@@ -4,7 +4,7 @@ window.googleMapEventJsFunctions = {
         console.log("Add event for map : " + mapId + ", event : " + guid + ", " + eventName);
 
         if (window._blazorGoogleMaps === null || window._blazorGoogleMaps === 'undefined') {
-            console.log("maps collection is not initialize.");
+            console.error("maps collection is not initialize.");
             return false;
         }
 

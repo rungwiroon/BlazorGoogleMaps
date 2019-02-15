@@ -8,36 +8,33 @@ using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
 {
-    public class Marker : IDisposable
+    public class Marker : JsObjectRef
     {
         private MapComponent _map;
-        public Guid Guid { get; private set; }
 
-        public Marker(MarkerOptions opt)
+        public Marker(MarkerOptions opt = null)
         {
-            Guid = Guid.NewGuid();
-
             if (opt?.Map != null)
                 _map = opt.Map;
 
             Helper.MyInvokeAsync<bool>(
                 "googleMapMarkerJsFunctions.init",
-                Guid,
+                _guid,
                 opt);
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             JSRuntime.Current.InvokeAsync<bool>(
                 "googleMapMarkerJsFunctions.dispose",
-                Guid);
+                _guid);
         }
 
         public async Task<Animation> GetAnimation()
         {
             var animation = await Helper.InvokeWithDefinedGuidAndMethodAsync<string>(
                 "googleMapMarkerJsFunctions.invoke",
-                Guid.ToString(),
+                _guid.ToString(),
                 "getAnimation");
 
             return Helper.ToEnum<Animation>(animation);
@@ -47,7 +44,7 @@ namespace GoogleMapsComponents.Maps
         {
             var result = await Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapMarkerJsFunctions.invoke",
-                Guid.ToString(),
+                _guid.ToString(),
                 "getClickable");
 
             return result;
@@ -57,7 +54,7 @@ namespace GoogleMapsComponents.Maps
         {
             var result = await Helper.InvokeWithDefinedGuidAndMethodAsync<string>(
                 "googleMapMarkerJsFunctions.invoke",
-                Guid.ToString(),
+                _guid.ToString(),
                 "getCursor");
 
             return result;
@@ -67,7 +64,7 @@ namespace GoogleMapsComponents.Maps
         {
             var result = await Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapMarkerJsFunctions.invoke",
-                Guid.ToString(),
+                _guid.ToString(),
                 "getDraggable");
 
             return result;
@@ -77,7 +74,7 @@ namespace GoogleMapsComponents.Maps
         {
             var result = await Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
                 "googleMapMarkerJsFunctions.invoke",
-                Guid.ToString(),
+                _guid.ToString(),
                 "getIcon");
 
             return result;
@@ -87,7 +84,7 @@ namespace GoogleMapsComponents.Maps
         {
             var result = await Helper.InvokeWithDefinedGuidAndMethodAsync<MarkerLabel>(
                 "googleMapMarkerJsFunctions.invoke",
-                Guid.ToString(),
+                _guid.ToString(),
                 "getLabel");
 
             return result;
@@ -102,7 +99,7 @@ namespace GoogleMapsComponents.Maps
         {
             var result = await Helper.InvokeWithDefinedGuidAndMethodAsync<LatLngLiteral>(
                 "googleMapMarkerJsFunctions.invoke",
-                Guid.ToString(),
+                _guid.ToString(),
                 "getPosition");
 
             return result;
@@ -112,7 +109,7 @@ namespace GoogleMapsComponents.Maps
         {
             var result = await Helper.InvokeWithDefinedGuidAndMethodAsync<MarkerShape>(
                 "googleMapMarkerJsFunctions.invoke",
-                Guid.ToString(),
+                _guid.ToString(),
                 "getShape");
 
             return result;
@@ -122,7 +119,7 @@ namespace GoogleMapsComponents.Maps
         {
             var result = await Helper.InvokeWithDefinedGuidAndMethodAsync<string>(
                 "googleMapMarkerJsFunctions.invoke",
-                Guid.ToString(),
+                _guid.ToString(),
                 "getTitle");
 
             return result;
@@ -132,7 +129,7 @@ namespace GoogleMapsComponents.Maps
         {
             var result = await Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapMarkerJsFunctions.invoke",
-                Guid.ToString(),
+                _guid.ToString(),
                 "getVisible");
 
             return result;
@@ -142,7 +139,7 @@ namespace GoogleMapsComponents.Maps
         {
             var result = await Helper.InvokeWithDefinedGuidAndMethodAsync<int>(
                 "googleMapMarkerJsFunctions.invoke",
-                Guid.ToString(),
+                _guid.ToString(),
                 "getZIndex");
 
             return result;
@@ -159,7 +156,7 @@ namespace GoogleMapsComponents.Maps
         {
             await Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
                 "googleMapMarkerJsFunctions.invoke",
-                Guid.ToString(),
+                _guid.ToString(),
                 "setAnimation",
                 animation);
         }
@@ -168,7 +165,7 @@ namespace GoogleMapsComponents.Maps
         {
             await Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
                 "googleMapMarkerJsFunctions.invoke",
-                Guid.ToString(),
+                _guid.ToString(),
                 "setClickable",
                 flag);
         }
@@ -177,7 +174,7 @@ namespace GoogleMapsComponents.Maps
         {
             await Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
                 "googleMapMarkerJsFunctions.invoke",
-                Guid.ToString(),
+                _guid.ToString(),
                 "setCursor",
                 cursor);
         }
@@ -186,7 +183,7 @@ namespace GoogleMapsComponents.Maps
         {
             await Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
                 "googleMapMarkerJsFunctions.invoke",
-                Guid.ToString(),
+                _guid.ToString(),
                 "setDraggable",
                 flag);
         }
@@ -195,7 +192,7 @@ namespace GoogleMapsComponents.Maps
         {
             var result = await Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
                 "googleMapMarkerJsFunctions.invoke",
-                Guid.ToString(),
+                _guid.ToString(),
                 "setIcon",
                 icon);
         }
@@ -204,7 +201,7 @@ namespace GoogleMapsComponents.Maps
         {
             await Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
                 "googleMapMarkerJsFunctions.invoke",
-                Guid.ToString(),
+                _guid.ToString(),
                 "setIcon",
                 icon);
         }
@@ -213,7 +210,7 @@ namespace GoogleMapsComponents.Maps
         {
             var result = await Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
                 "googleMapMarkerJsFunctions.invoke",
-                Guid.ToString(),
+                _guid.ToString(),
                 "setLabel",
                 label);
         }
@@ -227,7 +224,7 @@ namespace GoogleMapsComponents.Maps
         {
             await Helper.MyInvokeAsync<bool>(
                    "googleMapMarkerJsFunctions.setMap",
-                   Guid,
+                   _guid,
                    map?.DivId);
 
             _map = map;
@@ -237,7 +234,7 @@ namespace GoogleMapsComponents.Maps
         {
             await Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
                 "googleMapMarkerJsFunctions.invoke",
-                Guid.ToString(),
+                _guid.ToString(),
                 "setOpacity",
                 opacity);
         }
@@ -246,7 +243,7 @@ namespace GoogleMapsComponents.Maps
         {
             await Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
                 "googleMapMarkerJsFunctions.invoke",
-                Guid.ToString(),
+                _guid.ToString(),
                 "setOptions",
                 options);
         }
@@ -255,7 +252,7 @@ namespace GoogleMapsComponents.Maps
         {
             await Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
                 "googleMapMarkerJsFunctions.invoke",
-                Guid.ToString(),
+                _guid.ToString(),
                 "setPosition",
                 latLng);
         }
@@ -264,7 +261,7 @@ namespace GoogleMapsComponents.Maps
         {
             await Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
                 "googleMapMarkerJsFunctions.invoke",
-                Guid.ToString(),
+                _guid.ToString(),
                 "setShape",
                 shape);
         }
@@ -273,7 +270,7 @@ namespace GoogleMapsComponents.Maps
         {
             await Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
                 "googleMapMarkerJsFunctions.invoke",
-                Guid.ToString(),
+                _guid.ToString(),
                 "setTiltle",
                 title);
         }
@@ -282,7 +279,7 @@ namespace GoogleMapsComponents.Maps
         {
             await Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
                 "googleMapMarkerJsFunctions.invoke",
-                Guid.ToString(),
+                _guid.ToString(),
                 "setVisible",
                 visible);
         }
@@ -291,14 +288,14 @@ namespace GoogleMapsComponents.Maps
         {
             await Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
                 "googleMapMarkerJsFunctions.invoke",
-                Guid.ToString(),
+                _guid.ToString(),
                 "setZIndex",
                 zIndex);
         }
 
         public async Task<MapEventListener> AddListener(string eventName, Action<MapEventArgs> handler)
         {
-            var guid = await MapEventJsInterop.SubscribeMarkerEvent(Guid.ToString(), eventName, (dict) =>
+            var guid = await MapEventJsInterop.SubscribeMarkerEvent(_guid.ToString(), eventName, (dict) =>
             {
                 //if(dict != null)
                 //{

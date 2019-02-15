@@ -3,8 +3,8 @@ window.googleMapInfoWindowJsFunctions = {
     init: function (guid, jsonArgs) {
         let args = JSON.parse(jsonArgs);
 
-        console.log("Init info window" + guid);
-        console.dir(args);
+        //console.log("Init info window" + guid);
+        //console.dir(args);
 
         //if (options.map !== null && typeof options.map !== 'undefined')
         //    options.map = window._blazorGoogleMaps[options.map];
@@ -28,7 +28,7 @@ window.googleMapInfoWindowJsFunctions = {
         let infoWindow = window._blazorGoogleMapsInfoWindows[guid];
         let map = window._blazorGoogleMaps[args[0]];
 
-        console.log("Open info window" + guid);
+        //console.log("Open info window" + guid);
 
         infoWindow.open(map);
 

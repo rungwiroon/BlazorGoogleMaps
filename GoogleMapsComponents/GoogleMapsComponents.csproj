@@ -9,7 +9,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <AssemblyName>GoogleMapsComponents</AssemblyName>
     <RootNamespace>GoogleMapsComponents</RootNamespace>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <Company>QueueStack Solution</Company>
     <Authors>Rungwiroon</Authors>
     <Description>Blazor GoogleMaps components</Description>
@@ -17,6 +17,8 @@
     <Product>BlazorGoogleMaps</Product>
     <RepositoryUrl>https://github.com/rungwiroon/BlazorGoogleMaps</RepositoryUrl>
     <PackageProjectUrl>https://github.com/rungwiroon/BlazorGoogleMaps</PackageProjectUrl>
+    <AssemblyVersion>0.2.0.0</AssemblyVersion>
+    <FileVersion>0.2.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,12 +30,14 @@
 
   <ItemGroup>
     <None Remove="content\circleJsInterop.js" />
+    <None Remove="content\drawingManagerJsInterop.js" />
     <None Remove="content\googleMapJsInterop.js" />
     <None Remove="content\infoWindowJsInterop.js" />
     <None Remove="content\MapEventJsInterop.js" />
     <None Remove="content\markerJsInterop.js" />
     <None Remove="content\polygonJsInterop.js" />
     <None Remove="content\polylineJsInterop.js" />
+    <None Remove="content\rectangleJsInterop - Copy.js" />
     <None Remove="content\rectangleJsInterop.js" />
   </ItemGroup>
 
@@ -49,6 +53,12 @@
 
   <ItemGroup>
     <EmbeddedResource Update="content\circleJsInterop.js">
+      <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Update="content\drawingManagerJsInterop.js">
+      <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Update="content\rectangleJsInterop - Copy.js">
       <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
