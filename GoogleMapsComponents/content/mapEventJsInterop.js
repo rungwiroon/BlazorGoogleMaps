@@ -11,8 +11,8 @@ window.googleMapEventJsFunctions = {
         window._blazorMapEvents = window._blazorMapEvents || [];
 
         window._blazorMapEvents[guid] = window._blazorGoogleMaps[mapId][eventFunctionName](eventName, async function (args) {
-            console.log("Event " + eventName + " fired.");
-            console.dir(args);
+            //console.log("Event " + eventName + " fired.");
+            //console.dir(args);
 
             let timestamp = + new Date();
             let eventArgsId = guid + "_" + timestamp;
@@ -68,7 +68,7 @@ window.googleMapEventJsFunctions = {
         window._blazorMapEvents = window._blazorMapEvents || [];
 
         window._blazorMapEvents[eventGuid] = window._blazorGoogleMapsMarkers[markerGuid].addListener(eventName, async function (args) {
-            console.log("Event " + eventName + " fired.");
+            //console.log("Event " + eventName + " fired.");
 
             let timestamp = + new Date();
             let eventArgId = eventGuid + "_" + timestamp;

@@ -1,0 +1,38 @@
+﻿@page "/mapDirectionService"
+@using System.Diagnostics
+
+<h1>Google Map Direction Service</h1>
+
+<GoogleMap ref="@map1" Id="map1" Options="@mapOptions"></GoogleMap>
+<div></div>
+
+@functions {
+    private GoogleMap map1;
+
+    private MapOptions mapOptions;
+
+    private DirectionsService directionsService;
+
+    protected override async Task OnInitAsync()
+    {
+        mapOptions = new MapOptions()
+        {
+            Zoom = 13,
+            Center = new LatLngLiteral()
+            {
+                Lat = 13.505892,
+                Lng = 100.8162
+            },
+            MapTypeId = MapTypeId.Roadmap
+        };
+
+        directionsService = new DirectionsService();
+        await directionsService.Route(new DirectionsRequest()
+        {
+            Origin = "chicago, il",
+            Destination = "st louis, mo",
+            TravelMode = TravelMode.Driving
+        });
+    }
+
+}

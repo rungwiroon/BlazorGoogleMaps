@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.JSInterop;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,7 +13,7 @@ namespace GoogleMapsComponents.Maps.Visualization
     {
         private MapComponent _map;
 
-        private string jsObjectName = "googleMapHeatmapLayerJsFunctions";
+        private readonly string jsObjectName = "googleMapHeatmapLayerJsFunctions";
 
         /// <summary>
         /// Creates a new instance of HeatmapLayer.
@@ -39,7 +40,7 @@ namespace GoogleMapsComponents.Maps.Visualization
 
         public override void Dispose()
         {
-            Helper.InvokeWithDefinedGuidAsync<bool>(
+            JSRuntime.Current.InvokeAsync<bool>(
                     $"{jsObjectName}.dispose",
                     _guid.ToString());
         }

@@ -30,14 +30,15 @@
 
   <ItemGroup>
     <None Remove="content\circleJsInterop.js" />
+    <None Remove="content\directionServiceInterop.js" />
     <None Remove="content\drawingManagerJsInterop.js" />
     <None Remove="content\googleMapJsInterop.js" />
+    <None Remove="content\heatmapLayerJsInterop.js" />
     <None Remove="content\infoWindowJsInterop.js" />
     <None Remove="content\MapEventJsInterop.js" />
     <None Remove="content\markerJsInterop.js" />
     <None Remove="content\polygonJsInterop.js" />
     <None Remove="content\polylineJsInterop.js" />
-    <None Remove="content\rectangleJsInterop - Copy.js" />
     <None Remove="content\rectangleJsInterop.js" />
   </ItemGroup>
 
@@ -45,6 +46,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Blazor.Browser" Version="0.7.0" />
     <PackageReference Include="Microsoft.AspNetCore.Blazor.Build" Version="0.7.0" PrivateAssets="all" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="OneOf" Version="2.1.127" />
   </ItemGroup>
 
   <ItemGroup>
@@ -58,7 +60,7 @@
     <EmbeddedResource Update="content\drawingManagerJsInterop.js">
       <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Update="content\rectangleJsInterop - Copy.js">
+    <EmbeddedResource Update="content\rectangleJsInterop.js">
       <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
