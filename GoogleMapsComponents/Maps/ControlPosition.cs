@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
@@ -10,68 +13,81 @@ namespace GoogleMapsComponents.Maps
     /// Controls are positioned relative to other controls in the same layout position. 
     /// Controls that are added first are positioned closer to the edge of the map. 
     /// </summary>
-    public class ControlPosition
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum ControlPosition
     {
         /// <summary>
         /// Elements are positioned in the center of the bottom row.
         /// </summary>
-        public const string BOTTOM_CENTER = "BOTTOM_CENTER";
+        [EnumMember(Value = "BOTTOM_CENTER")]
+        BottomCenter,
 
         /// <summary>
         /// Elements are positioned in the bottom left and flow towards the middle. 
         /// Elements are positioned to the right of the Google logo.
         /// </summary>
-        public const string BOTTOM_LEFT = "BOTTOM_LEFT";
+        [EnumMember(Value = "BOTTOM_LEFT")]
+        BottomLeft,
 
         /// <summary>
         /// Elements are positioned in the bottom right and flow towards the middle. 
         /// Elements are positioned to the left of the copyrights.
         /// </summary>
-        public const string BOTTOM_RIGHT = "BOTTOM_RIGHT";
+        [EnumMember(Value = "BOTTOM_RIGHT")]
+        BottomRight,
 
         /// <summary>
         /// Elements are positioned on the left, above bottom-left elements, and flow upwards.
         /// </summary>
-        public const string LEFT_BOTTOM = "LEFT_BOTTOM";
+        [EnumMember(Value = "LEFT_BOTTOM")]
+        LeftBottom,
 
         /// <summary>
         /// Elements are positioned in the center of the left side.
         /// </summary>
-        public const string LEFT_CENTER = "LEFT_CENTER";
+        [EnumMember(Value = "LEFT_CENTER")]
+        LeftCenter,
 
         /// <summary>
         /// Elements are positioned on the left, below top-left elements, and flow downwards.
         /// </summary>
-        public const string LEFT_TOP = "LEFT_TOP";
+        [EnumMember(Value = "LEFT_TOP")]
+        LeftTop,
 
         /// <summary>
         /// Elements are positioned on the right, above bottom-right elements, and flow upwards.
         /// </summary>
-        public const string RIGHT_BOTTOM = "RIGHT_BOTTOM";
+        [EnumMember(Value = "RIGHT_BOTTOM")]
+        RightBottom,
 
         /// <summary>
         /// Elements are positioned in the center of the right side.
         /// </summary>
-        public const string RIGHT_CENTER = "RIGHT_CENTER";
+        [EnumMember(Value = "RIGHT_CENTER")]
+        RightCenter,
 
         /// <summary>
         /// Elements are positioned on the right, below top-right elements, and flow downwards.
         /// </summary>
-        public const string RIGHT_TOP = "RIGHT_TOP";
+        [EnumMember(Value = "RIGHT_TOP")]
+        RightTop,
 
         /// <summary>
         /// Elements are positioned in the center of the top row.
         /// </summary>
-        public const string TOP_CENTER = "TOP_CENTER";
+        [EnumMember(Value = "TOP_CENTER")]
+        TopCenter,
 
         /// <summary>
         /// Elements are positioned in the top left and flow towards the middle.
         /// </summary>
-        public const string TOP_LEFT = "TOP_LEFT";
+        [EnumMember(Value = "TOP_LEFT")]
+        TopLeft,
 
         /// <summary>
         /// Elements are positioned in the top right and flow towards the middle.
         /// </summary>
-        public const string TOP_RIGHT = "TOP_RIGHT";
+        [EnumMember(Value = "TOP_RIGHT")]
+        TopRight
     }
 }

@@ -16,6 +16,10 @@ namespace GoogleMapsComponents
     {
         public string DivId { get; private set; }
 
+        public Dictionary<ControlPosition, List<ElementRef>> Controls { get; private set; }
+
+        public MapData Data { get; private set; }
+
         public async Task InitAsync(string id, MapOptions options)
         {
             DivId = id;
@@ -294,6 +298,11 @@ namespace GoogleMapsComponents
                 switch (eventName)
                 {
                     case "click":
+                    case "dblclick":
+                    case "mousemove":
+                    case "mouseout":
+                    case "mouseover":
+                    case "rightclick":
                         var e = jObject.ToObject<MouseEventArgs>();
                         //Debug.WriteLine($"Click lat lng : {e.LatLng}");
                         handler(e);

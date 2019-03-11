@@ -10,5 +10,10 @@ namespace GoogleMapsComponents
         protected Guid _guid = Guid.NewGuid();
 
         public abstract void Dispose();
+
+        internal Guid Guid
+        {
+            get { return _guid; }
+        }
     }
 }
