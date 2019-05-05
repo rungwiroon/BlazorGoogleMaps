@@ -18,12 +18,13 @@ namespace GoogleMapsComponents.Maps.Drawing
         /// <summary>
         /// Creates a DrawingManager that allows users to draw overlays on the map, and switch between the type of overlay to be drawn with a drawing control.
         /// </summary>
-        public DrawingManager(DrawingManagerOptions opt = null)
+        public DrawingManager(IJSRuntime jsRuntime, DrawingManagerOptions opt = null)
+            : base(jsRuntime)
         {
             if (opt?.Map != null)
                 _map = opt.Map;
 
-            Helper.MyInvokeAsync<bool>(
+            _jsRuntime.MyInvokeAsync<bool>(
                 "googleMapDrawingManagerJsFunctions.init",
                 _guid,
                 opt);
@@ -31,7 +32,7 @@ namespace GoogleMapsComponents.Maps.Drawing
 
         public override void Dispose()
         {
-            JSRuntime.Current.InvokeAsync<bool>(
+            _jsRuntime.InvokeAsync<bool>(
                 "googleMapDrawingManagerJsFunctions.dispose",
                 _guid);
         }
@@ -42,7 +43,7 @@ namespace GoogleMapsComponents.Maps.Drawing
         /// <returns></returns>
         public async Task<OverlayType> GetDrawingMode()
         {
-            var result = await Helper.InvokeWithDefinedGuidAndMethodAsync<string>(
+            var result = await _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<string>(
                 "googleMapDrawingManagerJsFunctions.invoke",
                 _guid.ToString(),
                 "getDrawingMode");
@@ -67,7 +68,7 @@ namespace GoogleMapsComponents.Maps.Drawing
         /// <returns></returns>
         public Task SetDrawingMode(OverlayType drawingMode)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
                    "googleMapDrawingManagerJsFunctions.invoke",
                    _guid.ToString(),
                    "setDrawingMode",
@@ -80,7 +81,7 @@ namespace GoogleMapsComponents.Maps.Drawing
         /// <param name="map"></param>
         public async Task SetMap(MapComponent map)
         {
-            await Helper.MyInvokeAsync<bool>(
+            await _jsRuntime.MyInvokeAsync<bool>(
                    "googleMapDrawingManagerJsFunctions.setMap",
                    _guid,
                    map?.DivId);
@@ -94,7 +95,7 @@ namespace GoogleMapsComponents.Maps.Drawing
         /// <param name="options"></param>
         public Task SetOptions(DrawingManagerOptions options)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
                    "googleMapDrawingManagerJsFunctions.invoke",
                    _guid.ToString(),
                    "setOptions",

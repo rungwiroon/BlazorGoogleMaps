@@ -28,10 +28,10 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public void Stop()
         {
-            JSRuntime.Current.InvokeAsync<bool>(
-                   "googleMapEventJsFunctions.invokeEventArgsFunction",
-                   Id, 
-                   "stop");
+            //JSRuntime.Current.InvokeAsync<bool>(
+            //       "googleMapEventJsFunctions.invokeEventArgsFunction",
+            //       Id, 
+            //       "stop");
         }
     }
 }

@@ -1,0 +1,85 @@
+﻿@page "/mapMarker"
+@using GoogleMapsComponents
+@using GoogleMapsComponents.Maps
+
+<h1>Google Map Markers</h1>
+
+<GoogleMap ref="@map1" Id="map1" Options="@mapOptions"></GoogleMap>
+<button onclick="@AddMarker">Add marker</button>
+<button onclick="@RemoveMarker">Remove marker</button>
+<button onclick="@Recenter">Re-center marker</button>
+
+<MapEventList ref="@eventList" Events="@_events"></MapEventList>
+
+@functions {
+    private GoogleMap map1;
+
+    private MapOptions mapOptions;
+
+    private List<Marker> markers = new List<Marker>();
+
+    private List<String> _events = new List<String>();
+
+    private MapEventList eventList;
+
+    protected override void OnInit()
+    {
+        mapOptions = new MapOptions()
+        {
+            Zoom = 13,
+            Center = new LatLngLiteral()
+            {
+                Lat = 13.505892,
+                Lng = 100.8162
+            },
+            MapTypeId = MapTypeId.Roadmap
+        };
+    }
+
+    private async Task AddMarker()
+    {
+        var marker = new Marker(map1.JsRuntime, map1.JsEventInterop, new MarkerOptions()
+        {
+            Position = await map1.GetCenter(),
+            Map = map1,
+            Label = $"Test {markers.Count()}"
+        });
+
+        markers.Add(marker);
+
+        await marker.AddListener("click", e =>
+        {
+            _events.Add("click");
+            StateHasChanged();
+
+            var mouseEvent = e as MouseEventArgs;
+            mouseEvent.Stop();
+        });
+    }
+
+    private async Task RemoveMarker()
+    {
+        if (!markers.Any())
+        {
+            return;
+        }
+
+        var lastMarker = markers.Last();
+        await lastMarker.SetMap(null);
+
+        markers.RemoveAt(markers.Count - 1);
+    }
+
+    private async Task Recenter()
+    {
+        if (!markers.Any())
+        {
+            return;
+        }
+
+        var lastMarker = markers.Last();
+        var center = await map1.GetCenter();
+        await lastMarker.SetPosition(center);
+    }
+
+}

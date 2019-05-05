@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.JSInterop;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,20 +16,21 @@ namespace GoogleMapsComponents.Maps
         /// <summary>
         /// Create a polyline using the passed PolylineOptions, which specify both the path of the polyline and the stroke style to use when drawing the polyline.
         /// </summary>
-        public Polyline(PolylineOptions opts = null)
+        public Polyline(IJSRuntime jsRuntime, PolylineOptions opts = null)
+            : base(jsRuntime)
         {
             if (opts != null)
             {
                 _map = opts.Map;
 
-                Helper.InvokeWithDefinedGuidAsync<bool>(
+                _jsRuntime.InvokeWithDefinedGuidAsync<bool>(
                     "googleMapPolylineJsFunctions.init",
                     _guid.ToString(),
                     opts);
             }
             else
             {
-                Helper.InvokeWithDefinedGuidAsync<bool>(
+                _jsRuntime.InvokeWithDefinedGuidAsync<bool>(
                     "googleMapPolylineJsFunctions.init",
                     _guid.ToString());
             }
@@ -36,7 +38,7 @@ namespace GoogleMapsComponents.Maps
 
         public override void Dispose()
         {
-            Helper.InvokeWithDefinedGuidAsync<bool>(
+            _jsRuntime.InvokeWithDefinedGuidAsync<bool>(
                 "googleMapPolylineJsFunctions.dispose",
                 _guid.ToString());
         }
@@ -47,7 +49,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<bool> GetDraggable()
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapPolylineJsFunctions.invoke",
                 _guid.ToString(),
                 "getDraggable");
@@ -59,7 +61,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<bool> GetEditable()
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapPolylineJsFunctions.invoke",
                 _guid.ToString(),
                 "getEditable");
@@ -80,7 +82,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<IEnumerable<LatLngLiteral>> GetPath()
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<IEnumerable<LatLngLiteral>>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<IEnumerable<LatLngLiteral>>(
                 "googleMapPolylineJsFunctions.invoke",
                 _guid.ToString(),
                 "getPath");
@@ -92,7 +94,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<bool> GetVisible()
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapPolylineJsFunctions.invoke",
                 _guid.ToString(),
                 "getVisible");
@@ -106,7 +108,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task SetDraggable(bool draggable)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapPolylineJsFunctions.invoke",
                 _guid.ToString(),
                 "setDraggable",
@@ -120,7 +122,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task SetEditable(bool editable)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapPolylineJsFunctions.invoke",
                 _guid.ToString(),
                 "setEditable",
@@ -137,7 +139,7 @@ namespace GoogleMapsComponents.Maps
         {
             _map = map;
 
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapPolylineJsFunctions.setMap",
                 _guid.ToString(),
                 map.DivId);
@@ -145,7 +147,7 @@ namespace GoogleMapsComponents.Maps
 
         public Task SetOptions(PolylineOptions options)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapPolylineJsFunctions.invoke",
                 _guid.ToString(),
                 "setOptions",
@@ -159,7 +161,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task SetPath(IEnumerable<LatLngLiteral> path)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapPolylineJsFunctions.invoke",
                 _guid.ToString(),
                 "setPath",
@@ -173,7 +175,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task SetVisible(bool visible)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapPolylineJsFunctions.invoke",
                 _guid.ToString(),
                 "setVisible",

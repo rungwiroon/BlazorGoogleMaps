@@ -10,109 +10,116 @@ namespace GoogleMapsComponents
 {
     public class MapFunctionJsInterop
     {
-        public static Task Init(string id, MapOptions options)
+        private IJSRuntime _jsRuntime;
+
+        public MapFunctionJsInterop(IJSRuntime jsRuntime)
         {
-            return Helper.MyInvokeAsync<bool>(
+            _jsRuntime = jsRuntime;
+        }
+
+        public Task Init(string id, MapOptions options)
+        {
+            return _jsRuntime.MyInvokeAsync<bool>(
                 "googleMapJsFunctions.init",
                 id,
                 options);
         }
 
-        public static Task Dispose(string id)
+        public Task Dispose(string id)
         {
-            return JSRuntime.Current.InvokeAsync<bool>(
+            return _jsRuntime.InvokeAsync<bool>(
                 "googleMapJsFunctions.dispose",
                 id);
         }
 
-        public static Task FitBounds(string id, LatLngBoundsLiteral bounds)
+        public Task FitBounds(string id, LatLngBoundsLiteral bounds)
         {
-            return Helper.MyInvokeAsync<bool>(
+            return _jsRuntime.MyInvokeAsync<bool>(
                 "googleMapJsFunctions.fitBounds",
                 id,
                 bounds);
         }
 
-        public static Task PanBy(string id, int x, int y)
+        public Task PanBy(string id, int x, int y)
         {
-            return Helper.MyInvokeAsync<bool>(
+            return _jsRuntime.MyInvokeAsync<bool>(
                 "googleMapJsFunctions.panBy",
                 id,
                 x,
                 y);
         }
 
-        public static Task PanTo(string id, LatLngLiteral latLng)
+        public Task PanTo(string id, LatLngLiteral latLng)
         {
-            return Helper.MyInvokeAsync<bool>(
+            return _jsRuntime.MyInvokeAsync<bool>(
                 "googleMapJsFunctions.panTo",
                 id,
                 latLng);
         }
 
-        public static Task PanToBounds(string id, LatLngBoundsLiteral latLngBounds)
+        public Task PanToBounds(string id, LatLngBoundsLiteral latLngBounds)
         {
-            return Helper.MyInvokeAsync<bool>(
+            return _jsRuntime.MyInvokeAsync<bool>(
                 "googleMapJsFunctions.panToBounds",
                 id,
                 latLngBounds);
         }
 
-        public static Task<LatLngBoundsLiteral> GetBounds(string id)
+        public Task<LatLngBoundsLiteral> GetBounds(string id)
         {
-            return Helper.MyInvokeAsync<LatLngBoundsLiteral>(
+            return _jsRuntime.MyInvokeAsync<LatLngBoundsLiteral>(
                 "googleMapJsFunctions.getBounds",
                 id);
         }
 
-        public static Task<LatLngLiteral> GetCenter(string id)
+        public Task<LatLngLiteral> GetCenter(string id)
         {
-            return Helper.MyInvokeAsync<LatLngLiteral>(
+            return _jsRuntime.MyInvokeAsync<LatLngLiteral>(
                 "googleMapJsFunctions.getCenter",
                 id);
         }
 
-        public static Task SetCenter(string id, LatLngLiteral latLng)
+        public Task SetCenter(string id, LatLngLiteral latLng)
         {
-            return Helper.MyInvokeAsync<bool>(
+            return _jsRuntime.MyInvokeAsync<bool>(
                 "googleMapJsFunctions.setCenter",
                 id,
                 latLng);
         }
 
-        public static Task<bool> GetClickableIcons(string id)
+        public Task<bool> GetClickableIcons(string id)
         {
-            return Helper.MyInvokeAsync<bool>(
+            return _jsRuntime.MyInvokeAsync<bool>(
                 "googleMapJsFunctions.getClickableIcons",
                 id);
         }
 
-        public static Task SetClickableIcons(string id, bool value)
+        public Task SetClickableIcons(string id, bool value)
         {
-            return Helper.MyInvokeAsync<bool>(
+            return _jsRuntime.MyInvokeAsync<bool>(
                 "googleMapJsFunctions.setClickableIcons",
                 id,
                 value);
         }
 
-        public static Task<int> GetHeading(string id)
+        public Task<int> GetHeading(string id)
         {
-            return Helper.MyInvokeAsync<int>(
+            return _jsRuntime.MyInvokeAsync<int>(
                 "googleMapJsFunctions.getHeading",
                 id);
         }
 
-        public static Task SetHeading(string id, int heading)
+        public Task SetHeading(string id, int heading)
         {
-            return Helper.MyInvokeAsync<int>(
+            return _jsRuntime.MyInvokeAsync<int>(
                 "googleMapJsFunctions.setHeading",
                 id,
                 heading);
         }
 
-        public static async Task<MapTypeId> GetMapTypeId(string id)
+        public async Task<MapTypeId> GetMapTypeId(string id)
         {
-            var str = await Helper.MyInvokeAsync<string>(
+            var str = await _jsRuntime.MyInvokeAsync<string>(
                 "googleMapJsFunctions.getMapTypeId",
                 id);
 
@@ -121,39 +128,39 @@ namespace GoogleMapsComponents
             return Helper.ToEnum<MapTypeId>(str);
         }
 
-        public static Task SetMapTypeId(string id, MapTypeId mapTypeId)
+        public Task SetMapTypeId(string id, MapTypeId mapTypeId)
         {
-            return Helper.MyInvokeAsync<int>(
+            return _jsRuntime.MyInvokeAsync<int>(
                 "googleMapJsFunctions.setMapTypeId",
                 id,
                 mapTypeId);
         }
         
-        public static Task<int> GetTilt(string id)
+        public Task<int> GetTilt(string id)
         {
-            return Helper.MyInvokeAsync<int>(
+            return _jsRuntime.MyInvokeAsync<int>(
                 "googleMapJsFunctions.getTilt",
                 id);
         }
 
-        public static Task SetTilt(string id, int tilt)
+        public Task SetTilt(string id, int tilt)
         {
-            return Helper.MyInvokeAsync<bool>(
+            return _jsRuntime.MyInvokeAsync<bool>(
                 "googleMapJsFunctions.setTilt",
                 id,
                 tilt);
         }
 
-        public static Task<int> GetZoom(string id)
+        public Task<int> GetZoom(string id)
         {
-            return Helper.MyInvokeAsync<int>(
+            return _jsRuntime.MyInvokeAsync<int>(
                 "googleMapJsFunctions.getZoom",
                 id);
         }
 
-        public static Task SetZoom(string id, int zoom)
+        public Task SetZoom(string id, int zoom)
         {
-            return Helper.MyInvokeAsync<bool>(
+            return _jsRuntime.MyInvokeAsync<bool>(
                 "googleMapJsFunctions.setZoom",
                 id,
                 zoom);

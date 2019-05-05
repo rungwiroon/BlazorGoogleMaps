@@ -1,24 +1,15 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <OutputType>Library</OutputType>
     <IsPackable>true</IsPackable>
-    <BlazorLinkOnBuild>false</BlazorLinkOnBuild>
+    <RestoreAdditionalProjectSources>
+      https://dotnet.myget.org/F/aspnetcore-dev/api/v3/index.json;
+      https://dotnet.myget.org/F/blazor-dev/api/v3/index.json;
+    </RestoreAdditionalProjectSources>
     <LangVersion>7.3</LangVersion>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <AssemblyName>GoogleMapsComponents</AssemblyName>
-    <RootNamespace>GoogleMapsComponents</RootNamespace>
-    <Version>0.2.0</Version>
-    <Company>QueueStack Solution</Company>
-    <Authors>Rungwiroon</Authors>
-    <Description>Blazor GoogleMaps components</Description>
-    <PackageId>BlazorGoogleMaps</PackageId>
-    <Product>BlazorGoogleMaps</Product>
-    <RepositoryUrl>https://github.com/rungwiroon/BlazorGoogleMaps</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/rungwiroon/BlazorGoogleMaps</PackageProjectUrl>
-    <AssemblyVersion>0.2.0.0</AssemblyVersion>
-    <FileVersion>0.2.0.0</FileVersion>
+    <RazorLangVersion>3.0</RazorLangVersion>
+    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
   </PropertyGroup>
 
   <ItemGroup>
@@ -35,7 +26,7 @@
     <None Remove="content\googleMapJsInterop.js" />
     <None Remove="content\heatmapLayerJsInterop.js" />
     <None Remove="content\infoWindowJsInterop.js" />
-    <None Remove="content\MapEventJsInterop.js" />
+    <None Remove="content\mapEventJsInterop.js" />
     <None Remove="content\markerJsInterop.js" />
     <None Remove="content\polygonJsInterop.js" />
     <None Remove="content\polylineJsInterop.js" />
@@ -43,23 +34,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="GeoJSON.Net" Version="1.1.70" />
-    <PackageReference Include="Microsoft.AspNetCore.Blazor.Browser" Version="0.7.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Blazor.Build" Version="0.7.0" PrivateAssets="all" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-    <PackageReference Include="OneOf" Version="2.1.127" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="content\circleJsInterop.js">
-      <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Update="content\drawingManagerJsInterop.js">
-      <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Update="content\rectangleJsInterop.js">
-      <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
-    </EmbeddedResource>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Browser" Version="3.0.0-preview4-19216-03" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="OneOf" Version="2.1.146" />
   </ItemGroup>
 
 </Project>

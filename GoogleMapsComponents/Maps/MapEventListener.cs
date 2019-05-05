@@ -1,22 +1,29 @@
-﻿using System;
+﻿using Microsoft.JSInterop;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
 {
-    public class MapEventListener
+    public class MapEventListener : JsObjectRef
     {
-        internal Guid Guid { get; set; }
+        protected MapEventJsInterop _mapEventJsInterop;
 
-        internal MapEventListener(Guid guid)
+        internal MapEventListener(IJSRuntime jsRuntime, MapEventJsInterop mapEventJsInterop, Guid guid)
+            : base(jsRuntime, guid)
         {
-            Guid = guid;
+            _mapEventJsInterop = mapEventJsInterop;
+        }
+
+        public override void Dispose()
+        {
+            Remove();
         }
 
         public Task Remove()
         {
-            return MapEventJsInterop.UnsubscribeMapEvent(Guid.ToString());
+            return _mapEventJsInterop.UnsubscribeMapEvent(Guid.ToString());
         }
     }
 }

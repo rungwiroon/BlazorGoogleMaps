@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.JSInterop;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,20 +17,21 @@ namespace GoogleMapsComponents.Maps
         /// Create a circle using the passed CircleOptions, which specify the center, radius, and style.
         /// </summary>
         /// <param name="opts"></param>
-        public Circle(CircleOptions opts)
+        public Circle(IJSRuntime jsRuntime, CircleOptions opts = null)
+            : base(jsRuntime)
         {
             if (opts != null)
             {
                 _map = opts.Map;
 
-                Helper.InvokeWithDefinedGuidAsync<bool>(
+                _jsRuntime.InvokeWithDefinedGuidAsync<bool>(
                     "googleMapCircleJsFunctions.init",
                     _guid.ToString(),
                     opts);
             }
             else
             {
-                Helper.InvokeWithDefinedGuidAsync<bool>(
+                _jsRuntime.InvokeWithDefinedGuidAsync<bool>(
                     "googleMapCircleJsFunctions.init",
                     _guid.ToString());
             }
@@ -37,7 +39,7 @@ namespace GoogleMapsComponents.Maps
 
         public override void Dispose()
         {
-            Helper.InvokeWithDefinedGuidAsync<bool>(
+            _jsRuntime.InvokeWithDefinedGuidAsync<bool>(
                     "googleMapCircleJsFunctions.dispose",
                     _guid.ToString());
         }
@@ -48,7 +50,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<LatLngBoundsLiteral> GetBounds()
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<LatLngBoundsLiteral>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<LatLngBoundsLiteral>(
                 "googleMapCircleJsFunctions.invoke",
                 _guid.ToString(),
                 "getBounds");
@@ -60,7 +62,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<LatLngLiteral> GetCenter()
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<LatLngLiteral>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<LatLngLiteral>(
                 "googleMapCircleJsFunctions.invoke",
                 _guid.ToString(),
                 "getBounds");
@@ -72,7 +74,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<bool> GetDraggable()
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapCircleJsFunctions.invoke",
                 _guid.ToString(),
                 "GetDraggable");
@@ -84,7 +86,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<bool> GetEditable()
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapCircleJsFunctions.invoke",
                 _guid.ToString(),
                 "getEditable");
@@ -105,7 +107,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<double> GetRadius()
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<double>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<double>(
                 "googleMapCircleJsFunctions.invoke",
                 _guid.ToString(),
                 "getDraggable");
@@ -117,7 +119,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<bool> GetVisible()
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapCircleJsFunctions.invoke",
                 _guid.ToString(),
                 "getVisible");
@@ -129,7 +131,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="center"></param>
         public Task SetCenter(LatLngLiteral center)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapCircleJsFunctions.invoke",
                 _guid.ToString(),
                 "setCenter",
@@ -142,7 +144,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="draggable"></param>
         public Task SetDraggable(bool draggable)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapCircleJsFunctions.invoke",
                 _guid.ToString(),
                 "setDraggable",
@@ -155,7 +157,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="editable"></param>
         public Task SetEditable(bool editable)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapCircleJsFunctions.invoke",
                 _guid.ToString(),
                 "setEditable",
@@ -170,7 +172,7 @@ namespace GoogleMapsComponents.Maps
         {
             _map = map;
 
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapCircleJsFunctions.setMap",
                 _guid.ToString(),
                 map.DivId);
@@ -178,7 +180,7 @@ namespace GoogleMapsComponents.Maps
 
         public Task SetOptions(CircleOptions options)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapCircleJsFunctions.invoke",
                 _guid.ToString(),
                 "setOptions",
@@ -191,7 +193,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="radius"></param>
         public Task SetRadius(double radius)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapCircleJsFunctions.invoke",
                 _guid.ToString(),
                 "setRadius",
@@ -204,7 +206,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="visible"></param>
         public Task SetVisible(bool visible)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapCircleJsFunctions.invoke",
                 _guid.ToString(),
                 "setVisible",

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.JSInterop;
 using OneOf;
 
 namespace GoogleMapsComponents.Maps
@@ -16,17 +17,18 @@ namespace GoogleMapsComponents.Maps
     {
         private MapComponent _map;
 
-        protected MapData(MapComponent mapComponent)
+        protected MapData(IJSRuntime jsRuntime, MapComponent mapComponent)
+            : base(jsRuntime, new Guid(mapComponent.DivId))
         {
             _map = mapComponent;
-            _guid = new Guid(mapComponent.DivId);
         }
 
         /// <summary>
         /// Creates an empty collection, with the given DataOptions.
         /// </summary>
         /// <param name="options"></param>
-        public MapData(Data.DataOptions options)
+        public MapData(IJSRuntime jsRuntime, Data.DataOptions options)
+            : base(jsRuntime)
         {
 
         }
@@ -55,7 +57,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<Data.Feature> Add(OneOf<Data.Feature, Data.FeatureOptions> feature)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<Data.Feature>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<Data.Feature>(
                 "googleMapDataJsFunctions.invoke",
                 _guid.ToString(),
                 "add",
@@ -81,7 +83,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<bool> Contains(Data.Feature feature)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapDataJsFunctions.invoke",
                 _guid.ToString(),
                 "contains",
@@ -94,7 +96,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<ControlPosition> GetControlPosition()
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<ControlPosition>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<ControlPosition>(
                 "googleMapDataJsFunctions.invoke",
                 _guid.ToString(),
                 "getControlPosition");
@@ -108,7 +110,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<IEnumerable<string>> GetControls()
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<IEnumerable<string>>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<IEnumerable<string>>(
                 "googleMapDataJsFunctions.invoke",
                 _guid.ToString(),
                 "getControls");
@@ -121,7 +123,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<string> GetDrawingMode()
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<string>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<string>(
                 "googleMapDataJsFunctions.invoke",
                 _guid.ToString(),
                 "getDrawingMode");
@@ -135,7 +137,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<Data.Feature> GetFeatureById(OneOf<int, string> id)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<Data.Feature>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<Data.Feature>(
                 "googleMapDataJsFunctions.invoke",
                 _guid.ToString(),
                 "getFeatureById",
@@ -186,7 +188,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task OverrideSytle(Data.Feature feature, Data.StyleOptions style)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
                 "googleMapDataJsFunctions.invoke",
                 _guid.ToString(),
                 "overrideSytle",
@@ -201,7 +203,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task Remove(Data.Feature feature)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
                 "googleMapDataJsFunctions.invoke",
                 _guid.ToString(),
                 "remove",
@@ -216,7 +218,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task RevertStyle(Data.Feature feature = null)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
                 "googleMapDataJsFunctions.invoke",
                 _guid.ToString(),
                 "revertStyle",

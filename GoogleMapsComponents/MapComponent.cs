@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Blazor;
-using Microsoft.AspNetCore.Blazor.Components;
-using Microsoft.JSInterop;
+﻿using Microsoft.JSInterop;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using GoogleMapsComponents.Maps;
@@ -9,10 +7,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 
 namespace GoogleMapsComponents
 {
-    public class MapComponent : BlazorComponent, IDisposable
+    public class MapComponent : ComponentBase, IDisposable
     {
         public string DivId { get; private set; }
 
@@ -20,11 +19,20 @@ namespace GoogleMapsComponents
 
         public MapData Data { get; private set; }
 
+        [Inject]
+        public IJSRuntime JsRuntime { get; protected set; }
+
+        [Inject]
+        public MapFunctionJsInterop JsFuntionInterop { get; protected set; }
+
+        [Inject]
+        public MapEventJsInterop JsEventInterop { get; protected set; }
+
         public async Task InitAsync(string id, MapOptions options)
         {
             DivId = id;
 
-            await MapFunctionJsInterop.Init(id, options);
+            await JsFuntionInterop.Init(id, options);
 
             MapComponentInstances.Add(id, this);
         }
@@ -41,7 +49,7 @@ namespace GoogleMapsComponents
                                 ContractResolver = new CamelCasePropertyNamesContractResolver()
                             });
 
-            await Helper.MyInvokeAsync<bool>(
+            await JsRuntime.MyInvokeAsync<bool>(
                 "googleMapJsFunctions.init",
                 DivId,
                 element,
@@ -53,7 +61,7 @@ namespace GoogleMapsComponents
         public void Dispose()
         {
             ClearListeners();
-            MapFunctionJsInterop.Dispose(DivId);
+            JsFuntionInterop.Dispose(DivId);
             MapComponentInstances.Remove(DivId);
         }
 
@@ -64,7 +72,7 @@ namespace GoogleMapsComponents
         /// <returns></returns>
         public Task FitBounds(LatLngBoundsLiteral bounds)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
+            return JsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
                 "googleMapJsFunctions.invoke",
                 DivId,
                 "fitBounds",
@@ -81,7 +89,7 @@ namespace GoogleMapsComponents
         /// <returns></returns>
         public Task PanBy(int x, int y)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
+            return JsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
                 "googleMapJsFunctions.invoke",
                 DivId,
                 "panBy",
@@ -97,7 +105,7 @@ namespace GoogleMapsComponents
         /// <returns></returns>
         public Task PanTo(LatLngLiteral latLng)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
+            return JsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
                 "googleMapJsFunctions.invoke",
                 DivId,
                 "panTo",
@@ -112,7 +120,7 @@ namespace GoogleMapsComponents
         /// <returns></returns>
         public Task PanToBounds(LatLngBoundsLiteral latLngBounds)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
+            return JsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
                 "googleMapJsFunctions.invoke",
                 DivId,
                 "panToBounds",
@@ -127,7 +135,7 @@ namespace GoogleMapsComponents
         /// <returns></returns>
         public Task<LatLngBoundsLiteral> GetBounds()
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<LatLngBoundsLiteral>(
+            return JsRuntime.InvokeWithDefinedGuidAndMethodAsync<LatLngBoundsLiteral>(
                 "googleMapJsFunctions.invoke",
                 DivId,
                 "getBounds");
@@ -140,7 +148,7 @@ namespace GoogleMapsComponents
         /// <returns></returns>
         public Task<LatLngLiteral> GetCenter()
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<LatLngLiteral>(
+            return JsRuntime.InvokeWithDefinedGuidAndMethodAsync<LatLngLiteral>(
                 "googleMapJsFunctions.invoke",
                 DivId,
                 "getCenter");
@@ -148,7 +156,7 @@ namespace GoogleMapsComponents
 
         public Task SetCenter(LatLngLiteral latLng)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
+            return JsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
                 "googleMapJsFunctions.invoke",
                 DivId,
                 "setCenter",
@@ -162,7 +170,7 @@ namespace GoogleMapsComponents
         /// <returns></returns>
         public Task<int> GetHeading()
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<int>(
+            return JsRuntime.InvokeWithDefinedGuidAndMethodAsync<int>(
                 "googleMapJsFunctions.invoke",
                 DivId,
                 "getHeading");
@@ -175,7 +183,7 @@ namespace GoogleMapsComponents
         /// <returns></returns>
         public Task SetHeading(int heading)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
+            return JsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
                 "googleMapJsFunctions.invoke",
                 DivId,
                 "setHeading",
@@ -184,7 +192,7 @@ namespace GoogleMapsComponents
 
         public async Task<MapTypeId> GetMapTypeId()
         {
-             var mapTypeIdStr = await Helper.InvokeWithDefinedGuidAndMethodAsync<string>(
+             var mapTypeIdStr = await JsRuntime.InvokeWithDefinedGuidAndMethodAsync<string>(
                 "googleMapJsFunctions.invoke",
                 DivId,
                 "getMapTypeId");
@@ -194,7 +202,7 @@ namespace GoogleMapsComponents
 
         public Task SetMapTypeId(MapTypeId mapTypeId)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
+            return JsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
                 "googleMapJsFunctions.invoke",
                 DivId,
                 "setMapTypeId",
@@ -210,7 +218,7 @@ namespace GoogleMapsComponents
         /// <returns></returns>
         public Task<int> GetTilt()
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<int>(
+            return JsRuntime.InvokeWithDefinedGuidAndMethodAsync<int>(
                 "googleMapJsFunctions.invoke",
                 DivId,
                 "getTilt");
@@ -228,7 +236,7 @@ namespace GoogleMapsComponents
         /// <returns></returns>
         public Task SetTilt(int tilt)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
+            return JsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
                 "googleMapJsFunctions.invoke",
                 DivId,
                 "setTilt",
@@ -237,7 +245,7 @@ namespace GoogleMapsComponents
 
         public Task<int> GetZoom()
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<int>(
+            return JsRuntime.InvokeWithDefinedGuidAndMethodAsync<int>(
                 "googleMapJsFunctions.invoke",
                 DivId,
                 "getZoom");
@@ -245,7 +253,7 @@ namespace GoogleMapsComponents
 
         public Task SetZoom(int zoom)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
+            return JsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
                 "googleMapJsFunctions.invoke",
                 DivId,
                 "setZoom",
@@ -254,16 +262,16 @@ namespace GoogleMapsComponents
 
         public async Task<MapEventListener> AddListener(string eventName, Action<MapEventArgs> handler)
         {
-            var guid = await MapEventJsInterop.SubscribeMapEvent(DivId, eventName, (jObject) =>
+            var guid = await JsEventInterop.SubscribeMapEvent(DivId, eventName, (jObject) =>
             {
-                if (jObject != null)
-                {
-                    Debug.WriteLine($"{eventName} triggered.");
-                    //foreach (var val in dict)
-                    //{
-                        Debug.WriteLine(jObject);
-                    //}
-                }
+                //if (jObject != null)
+                //{
+                //    Debug.WriteLine($"{eventName} triggered.");
+                //    //foreach (var val in dict)
+                //    //{
+                //        Debug.WriteLine(jObject);
+                //    //}
+                //}
 
                 switch (eventName)
                 {
@@ -279,12 +287,12 @@ namespace GoogleMapsComponents
                 }
             });
 
-            return new MapEventListener(guid);
+            return new MapEventListener(JsRuntime, JsEventInterop, guid);
         }
 
         public async Task<MapEventListener> AddListenerOnce(string eventName, Action<MapEventArgs> handler)
         {
-            var guid = await MapEventJsInterop.SubscribeMapEventOnce(DivId, eventName, (jObject) =>
+            var guid = await JsEventInterop.SubscribeMapEventOnce(DivId, eventName, (jObject) =>
             {
                 //if (jObject != null)
                 //{
@@ -314,19 +322,19 @@ namespace GoogleMapsComponents
                 }
             });
 
-            return new MapEventListener(guid);
+            return new MapEventListener(JsRuntime, JsEventInterop, guid);
         }
 
         public Task ClearListeners()
         {
-           return JSRuntime.Current.InvokeAsync<bool>(
+           return JsRuntime.InvokeAsync<bool>(
                 "googleMapEventJsFunctions.clearInstanceListeners",
                 DivId);
         }
 
         public Task clearListeners(string eventName)
         {
-            return JSRuntime.Current.InvokeAsync<bool>(
+            return JsRuntime.InvokeAsync<bool>(
                 "googleMapEventJsFunctions.clearListeners",
                 DivId,
                 eventName);

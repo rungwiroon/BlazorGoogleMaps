@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.JSInterop;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,20 +15,21 @@ namespace GoogleMapsComponents.Maps
         /// A polygon may contain one or more paths, where each path consists of an array of LatLngs.
         /// </summary>
         /// <param name="opts"></param>
-        public Polygon(PolygonOptions opts = null)
+        public Polygon(IJSRuntime jsRuntime, PolygonOptions opts = null)
+            : base(jsRuntime)
         {
             if(opts != null)
             {
                 _map = opts.Map;
 
-                Helper.InvokeWithDefinedGuidAsync<bool>(
+                _jsRuntime.InvokeWithDefinedGuidAsync<bool>(
                     "googleMapPolygonJsFunctions.init",
                     _guid.ToString(),
                     opts);
             }
             else
             {
-                Helper.InvokeWithDefinedGuidAsync<bool>(
+                _jsRuntime.InvokeWithDefinedGuidAsync<bool>(
                     "googleMapPolygonJsFunctions.init",
                     _guid.ToString());
             }
@@ -35,7 +37,7 @@ namespace GoogleMapsComponents.Maps
 
         public override void Dispose()
         {
-            Helper.InvokeWithDefinedGuidAsync<bool>(
+            _jsRuntime.InvokeWithDefinedGuidAsync<bool>(
                 "googleMapPolygonJsFunctions.dispose",
                 _guid.ToString());
         }
@@ -46,7 +48,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<bool> GetDraggble()
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapPolygonJsFunctions.invoke",
                 _guid.ToString(),
                 "getDraggble");
@@ -58,7 +60,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<bool> GetEditable()
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapPolygonJsFunctions.invoke",
                 _guid.ToString(),
                 "getEditable");
@@ -79,7 +81,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<IEnumerable<LatLngLiteral>> GetPath()
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<IEnumerable<LatLngLiteral>>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<IEnumerable<LatLngLiteral>>(
                 "googleMapPolygonJsFunctions.invoke",
                 _guid.ToString(),
                 "getPath");
@@ -91,7 +93,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<IEnumerable<IEnumerable<LatLngLiteral>>> GetPaths()
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<IEnumerable<IEnumerable<LatLngLiteral>>>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<IEnumerable<IEnumerable<LatLngLiteral>>>(
                 "googleMapPolygonJsFunctions.invoke",
                 _guid.ToString(),
                 "getPaths");
@@ -103,7 +105,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<bool> GetVisible()
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapPolygonJsFunctions.invoke",
                 _guid.ToString(),
                 "getVisible");
@@ -116,7 +118,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="draggble"></param>
         public Task SetDraggble(bool draggble)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapPolygonJsFunctions.invoke",
                 _guid.ToString(),
                 "setDraggble",
@@ -129,7 +131,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="editable"></param>
         public Task SetEditable(bool editable)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapPolygonJsFunctions.invoke",
                 _guid.ToString(),
                 "setEditable",
@@ -144,7 +146,7 @@ namespace GoogleMapsComponents.Maps
         {
             _map = map;
 
-            return Helper.InvokeWithDefinedGuidAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAsync<bool>(
                 "googleMapPolygonJsFunctions.setMap",
                 _guid.ToString(),
                 map.DivId);
@@ -156,7 +158,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="options"></param>
         public Task SetOptions(PolygonOptions options)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapPolygonJsFunctions.invoke",
                 _guid.ToString(),
                 "setOptions",
@@ -169,7 +171,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="path"></param>
         public Task SetPath(IEnumerable<LatLngLiteral> path)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapPolygonJsFunctions.invoke",
                 _guid.ToString(),
                 "setPath",
@@ -182,7 +184,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="paths"></param>
         public Task SetPaths(IEnumerable<IEnumerable<LatLngLiteral>> paths)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapPolygonJsFunctions.invoke",
                 _guid.ToString(),
                 "setPaths",
@@ -195,7 +197,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="visible"></param>
         public Task SetVisible(bool visible)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapPolygonJsFunctions.invoke",
                 _guid.ToString(),
                 "setVisible",

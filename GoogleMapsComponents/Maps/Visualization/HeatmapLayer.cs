@@ -19,20 +19,21 @@ namespace GoogleMapsComponents.Maps.Visualization
         /// Creates a new instance of HeatmapLayer.
         /// </summary>
         /// <param name="opts"></param>
-        public HeatmapLayer(HeatmapLayerOptions opts = null)
+        public HeatmapLayer(IJSRuntime jsRuntime, HeatmapLayerOptions opts = null)
+            : base(jsRuntime) 
         {
             if (opts != null)
             {
                 _map = opts.Map;
 
-                Helper.InvokeWithDefinedGuidAsync<bool>(
+                _jsRuntime.InvokeWithDefinedGuidAsync<bool>(
                     $"{jsObjectName}.init",
                     _guid.ToString(),
                     opts);
             }
             else
             {
-                Helper.InvokeWithDefinedGuidAsync<bool>(
+                _jsRuntime.InvokeWithDefinedGuidAsync<bool>(
                     $"{jsObjectName}.init",
                     _guid.ToString());
             }
@@ -40,7 +41,7 @@ namespace GoogleMapsComponents.Maps.Visualization
 
         public override void Dispose()
         {
-            JSRuntime.Current.InvokeAsync<bool>(
+            _jsRuntime.InvokeAsync<bool>(
                     $"{jsObjectName}.dispose",
                     _guid.ToString());
         }
@@ -51,7 +52,7 @@ namespace GoogleMapsComponents.Maps.Visualization
         /// <returns></returns>
         public Task<IEnumerable<object>> GetData()
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<IEnumerable<object>>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<IEnumerable<object>>(
                 $"{jsObjectName}.invoke",
                 _guid.ToString(),
                 "getData");
@@ -68,7 +69,7 @@ namespace GoogleMapsComponents.Maps.Visualization
         /// <param name="data"></param>
         public Task SetData(IEnumerable<LatLngLiteral> data)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
                 $"{jsObjectName}.invoke",
                 _guid.ToString(),
                 "setData",
@@ -81,7 +82,7 @@ namespace GoogleMapsComponents.Maps.Visualization
         /// <param name="data"></param>
         public Task SetData(IEnumerable<WeightedLocation> data)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
                 $"{jsObjectName}.invoke",
                 _guid.ToString(),
                 "setData",
@@ -96,7 +97,7 @@ namespace GoogleMapsComponents.Maps.Visualization
         {
             _map = map;
 
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
                 $"{jsObjectName}.setMap",
                 _guid.ToString(),
                 map.DivId);
@@ -104,7 +105,7 @@ namespace GoogleMapsComponents.Maps.Visualization
 
         public Task SetOptions(HeatmapLayerOptions options)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<object>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
                 $"{jsObjectName}.invoke",
                 _guid.ToString(),
                 "setOptions",

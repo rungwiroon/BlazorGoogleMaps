@@ -7,16 +7,23 @@ using System.Threading.Tasks;
 
 namespace GoogleMapsComponents
 {
-    public static class MapEventJsInterop
+    public class MapEventJsInterop
     {
         private static readonly Dictionary<Guid, Action<JObject>> registeredEvents 
             = new Dictionary<Guid, Action<JObject>>();
 
-        public static async Task<Guid> SubscribeMapEvent(string mapId, string eventName, Action<JObject> action)
+        private IJSRuntime _jsRuntime;
+
+        public MapEventJsInterop(IJSRuntime jsRuntime)
+        {
+            _jsRuntime = jsRuntime;
+        }
+
+        public async Task<Guid> SubscribeMapEvent(string mapId, string eventName, Action<JObject> action)
         {
             var guid = Guid.NewGuid();
 
-            await JSRuntime.Current.InvokeAsync<bool>(
+            await _jsRuntime.InvokeAsync<bool>(
                 "googleMapEventJsFunctions.addListener",
                 guid,
                 mapId,
@@ -27,11 +34,11 @@ namespace GoogleMapsComponents
             return guid;
         }
 
-        public static async Task<Guid> SubscribeMapEventOnce(string mapId, string eventName, Action<JObject> action)
+        public async Task<Guid> SubscribeMapEventOnce(string mapId, string eventName, Action<JObject> action)
         {
             var guid = Guid.NewGuid();
 
-            await JSRuntime.Current.InvokeAsync<bool>(
+            await _jsRuntime.InvokeAsync<bool>(
                 "googleMapEventJsFunctions.addListenerOnce",
                 guid,
                 mapId,
@@ -42,9 +49,9 @@ namespace GoogleMapsComponents
             return guid;
         }
 
-        public static async Task UnsubscribeMapEvent(string guid)
+        public async Task UnsubscribeMapEvent(string guid)
         {
-            await Helper.MyInvokeAsync<bool>(
+            await _jsRuntime.MyInvokeAsync<bool>(
                 "googleMapEventJsFunctions.removeListener",
                 guid);
         }
@@ -66,14 +73,14 @@ namespace GoogleMapsComponents
             return Task.FromResult(true);
         }
 
-        public static async Task<Guid> SubscribeMarkerEvent(
+        public async Task<Guid> SubscribeMarkerEvent(
             string markerGuid, 
             string eventName, 
             Action<JObject> action)
         {
             var eventGuid = Guid.NewGuid();
 
-            await JSRuntime.Current.InvokeAsync<bool>(
+            await _jsRuntime.InvokeAsync<bool>(
                 "googleMapEventJsFunctions.addMarkerListener",
                 eventGuid,
                 markerGuid,

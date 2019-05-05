@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.JSInterop;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,20 +17,21 @@ namespace GoogleMapsComponents.Maps
         /// Create a rectangle using the passed RectangleOptions, which specify the bounds and style.
         /// </summary>
         /// <param name="opts"></param>
-        public Rectangle(RectangleOptions opts = null)
+        public Rectangle(IJSRuntime jsRuntime, RectangleOptions opts = null)
+            : base(jsRuntime)
         {
-            if(opts != null)
+            if (opts != null)
             {
                 _map = opts.Map;
 
-                Helper.InvokeWithDefinedGuidAsync<bool>(
+                _jsRuntime.InvokeWithDefinedGuidAsync<bool>(
                     "googleMapRectangleJsFunctions.init",
                     _guid.ToString(),
                     opts);
             }
             else
             {
-                Helper.InvokeWithDefinedGuidAsync<bool>(
+                _jsRuntime.InvokeWithDefinedGuidAsync<bool>(
                     "googleMapRectangleJsFunctions.init",
                     _guid.ToString());
             }
@@ -37,7 +39,7 @@ namespace GoogleMapsComponents.Maps
 
         public override void Dispose()
         {
-            Helper.InvokeWithDefinedGuidAsync<bool>(
+            _jsRuntime.InvokeWithDefinedGuidAsync<bool>(
                     "googleMapRectangleJsFunctions.dispose",
                     _guid.ToString());
         }
@@ -48,7 +50,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<LatLngBoundsLiteral> GetBounds()
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<LatLngBoundsLiteral>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<LatLngBoundsLiteral>(
                 "googleMapRectangleJsFunctions.invoke",
                 _guid.ToString(),
                 "getBounds");
@@ -60,7 +62,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<bool> GetDraggable()
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapRectangleJsFunctions.invoke",
                 _guid.ToString(),
                 "getDraggable");
@@ -72,7 +74,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<bool> GetEditable()
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapRectangleJsFunctions.invoke",
                 _guid.ToString(),
                 "getEditable");
@@ -93,7 +95,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<bool> GetVisible()
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapRectangleJsFunctions.invoke",
                 _guid.ToString(),
                 "getVisible");
@@ -105,7 +107,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="bounds"></param>
         public Task SetBounds(LatLngBoundsLiteral bounds)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapRectangleJsFunctions.invoke",
                 _guid.ToString(),
                 "setBounds",
@@ -118,7 +120,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="draggble"></param>
         public Task SetDraggable(bool draggble)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapRectangleJsFunctions.invoke",
                 _guid.ToString(),
                 "setDraggable",
@@ -131,7 +133,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="editable"></param>
         public Task SetEditable(bool editable)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapRectangleJsFunctions.invoke",
                 _guid.ToString(),
                 "setEditable",
@@ -146,7 +148,7 @@ namespace GoogleMapsComponents.Maps
         {
             _map = map;
 
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapRectangleJsFunctions.setMap",
                 _guid.ToString(),
                 map.DivId);
@@ -154,7 +156,7 @@ namespace GoogleMapsComponents.Maps
 
         public Task SetOptions(RectangleOptions options)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapRectangleJsFunctions.invoke",
                 _guid.ToString(),
                 "setOptions",
@@ -167,7 +169,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="visible"></param>
         public Task SetVisible(bool visible)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapRectangleJsFunctions.invoke",
                 _guid.ToString(),
                 "setVisible",

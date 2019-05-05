@@ -28,7 +28,7 @@ window.googleMapEventJsFunctions = {
 
             await DotNet.invokeMethodAsync('GoogleMapsComponents', 'NotifyMapEvent', guid, jsonString)
                 .then(_ => {
-                    console.log("Remove event args : " + eventArgsId);
+                    //console.log("Remove event args : " + eventArgsId);
                     delete window._blazorMapEventArgs[eventArgsId];
                 });
         });
@@ -95,7 +95,7 @@ window.googleMapEventJsFunctions = {
     },
 
     invokeEventArgsFunction: function (id, functionName) {
-        console.log("Invoke event function : " + functionName + "for event id : " + id);
+        //console.log("Invoke event function : " + functionName + "for event id : " + id);
         //console.dir(window._blazorMapEventArgs);
         //console.dir(window._blazorMapEventArgs[id]);
 

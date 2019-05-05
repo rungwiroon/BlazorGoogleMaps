@@ -9,10 +9,8 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// An overlay that looks like a bubble and is often connected to a marker.
     /// </summary>
-    public class InfoWindow : IDisposable
+    public class InfoWindow : JsObjectRef
     {
-        public Guid Guid { get; private set; }
-
         /// <summary>
         /// Creates an info window with the given options. 
         /// An InfoWindow can be placed on a map at a particular position or above a marker, depending on what is specified in the options. 
@@ -21,19 +19,18 @@ namespace GoogleMapsComponents.Maps
         /// The user can click the close button on the InfoWindow to remove it from the map, or the developer can call close() for the same effect.
         /// </summary>
         /// <param name="opts"></param>
-        public InfoWindow(InfoWindowOptions opts)
+        public InfoWindow(IJSRuntime jsRuntime, InfoWindowOptions opts)
+            : base(jsRuntime)
         {
-            Guid = Guid.NewGuid();
-
-            Helper.InvokeWithDefinedGuidAsync<bool>(
+            _jsRuntime.InvokeWithDefinedGuidAsync<bool>(
                 "googleMapInfoWindowJsFunctions.init",
                 Guid.ToString(),
                 opts);
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
-            JSRuntime.Current.InvokeAsync<bool>(
+            _jsRuntime.InvokeAsync<bool>(
                 "googleMapInfoWindowJsFunctions.dispose",
                 Guid.ToString());
         }
@@ -43,7 +40,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public Task Close()
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapInfoWindowJsFunctions.invoke",
                 Guid.ToString(),
                 "close");
@@ -51,7 +48,7 @@ namespace GoogleMapsComponents.Maps
 
         public Task<string> GetContent()
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<string>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<string>(
                 "googleMapInfoWindowJsFunctions.invoke",
                 Guid.ToString(),
                 "getContent");
@@ -59,7 +56,7 @@ namespace GoogleMapsComponents.Maps
 
         public Task<LatLngLiteral> GetPosition()
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<LatLngLiteral>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<LatLngLiteral>(
                 "googleMapInfoWindowJsFunctions.invoke",
                 Guid.ToString(),
                 "getPosition");
@@ -67,7 +64,7 @@ namespace GoogleMapsComponents.Maps
 
         public Task<int> GetZIndex()
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<int>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<int>(
                 "googleMapInfoWindowJsFunctions.invoke",
                 Guid.ToString(),
                 "getZIndex");
@@ -80,7 +77,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="anchor"></param>
         public Task Open(MapComponent map, object anchor = null)
         {
-            return Helper.InvokeWithDefinedGuidAsync<bool>(
+            return _jsRuntime.InvokeWithDefinedGuidAsync<bool>(
                 "googleMapInfoWindowJsFunctions.open",
                 Guid.ToString(),
                 map.DivId);
@@ -88,7 +85,7 @@ namespace GoogleMapsComponents.Maps
 
         public Task SetContent(string content)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<int>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<int>(
                 "googleMapInfoWindowJsFunctions.invoke",
                 Guid.ToString(),
                 "setContent",
@@ -97,7 +94,7 @@ namespace GoogleMapsComponents.Maps
 
         public Task SetPosition(LatLngLiteral position)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<int>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<int>(
                 "googleMapInfoWindowJsFunctions.invoke",
                 Guid.ToString(),
                 "setPosition",
@@ -106,7 +103,7 @@ namespace GoogleMapsComponents.Maps
 
         public Task SetZIndex(int zIndex)
         {
-            return Helper.InvokeWithDefinedGuidAndMethodAsync<int>(
+            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<int>(
                 "googleMapInfoWindowJsFunctions.invoke",
                 Guid.ToString(),
                 "setZIndex",

@@ -11,7 +11,10 @@ namespace GoogleMapsComponents
 {
     internal static class Helper
     {
-        internal static Task<TRes> MyInvokeAsync<TRes>(string identifier, params object[] args)
+        internal static Task<TRes> MyInvokeAsync<TRes>(
+            this IJSRuntime jsRuntime,
+            string identifier, 
+            params object[] args)
         {
             var argsJson = JsonConvert.SerializeObject(args,
                             Formatting.None,
@@ -21,11 +24,14 @@ namespace GoogleMapsComponents
                                 ContractResolver = new CamelCasePropertyNamesContractResolver()
                             });
 
-            return JSRuntime.Current.InvokeAsync<TRes>(identifier, argsJson);
+            return jsRuntime.InvokeAsync<TRes>(identifier, argsJson);
         }
 
         internal static Task<TRes> InvokeWithDefinedGuidAsync<TRes>(
-            string identifier, string guid, params object[] args)
+            this IJSRuntime jsRuntime,
+            string identifier, 
+            string guid, 
+            params object[] args)
         {
             var argsJson = JsonConvert.SerializeObject(args,
                             Formatting.None,
@@ -35,11 +41,15 @@ namespace GoogleMapsComponents
                                 ContractResolver = new CamelCasePropertyNamesContractResolver()
                             });
 
-            return JSRuntime.Current.InvokeAsync<TRes>(identifier, guid, argsJson);
+            return jsRuntime.InvokeAsync<TRes>(identifier, guid, argsJson);
         }
 
         internal static Task<TRes> InvokeWithDefinedGuidAndMethodAsync<TRes>(
-            string identifier, string guid, string method, params object[] args)
+            this IJSRuntime jsRuntime,
+            string identifier, 
+            string guid, 
+            string method, 
+            params object[] args)
         {
             var argsJson = JsonConvert.SerializeObject(args,
                             Formatting.None,
@@ -49,7 +59,7 @@ namespace GoogleMapsComponents
                                 ContractResolver = new CamelCasePropertyNamesContractResolver()
                             });
 
-            return JSRuntime.Current.InvokeAsync<TRes>(identifier, guid, method, argsJson);
+            return jsRuntime.InvokeAsync<TRes>(identifier, guid, method, argsJson);
         }
 
         internal static T ToEnum<T>(string str)

@@ -19,16 +19,17 @@ namespace GoogleMapsComponents.Maps
         /// <summary>
         /// Creates a new instance of a DirectionsService that sends directions queries to Google servers.
         /// </summary>
-        public DirectionsService()
+        public DirectionsService(IJSRuntime jsRuntime)
+            : base(jsRuntime)
         {
-            JSRuntime.Current.InvokeAsync<object>(
+            _jsRuntime.InvokeAsync<object>(
                 $"{jsObjectName}.init",
                 _guid.ToString());
         }
 
         public override void Dispose()
         {
-            JSRuntime.Current.InvokeAsync<bool>(
+            _jsRuntime.InvokeAsync<bool>(
                     $"{jsObjectName}.dispose",
                     _guid.ToString());
         }
@@ -40,7 +41,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="callback"></param>
         public async Task<DirectionResponse> Route(DirectionsRequest request)
         {
-            var json = await Helper.InvokeWithDefinedGuidAsync<string>(
+            var json = await _jsRuntime.InvokeWithDefinedGuidAsync<string>(
                     $"{jsObjectName}.route",
                     _guid.ToString(),
                     request);
