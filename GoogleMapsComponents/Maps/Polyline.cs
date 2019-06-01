@@ -142,7 +142,7 @@ namespace GoogleMapsComponents.Maps
             return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
                 "googleMapPolylineJsFunctions.setMap",
                 _guid.ToString(),
-                map.DivId);
+                map?.DivId);
         }
 
         public Task SetOptions(PolylineOptions options)

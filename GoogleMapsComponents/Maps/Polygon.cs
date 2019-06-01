@@ -18,7 +18,7 @@ namespace GoogleMapsComponents.Maps
         public Polygon(IJSRuntime jsRuntime, PolygonOptions opts = null)
             : base(jsRuntime)
         {
-            if(opts != null)
+            if (opts != null)
             {
                 _map = opts.Map;
 
@@ -149,7 +149,7 @@ namespace GoogleMapsComponents.Maps
             return _jsRuntime.InvokeWithDefinedGuidAsync<bool>(
                 "googleMapPolygonJsFunctions.setMap",
                 _guid.ToString(),
-                map.DivId);
+                map?.DivId);
         }
 
         /// <summary>
