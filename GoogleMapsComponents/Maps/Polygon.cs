@@ -16,7 +16,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="opts"></param>
         public Polygon(IJSRuntime jsRuntime, PolygonOptions opts = null)
-            : base(jsRuntime)
+            : base(jsRuntime, "google.maps.Polygon", opts)
         {
             if (opts != null)
             {

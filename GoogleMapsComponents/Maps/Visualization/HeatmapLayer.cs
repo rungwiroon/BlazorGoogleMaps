@@ -20,7 +20,7 @@ namespace GoogleMapsComponents.Maps.Visualization
         /// </summary>
         /// <param name="opts"></param>
         public HeatmapLayer(IJSRuntime jsRuntime, HeatmapLayerOptions opts = null)
-            : base(jsRuntime) 
+            : base(jsRuntime, "google.maps.visualization.HeatmapLayer", opts) 
         {
             if (opts != null)
             {

@@ -37,6 +37,7 @@
     <None Remove="content\infoWindowJsInterop.js" />
     <None Remove="content\mapEventJsInterop.js" />
     <None Remove="content\markerJsInterop.js" />
+    <None Remove="content\objectManager.js" />
     <None Remove="content\polygonJsInterop.js" />
     <None Remove="content\polylineJsInterop.js" />
     <None Remove="content\rectangleJsInterop.js" />

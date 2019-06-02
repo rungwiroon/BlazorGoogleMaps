@@ -1,4 +1,5 @@
-﻿using Microsoft.JSInterop;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
@@ -16,15 +17,44 @@ namespace GoogleMapsComponents
             string identifier, 
             params object[] args)
         {
-            var argsJson = JsonConvert.SerializeObject(args,
-                            Formatting.None,
-                            new JsonSerializerSettings
-                            {
-                                NullValueHandling = NullValueHandling.Ignore,
-                                ContractResolver = new CamelCasePropertyNamesContractResolver()
-                            });
+            var jsFriendlyArgs = args
+                .Select(arg =>
+                {
+                    var argType = arg.GetType();
 
-            return jsRuntime.InvokeAsync<TRes>(identifier, argsJson);
+                    if(argType == typeof(ElementRef)
+                        || argType == typeof(string)
+                        || argType == typeof(int)
+                        || argType == typeof(long)
+                        || argType == typeof(double)
+                        || argType == typeof(float)
+                        || argType == typeof(decimal)
+                        || argType == typeof(DateTime))
+                    {
+                        return arg;
+                    }
+                    else if(argType == typeof(Action)
+                        || argType == typeof(Action<>)
+                        || argType == typeof(Action<,>)
+                        || argType == typeof(Action<,,>)
+                        || argType == typeof(Action<,,,>))
+                    {
+                        return new DotNetObjectRef(arg);
+                    }
+                    else
+                    {
+                        return JsonConvert.SerializeObject(
+                                arg,
+                                Formatting.None,
+                                new JsonSerializerSettings
+                                {
+                                    NullValueHandling = NullValueHandling.Ignore,
+                                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                                });
+                    }
+                });
+
+            return jsRuntime.InvokeAsync<TRes>(identifier, jsFriendlyArgs);
         }
 
         internal static Task<TRes> InvokeWithDefinedGuidAsync<TRes>(

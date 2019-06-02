@@ -19,7 +19,7 @@ namespace GoogleMapsComponents.Maps.Drawing
         /// Creates a DrawingManager that allows users to draw overlays on the map, and switch between the type of overlay to be drawn with a drawing control.
         /// </summary>
         public DrawingManager(IJSRuntime jsRuntime, DrawingManagerOptions opt = null)
-            : base(jsRuntime)
+            : base(jsRuntime, "google.maps.drawing.DrawingManager", opt)
         {
             if (opt?.Map != null)
                 _map = opt.Map;

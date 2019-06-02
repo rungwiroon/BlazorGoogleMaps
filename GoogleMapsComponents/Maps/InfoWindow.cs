@@ -20,7 +20,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="opts"></param>
         public InfoWindow(IJSRuntime jsRuntime, InfoWindowOptions opts)
-            : base(jsRuntime)
+            : base(jsRuntime, "google.maps.InfoWindow", opts)
         {
             _jsRuntime.InvokeWithDefinedGuidAsync<bool>(
                 "googleMapInfoWindowJsFunctions.init",

@@ -17,7 +17,7 @@ namespace GoogleMapsComponents.Maps
         /// Create a polyline using the passed PolylineOptions, which specify both the path of the polyline and the stroke style to use when drawing the polyline.
         /// </summary>
         public Polyline(IJSRuntime jsRuntime, PolylineOptions opts = null)
-            : base(jsRuntime)
+            : base(jsRuntime, "google.maps.Polyline", opts)
         {
             if (opts != null)
             {

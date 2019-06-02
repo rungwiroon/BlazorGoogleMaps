@@ -3,7 +3,7 @@
 
 @inherits MapComponent
 
-<div id="@Id" style="height: 500px"></div>
+<div ref="@Element" id="@Id" style="height: 500px"></div>
 
 @functions {
     [Parameter]
@@ -15,14 +15,16 @@
     [Parameter]
     private Action OnAfterInit { get; set; }
 
+    private ElementRef Element { get; set; }
+
     protected override void OnInit()
     {
 
     }
 
-    protected async override Task OnAfterRenderAsync()
+    protected override void OnAfterRender()
     {
-        await InitAsync(Id, Options);
+        Init(Element, Options);
 
         //Debug.WriteLine("Init finished");
 

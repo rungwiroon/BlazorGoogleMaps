@@ -9,8 +9,8 @@ namespace GoogleMapsComponents
     {
         public static IServiceCollection AddBlazorGoogleMaps(this IServiceCollection service)
         {
-            service.AddSingleton<MapFunctionJsInterop>();
             service.AddSingleton<MapEventJsInterop>();
+
             return service;
         }
     }

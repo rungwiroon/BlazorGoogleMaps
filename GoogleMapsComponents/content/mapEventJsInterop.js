@@ -1,6 +1,7 @@
 ﻿
 window.googleMapEventJsFunctions = {
-    addMapEvent: function (guid, mapId, eventFunctionName, eventName) {
+
+    addMapEvent2: function (guid, mapId, eventFunctionName, eventName, dotNetHandler) {
         console.log("Add event for map : " + mapId + ", event : " + guid + ", " + eventName);
 
         if (window._blazorGoogleMaps === null || window._blazorGoogleMaps === 'undefined') {
@@ -14,34 +15,24 @@ window.googleMapEventJsFunctions = {
             //console.log("Event " + eventName + " fired.");
             //console.dir(args);
 
-            let timestamp = + new Date();
-            let eventArgsId = guid + "_" + timestamp;
-
-            window._blazorMapEventArgs = window._blazorMapEventArgs || [];
-
-            if (args !== null && typeof args !== 'undefined') {
-                args["id"] = eventArgsId;
-                window._blazorMapEventArgs[eventArgsId] = args;
-            }
+            //window._blazorMapEventArgs = window._blazorMapEventArgs || [];
 
             let jsonString = JSON.stringify(args);
 
-            await DotNet.invokeMethodAsync('GoogleMapsComponents', 'NotifyMapEvent', guid, jsonString)
-                .then(_ => {
-                    //console.log("Remove event args : " + eventArgsId);
-                    delete window._blazorMapEventArgs[eventArgsId];
-                });
+            await dotNetHandler.invokeMethodAsync('Invoke', jsonString);
         });
 
         return true;
     },
 
-    addListener: function (guid, mapId, eventName) {
-        return window.googleMapEventJsFunctions.addMapEvent(guid, mapId, "addListener", eventName);
+    addListener2: function (guid, mapId, eventName, dotNetInstance) {
+        return window.googleMapEventJsFunctions.addMapEvent2(
+            guid, mapId, "addListener", eventName, dotNetInstance);
     },
 
-    addListenerOnce: function (guid, mapId, eventName) {
-        return window.googleMapEventJsFunctions.addMapEvent(guid, mapId, "addListenerOnce", eventName);
+    addListenerOnce2: function (guid, mapId, eventName, dotNetInstance) {
+        return window.googleMapEventJsFunctions.addMapEvent2(
+            guid, mapId, "addListenerOnce", eventName, dotNetInstance);
     },
 
     removeListener: function (guid) {

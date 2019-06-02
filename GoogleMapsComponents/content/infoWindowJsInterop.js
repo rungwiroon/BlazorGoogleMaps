@@ -49,4 +49,4 @@ window.googleMapInfoWindowJsFunctions = {
 
         return true;
     }
-}
+};

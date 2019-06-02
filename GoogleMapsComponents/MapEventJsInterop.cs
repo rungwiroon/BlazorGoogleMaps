@@ -9,8 +9,8 @@ namespace GoogleMapsComponents
 {
     public class MapEventJsInterop
     {
-        private static readonly Dictionary<Guid, Action<JObject>> registeredEvents 
-            = new Dictionary<Guid, Action<JObject>>();
+        //private static readonly Dictionary<Guid, Action<JObject>> registeredEvents 
+        //    = new Dictionary<Guid, Action<JObject>>();
 
         private IJSRuntime _jsRuntime;
 
@@ -21,32 +21,33 @@ namespace GoogleMapsComponents
 
         public async Task<Guid> SubscribeMapEvent(string mapId, string eventName, Action<JObject> action)
         {
-            var guid = Guid.NewGuid();
+            //var guid = Guid.NewGuid();
+            var handler = new JsCallableAction(_jsRuntime, action);
 
             await _jsRuntime.InvokeAsync<bool>(
-                "googleMapEventJsFunctions.addListener",
-                guid,
+                "googleMapEventJsFunctions.addListener2",
+                handler.Guid,
                 mapId,
-                eventName);
+                eventName,
+                new DotNetObjectRef(handler));
 
-            registeredEvents.Add(guid, action);
-
-            return guid;
+            return handler.Guid;
         }
 
-        public async Task<Guid> SubscribeMapEventOnce(string mapId, string eventName, Action<JObject> action)
+        public async Task<Guid> SubscribeMapEventOnce(
+            string mapId, string eventName, Action<JObject> action)
         {
-            var guid = Guid.NewGuid();
+            //var guid = Guid.NewGuid();
+            var handler = new JsCallableAction(_jsRuntime, action);
 
             await _jsRuntime.InvokeAsync<bool>(
-                "googleMapEventJsFunctions.addListenerOnce",
-                guid,
+                "googleMapEventJsFunctions.addListenerOnce2",
+                handler.Guid,
                 mapId,
-                eventName);
+                eventName,
+                new DotNetObjectRef(handler));
 
-            registeredEvents.Add(guid, action);
-
-            return guid;
+            return handler.Guid;
         }
 
         public async Task UnsubscribeMapEvent(string guid)
@@ -54,23 +55,6 @@ namespace GoogleMapsComponents
             await _jsRuntime.MyInvokeAsync<bool>(
                 "googleMapEventJsFunctions.removeListener",
                 guid);
-        }
-
-        [JSInvokable]
-        public static Task NotifyMapEvent(string guidString, string eventArgs)
-        {
-            var guid = new Guid(guidString);
-
-            if (eventArgs == null)
-            {
-                registeredEvents[guid].Invoke(null);
-            }
-            else
-            {
-                registeredEvents[guid].Invoke(JObject.Parse(eventArgs));
-            }
-
-            return Task.FromResult(true);
         }
 
         public async Task<Guid> SubscribeMarkerEvent(
@@ -86,7 +70,7 @@ namespace GoogleMapsComponents
                 markerGuid,
                 eventName);
 
-            registeredEvents.Add(eventGuid, action);
+            //registeredEvents.Add(eventGuid, action);
 
             return eventGuid;
         }
@@ -102,7 +86,7 @@ namespace GoogleMapsComponents
         public static Task NotifyMarkerEvent(string guidString, string eventArgs)
         {
             var guid = new Guid(guidString);
-            registeredEvents[guid].Invoke(JObject.Parse(eventArgs));
+            //registeredEvents[guid].Invoke(JObject.Parse(eventArgs));
 
             return Task.FromResult(true);
         }

@@ -18,7 +18,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="opts"></param>
         public Circle(IJSRuntime jsRuntime, CircleOptions opts = null)
-            : base(jsRuntime)
+            : base(jsRuntime, "google.maps.Circle", opts)
         {
             if (opts != null)
             {

@@ -28,7 +28,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="options"></param>
         public MapData(IJSRuntime jsRuntime, Data.DataOptions options)
-            : base(jsRuntime)
+            : base(jsRuntime, "google.maps.Data", options)
         {
 
         }

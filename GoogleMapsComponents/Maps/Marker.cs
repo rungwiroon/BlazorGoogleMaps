@@ -16,7 +16,7 @@ namespace GoogleMapsComponents.Maps
             IJSRuntime jsRuntime,
             MapEventJsInterop jsEventInterop,
             MarkerOptions opt = null)
-            : base(jsRuntime)
+            : base(jsRuntime, "google.maps.Marker", opt)
         {
             if (opt?.Map != null)
                 _map = opt.Map;

@@ -18,7 +18,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="opts"></param>
         public Rectangle(IJSRuntime jsRuntime, RectangleOptions opts = null)
-            : base(jsRuntime)
+            : base(jsRuntime, "google.maps.Rectangle", opts)
         {
             if (opts != null)
             {
