@@ -22,9 +22,9 @@
 
     }
 
-    protected override void OnAfterRender()
+    protected override async Task OnAfterRenderAsync()
     {
-        Init(Element, Options);
+        await InitAsync(Element, Options);
 
         //Debug.WriteLine("Init finished");
 

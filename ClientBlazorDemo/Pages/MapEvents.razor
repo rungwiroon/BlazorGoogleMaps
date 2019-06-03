@@ -44,7 +44,7 @@
 
         await map1.AddListener("center_changed", OnCenterChanged);
 
-        await map1.AddListener("click", OnClick);
+        await map1.AddListener<MouseEventArgs>("click", OnClick);
 
         await map1.AddListener("dblclick", OnDoubleClick);
 
@@ -77,7 +77,7 @@
         await map1.AddListener("zoom_changed", OnZoomChanged);
     }
 
-    private void OnBoundsChanged(MapEventArgs _)
+    private void OnBoundsChanged()
     {
         //Console.WriteLine("Bounds changed.");
 
@@ -87,7 +87,7 @@
         StateHasChanged();
     }
 
-    private void OnCenterChanged(MapEventArgs _)
+    private void OnCenterChanged()
     {
         //Console.WriteLine("Center changed.");
 
@@ -97,7 +97,7 @@
         StateHasChanged();
     }
 
-    private void OnClick(MapEventArgs e)
+    private void OnClick(MouseEventArgs e)
     {
         //Console.WriteLine("Click.");
 
@@ -113,7 +113,7 @@
         }
     }
 
-    private void OnDoubleClick(MapEventArgs _)
+    private void OnDoubleClick()
     {
         //Console.WriteLine("Double click.");
 
@@ -123,7 +123,7 @@
         StateHasChanged();
     }
 
-    private void OnDrag(MapEventArgs _)
+    private void OnDrag()
     {
         //Console.WriteLine("Drag.");
 
@@ -133,7 +133,7 @@
         StateHasChanged();
     }
 
-    private void OnDragEnd(MapEventArgs _)
+    private void OnDragEnd()
     {
         //Console.WriteLine("Drag end.");
 
@@ -142,7 +142,7 @@
         StateHasChanged();
     }
 
-    private void OnDragStart(MapEventArgs _)
+    private void OnDragStart()
     {
         //Console.WriteLine("Drag start.");
 
@@ -152,7 +152,7 @@
         StateHasChanged();
     }
 
-    private void OnHeadingChanged(MapEventArgs _)
+    private void OnHeadingChanged()
     {
         //Console.WriteLine("Heading changed.");
 
@@ -162,7 +162,7 @@
         StateHasChanged();
     }
 
-    private void OnIdle(MapEventArgs _)
+    private void OnIdle()
     {
         //Console.WriteLine("Idle.");
 
@@ -172,7 +172,7 @@
         StateHasChanged();
     }
 
-    private void OnMapTypeIdChanged(MapEventArgs _)
+    private void OnMapTypeIdChanged()
     {
         //Console.WriteLine("OnMapTypeIdChanged.");
 
@@ -182,7 +182,7 @@
         StateHasChanged();
     }
 
-    private void OnMouseMove(MapEventArgs _)
+    private void OnMouseMove()
     {
         //Console.WriteLine("OnMouseMove.");
 
@@ -192,7 +192,7 @@
         StateHasChanged();
     }
 
-    private void OnMouseOut(MapEventArgs _)
+    private void OnMouseOut()
     {
         //Console.WriteLine("OnMouseOut.");
 
@@ -202,7 +202,7 @@
         StateHasChanged();
     }
 
-    private void OnMouseOver(MapEventArgs _)
+    private void OnMouseOver()
     {
         //Console.WriteLine("OnMouseOver.");
 
@@ -211,7 +211,7 @@
         StateHasChanged();
     }
 
-    private void OnProjectionChanged(MapEventArgs _)
+    private void OnProjectionChanged()
     {
         //Console.WriteLine("OnProjectionChanged.");
 
@@ -220,7 +220,7 @@
         StateHasChanged();
     }
 
-    private void OnRightClick(MapEventArgs _)
+    private void OnRightClick()
     {
         //Console.WriteLine("OnRightClick.");
 
@@ -229,7 +229,7 @@
         StateHasChanged();
     }
 
-    private void OnTilesLoaded(MapEventArgs _)
+    private void OnTilesLoaded()
     {
         //Console.WriteLine("OnTilesLoaded.");
 
@@ -238,7 +238,7 @@
         StateHasChanged();
     }
 
-    private void OnTiltChanged(MapEventArgs _)
+    private void OnTiltChanged()
     {
         //Console.WriteLine("OnTiltChanged.");
 
@@ -247,7 +247,7 @@
         StateHasChanged();
     }
 
-    private void OnZoomChanged(MapEventArgs _)
+    private void OnZoomChanged()
     {
         //Console.WriteLine("OnZoomChanged.");
 

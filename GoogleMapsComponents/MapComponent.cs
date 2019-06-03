@@ -22,14 +22,14 @@ namespace GoogleMapsComponents
         [Inject]
         public IJSRuntime JsRuntime { get; protected set; }
 
-        [Inject]
-        public MapEventJsInterop JsEventInterop { get; protected set; }
+        //[Inject]
+        //public MapEventJsInterop JsEventInterop { get; protected set; }
 
         private JsObjectRef _jsObjectRef;
 
-        public void Init(ElementRef element, MapOptions options)
+        public async Task InitAsync(ElementRef element, MapOptions options)
         {
-            _jsObjectRef = new JsObjectRef(
+            _jsObjectRef = await JsObjectRef.CreateAsync(
                 JsRuntime,
                 "google.maps.Map",
                 element,
@@ -42,7 +42,7 @@ namespace GoogleMapsComponents
 
         public void Dispose()
         {
-            ClearListeners();
+            //ClearListeners();
             _jsObjectRef.Dispose();
             MapComponentInstances.Remove(DivId);
         }
@@ -187,89 +187,113 @@ namespace GoogleMapsComponents
             return _jsObjectRef.InvokeAsync<object>("setZoom", zoom);
         }
 
-        public async Task<MapEventListener> AddListener(string eventName, Action<MapEventArgs> handler)
+        public async Task<MapEventListener> AddListener(string eventName, Action handler)
         {
-            var guid = await JsEventInterop.SubscribeMapEvent(DivId, eventName, (jObject) =>
-            {
-                //if (jObject != null)
-                //{
-                //    Debug.WriteLine($"{eventName} triggered.");
-                //    //foreach (var val in dict)
-                //    //{
-                //        Debug.WriteLine(jObject);
-                //    //}
-                //}
+            var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
+                "addListener", eventName, handler);
 
-                switch (eventName)
-                {
-                    case "click":
-                        var e = jObject.ToObject<MouseEventArgs>();
-                        //Debug.WriteLine($"Click lat lng : {e.LatLng}");
-                        handler(e);
-                        break;
-
-                    default:
-                        handler(MapEventArgs.Empty);
-                        break;
-                }
-            });
-
-            return new MapEventListener(JsRuntime, JsEventInterop, guid);
+            return new MapEventListener(listenerRef);
         }
 
-        public async Task<MapEventListener> AddListenerOnce(string eventName, Action<MapEventArgs> handler)
-        { 
-            var guid = await JsEventInterop.SubscribeMapEventOnce(DivId, eventName, (jObject) =>
-            {
-                //if (jObject != null)
-                //{
-                    //Debug.WriteLine($"{eventName} triggered.");
-                    //foreach (var val in dict)
-                    //{
-                    //Debug.WriteLine(jObject);
-                    //}
-                //}
-
-                switch (eventName)
-                {
-                    case "click":
-                    case "dblclick":
-                    case "mousemove":
-                    case "mouseout":
-                    case "mouseover":
-                    case "rightclick":
-                        var e = jObject.ToObject<MouseEventArgs>();
-                        //Debug.WriteLine($"Click lat lng : {e.LatLng}");
-                        handler(e);
-                        break;
-
-                    default:
-                        handler(MapEventArgs.Empty);
-                        break;
-                }
-            });
-
-            return new MapEventListener(JsRuntime, JsEventInterop, guid);
-        }
-
-        public Task ClearListeners()
+        public async Task<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
         {
-           return JsRuntime.InvokeAsync<bool>(
-                "googleMapEventJsFunctions.clearInstanceListeners",
-                DivId);
+            var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
+                "addListener", eventName, handler);
+
+            return new MapEventListener(listenerRef);
+
+            //var guid = await JsEventInterop.SubscribeMapEvent(DivId, eventName, (jObject) =>
+            //{
+            //    //if (jObject != null)
+            //    //{
+            //    //    Debug.WriteLine($"{eventName} triggered.");
+            //    //    //foreach (var val in dict)
+            //    //    //{
+            //    //        Debug.WriteLine(jObject);
+            //    //    //}
+            //    //}
+
+            //    switch (eventName)
+            //    {
+            //        case "click":
+            //            var e = jObject.ToObject<MouseEventArgs>();
+            //            //Debug.WriteLine($"Click lat lng : {e.LatLng}");
+            //            handler(e);
+            //            break;
+
+            //        default:
+            //            handler(MapEventArgs.Empty);
+            //            break;
+            //    }
+            //});
+
+            //return new MapEventListener(JsRuntime, JsEventInterop, guid);
         }
 
-        public Task clearListeners(string eventName)
-        {
-            return JsRuntime.InvokeAsync<bool>(
-                "googleMapEventJsFunctions.clearListeners",
-                DivId,
-                eventName);
-        }
+        //public async Task<MapEventListener> AddListenerOnce(string eventName, Action handler)
+        //{
+        //    var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
+        //        "addListenerOnce", eventName, handler);
 
-        public Task RemoveListener(MapEventListener listerner)
-        {
-            return listerner.Remove();
-        }
+        //    return new MapEventListener(listenerRef);
+        //}
+
+        //public async Task<MapEventListener> AddListenerOnce<T>(string eventName, Action<T> handler)
+        //{
+        //    var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
+        //        "addListenerOnce", eventName, handler);
+
+        //    return new MapEventListener(listenerRef);
+
+        //    //var guid = await JsEventInterop.SubscribeMapEventOnce(DivId, eventName, (jObject) =>
+        //    //{
+        //    //    //if (jObject != null)
+        //    //    //{
+        //    //        //Debug.WriteLine($"{eventName} triggered.");
+        //    //        //foreach (var val in dict)
+        //    //        //{
+        //    //        //Debug.WriteLine(jObject);
+        //    //        //}
+        //    //    //}
+
+        //    //    switch (eventName)
+        //    //    {
+        //    //        case "click":
+        //    //        case "dblclick":
+        //    //        case "mousemove":
+        //    //        case "mouseout":
+        //    //        case "mouseover":
+        //    //        case "rightclick":
+        //    //            var e = jObject.ToObject<MouseEventArgs>();
+        //    //            //Debug.WriteLine($"Click lat lng : {e.LatLng}");
+        //    //            handler(e);
+        //    //            break;
+
+        //    //        default:
+        //    //            handler(MapEventArgs.Empty);
+        //    //            break;
+        //    //    }
+        //    //});
+
+        //    //return new MapEventListener(JsRuntime, JsEventInterop, guid);
+        //}
+
+        //public Task ClearInstanceListeners()
+        //{
+        //   return _jsObjectRef.InvokeAsync<object>(
+        //        "clearInstanceListeners");
+        //}
+
+        //public Task clearListeners(string eventName)
+        //{
+        //    return _jsObjectRef.InvokeAsync<bool>(
+        //        "clearListeners",
+        //        eventName);
+        //}
+
+        //public Task RemoveListener(MapEventListener listerner)
+        //{
+        //    return listerner.Remove();
+        //}
     }
 }

@@ -12,26 +12,34 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// A service for computing directions between two or more places.
     /// </summary>
-    public class DirectionsService : JsObjectRef
+    public class DirectionsService : IDisposable
     {
         private readonly string jsObjectName = "googleMapDirectionServiceFunctions";
+        private readonly JsObjectRef _jsObjectRef;
 
         /// <summary>
         /// Creates a new instance of a DirectionsService that sends directions queries to Google servers.
         /// </summary>
-        public DirectionsService(IJSRuntime jsRuntime)
-            : base(jsRuntime)
+        public async static Task<DirectionsService> CreateAsync(IJSRuntime jsRuntime)
         {
-            _jsRuntime.InvokeAsync<object>(
-                $"{jsObjectName}.init",
-                _guid.ToString());
+            var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.DirectionsService");
+
+            var obj = new DirectionsService(jsObjectRef);
+
+            return obj;
         }
 
-        public override void Dispose()
+        /// <summary>
+        /// Creates a new instance of a DirectionsService that sends directions queries to Google servers.
+        /// </summary>
+        private DirectionsService(JsObjectRef jsObjectRef)
         {
-            _jsRuntime.InvokeAsync<bool>(
-                    $"{jsObjectName}.dispose",
-                    _guid.ToString());
+            _jsObjectRef = jsObjectRef;
+        }
+
+        public void Dispose()
+        {
+            _jsObjectRef.Dispose();
         }
 
         /// <summary>
@@ -41,9 +49,8 @@ namespace GoogleMapsComponents.Maps
         /// <param name="callback"></param>
         public async Task<DirectionResponse> Route(DirectionsRequest request)
         {
-            var json = await _jsRuntime.InvokeWithDefinedGuidAsync<string>(
+            var json = await _jsObjectRef.InvokeAsync<string>(
                     $"{jsObjectName}.route",
-                    _guid.ToString(),
                     request);
 
             var directionResponse = JsonConvert.DeserializeObject<DirectionResponse>(json);

@@ -9,8 +9,10 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// An overlay that looks like a bubble and is often connected to a marker.
     /// </summary>
-    public class InfoWindow : JsObjectRef
+    public class InfoWindow : IDisposable
     {
+        private readonly JsObjectRef _jsObjectRef;
+
         /// <summary>
         /// Creates an info window with the given options. 
         /// An InfoWindow can be placed on a map at a particular position or above a marker, depending on what is specified in the options. 
@@ -19,20 +21,31 @@ namespace GoogleMapsComponents.Maps
         /// The user can click the close button on the InfoWindow to remove it from the map, or the developer can call close() for the same effect.
         /// </summary>
         /// <param name="opts"></param>
-        public InfoWindow(IJSRuntime jsRuntime, InfoWindowOptions opts)
-            : base(jsRuntime, "google.maps.InfoWindow", opts)
+        public async static Task<InfoWindow> CreateAsync(IJSRuntime jsRuntime, InfoWindowOptions opts = null)
         {
-            _jsRuntime.InvokeWithDefinedGuidAsync<bool>(
-                "googleMapInfoWindowJsFunctions.init",
-                Guid.ToString(),
-                opts);
+            var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.InfoWindow", opts);
+
+            var obj = new InfoWindow(jsObjectRef, opts);
+
+            return obj;
         }
 
-        public override void Dispose()
+        /// <summary>
+        /// Creates an info window with the given options. 
+        /// An InfoWindow can be placed on a map at a particular position or above a marker, depending on what is specified in the options. 
+        /// Unless auto-pan is disabled, an InfoWindow will pan the map to make itself visible when it is opened. 
+        /// After constructing an InfoWindow, you must call open to display it on the map. 
+        /// The user can click the close button on the InfoWindow to remove it from the map, or the developer can call close() for the same effect.
+        /// </summary>
+        /// <param name="opts"></param>
+        private InfoWindow(JsObjectRef jsObjectRef, InfoWindowOptions opts)
         {
-            _jsRuntime.InvokeAsync<bool>(
-                "googleMapInfoWindowJsFunctions.dispose",
-                Guid.ToString());
+            _jsObjectRef = jsObjectRef;
+        }
+
+        public void Dispose()
+        {
+            _jsObjectRef.Dispose();
         }
 
         /// <summary>
@@ -40,34 +53,22 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public Task Close()
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
-                "googleMapInfoWindowJsFunctions.invoke",
-                Guid.ToString(),
-                "close");
+            return _jsObjectRef.InvokeAsync<bool>("close");
         }
 
         public Task<string> GetContent()
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<string>(
-                "googleMapInfoWindowJsFunctions.invoke",
-                Guid.ToString(),
-                "getContent");
+            return _jsObjectRef.InvokeAsync<string>("getContent");
         }
 
         public Task<LatLngLiteral> GetPosition()
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<LatLngLiteral>(
-                "googleMapInfoWindowJsFunctions.invoke",
-                Guid.ToString(),
-                "getPosition");
+            return _jsObjectRef.InvokeAsync<LatLngLiteral>("getPosition");
         }
 
         public Task<int> GetZIndex()
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<int>(
-                "googleMapInfoWindowJsFunctions.invoke",
-                Guid.ToString(),
-                "getZIndex");
+            return _jsObjectRef.InvokeAsync<int>("getZIndex");
         }
 
         /// <summary>
@@ -77,35 +78,24 @@ namespace GoogleMapsComponents.Maps
         /// <param name="anchor"></param>
         public Task Open(MapComponent map, object anchor = null)
         {
-            return _jsRuntime.InvokeWithDefinedGuidAsync<bool>(
-                "googleMapInfoWindowJsFunctions.open",
-                Guid.ToString(),
-                map.DivId);
+            return _jsObjectRef.InvokeAsync<bool>(map.DivId);
         }
 
         public Task SetContent(string content)
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<int>(
-                "googleMapInfoWindowJsFunctions.invoke",
-                Guid.ToString(),
-                "setContent",
-                content);
+            return _jsObjectRef.InvokeAsync<object>(content);
         }
 
         public Task SetPosition(LatLngLiteral position)
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<int>(
-                "googleMapInfoWindowJsFunctions.invoke",
-                Guid.ToString(),
+            return _jsObjectRef.InvokeAsync<object>(
                 "setPosition",
                 position);
         }
 
         public Task SetZIndex(int zIndex)
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<int>(
-                "googleMapInfoWindowJsFunctions.invoke",
-                Guid.ToString(),
+            return _jsObjectRef.InvokeAsync<object>(
                 "setZIndex",
                 zIndex);
         }

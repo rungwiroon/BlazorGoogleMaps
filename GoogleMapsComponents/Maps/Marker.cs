@@ -7,93 +7,76 @@ using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
 {
-    public class Marker : JsObjectRef
+    public class Marker : IDisposable
     {
         private MapComponent _map;
-        private readonly MapEventJsInterop _jsEventInterop;
 
-        public Marker(
-            IJSRuntime jsRuntime,
-            MapEventJsInterop jsEventInterop,
-            MarkerOptions opt = null)
-            : base(jsRuntime, "google.maps.Marker", opt)
+        private readonly JsObjectRef _jsObjectRef;
+        //private readonly MapEventJsInterop _jsEventInterop;
+
+        public async static Task<Marker> CreateAsync(IJSRuntime jsRuntime, MarkerOptions opts = null)
         {
+            var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Marker", opts);
+
+            var obj = new Marker(jsObjectRef, opts);
+
+            return obj;
+        }
+
+        private Marker(
+            JsObjectRef jsObjectRef,
+            //MapEventJsInterop jsEventInterop,
+            MarkerOptions opt = null)
+        {
+            _jsObjectRef = jsObjectRef;
+
             if (opt?.Map != null)
                 _map = opt.Map;
 
-            _jsRuntime.MyInvokeAsync<bool>(
-                "googleMapMarkerJsFunctions.init",
-                _guid,
-                opt);
-
-            _jsEventInterop = jsEventInterop;
+            //_jsEventInterop = jsEventInterop;
         }
 
-        public override void Dispose()
+        public void Dispose()
         {
-            _jsRuntime.InvokeAsync<bool>(
-                "googleMapMarkerJsFunctions.dispose",
-                _guid);
+            _jsObjectRef.Dispose();
         }
 
         public async Task<Animation> GetAnimation()
         {
-            var animation = await _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<string>(
-                "googleMapMarkerJsFunctions.invoke",
-                _guid.ToString(),
+            var animation = await _jsObjectRef.InvokeAsync<string>(
                 "getAnimation");
 
             return Helper.ToEnum<Animation>(animation);
         }
 
-        public async Task<bool> GetClickable()
+        public Task<bool> GetClickable()
         {
-            var result = await _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
-                "googleMapMarkerJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<bool>(
                 "getClickable");
-
-            return result;
         }
 
-        public async Task<string> GetCursor()
+        public Task<string> GetCursor()
         {
-            var result = await _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<string>(
-                "googleMapMarkerJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<string>(
                 "getCursor");
-
-            return result;
         }
 
-        public async Task<bool> GetDraggable()
+        public Task<bool> GetDraggable()
         {
-            var result = await _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
-                "googleMapMarkerJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<bool>(
                 "getDraggable");
-
-            return result;
         }
 
-        public async Task<object> GetIcon()
+        public Task<object> GetIcon()
         {
-            var result = await _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
-                "googleMapMarkerJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<object>(
                 "getIcon");
-
-            return result;
         }
 
-        public async Task<MarkerLabel> GetLabel()
+        public Task<MarkerLabel> GetLabel()
         {
-            var result = await _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<MarkerLabel>(
-                "googleMapMarkerJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<MarkerLabel>(
                 "getLabel");
-
-            return result;
         }
 
         public MapComponent GetMap()
@@ -101,54 +84,34 @@ namespace GoogleMapsComponents.Maps
             return _map;
         }
 
-        public async Task<LatLngLiteral> GetPosition()
+        public Task<LatLngLiteral> GetPosition()
         {
-            var result = await _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<LatLngLiteral>(
-                "googleMapMarkerJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<LatLngLiteral>(
                 "getPosition");
-
-            return result;
         }
 
-        public async Task<MarkerShape> GetShape()
+        public Task<MarkerShape> GetShape()
         {
-            var result = await _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<MarkerShape>(
-                "googleMapMarkerJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<MarkerShape>(
                 "getShape");
-
-            return result;
         }
 
-        public async Task<string> GetTitle()
+        public Task<string> GetTitle()
         {
-            var result = await _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<string>(
-                "googleMapMarkerJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<string>(
                 "getTitle");
-
-            return result;
         }
 
-        public async Task<bool> GetVisible()
+        public Task<bool> GetVisible()
         {
-            var result = await _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
-                "googleMapMarkerJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<bool>(
                 "getVisible");
-
-            return result;
         }
 
-        public async Task<int> GetZIndex()
+        public Task<int> GetZIndex()
         {
-            var result = await _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<int>(
-                "googleMapMarkerJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<int>(
                 "getZIndex");
-
-            return result;
         }
 
         /// <summary>
@@ -158,65 +121,51 @@ namespace GoogleMapsComponents.Maps
         /// Passing in null will cause any animation to stop.
         /// </summary>
         /// <param name="animation"></param>
-        public async Task SetAnimation(Animation animation)
+        public Task SetAnimation(Animation animation)
         {
-            await _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
-                "googleMapMarkerJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<object>(
                 "setAnimation",
                 animation);
         }
 
-        public async Task SetClickable(bool flag)
+        public Task SetClickable(bool flag)
         {
-            await _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
-                "googleMapMarkerJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<object>(
                 "setClickable",
                 flag);
         }
 
-        public async Task SetCursor(string cursor)
+        public Task SetCursor(string cursor)
         {
-            await _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
-                "googleMapMarkerJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<object>(
                 "setCursor",
                 cursor);
         }
 
-        public async Task SetDraggable(bool flag)
+        public Task SetDraggable(bool flag)
         {
-            await _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
-                "googleMapMarkerJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<object>(
                 "setDraggable",
                 flag);
         }
 
-        public async Task SetIcon(string icon)
+        public Task SetIcon(string icon)
         {
-            var result = await _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
-                "googleMapMarkerJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<object>(
                 "setIcon",
                 icon);
         }
 
-        public async Task SetIcon(Icon icon)
+        public Task SetIcon(Icon icon)
         {
-            await _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
-                "googleMapMarkerJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<object>(
                 "setIcon",
                 icon);
         }
 
-        public async Task SetLabel(Symbol label)
+        public Task SetLabel(Symbol label)
         {
-            var result = await _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
-                "googleMapMarkerJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<object>(
                 "setLabel",
                 label);
         }
@@ -228,106 +177,104 @@ namespace GoogleMapsComponents.Maps
         /// <param name="map"></param>
         public async Task SetMap(MapComponent map)
         {
-            await _jsRuntime.MyInvokeAsync<bool>(
+            await _jsObjectRef.InvokeAsync<bool>(
                    "googleMapMarkerJsFunctions.setMap",
-                   _guid,
                    map?.DivId);
 
             _map = map;
         }
 
-        public async Task SetOpacity(float opacity)
+        public Task SetOpacity(float opacity)
         {
-            await _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
-                "googleMapMarkerJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<object>(
                 "setOpacity",
                 opacity);
         }
 
-        public async Task SetOptions(MarkerOptions options)
+        public Task SetOptions(MarkerOptions options)
         {
-            await _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
-                "googleMapMarkerJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<object>(
                 "setOptions",
                 options);
         }
 
-        public async Task SetPosition(LatLngLiteral latLng)
+        public Task SetPosition(LatLngLiteral latLng)
         {
-            await _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
-                "googleMapMarkerJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<object>(
                 "setPosition",
                 latLng);
         }
 
-        public async Task SetShape(MarkerShape shape)
+        public Task SetShape(MarkerShape shape)
         {
-            await _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
-                "googleMapMarkerJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<object>(
                 "setShape",
                 shape);
         }
 
-        public async Task SetTiltle(string title)
+        public Task SetTiltle(string title)
         {
-            await _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
-                "googleMapMarkerJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<object>(
                 "setTiltle",
                 title);
         }
 
-        public async Task SetVisible(bool visible)
+        public Task SetVisible(bool visible)
         {
-            await _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
-                "googleMapMarkerJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<object>(
                 "setVisible",
                 visible);
         }
 
-        public async Task SetZIndex(int zIndex)
+        public Task SetZIndex(int zIndex)
         {
-            await _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
-                "googleMapMarkerJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<object>(
                 "setZIndex",
                 zIndex);
         }
 
-        public async Task<MapEventListener> AddListener(string eventName, Action<MapEventArgs> handler)
+        public async Task<MapEventListener> AddListener(string eventName, Action handler)
         {
-            var guid = await _jsEventInterop.SubscribeMarkerEvent(_guid.ToString(), eventName, (dict) =>
-            {
-                //if(dict != null)
-                //{
-                //    Debug.WriteLine($"{eventName} triggered.");
-                //    foreach (var val in dict)
-                //    {
-                //        Debug.WriteLine(val);
-                //    }
-                //}
+            var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
+                "addListener", eventName, handler);
 
-                switch(eventName)
-                {
-                    //case "click":
-                    //    handler(new MouseEventArgs((string)dict["id"])
-                    //    {
+            return new MapEventListener(listenerRef);
+        }
 
-                    //    });
-                    //    break;
+        public async Task<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
+        {
+            var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
+                "addListener", eventName, handler);
 
-                    default:
-                        handler(MapEventArgs.Empty);
-                        break;
-                }
-            });
+            return new MapEventListener(listenerRef);
 
-            return new MapEventListener(_jsRuntime, _jsEventInterop, guid);
+            //var guid = await _jsEventInterop.SubscribeMarkerEvent(_guid.ToString(), eventName, (dict) =>
+            //{
+            //    //if(dict != null)
+            //    //{
+            //    //    Debug.WriteLine($"{eventName} triggered.");
+            //    //    foreach (var val in dict)
+            //    //    {
+            //    //        Debug.WriteLine(val);
+            //    //    }
+            //    //}
+
+            //    switch(eventName)
+            //    {
+            //        //case "click":
+            //        //    handler(new MouseEventArgs((string)dict["id"])
+            //        //    {
+
+            //        //    });
+            //        //    break;
+
+            //        default:
+            //            handler(MapEventArgs.Empty);
+            //            break;
+            //    }
+            //});
+
+            //return new MapEventListener(_jsRuntime, _jsEventInterop, guid);
         }
     }
 }

@@ -38,7 +38,7 @@
 
     private async Task AddMarker()
     {
-        var marker = new Marker(map1.JsRuntime, map1.JsEventInterop, new MarkerOptions()
+        var marker = await Marker.CreateAsync(map1.JsRuntime, new MarkerOptions()
         {
             Position = await map1.GetCenter(),
             Map = map1,
@@ -47,13 +47,12 @@
 
         markers.Add(marker);
 
-        await marker.AddListener("click", e =>
+        await marker.AddListener<MouseEventArgs>("click", e =>
         {
             _events.Add("click");
             StateHasChanged();
 
-            var mouseEvent = e as MouseEventArgs;
-            mouseEvent.Stop();
+            e.Stop();
         });
     }
 

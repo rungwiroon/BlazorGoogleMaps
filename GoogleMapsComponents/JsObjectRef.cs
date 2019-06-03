@@ -6,20 +6,19 @@ using System.Threading.Tasks;
 
 namespace GoogleMapsComponents
 {
-    public class JsObjectRef : IDisposable
+    internal class JsObjectRef : IDisposable
     {
         protected readonly Guid _guid;
+        protected readonly IJSRuntime _jsRuntime;
 
-        internal Guid Guid
+        public Guid Guid
         {
             get { return _guid; }
         }
 
-        protected readonly IJSRuntime _jsRuntime;
-
-        public JsObjectRef(IJSRuntime jsRuntime)
+        public IJSRuntime JSRuntime
         {
-            _jsRuntime = jsRuntime;
+            get { return _jsRuntime; }
         }
 
         public JsObjectRef(
@@ -30,34 +29,64 @@ namespace GoogleMapsComponents
             _guid = guid;
         }
 
-        public JsObjectRef(
+        public static Task<JsObjectRef> CreateAsync(
             IJSRuntime jsRuntime,
-            string functionName,
+            string constructorFunctionName,
             params object[] args)
-            : this(jsRuntime, Guid.NewGuid(), functionName, args)
         {
-            
+            return CreateAsync(jsRuntime, Guid.NewGuid(), constructorFunctionName, args);
         }
 
-        public JsObjectRef(
-            IJSRuntime jsRuntime, 
-            Guid guid, 
+        public async static Task<JsObjectRef> CreateAsync(
+            IJSRuntime jsRuntime,
+            Guid guid,
             string functionName,
             params object[] args)
         {
-            _jsRuntime = jsRuntime;
-            _guid = guid;
+            var jsObjectRef = new JsObjectRef(jsRuntime, guid);
 
-            _jsRuntime.MyInvokeAsync<object>(
+            await jsRuntime.MyInvokeAsync<object>(
                 "googleMapsObjectManager.createObject",
-                new object[] { guid, functionName }
+                new object[] { guid.ToString(), functionName }
                     .Concat(args).ToArray()
             );
+
+            return jsObjectRef;
         }
+
+        //public JsObjectRef(
+        //    IJSRuntime jsRuntime,
+        //    string functionName,
+        //    params object[] args)
+        //    : this(jsRuntime, Guid.NewGuid(), functionName, args)
+        //{
+            
+        //}
+
+        //public JsObjectRef(
+        //    IJSRuntime jsRuntime, 
+        //    Guid guid, 
+        //    string functionName,
+        //    params object[] args)
+        //{
+        //    _jsRuntime = jsRuntime;
+        //    _guid = guid;
+
+        //    _jsRuntime.MyInvokeAsync<object>(
+        //        "googleMapsObjectManager.createObject",
+        //        new object[] { guid, functionName }
+        //            .Concat(args).ToArray()
+        //    );
+        //}
 
         public virtual void Dispose()
         {
-            _jsRuntime.InvokeAsync<object>(
+            DisposeAsync();
+        }
+
+        public Task DisposeAsync()
+        {
+            return _jsRuntime.InvokeAsync<object>(
                 "googleMapsObjectManager.dispose",
                 _guid.ToString()
             );
@@ -70,6 +99,17 @@ namespace GoogleMapsComponents
                 new object[] { _guid.ToString(), functionName }
                     .Concat(args).ToArray()
             );
+        }
+
+        public async Task<JsObjectRef> InvokeWithReturnedObjectRefAsync(string functionName, params object[] args)
+        {
+            var guid = await _jsRuntime.MyInvokeAsync<string>(
+                "googleMapsObjectManager.invokeWithReturnedObjectRef",
+                new object[] { _guid.ToString(), functionName }
+                    .Concat(args).ToArray()
+            );
+
+            return new JsObjectRef(_jsRuntime, new Guid(guid));
         }
 
         public override bool Equals(object obj)

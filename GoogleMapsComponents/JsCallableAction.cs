@@ -6,28 +6,38 @@ using System.Text;
 
 namespace GoogleMapsComponents
 {
-    public class JsCallableAction : JsObjectRef
+    public class JsCallableAction
     {
-        private Action<JObject> _action;
+        private readonly Action _action;
 
-        public JsCallableAction(IJSRuntime jsRuntime, Action<JObject> action)
-            : base(jsRuntime)
+        public JsCallableAction(Action action)
         {
             _action = action;
         }
 
-        public override void Dispose()
-        {
-
-        }
-
         [JSInvokable]
-        public void Invoke(string arg)
+        public void Invoke()
         {
-            if (string.IsNullOrEmpty(arg))
-                _action(null);
-            else
-                _action(JObject.Parse(arg));
+            _action();
         }
     }
+
+    //public class JsCallableActionJObject
+    //{
+    //    private readonly Action<JObject> _action;
+
+    //    public JsCallableActionJObject(Action<JObject> action)
+    //    {
+    //        _action = action;
+    //    }
+
+    //    [JSInvokable]
+    //    public void Invoke(string arg)
+    //    {
+    //        if (string.IsNullOrEmpty(arg))
+    //            _action(null);
+    //        else
+    //            _action(JObject.Parse(arg));
+    //    }
+    //}
 }

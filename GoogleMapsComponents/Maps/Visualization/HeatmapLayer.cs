@@ -9,41 +9,40 @@ namespace GoogleMapsComponents.Maps.Visualization
     /// <summary>
     /// A layer that provides a client-side rendered heatmap, depicting the intensity of data at geographical points.
     /// </summary>
-    public class HeatmapLayer : JsObjectRef
+    public class HeatmapLayer : IDisposable
     {
         private MapComponent _map;
 
         private readonly string jsObjectName = "googleMapHeatmapLayerJsFunctions";
 
+        private readonly JsObjectRef _jsObjectRef;
+
         /// <summary>
         /// Creates a new instance of HeatmapLayer.
         /// </summary>
         /// <param name="opts"></param>
-        public HeatmapLayer(IJSRuntime jsRuntime, HeatmapLayerOptions opts = null)
-            : base(jsRuntime, "google.maps.visualization.HeatmapLayer", opts) 
+        public async static Task<HeatmapLayer> CreateAsync(IJSRuntime jsRuntime, HeatmapLayerOptions opts = null)
         {
-            if (opts != null)
-            {
-                _map = opts.Map;
+            var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.visualization.HeatmapLayer", opts);
 
-                _jsRuntime.InvokeWithDefinedGuidAsync<bool>(
-                    $"{jsObjectName}.init",
-                    _guid.ToString(),
-                    opts);
-            }
-            else
-            {
-                _jsRuntime.InvokeWithDefinedGuidAsync<bool>(
-                    $"{jsObjectName}.init",
-                    _guid.ToString());
-            }
+            var obj = new HeatmapLayer(jsObjectRef, opts);
+
+            return obj;
         }
 
-        public override void Dispose()
+        /// <summary>
+        /// Creates a new instance of HeatmapLayer.
+        /// </summary>
+        /// <param name="opts"></param>
+        private HeatmapLayer(JsObjectRef jsObjectRef, HeatmapLayerOptions opts = null)
         {
-            _jsRuntime.InvokeAsync<bool>(
-                    $"{jsObjectName}.dispose",
-                    _guid.ToString());
+            _jsObjectRef = jsObjectRef;
+            _map = opts?.Map;
+        }
+
+        public void Dispose()
+        {
+            _jsObjectRef.Dispose();
         }
 
         /// <summary>
@@ -52,9 +51,7 @@ namespace GoogleMapsComponents.Maps.Visualization
         /// <returns></returns>
         public Task<IEnumerable<object>> GetData()
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<IEnumerable<object>>(
-                $"{jsObjectName}.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<IEnumerable<object>>(
                 "getData");
         }
 
@@ -69,9 +66,7 @@ namespace GoogleMapsComponents.Maps.Visualization
         /// <param name="data"></param>
         public Task SetData(IEnumerable<LatLngLiteral> data)
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
-                $"{jsObjectName}.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<object>(
                 "setData",
                 data);
         }
@@ -82,9 +77,7 @@ namespace GoogleMapsComponents.Maps.Visualization
         /// <param name="data"></param>
         public Task SetData(IEnumerable<WeightedLocation> data)
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
-                $"{jsObjectName}.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<object>(
                 "setData",
                 data);
         }
@@ -97,17 +90,14 @@ namespace GoogleMapsComponents.Maps.Visualization
         {
             _map = map;
 
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
+            return _jsObjectRef.InvokeAsync<object>(
                 $"{jsObjectName}.setMap",
-                _guid.ToString(),
-                map.DivId);
+                map?.DivId);
         }
 
         public Task SetOptions(HeatmapLayerOptions options)
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
-                $"{jsObjectName}.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<object>(
                 "setOptions",
                 options);
         }

@@ -12,6 +12,14 @@ namespace GoogleMapsComponents
 {
     internal static class Helper
     {
+        internal static Task MyInvokeAsync(
+            this IJSRuntime jsRuntime,
+            string identifier,
+            params object[] args)
+        {
+            return jsRuntime.MyInvokeAsync<object>(identifier, args);
+        }
+
         internal static Task<TRes> MyInvokeAsync<TRes>(
             this IJSRuntime jsRuntime,
             string identifier, 
@@ -33,11 +41,19 @@ namespace GoogleMapsComponents
                     {
                         return arg;
                     }
-                    else if(argType == typeof(Action)
-                        || argType == typeof(Action<>)
+                    else if(argType == typeof(Action))
+                    {
+                        return new DotNetObjectRef(
+                            new JsCallableAction((Action)arg));
+                    }
+                    else if(argType == typeof(Action<>)
                         || argType == typeof(Action<,>)
                         || argType == typeof(Action<,,>)
                         || argType == typeof(Action<,,,>))
+                    {
+                        return new DotNetObjectRef(arg);
+                    }
+                    else if(argType == typeof(JsCallableAction))
                     {
                         return new DotNetObjectRef(arg);
                     }

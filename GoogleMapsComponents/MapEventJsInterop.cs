@@ -19,36 +19,36 @@ namespace GoogleMapsComponents
             _jsRuntime = jsRuntime;
         }
 
-        public async Task<Guid> SubscribeMapEvent(string mapId, string eventName, Action<JObject> action)
-        {
-            //var guid = Guid.NewGuid();
-            var handler = new JsCallableAction(_jsRuntime, action);
+        //public async Task<Guid> SubscribeMapEvent(string mapId, string eventName, Action<JObject> action)
+        //{
+        //    //var guid = Guid.NewGuid();
+        //    var handler = new JsCallableAction(_jsRuntime, action);
 
-            await _jsRuntime.InvokeAsync<bool>(
-                "googleMapEventJsFunctions.addListener2",
-                handler.Guid,
-                mapId,
-                eventName,
-                new DotNetObjectRef(handler));
+        //    await _jsRuntime.InvokeAsync<bool>(
+        //        "googleMapEventJsFunctions.addListener2",
+        //        handler.Guid,
+        //        mapId,
+        //        eventName,
+        //        new DotNetObjectRef(handler));
 
-            return handler.Guid;
-        }
+        //    return handler.Guid;
+        //}
 
-        public async Task<Guid> SubscribeMapEventOnce(
-            string mapId, string eventName, Action<JObject> action)
-        {
-            //var guid = Guid.NewGuid();
-            var handler = new JsCallableAction(_jsRuntime, action);
+        //public async Task<Guid> SubscribeMapEventOnce(
+        //    string mapId, string eventName, Action<JObject> action)
+        //{
+        //    //var guid = Guid.NewGuid();
+        //    var handler = new JsCallableAction(_jsRuntime, action);
 
-            await _jsRuntime.InvokeAsync<bool>(
-                "googleMapEventJsFunctions.addListenerOnce2",
-                handler.Guid,
-                mapId,
-                eventName,
-                new DotNetObjectRef(handler));
+        //    await _jsRuntime.InvokeAsync<bool>(
+        //        "googleMapEventJsFunctions.addListenerOnce2",
+        //        handler.Guid,
+        //        mapId,
+        //        eventName,
+        //        new DotNetObjectRef(handler));
 
-            return handler.Guid;
-        }
+        //    return handler.Guid;
+        //}
 
         public async Task UnsubscribeMapEvent(string guid)
         {
