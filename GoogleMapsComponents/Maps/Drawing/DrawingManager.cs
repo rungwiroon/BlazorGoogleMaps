@@ -85,7 +85,7 @@ namespace GoogleMapsComponents.Maps.Drawing
         {
             await _jsObjectRef.InvokeAsync<bool>(
                    "googleMapDrawingManagerJsFunctions.setMap",
-                   map?.DivId);
+                   map);
 
             _map = map;
         }

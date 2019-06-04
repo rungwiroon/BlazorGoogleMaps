@@ -6,7 +6,46 @@ using System.Threading.Tasks;
 
 namespace GoogleMapsComponents
 {
-    internal class JsObjectRef : IDisposable
+    internal class JsObjectRef1 : IJsObjectRef
+    {
+        protected readonly Guid _guid;
+
+        public Guid Guid
+        {
+            get { return _guid; }
+        }
+
+        public string GuidString
+        {
+            get { return _guid.ToString(); }
+        }
+
+        public JsObjectRef1(Guid guid)
+        {
+            _guid = guid;
+        }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as JsObjectRef;
+
+            if (other == null)
+            {
+                return false;
+            }
+            else
+            {
+                return other.Guid == _guid;
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return _guid.GetHashCode();
+        }
+    }
+
+    internal class JsObjectRef : IJsObjectRef, IDisposable
     {
         protected readonly Guid _guid;
         protected readonly IJSRuntime _jsRuntime;
@@ -54,31 +93,6 @@ namespace GoogleMapsComponents
             return jsObjectRef;
         }
 
-        //public JsObjectRef(
-        //    IJSRuntime jsRuntime,
-        //    string functionName,
-        //    params object[] args)
-        //    : this(jsRuntime, Guid.NewGuid(), functionName, args)
-        //{
-            
-        //}
-
-        //public JsObjectRef(
-        //    IJSRuntime jsRuntime, 
-        //    Guid guid, 
-        //    string functionName,
-        //    params object[] args)
-        //{
-        //    _jsRuntime = jsRuntime;
-        //    _guid = guid;
-
-        //    _jsRuntime.MyInvokeAsync<object>(
-        //        "googleMapsObjectManager.createObject",
-        //        new object[] { guid, functionName }
-        //            .Concat(args).ToArray()
-        //    );
-        //}
-
         public virtual void Dispose()
         {
             DisposeAsync();
@@ -89,6 +103,15 @@ namespace GoogleMapsComponents
             return _jsRuntime.InvokeAsync<object>(
                 "googleMapsObjectManager.dispose",
                 _guid.ToString()
+            );
+        }
+
+        public Task InvokeAsync(string functionName, params object[] args)
+        {
+            return _jsRuntime.MyInvokeAsync(
+                "googleMapsObjectManager.invoke",
+                new object[] { _guid.ToString(), functionName }
+                    .Concat(args).ToArray()
             );
         }
 

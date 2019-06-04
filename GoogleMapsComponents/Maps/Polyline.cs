@@ -97,7 +97,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task SetDraggable(bool draggable)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "setDraggable",
                 draggable);
         }
@@ -109,7 +109,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task SetEditable(bool editable)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "setEditable",
                 editable);
         }
@@ -124,14 +124,14 @@ namespace GoogleMapsComponents.Maps
         {
             _map = map;
 
-            return _jsObjectRef.InvokeAsync<object>(
-                "googleMapPolylineJsFunctions.setMap",
-                map?.DivId);
+            return _jsObjectRef.InvokeAsync(
+                "setMap",
+                map);
         }
 
         public Task SetOptions(PolylineOptions options)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "setOptions",
                 options);
         }
@@ -143,7 +143,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task SetPath(IEnumerable<LatLngLiteral> path)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "setPath",
                 path);
         }
@@ -155,7 +155,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task SetVisible(bool visible)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "setVisible",
                 visible);
         }

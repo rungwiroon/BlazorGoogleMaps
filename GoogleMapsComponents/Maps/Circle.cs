@@ -111,7 +111,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="center"></param>
         public Task SetCenter(LatLngLiteral center)
         {
-            return _jsObjectRef.InvokeAsync<object>("setCenter", center);
+            return _jsObjectRef.InvokeAsync("setCenter", center);
         }
 
         /// <summary>
@@ -120,7 +120,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="draggable"></param>
         public Task SetDraggable(bool draggable)
         {
-            return _jsObjectRef.InvokeAsync<object>("setDraggable", draggable);
+            return _jsObjectRef.InvokeAsync("setDraggable", draggable);
         }
 
         /// <summary>
@@ -129,7 +129,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="editable"></param>
         public Task SetEditable(bool editable)
         {
-            return _jsObjectRef.InvokeAsync<object>("setEditable", editable);
+            return _jsObjectRef.InvokeAsync("setEditable", editable);
         }
 
         /// <summary>
@@ -140,14 +140,14 @@ namespace GoogleMapsComponents.Maps
         {
             _map = map;
 
-            return _jsObjectRef.InvokeAsync<object>(
-                "googleMapCircleJsFunctions.setMap",
-                map?.DivId);
+            return _jsObjectRef.InvokeAsync(
+                "setMap",
+                map);
         }
 
         public Task SetOptions(CircleOptions options)
         {
-            return _jsObjectRef.InvokeAsync<object>("setOptions", options);
+            return _jsObjectRef.InvokeAsync("setOptions", options);
         }
 
         /// <summary>
@@ -156,7 +156,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="radius"></param>
         public Task SetRadius(double radius)
         {
-            return _jsObjectRef.InvokeAsync<object>("setRadius", radius);
+            return _jsObjectRef.InvokeAsync("setRadius", radius);
         }
 
         /// <summary>
@@ -165,7 +165,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="visible"></param>
         public Task SetVisible(bool visible)
         {
-            return _jsObjectRef.InvokeAsync<object>("setVisible", visible);
+            return _jsObjectRef.InvokeAsync("setVisible", visible);
         }
     }
 }

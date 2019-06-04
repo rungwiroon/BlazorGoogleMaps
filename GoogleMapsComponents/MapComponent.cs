@@ -11,9 +11,9 @@ using Microsoft.AspNetCore.Components;
 
 namespace GoogleMapsComponents
 {
-    public class MapComponent : ComponentBase, IDisposable
+    public class MapComponent : ComponentBase, IDisposable, IJsObjectRef
     {
-        public string DivId { get; private set; }
+        public Guid Guid { get; private set; }
 
         public Dictionary<ControlPosition, List<ElementRef>> Controls { get; private set; }
 
@@ -21,9 +21,6 @@ namespace GoogleMapsComponents
 
         [Inject]
         public IJSRuntime JsRuntime { get; protected set; }
-
-        //[Inject]
-        //public MapEventJsInterop JsEventInterop { get; protected set; }
 
         private JsObjectRef _jsObjectRef;
 
@@ -35,16 +32,15 @@ namespace GoogleMapsComponents
                 element,
                 options);
 
-            DivId = _jsObjectRef.Guid.ToString();
+            Guid = _jsObjectRef.Guid;
 
-            MapComponentInstances.Add(DivId, this);
+            MapComponentInstances.Add(Guid.ToString(), this);
         }
 
         public void Dispose()
         {
-            //ClearListeners();
             _jsObjectRef.Dispose();
-            MapComponentInstances.Remove(DivId);
+            MapComponentInstances.Remove(Guid.ToString());
         }
 
         /// <summary>
@@ -201,33 +197,6 @@ namespace GoogleMapsComponents
                 "addListener", eventName, handler);
 
             return new MapEventListener(listenerRef);
-
-            //var guid = await JsEventInterop.SubscribeMapEvent(DivId, eventName, (jObject) =>
-            //{
-            //    //if (jObject != null)
-            //    //{
-            //    //    Debug.WriteLine($"{eventName} triggered.");
-            //    //    //foreach (var val in dict)
-            //    //    //{
-            //    //        Debug.WriteLine(jObject);
-            //    //    //}
-            //    //}
-
-            //    switch (eventName)
-            //    {
-            //        case "click":
-            //            var e = jObject.ToObject<MouseEventArgs>();
-            //            //Debug.WriteLine($"Click lat lng : {e.LatLng}");
-            //            handler(e);
-            //            break;
-
-            //        default:
-            //            handler(MapEventArgs.Empty);
-            //            break;
-            //    }
-            //});
-
-            //return new MapEventListener(JsRuntime, JsEventInterop, guid);
         }
 
         //public async Task<MapEventListener> AddListenerOnce(string eventName, Action handler)

@@ -1,7 +1,7 @@
 ﻿function stringToFunction(str) {
-    var arr = str.split(".");
+    let arr = str.split(".");
 
-    var fn = window || this;
+    let fn = window || this;
     for (let i = 0, len = arr.length; i < len; i++) {
         fn = fn[arr[i]];
     }
@@ -51,8 +51,14 @@ function tryParseJson(item) {
         return item.replace(/['"]+/g, '');
     }
 
-    if (typeof item2 === "object" && item2 !== null)
-        return item2;
+    if (typeof item2 === "object" && item2 !== null) {
+        if ("guidString" in item2) {
+            console.log("Found object has Guid property.");
+            return window._blazorGoogleMapsObjects[item2.guidString];
+        } else {
+            return item2;
+        }
+    }
 
     return item.replace(/['"]+/g, '');
 }

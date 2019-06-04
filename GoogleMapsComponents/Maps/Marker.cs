@@ -178,8 +178,8 @@ namespace GoogleMapsComponents.Maps
         public async Task SetMap(MapComponent map)
         {
             await _jsObjectRef.InvokeAsync<bool>(
-                   "googleMapMarkerJsFunctions.setMap",
-                   map?.DivId);
+                   "setMap",
+                   map);
 
             _map = map;
         }
@@ -247,34 +247,6 @@ namespace GoogleMapsComponents.Maps
                 "addListener", eventName, handler);
 
             return new MapEventListener(listenerRef);
-
-            //var guid = await _jsEventInterop.SubscribeMarkerEvent(_guid.ToString(), eventName, (dict) =>
-            //{
-            //    //if(dict != null)
-            //    //{
-            //    //    Debug.WriteLine($"{eventName} triggered.");
-            //    //    foreach (var val in dict)
-            //    //    {
-            //    //        Debug.WriteLine(val);
-            //    //    }
-            //    //}
-
-            //    switch(eventName)
-            //    {
-            //        //case "click":
-            //        //    handler(new MouseEventArgs((string)dict["id"])
-            //        //    {
-
-            //        //    });
-            //        //    break;
-
-            //        default:
-            //            handler(MapEventArgs.Empty);
-            //            break;
-            //    }
-            //});
-
-            //return new MapEventListener(_jsRuntime, _jsEventInterop, guid);
         }
     }
 }

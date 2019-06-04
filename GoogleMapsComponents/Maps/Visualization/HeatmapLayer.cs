@@ -13,7 +13,7 @@ namespace GoogleMapsComponents.Maps.Visualization
     {
         private MapComponent _map;
 
-        private readonly string jsObjectName = "googleMapHeatmapLayerJsFunctions";
+        //private readonly string jsObjectName = "googleMapHeatmapLayerJsFunctions";
 
         private readonly JsObjectRef _jsObjectRef;
 
@@ -66,7 +66,7 @@ namespace GoogleMapsComponents.Maps.Visualization
         /// <param name="data"></param>
         public Task SetData(IEnumerable<LatLngLiteral> data)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "setData",
                 data);
         }
@@ -77,7 +77,7 @@ namespace GoogleMapsComponents.Maps.Visualization
         /// <param name="data"></param>
         public Task SetData(IEnumerable<WeightedLocation> data)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "setData",
                 data);
         }
@@ -90,14 +90,14 @@ namespace GoogleMapsComponents.Maps.Visualization
         {
             _map = map;
 
-            return _jsObjectRef.InvokeAsync<object>(
-                $"{jsObjectName}.setMap",
-                map?.DivId);
+            return _jsObjectRef.InvokeAsync(
+                "setMap",
+                map);
         }
 
         public Task SetOptions(HeatmapLayerOptions options)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "setOptions",
                 options);
         }

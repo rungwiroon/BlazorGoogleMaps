@@ -78,24 +78,24 @@ namespace GoogleMapsComponents.Maps
         /// <param name="anchor"></param>
         public Task Open(MapComponent map, object anchor = null)
         {
-            return _jsObjectRef.InvokeAsync<bool>(map.DivId);
+            return _jsObjectRef.InvokeAsync("open", map);
         }
 
         public Task SetContent(string content)
         {
-            return _jsObjectRef.InvokeAsync<object>(content);
+            return _jsObjectRef.InvokeAsync("setContent", content);
         }
 
         public Task SetPosition(LatLngLiteral position)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "setPosition",
                 position);
         }
 
         public Task SetZIndex(int zIndex)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "setZIndex",
                 zIndex);
         }

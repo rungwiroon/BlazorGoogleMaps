@@ -107,7 +107,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="draggble"></param>
         public Task SetDraggble(bool draggble)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "setDraggble",
                 draggble);
         }
@@ -118,7 +118,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="editable"></param>
         public Task SetEditable(bool editable)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "setEditable",
                 editable);
         }
@@ -131,9 +131,9 @@ namespace GoogleMapsComponents.Maps
         {
             _map = map;
 
-            return _jsObjectRef.InvokeAsync<bool>(
-                "googleMapPolygonJsFunctions.setMap",
-                map?.DivId);
+            return _jsObjectRef.InvokeAsync(
+                "setMap",
+                map);
         }
 
         /// <summary>
@@ -142,7 +142,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="options"></param>
         public Task SetOptions(PolygonOptions options)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "setOptions",
                 options);
         }
@@ -153,7 +153,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="path"></param>
         public Task SetPath(IEnumerable<LatLngLiteral> path)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "setPath",
                 path);
         }
@@ -164,7 +164,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="paths"></param>
         public Task SetPaths(IEnumerable<IEnumerable<LatLngLiteral>> paths)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "setPaths",
                 paths);
         }
@@ -175,7 +175,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="visible"></param>
         public Task SetVisible(bool visible)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "setVisible",
                 visible);
         }

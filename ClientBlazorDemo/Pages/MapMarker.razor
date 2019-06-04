@@ -41,9 +41,11 @@
         var marker = await Marker.CreateAsync(map1.JsRuntime, new MarkerOptions()
         {
             Position = await map1.GetCenter(),
-            Map = map1,
+            //Map = map1,
             Label = $"Test {markers.Count()}"
         });
+
+        await marker.SetMap(map1);
 
         markers.Add(marker);
 

@@ -10,7 +10,7 @@ namespace GoogleMapsComponents
     {
         public override void WriteJson(JsonWriter writer, MapComponent value, JsonSerializer serializer)
         {
-            writer.WriteValue(value.DivId);
+            writer.WriteValue(value.Guid);
         }
 
         public override MapComponent ReadJson(JsonReader reader, Type objectType, MapComponent existingValue, bool hasExistingValue, JsonSerializer serializer)

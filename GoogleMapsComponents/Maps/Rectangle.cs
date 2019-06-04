@@ -97,7 +97,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="bounds"></param>
         public Task SetBounds(LatLngBoundsLiteral bounds)
         {
-            return _jsObjetRef.InvokeAsync<object>(
+            return _jsObjetRef.InvokeAsync(
                 "setBounds",
                 bounds);
         }
@@ -108,7 +108,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="draggble"></param>
         public Task SetDraggable(bool draggble)
         {
-            return _jsObjetRef.InvokeAsync<object>(
+            return _jsObjetRef.InvokeAsync(
                 "setDraggable",
                 draggble);
         }
@@ -119,7 +119,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="editable"></param>
         public Task SetEditable(bool editable)
         {
-            return _jsObjetRef.InvokeAsync<object>(
+            return _jsObjetRef.InvokeAsync(
                 "setEditable",
                 editable);
         }
@@ -132,13 +132,14 @@ namespace GoogleMapsComponents.Maps
         {
             _map = map;
 
-            return _jsObjetRef.InvokeAsync<object>(
-                map?.DivId);
+            return _jsObjetRef.InvokeAsync(
+                "setMap",
+                map);
         }
 
         public Task SetOptions(RectangleOptions options)
         {
-            return _jsObjetRef.InvokeAsync<object>(
+            return _jsObjetRef.InvokeAsync(
                 "setOptions",
                 options);
         }
@@ -149,7 +150,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="visible"></param>
         public Task SetVisible(bool visible)
         {
-            return _jsObjetRef.InvokeAsync<object>(
+            return _jsObjetRef.InvokeAsync(
                 "setVisible",
                 visible);
         }
