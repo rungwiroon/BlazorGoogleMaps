@@ -47,7 +47,7 @@
 
     private async Task OnAfterMapInit()
     {
-        await map1.AddListener<MouseEventArgs>("click", async (e) => await OnClick(e));
+        await map1.AddListener<MouseEvent>("click", async (e) => await OnClick(e));
     }
 
     private async Task StartDrawingPolyline()
@@ -115,9 +115,9 @@
         path.Clear();
     }
 
-    private async Task OnClick(MouseEventArgs e)
+    private async Task OnClick(MouseEvent e)
     {
-        var mouseEvent = e as MouseEventArgs;
+        var mouseEvent = e as MouseEvent;
 
         //Debug.WriteLine($"Onclick : {mouseEvent.LatLng}");
 

@@ -44,7 +44,7 @@
 
         await map1.AddListener("center_changed", OnCenterChanged);
 
-        await map1.AddListener<MouseEventArgs>("click", OnClick);
+        await map1.AddListener<MouseEvent>("click", OnClick);
 
         await map1.AddListener("dblclick", OnDoubleClick);
 
@@ -60,7 +60,7 @@
 
         await map1.AddListener("maptypeid_changed", OnMapTypeIdChanged);
 
-        await map1.AddListener("mousemove", OnMouseMove);
+        await map1.AddListener<MouseEvent>("mousemove", OnMouseMove);
 
         await map1.AddListener("mouseout", OnMouseOut);
 
@@ -97,18 +97,18 @@
         StateHasChanged();
     }
 
-    private void OnClick(MouseEventArgs e)
+    private void OnClick(MouseEvent e)
     {
         //Console.WriteLine("Click.");
 
-        _events.Insert(0, "Click.");
+        _events.Insert(0, $"Click {e.LatLng}.");
         _events = _events.Take(100).ToList();
 
         StateHasChanged();
 
         if(DisablePoiInfoWindow)
         {
-            var mouseEvent = e as MouseEventArgs;
+            var mouseEvent = e as MouseEvent;
             mouseEvent.Stop();
         }
     }
@@ -182,11 +182,11 @@
         StateHasChanged();
     }
 
-    private void OnMouseMove()
+    private void OnMouseMove(MouseEvent e)
     {
         //Console.WriteLine("OnMouseMove.");
 
-        _events.Insert(0, "OnMouseMove.");
+        _events.Insert(0, $"OnMouseMove {e.LatLng}.");
         _events = _events.Take(100).ToList();
 
         StateHasChanged();

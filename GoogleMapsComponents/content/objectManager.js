@@ -16,24 +16,27 @@
 function tryParseJson(item) {
     //console.log(item);
 
-    if (typeof item === "object" && 'invokeMethodAsync' in item) {
+    if (typeof item === "object" && "invokeMethodAsync" in item) {
         //console.log("wrap dotnet object ref");
 
-        return async function (args) {
-            //if (args === null || typeof args === 'undefined')
-                await item.invokeMethodAsync('Invoke');
+        return async function (...args) {
+            if (args === null || typeof args === "undefined")
+                await item.invokeMethodAsync("Invoke");
 
             //console.log(args);
 
             //let args2 = args.map(arg => {
-            //    if (arg !== Object(arg)) {
-            //        return arg;
+            //    if (typeof arg === "object" && "toJson" in arg) {
+            //        console.log("toJson");
+            //        return arg.toJson();
             //    } else {
-            //        return JSON.stringify(args);
+            //        return arg;
             //    }
             //});
 
-            //await item.invokeMethodAsync('Invoke', ...args2);
+            //console.log(args);
+
+            await item.invokeMethodAsync("Invoke", JSON.stringify(args));
         };
     }
 
@@ -95,7 +98,7 @@ window.googleMapsObjectManager = {
         let result = googleMapsObjectManager.invoke(args);
         let uuid = uuidv4();
 
-        console.log("invokeWithReturnedObjectRef " + uuid);
+        //console.log("invokeWithReturnedObjectRef " + uuid);
 
         window._blazorGoogleMapsObjects[uuid] = result;
 

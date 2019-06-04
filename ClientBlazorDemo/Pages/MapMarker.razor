@@ -47,7 +47,7 @@
 
         markers.Add(marker);
 
-        await marker.AddListener<MouseEventArgs>("click", e =>
+        await marker.AddListener<MouseEvent>("click", e =>
         {
             _events.Add("click");
             StateHasChanged();

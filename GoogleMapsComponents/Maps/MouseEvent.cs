@@ -9,10 +9,8 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// This object is returned from various mouse events on the map and overlays.
     /// </summary>
-    public class MouseEventArgs : MapEventArgs
+    public class MouseEvent
     {
-        public string Id { get; set; }
-
         /// <summary>
         /// The latitude/longitude that was below the cursor when the event occurred.
         /// </summary>

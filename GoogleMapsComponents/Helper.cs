@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
@@ -46,12 +47,17 @@ namespace GoogleMapsComponents
                         return new DotNetObjectRef(
                             new JsCallableAction((Action)arg));
                     }
-                    else if(argType == typeof(Action<>)
-                        || argType == typeof(Action<,>)
-                        || argType == typeof(Action<,,>)
-                        || argType == typeof(Action<,,,>))
+                    else if(argType.IsGenericType 
+                        && (argType.GetGenericTypeDefinition() == typeof(Action<>)
+                        || argType.GetGenericTypeDefinition() == typeof(Action<,>)
+                        || argType.GetGenericTypeDefinition() == typeof(Action<,,>)
+                        || argType.GetGenericTypeDefinition() == typeof(Action<,,,>)))
                     {
-                        return new DotNetObjectRef(arg);
+                        var genericArguments = argType.GetGenericArguments();
+
+                        //Debug.WriteLine($"Generic args : {genericArguments.Count()}");
+
+                        return new DotNetObjectRef(new JsCallableAction((Delegate)arg, genericArguments));
                     }
                     else if(argType == typeof(JsCallableAction))
                     {
@@ -73,40 +79,40 @@ namespace GoogleMapsComponents
             return jsRuntime.InvokeAsync<TRes>(identifier, jsFriendlyArgs);
         }
 
-        internal static Task<TRes> InvokeWithDefinedGuidAsync<TRes>(
-            this IJSRuntime jsRuntime,
-            string identifier, 
-            string guid, 
-            params object[] args)
-        {
-            var argsJson = JsonConvert.SerializeObject(args,
-                            Formatting.None,
-                            new JsonSerializerSettings
-                            {
-                                NullValueHandling = NullValueHandling.Ignore,
-                                ContractResolver = new CamelCasePropertyNamesContractResolver()
-                            });
+        //internal static Task<TRes> InvokeWithDefinedGuidAsync<TRes>(
+        //    this IJSRuntime jsRuntime,
+        //    string identifier, 
+        //    string guid, 
+        //    params object[] args)
+        //{
+        //    var argsJson = JsonConvert.SerializeObject(args,
+        //                    Formatting.None,
+        //                    new JsonSerializerSettings
+        //                    {
+        //                        NullValueHandling = NullValueHandling.Ignore,
+        //                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+        //                    });
 
-            return jsRuntime.InvokeAsync<TRes>(identifier, guid, argsJson);
-        }
+        //    return jsRuntime.InvokeAsync<TRes>(identifier, guid, argsJson);
+        //}
 
-        internal static Task<TRes> InvokeWithDefinedGuidAndMethodAsync<TRes>(
-            this IJSRuntime jsRuntime,
-            string identifier, 
-            string guid, 
-            string method, 
-            params object[] args)
-        {
-            var argsJson = JsonConvert.SerializeObject(args,
-                            Formatting.None,
-                            new JsonSerializerSettings
-                            {
-                                NullValueHandling = NullValueHandling.Ignore,
-                                ContractResolver = new CamelCasePropertyNamesContractResolver()
-                            });
+        //internal static Task<TRes> InvokeWithDefinedGuidAndMethodAsync<TRes>(
+        //    this IJSRuntime jsRuntime,
+        //    string identifier, 
+        //    string guid, 
+        //    string method, 
+        //    params object[] args)
+        //{
+        //    var argsJson = JsonConvert.SerializeObject(args,
+        //                    Formatting.None,
+        //                    new JsonSerializerSettings
+        //                    {
+        //                        NullValueHandling = NullValueHandling.Ignore,
+        //                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+        //                    });
 
-            return jsRuntime.InvokeAsync<TRes>(identifier, guid, method, argsJson);
-        }
+        //    return jsRuntime.InvokeAsync<TRes>(identifier, guid, method, argsJson);
+        //}
 
         internal static T ToEnum<T>(string str)
         {
