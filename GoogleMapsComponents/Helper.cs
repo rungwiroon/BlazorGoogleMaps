@@ -59,19 +59,16 @@ namespace GoogleMapsComponents
                     else if (arg is Action)
                     {
                         return new DotNetObjectRef(
-                            new JsCallableAction((Action)arg));
+                            new JsCallableAction(jsRuntime, (Action)arg));
                     }
                     else if (argType.IsGenericType
-                        && (argType.GetGenericTypeDefinition() == typeof(Action<>)
-                        || argType.GetGenericTypeDefinition() == typeof(Action<,>)
-                        || argType.GetGenericTypeDefinition() == typeof(Action<,,>)
-                        || argType.GetGenericTypeDefinition() == typeof(Action<,,,>)))
+                        && (argType.GetGenericTypeDefinition() == typeof(Action<>)))
                     {
                         var genericArguments = argType.GetGenericArguments();
 
                         //Debug.WriteLine($"Generic args : {genericArguments.Count()}");
 
-                        return new DotNetObjectRef(new JsCallableAction((Delegate)arg, genericArguments));
+                        return new DotNetObjectRef(new JsCallableAction(jsRuntime, (Delegate)arg, genericArguments));
                     }
                     else if (arg is JsCallableAction)
                     {

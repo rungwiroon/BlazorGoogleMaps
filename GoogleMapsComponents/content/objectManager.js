@@ -38,7 +38,11 @@ function tryParseJson(item) {
 
             //console.log(args);
 
-            await item.invokeMethodAsync("Invoke", JSON.stringify(args));
+            var guid = googleMapsObjectManager.addObject(args[0]);
+
+            await item.invokeMethodAsync("Invoke", JSON.stringify(args), guid);
+
+            googleMapsObjectManager.disposeObject(guid);
         };
     }
 
@@ -93,6 +97,17 @@ window.googleMapsObjectManager = {
         window._blazorGoogleMapsObjects[args[0]] = new constructor(...args2);
     },
 
+    addObject: function (obj, guid) {
+        if (guid === null || typeof guid === "undefined") {
+            guid = uuidv4();
+        }
+
+        window._blazorGoogleMapsObjects = window._blazorGoogleMapsObjects || [];
+        window._blazorGoogleMapsObjects[guid] = obj;
+
+        return guid;
+    },
+
     disposeObject: function (guid) {
         delete window._blazorGoogleMapsObjects[guid];
     },
@@ -121,6 +136,12 @@ window.googleMapsObjectManager = {
         window._blazorGoogleMapsObjects[uuid] = result;
 
         return uuid;
+    },
+
+    readObjectProperyValue: function (guid, propertyName) {
+        let obj = window._blazorGoogleMapsObjects[guid];
+
+        return obj[propertyName];
     }
 
     //invokeAsync: async function (guid, methodName, jsonArgs) {

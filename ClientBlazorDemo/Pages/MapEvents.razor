@@ -44,7 +44,7 @@
 
         await map1.AddListener("center_changed", OnCenterChanged);
 
-        await map1.AddListener<MouseEvent>("click", OnClick);
+        await map1.AddListener<MouseEvent>("click", async(e) => await OnClick(e));
 
         await map1.AddListener("dblclick", OnDoubleClick);
 
@@ -97,7 +97,7 @@
         StateHasChanged();
     }
 
-    private void OnClick(MouseEvent e)
+    private async Task OnClick(MouseEvent e)
     {
         //Console.WriteLine("Click.");
 
@@ -108,8 +108,7 @@
 
         if(DisablePoiInfoWindow)
         {
-            var mouseEvent = e as MouseEvent;
-            mouseEvent.Stop();
+            await e.Stop();
         }
     }
 

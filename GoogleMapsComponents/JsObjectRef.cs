@@ -45,7 +45,7 @@ namespace GoogleMapsComponents
         }
     }
 
-    internal class JsObjectRef : IJsObjectRef, IDisposable
+    public class JsObjectRef : IJsObjectRef, IDisposable
     {
         protected readonly Guid _guid;
         protected readonly IJSRuntime _jsRuntime;

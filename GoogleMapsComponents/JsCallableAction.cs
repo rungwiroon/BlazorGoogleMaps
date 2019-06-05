@@ -12,15 +12,17 @@ namespace GoogleMapsComponents
     {
         private readonly Delegate _delegate;
         private readonly Type[] _argumentTypes;
+        private readonly IJSRuntime _jsRuntime;
 
-        public JsCallableAction(Delegate @delegate, params Type[] argumentTypes)
+        public JsCallableAction(IJSRuntime jsRuntime, Delegate @delegate, params Type[] argumentTypes)
         {
+            _jsRuntime = jsRuntime;
             _delegate = @delegate;
             _argumentTypes = argumentTypes;
         }
 
         [JSInvokable]
-        public void Invoke(string args)
+        public void Invoke(string args, string guid)
         {
             if (string.IsNullOrWhiteSpace(args) || !_argumentTypes.Any())
             {
@@ -30,7 +32,16 @@ namespace GoogleMapsComponents
 
             var jArray = JArray.Parse(args);
             var arguments = _argumentTypes.Zip(jArray, (type, jToken) => new { jToken, type })
-                .Select(x => x.jToken.ToObject(x.type))
+                .Select(x =>
+                {
+                    var obj = x.jToken.ToObject(x.type);
+                    var actionArg = obj as IActionArgument;
+
+                    if(actionArg != null)
+                        actionArg.JsObjectRef = new JsObjectRef(_jsRuntime, new Guid(guid));
+
+                    return obj;
+                })
                 .ToArray();
 
             //Debug.WriteLine(arguments.FirstOrDefault()?.GetType());
