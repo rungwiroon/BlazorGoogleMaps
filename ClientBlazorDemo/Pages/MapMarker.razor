@@ -16,7 +16,7 @@
 
     private MapOptions mapOptions;
 
-    private List<Marker> markers = new List<Marker>();
+    private Stack<Marker> markers = new Stack<Marker>();
 
     private List<String> _events = new List<String>();
 
@@ -41,13 +41,13 @@
         var marker = await Marker.CreateAsync(map1.JsRuntime, new MarkerOptions()
         {
             Position = await map1.GetCenter(),
-            //Map = map1,
+            Map = map1,
             Label = $"Test {markers.Count()}"
         });
 
-        await marker.SetMap(map1);
+        //await marker.SetMap(map1);
 
-        markers.Add(marker);
+        markers.Push(marker);
 
         await marker.AddListener<MouseEvent>("click", e =>
         {
@@ -65,10 +65,8 @@
             return;
         }
 
-        var lastMarker = markers.Last();
+        var lastMarker = markers.Pop();;
         await lastMarker.SetMap(null);
-
-        markers.RemoveAt(markers.Count - 1);
     }
 
     private async Task Recenter()

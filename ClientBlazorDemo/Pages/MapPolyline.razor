@@ -1,11 +1,12 @@
 ﻿@page "/mapPolyline"
 @using GoogleMapsComponents
 @using GoogleMapsComponents.Maps
+@using System.Diagnostics
 
 <h1>Polylines</h1>
 
 <GoogleMap ref="@map1" Id="map1" Options="@mapOptions" OnAfterInit="async () => await OnAfterMapInit()"></GoogleMap>
-<button onclick="async () => await StartDrawingPolyline()">Start drawing polyline</button>
+<button onclick="@StartDrawingPolyline">Start drawing polyline</button>
 <button onclick="@EndDrawingPolyline">End drawing polyline</button>
 <br />
 <button onclick="@StartDrawingPolygon">Start drawing polygon</button>
@@ -117,11 +118,9 @@
 
     private async Task OnClick(MouseEvent e)
     {
-        var mouseEvent = e as MouseEvent;
-
         //Debug.WriteLine($"Onclick : {mouseEvent.LatLng}");
 
-        path.Add(mouseEvent.LatLng);
+        path.Add(e.LatLng);
 
         if (polyline != null)
         {

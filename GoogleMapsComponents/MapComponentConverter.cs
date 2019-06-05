@@ -10,14 +10,16 @@ namespace GoogleMapsComponents
     {
         public override void WriteJson(JsonWriter writer, MapComponent value, JsonSerializer serializer)
         {
-            writer.WriteValue(value.Guid);
+            serializer.Serialize(writer, new JsObjectRef1(value.Guid));
         }
 
         public override MapComponent ReadJson(JsonReader reader, Type objectType, MapComponent existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
-            var mapId = reader.ReadAsString();
+            throw new NotImplementedException();
 
-            return MapComponentInstances.GetInstance(mapId);
+            //var mapId = reader.ReadAsString();
+
+            //return MapComponentInstances.GetInstance(mapId);
         }
     }
 }

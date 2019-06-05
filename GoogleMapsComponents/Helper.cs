@@ -40,6 +40,9 @@ namespace GoogleMapsComponents
             var jsFriendlyArgs = args
                 .Select(arg =>
                 {
+                    if (arg == null)
+                        return arg;
+
                     var argType = arg.GetType();
 
                     if (arg is ElementRef
@@ -49,8 +52,7 @@ namespace GoogleMapsComponents
                         || arg is double
                         || arg is float
                         || arg is decimal
-                        || arg is DateTime
-                        || arg is null)
+                        || arg is DateTime)
                     {
                         return arg;
                     }
@@ -77,7 +79,7 @@ namespace GoogleMapsComponents
                     }
                     else if (arg is IJsObjectRef)
                     {
-                        Debug.WriteLine("Serialize IJsObjectRef");
+                        //Debug.WriteLine("Serialize IJsObjectRef");
 
                         var guid = ((IJsObjectRef)arg).Guid;
                         return SerializeObject(new JsObjectRef1(guid));

@@ -1,6 +1,4 @@
 ﻿using Microsoft.JSInterop;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using GoogleMapsComponents.Maps;
 using System;
 using System.Collections.Generic;
@@ -50,7 +48,7 @@ namespace GoogleMapsComponents
         /// <returns></returns>
         public Task FitBounds(LatLngBoundsLiteral bounds)
         {
-            return _jsObjectRef.InvokeAsync<object>("fitBounds", bounds);
+            return _jsObjectRef.InvokeAsync("fitBounds", bounds);
         }
 
         /// <summary>
@@ -63,7 +61,7 @@ namespace GoogleMapsComponents
         /// <returns></returns>
         public Task PanBy(int x, int y)
         {
-            return _jsObjectRef.InvokeAsync<object>("panBy", x, y);
+            return _jsObjectRef.InvokeAsync("panBy", x, y);
         }
 
         /// <summary>
@@ -74,7 +72,7 @@ namespace GoogleMapsComponents
         /// <returns></returns>
         public Task PanTo(LatLngLiteral latLng)
         {
-            return _jsObjectRef.InvokeAsync<object>("panTo", latLng);
+            return _jsObjectRef.InvokeAsync("panTo", latLng);
         }
 
         /// <summary>
@@ -85,7 +83,7 @@ namespace GoogleMapsComponents
         /// <returns></returns>
         public Task PanToBounds(LatLngBoundsLiteral latLngBounds)
         {
-            return _jsObjectRef.InvokeAsync<object>("panToBounds", latLngBounds);
+            return _jsObjectRef.InvokeAsync("panToBounds", latLngBounds);
         }
 
         /// <summary>
@@ -111,7 +109,7 @@ namespace GoogleMapsComponents
 
         public Task SetCenter(LatLngLiteral latLng)
         {
-            return _jsObjectRef.InvokeAsync<object>("setCenter", latLng);
+            return _jsObjectRef.InvokeAsync("setCenter", latLng);
         }
 
         /// <summary>
@@ -131,7 +129,7 @@ namespace GoogleMapsComponents
         /// <returns></returns>
         public Task SetHeading(int heading)
         {
-            return _jsObjectRef.InvokeAsync<object>("setHeading", heading);
+            return _jsObjectRef.InvokeAsync("setHeading", heading);
         }
 
         public async Task<MapTypeId> GetMapTypeId()
@@ -143,7 +141,7 @@ namespace GoogleMapsComponents
 
         public Task SetMapTypeId(MapTypeId mapTypeId)
         {
-            return _jsObjectRef.InvokeAsync<object>("setMapTypeId", mapTypeId);
+            return _jsObjectRef.InvokeAsync("setMapTypeId", mapTypeId);
         }
 
         /// <summary>
@@ -170,7 +168,7 @@ namespace GoogleMapsComponents
         /// <returns></returns>
         public Task SetTilt(int tilt)
         {
-            return _jsObjectRef.InvokeAsync<object>("setTilt", tilt);
+            return _jsObjectRef.InvokeAsync("setTilt", tilt);
         }
 
         public Task<int> GetZoom()
@@ -180,7 +178,7 @@ namespace GoogleMapsComponents
 
         public Task SetZoom(int zoom)
         {
-            return _jsObjectRef.InvokeAsync<object>("setZoom", zoom);
+            return _jsObjectRef.InvokeAsync("setZoom", zoom);
         }
 
         public async Task<MapEventListener> AddListener(string eventName, Action handler)

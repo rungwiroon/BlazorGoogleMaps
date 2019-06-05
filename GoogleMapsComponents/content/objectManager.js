@@ -16,7 +16,9 @@
 function tryParseJson(item) {
     //console.log(item);
 
-    if (typeof item === "object" && "invokeMethodAsync" in item) {
+    if (item !== null
+        && typeof item === "object"
+        && "invokeMethodAsync" in item) {
         //console.log("wrap dotnet object ref");
 
         return async function (...args) {
@@ -53,9 +55,19 @@ function tryParseJson(item) {
 
     if (typeof item2 === "object" && item2 !== null) {
         if ("guidString" in item2) {
-            console.log("Found object has Guid property.");
+            //console.log("Found object has Guid property.");
             return window._blazorGoogleMapsObjects[item2.guidString];
         } else {
+            for (var propertyName in item2) {
+                let propertyValue = item2[propertyName];
+                if (typeof propertyValue === "object"
+                    && propertyValue !== null
+                    && "guidString" in propertyValue) {
+                    //console.log("Found object has Guid property.");
+                    item2[propertyName] = window._blazorGoogleMapsObjects[propertyValue.guidString];
+                }
+            }
+
             return item2;
         }
     }

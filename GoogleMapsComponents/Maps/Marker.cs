@@ -9,10 +9,8 @@ namespace GoogleMapsComponents.Maps
 {
     public class Marker : IDisposable
     {
-        private MapComponent _map;
-
         private readonly JsObjectRef _jsObjectRef;
-        //private readonly MapEventJsInterop _jsEventInterop;
+        private MapComponent _map;
 
         public async static Task<Marker> CreateAsync(IJSRuntime jsRuntime, MarkerOptions opts = null)
         {
@@ -25,15 +23,10 @@ namespace GoogleMapsComponents.Maps
 
         private Marker(
             JsObjectRef jsObjectRef,
-            //MapEventJsInterop jsEventInterop,
             MarkerOptions opt = null)
         {
             _jsObjectRef = jsObjectRef;
-
-            if (opt?.Map != null)
-                _map = opt.Map;
-
-            //_jsEventInterop = jsEventInterop;
+            _map = opt?.Map;
         }
 
         public void Dispose()
@@ -123,49 +116,49 @@ namespace GoogleMapsComponents.Maps
         /// <param name="animation"></param>
         public Task SetAnimation(Animation animation)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "setAnimation",
                 animation);
         }
 
         public Task SetClickable(bool flag)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "setClickable",
                 flag);
         }
 
         public Task SetCursor(string cursor)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "setCursor",
                 cursor);
         }
 
         public Task SetDraggable(bool flag)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "setDraggable",
                 flag);
         }
 
         public Task SetIcon(string icon)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "setIcon",
                 icon);
         }
 
         public Task SetIcon(Icon icon)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "setIcon",
                 icon);
         }
 
         public Task SetLabel(Symbol label)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "setLabel",
                 label);
         }
@@ -177,7 +170,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="map"></param>
         public async Task SetMap(MapComponent map)
         {
-            await _jsObjectRef.InvokeAsync<bool>(
+            await _jsObjectRef.InvokeAsync(
                    "setMap",
                    map);
 
@@ -186,49 +179,49 @@ namespace GoogleMapsComponents.Maps
 
         public Task SetOpacity(float opacity)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "setOpacity",
                 opacity);
         }
 
         public Task SetOptions(MarkerOptions options)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "setOptions",
                 options);
         }
 
         public Task SetPosition(LatLngLiteral latLng)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "setPosition",
                 latLng);
         }
 
         public Task SetShape(MarkerShape shape)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "setShape",
                 shape);
         }
 
         public Task SetTiltle(string title)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "setTiltle",
                 title);
         }
 
         public Task SetVisible(bool visible)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "setVisible",
                 visible);
         }
 
         public Task SetZIndex(int zIndex)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "setZIndex",
                 zIndex);
         }
