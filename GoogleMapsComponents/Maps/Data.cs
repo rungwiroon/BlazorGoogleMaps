@@ -182,7 +182,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task OverrideSytle(Data.Feature feature, Data.StyleOptions style)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "overrideSytle",
                 feature,
                 style);
@@ -195,7 +195,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task Remove(Data.Feature feature)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "remove",
                 feature);
         }
@@ -208,7 +208,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task RevertStyle(Data.Feature feature = null)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "revertStyle",
                 feature);
         }
@@ -220,7 +220,9 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task SetControlPosition(ControlPosition controlPosition)
         {
-            throw new NotImplementedException();
+            return _jsObjectRef.InvokeAsync(
+                "setControlPosition",
+                controlPosition);
         }
 
         /// <summary>
@@ -233,7 +235,9 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task SetControls(IEnumerable<string> controls)
         {
-            throw new NotImplementedException();
+            return _jsObjectRef.InvokeAsync(
+                "setControls",
+                controls);
         }
 
         /// <summary>
@@ -245,7 +249,9 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task SetDrawingMode(string drawingMode)
         {
-            throw new NotImplementedException();
+            return _jsObjectRef.InvokeAsync(
+                "setDrawingMode",
+                drawingMode);
         }
 
         /// <summary>
@@ -256,7 +262,11 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task SetMap(MapComponent map)
         {
-            throw new NotImplementedException();
+            _map = map;
+
+            return _jsObjectRef.InvokeAsync(
+                "setMap",
+                map);
         }
 
         /// <summary>
@@ -279,6 +289,22 @@ namespace GoogleMapsComponents.Maps
         public Task<object> ToGeoJson()
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<MapEventListener> AddListener(string eventName, Action handler)
+        {
+            var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
+                "addListener", eventName, handler);
+
+            return new MapEventListener(listenerRef);
+        }
+
+        public async Task<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
+        {
+            var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
+                "addListener", eventName, handler);
+
+            return new MapEventListener(listenerRef);
         }
     }
 }
