@@ -48,8 +48,8 @@ namespace GoogleMapsComponents.Maps
         /// <summary>
         /// Map on which to display the Circle.
         /// </summary>
-        [JsonConverter(typeof(MapComponentConverter))]
-        public MapComponent Map { get; set; }
+        [JsonConverter(typeof(JsObjectRefConverter<Map>))]
+        public Map Map { get; set; }
 
         /// <summary>
         /// The radius in meters on the Earth's surface.

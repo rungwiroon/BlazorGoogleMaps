@@ -9,7 +9,7 @@ namespace GoogleMapsComponents.Maps
     public class Polygon : IDisposable
     {
         private readonly JsObjectRef _jsObjectRef;
-        private MapComponent _map;
+        private Map _map;
 
         /// <summary>
         /// Create a polygon using the passed PolygonOptions, which specify the polygon's path, the stroke style for the polygon's edges, and the fill style for the polygon's interior regions. 
@@ -65,7 +65,7 @@ namespace GoogleMapsComponents.Maps
         /// Returns the map on which this shape is attached.
         /// </summary>
         /// <returns></returns>
-        public MapComponent GetMap()
+        public Map GetMap()
         {
             return _map;
         }
@@ -127,7 +127,7 @@ namespace GoogleMapsComponents.Maps
         /// Renders this shape on the specified map. If map is set to null, the shape will be removed.
         /// </summary>
         /// <param name="map"></param>
-        public Task SetMap(MapComponent map)
+        public Task SetMap(Map map)
         {
             _map = map;
 

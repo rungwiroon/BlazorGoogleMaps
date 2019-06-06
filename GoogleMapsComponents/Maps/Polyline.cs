@@ -12,7 +12,7 @@ namespace GoogleMapsComponents.Maps
     public class Polyline : IDisposable
     {
         private readonly JsObjectRef _jsObjectRef;
-        private MapComponent _map;
+        private Map _map;
 
         /// <summary>
         /// Create a polyline using the passed PolylineOptions, which specify both the path of the polyline and the stroke style to use when drawing the polyline.
@@ -64,7 +64,7 @@ namespace GoogleMapsComponents.Maps
         /// Returns the map on which this shape is attached.
         /// </summary>
         /// <returns></returns>
-        public MapComponent GetMap()
+        public Map GetMap()
         {
             return _map;
         }
@@ -120,7 +120,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="map"></param>
         /// <returns></returns>
-        public Task SetMap(MapComponent map)
+        public Task SetMap(Map map)
         {
             _map = map;
 

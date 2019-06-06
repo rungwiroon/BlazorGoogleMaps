@@ -37,6 +37,12 @@ namespace GoogleMapsComponents
             string identifier, 
             params object[] args)
         {
+            //var type = typeof(TRes);
+            //if (typeof(IJsObjectRef).IsAssignableFrom(type))
+            //{
+            //    args = 
+            //}
+
             var jsFriendlyArgs = args
                 .Select(arg =>
                 {

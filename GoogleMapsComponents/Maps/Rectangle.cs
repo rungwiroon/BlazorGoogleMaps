@@ -12,7 +12,7 @@ namespace GoogleMapsComponents.Maps
     public class Rectangle : IDisposable
     {
         private readonly JsObjectRef _jsObjetRef;
-        private MapComponent _map;
+        private Map _map;
 
         /// <summary>
         /// Create a rectangle using the passed RectangleOptions, which specify the bounds and style.
@@ -76,7 +76,7 @@ namespace GoogleMapsComponents.Maps
         /// Returns the map on which this rectangle is displayed.
         /// </summary>
         /// <returns></returns>
-        public MapComponent GetMap()
+        public Map GetMap()
         {
             return _map;
         }
@@ -128,7 +128,7 @@ namespace GoogleMapsComponents.Maps
         /// Renders the rectangle on the specified map. If map is set to null, the rectangle will be removed.
         /// </summary>
         /// <param name="map"></param>
-        public Task SetMap(MapComponent map)
+        public Task SetMap(Map map)
         {
             _map = map;
 

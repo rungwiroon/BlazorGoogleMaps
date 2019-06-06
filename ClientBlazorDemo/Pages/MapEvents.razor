@@ -40,41 +40,41 @@
     {
         //Debug.WriteLine("Start OnAfterRenderAsync");
 
-        await map1.AddListener("bounds_changed", OnBoundsChanged);
+        await map1.InteropObject.AddListener("bounds_changed", OnBoundsChanged);
 
-        await map1.AddListener("center_changed", OnCenterChanged);
+        await map1.InteropObject.AddListener("center_changed", OnCenterChanged);
 
-        await map1.AddListener<MouseEvent>("click", async(e) => await OnClick(e));
+        await map1.InteropObject.AddListener<MouseEvent>("click", async(e) => await OnClick(e));
 
-        await map1.AddListener("dblclick", OnDoubleClick);
+        await map1.InteropObject.AddListener("dblclick", OnDoubleClick);
 
-        await map1.AddListener("drag", OnDrag);
+        await map1.InteropObject.AddListener("drag", OnDrag);
 
-        await map1.AddListener("dragend", OnDragEnd);
+        await map1.InteropObject.AddListener("dragend", OnDragEnd);
 
-        await map1.AddListener("dragstart", OnDragStart);
+        await map1.InteropObject.AddListener("dragstart", OnDragStart);
 
-        await map1.AddListener("heading_changed", OnHeadingChanged);
+        await map1.InteropObject.AddListener("heading_changed", OnHeadingChanged);
 
-        await map1.AddListener("idle", OnIdle);
+        await map1.InteropObject.AddListener("idle", OnIdle);
 
-        await map1.AddListener("maptypeid_changed", OnMapTypeIdChanged);
+        await map1.InteropObject.AddListener("maptypeid_changed", OnMapTypeIdChanged);
 
-        await map1.AddListener<MouseEvent>("mousemove", OnMouseMove);
+        await map1.InteropObject.AddListener<MouseEvent>("mousemove", OnMouseMove);
 
-        await map1.AddListener("mouseout", OnMouseOut);
+        await map1.InteropObject.AddListener("mouseout", OnMouseOut);
 
-        await map1.AddListener("mouseover", OnMouseOver);
+        await map1.InteropObject.AddListener("mouseover", OnMouseOver);
 
-        await map1.AddListener("projection_changed", OnProjectionChanged);
+        await map1.InteropObject.AddListener("projection_changed", OnProjectionChanged);
 
-        await map1.AddListener("rightclick", OnRightClick);
+        await map1.InteropObject.AddListener("rightclick", OnRightClick);
 
-        await map1.AddListener("tilesloaded", OnTilesLoaded);
+        await map1.InteropObject.AddListener("tilesloaded", OnTilesLoaded);
 
-        await map1.AddListener("tilt_changed", OnTiltChanged);
+        await map1.InteropObject.AddListener("tilt_changed", OnTiltChanged);
 
-        await map1.AddListener("zoom_changed", OnZoomChanged);
+        await map1.InteropObject.AddListener("zoom_changed", OnZoomChanged);
     }
 
     private void OnBoundsChanged()

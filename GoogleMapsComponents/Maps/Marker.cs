@@ -10,7 +10,7 @@ namespace GoogleMapsComponents.Maps
     public class Marker : IDisposable
     {
         private readonly JsObjectRef _jsObjectRef;
-        private MapComponent _map;
+        private Map _map;
 
         public async static Task<Marker> CreateAsync(IJSRuntime jsRuntime, MarkerOptions opts = null)
         {
@@ -72,7 +72,7 @@ namespace GoogleMapsComponents.Maps
                 "getLabel");
         }
 
-        public MapComponent GetMap()
+        public Map GetMap()
         {
             return _map;
         }
@@ -168,7 +168,7 @@ namespace GoogleMapsComponents.Maps
         /// If map is set to null, the marker will be removed.
         /// </summary>
         /// <param name="map"></param>
-        public async Task SetMap(MapComponent map)
+        public async Task SetMap(Map map)
         {
             await _jsObjectRef.InvokeAsync(
                    "setMap",

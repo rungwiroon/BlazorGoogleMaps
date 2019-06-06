@@ -48,7 +48,7 @@
 
     private async Task OnAfterMapInit()
     {
-        await map1.AddListener<MouseEvent>("click", async (e) => await OnClick(e));
+        await map1.InteropObject.AddListener<MouseEvent>("click", async (e) => await OnClick(e));
     }
 
     private async Task StartDrawingPolyline()
@@ -57,7 +57,7 @@
         {
             Draggable = true,
             Editable = true,
-            Map = map1
+            Map = map1.InteropObject
         });
 
         path.Clear();
@@ -77,7 +77,7 @@
         {
             Draggable = true,
             Editable = true,
-            Map = map1
+            Map = map1.InteropObject
         });
 
         path.Clear();
@@ -97,7 +97,7 @@
         {
             Draggable = true,
             Editable = true,
-            Map = map1
+            Map = map1.InteropObject
         });
 
         path.Clear();
@@ -109,7 +109,7 @@
         {
             Draggable = true,
             Editable = true,
-            Map = map1,
+            Map = map1.InteropObject,
             Radius = 1000
         });
 

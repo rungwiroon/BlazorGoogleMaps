@@ -11,7 +11,7 @@ namespace GoogleMapsComponents.Maps
     /// </summary>
     public class Circle : IDisposable
     {
-        private MapComponent _map;
+        private Map _map;
         private readonly JsObjectRef _jsObjectRef;
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace GoogleMapsComponents.Maps
         /// Returns the map on which this circle is displayed.
         /// </summary>
         /// <returns></returns>
-        public MapComponent GetMap()
+        public Map GetMap()
         {
             return _map;
         }
@@ -136,7 +136,7 @@ namespace GoogleMapsComponents.Maps
         /// Renders the circle on the specified map. If map is set to null, the circle will be removed.
         /// </summary>
         /// <param name="map"></param>
-        public Task SetMap(MapComponent map)
+        public Task SetMap(Map map)
         {
             _map = map;
 

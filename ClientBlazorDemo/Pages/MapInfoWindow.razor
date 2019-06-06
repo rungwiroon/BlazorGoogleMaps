@@ -31,12 +31,12 @@
 
     private async Task AddMarker()
     {
-        var position = await map1.GetCenter();
+        var position = await map1.InteropObject.GetCenter();
 
         var marker = await Marker.CreateAsync(map1.JsRuntime, new MarkerOptions()
         {
             Position = position,
-            Map = map1,
+            Map = map1.InteropObject,
             Label = $"Test {markerCount}"
         });
 

@@ -40,8 +40,8 @@
     {
         var marker = await Marker.CreateAsync(map1.JsRuntime, new MarkerOptions()
         {
-            Position = await map1.GetCenter(),
-            Map = map1,
+            Position = await map1.InteropObject.GetCenter(),
+            Map = map1.InteropObject,
             Label = $"Test {markers.Count()}"
         });
 
@@ -77,7 +77,7 @@
         }
 
         var lastMarker = markers.Last();
-        var center = await map1.GetCenter();
+        var center = await map1.InteropObject.GetCenter();
         await lastMarker.SetPosition(center);
     }
 

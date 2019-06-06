@@ -54,8 +54,8 @@ namespace GoogleMapsComponents.Maps
         /// <summary>
         /// Map on which to display Marker.
         /// </summary>
-        [JsonConverter(typeof(MapComponentConverter))]
-        public MapComponent Map { get; set; }
+        [JsonConverter(typeof(JsObjectRefConverter<Map>))]
+        public Map Map { get; set; }
 
         /// <summary>
         /// The marker's opacity between 0.0 and 1.0.
