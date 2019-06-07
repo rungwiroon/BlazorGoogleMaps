@@ -1,7 +1,10 @@
 ﻿@using Maps
 @using System.Diagnostics
+@using Microsoft.AspNetCore.Components;
 
 @inherits MapComponent
+
+@implements IDisposable
 
 <div ref="@Element" id="@Id" style="height: 500px"></div>
 
@@ -17,11 +20,6 @@
 
     private ElementRef Element { get; set; }
 
-    protected override void OnInit()
-    {
-
-    }
-
     protected override async Task OnAfterRenderAsync()
     {
         await InitAsync(Element, Options);
@@ -36,8 +34,6 @@
 
     protected override bool ShouldRender()
     {
-        var renderUI = false;
-
-        return renderUI;
+        return false;
     }
 }

@@ -1,5 +1,5 @@
 ﻿@page "/maps"
-@using GoogleMapsComponents
+
 @using GoogleMapsComponents.Maps
 @using System.Diagnostics
 
@@ -7,100 +7,95 @@
 
 <h1>Maps</h1>
 
-<div ref="@map1ElementRef" Id="map1" style="height: 500px"></div>
-<GoogleMap ref="@map2" Id="map2" Options="@mapOptions2"></GoogleMap>
+<div ref="@map1ElementRef" id="map1" style="height: 450px"></div>
+<div>
+    <button onclick="@SyncBounds">Sync map bounds</button>
+    <button onclick="@SyncMapCenter">Sync map center</button>
+    <button onclick="@SetMapHeading">Set map heading</button>
+    <button onclick="@ToggleMapType">Toggle map type</button>
+    <button onclick="@ToggleTilt">Toggle map tilt</button>
+    <button onclick="@ZoomIn">Zoom in</button>
+</div>
 
-<button onclick="@SyncBounds">Sync map bounds</button>
-<button onclick="@SyncMapCenter">Sync map center</button>
-<button onclick="@SetMapHeading">Set map heading</button>
-<button onclick="@ToggleMapType">Toggle map type</button>
-<button onclick="@ToggleTilt">Toggle map tilt</button>
-<button onclick="@ZoomIn">Zoom in</button>
+<div ref="@map2ElementRef" id="map2" style="height: 450px"></div>
 
 @functions {
-    private Map map1;
-    private GoogleMap map2;
+    private Map map1, map2;
 
-    private MapOptions mapOptions;
-    private MapOptions mapOptions2;
-
-    private ElementRef map1ElementRef;
-
-    protected override void OnInit()
-    {
-        mapOptions = new MapOptions()
-        {
-            Zoom = 13,
-            Center = new LatLngLiteral()
-            {
-                Lat = 13.505892,
-                Lng = 100.8162
-            },
-            MapTypeId = MapTypeId.Roadmap
-        };
-
-        mapOptions2 = new MapOptions()
-        {
-            Zoom = 18,
-            Center = new LatLngLiteral()
-            {
-                Lat = 45.518,
-                Lng = -122.672
-            },
-            MapTypeId = MapTypeId.Sattellite,
-            Heading = 90,
-            Tilt = 45
-        };
-    }
+    private ElementRef map1ElementRef, map2ElementRef;
 
     protected override async Task OnAfterRenderAsync()
     {
-        if(map1 == null)
+        if (map1 == null)
         {
-            map1 = await Map.CreateAsync(JsRuntime, map1ElementRef, mapOptions);
+            var mapOptions1 = new MapOptions()
+            {
+                Zoom = 13,
+                Center = new LatLngLiteral()
+                {
+                    Lat = 13.505892,
+                    Lng = 100.8162
+                },
+                MapTypeId = MapTypeId.Roadmap
+            };
 
-            Debug.WriteLine("Init finished");
+            map1 = await Map.CreateAsync(JsRuntime, map1ElementRef, mapOptions1);
+
+            //Debug.WriteLine("Init finished");
         }
 
-        //if (OnAfterInit != null)
-        //{
-        //    OnAfterInit();
-        //}
+        if (map2 == null)
+        {
+            var mapOptions2 = new MapOptions()
+            {
+                Zoom = 18,
+                Center = new LatLngLiteral()
+                {
+                    Lat = 45.518,
+                    Lng = -122.672
+                },
+                MapTypeId = MapTypeId.Sattellite,
+                Heading = 90,
+                Tilt = 45
+            };
+
+            map2 = await Map.CreateAsync(JsRuntime, map2ElementRef, mapOptions2);
+        }
     }
 
     private async Task SyncBounds()
     {
         var bounds = await map1.GetBounds();
-        await map2.InteropObject.FitBounds(bounds);
+        await map2.FitBounds(bounds);
     }
 
     private async Task SyncMapCenter()
     {
         var latLng = await map1.GetCenter();
-        await map2.InteropObject.SetCenter(latLng);
+        await map2.SetCenter(latLng);
     }
 
     private async Task SetMapHeading()
     {
-        await map2.InteropObject.SetHeading(await map2.InteropObject.GetHeading() + 90);
-        var heading = await map2.InteropObject.GetHeading();
+        await map2.SetHeading(await map2.GetHeading() + 90);
+        var heading = await map2.GetHeading();
 
         Console.WriteLine($"Map2 heading is {heading}");
     }
 
     private async Task ToggleTilt()
     {
-        var tilt = await map2.InteropObject.GetTilt();
+        var tilt = await map2.GetTilt();
 
         Console.WriteLine($"Map2 tilt is {tilt}");
 
         if (tilt > 0)
         {
-            await map2.InteropObject.SetTilt(0);
+            await map2.SetTilt(0);
         }
         else
         {
-            await map2.InteropObject.SetTilt(45);
+            await map2.SetTilt(45);
         }
     }
 

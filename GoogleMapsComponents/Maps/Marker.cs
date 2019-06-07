@@ -1,4 +1,5 @@
 ﻿using Microsoft.JSInterop;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,23 +11,18 @@ namespace GoogleMapsComponents.Maps
     public class Marker : IDisposable
     {
         private readonly JsObjectRef _jsObjectRef;
-        private Map _map;
 
         public async static Task<Marker> CreateAsync(IJSRuntime jsRuntime, MarkerOptions opts = null)
         {
             var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Marker", opts);
-
-            var obj = new Marker(jsObjectRef, opts);
+            var obj = new Marker(jsObjectRef);
 
             return obj;
         }
 
-        private Marker(
-            JsObjectRef jsObjectRef,
-            MarkerOptions opt = null)
+        private Marker(JsObjectRef jsObjectRef)
         {
             _jsObjectRef = jsObjectRef;
-            _map = opt?.Map;
         }
 
         public void Dispose()
@@ -72,9 +68,12 @@ namespace GoogleMapsComponents.Maps
                 "getLabel");
         }
 
-        public Map GetMap()
+        public async Task<Map> GetMap()
         {
-            return _map;
+            var guid = await _jsObjectRef.InvokeAsync<string>(
+                "getMap");
+
+            return (Map)JsObjectRefInstances.GetInstance(guid);
         }
 
         public Task<LatLngLiteral> GetPosition()
@@ -174,7 +173,7 @@ namespace GoogleMapsComponents.Maps
                    "setMap",
                    map);
 
-            _map = map;
+            //_map = map;
         }
 
         public Task SetOpacity(float opacity)

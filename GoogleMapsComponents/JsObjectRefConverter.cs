@@ -1,5 +1,6 @@
 ﻿using GoogleMapsComponents.Maps;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,11 +18,14 @@ namespace GoogleMapsComponents
 
         public override T ReadJson(JsonReader reader, Type objectType, T existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("What?");
 
-            //var mapId = reader.ReadAsString();
+            var jo = JObject.Load(reader);
+            Console.WriteLine(jo);
 
-            //return MapComponentInstances.GetInstance(mapId);
+            var guid = jo["guidString"].ToObject<string>();
+
+            return (T)JsObjectRefInstances.GetInstance(guid);
         }
     }
 }

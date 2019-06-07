@@ -1,6 +1,7 @@
 ﻿using GoogleMapsComponents.Maps.Coordinates;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using Newtonsoft.Json;
 using OneOf;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// google.maps.Map class
     /// </summary>
+    //[JsonConverter(typeof(JsObjectRefConverter<Map>))]
     public class Map : IDisposable, IJsObjectRef
     {
         private readonly JsObjectRef _jsObjectRef;
@@ -28,8 +30,11 @@ namespace GoogleMapsComponents.Maps
             MapOptions opts = null)
         {
             var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Map", mapDiv, opts);
+            var map = new Map(jsObjectRef);
 
-            return new Map(jsObjectRef);
+            JsObjectRefInstances.Add(map);
+
+            return map;
         }
 
         private Map(JsObjectRef jsObjectRef)
@@ -39,6 +44,7 @@ namespace GoogleMapsComponents.Maps
 
         public void Dispose()
         {
+            JsObjectRefInstances.Remove(_jsObjectRef.Guid.ToString());
             _jsObjectRef.Dispose();
         }
 

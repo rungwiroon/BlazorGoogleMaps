@@ -94,7 +94,14 @@ window.googleMapsObjectManager = {
         //console.log(args2);
 
         let constructor = stringToFunction(args[1]);
-        window._blazorGoogleMapsObjects[args[0]] = new constructor(...args2);
+        let obj = new constructor(...args2);
+        let guid = args[0];
+
+        if ("set" in obj) {
+            obj.set("guidString", guid);
+        }
+        
+        window._blazorGoogleMapsObjects[guid] = obj;
     },
 
     addObject: function (obj, guid) {
@@ -122,7 +129,16 @@ window.googleMapsObjectManager = {
         //console.dir(args);
         //console.dir(args2);
 
-        return obj[args[1]](...args2);
+        var result = obj[args[1]](...args2);
+
+        if (result !== null
+            && typeof result === "object"
+            && "get" in result) {
+            console.log({ guidString: result.get("guidString") });
+            return result.get("guidString");
+        } else {
+            return result;
+        }
     },
 
     invokeWithReturnedObjectRef: function (args) {
@@ -138,7 +154,7 @@ window.googleMapsObjectManager = {
         return uuid;
     },
 
-    readObjectProperyValue: function (guid, propertyName) {
+    readObjectPropertyValue: function (guid, propertyName) {
         let obj = window._blazorGoogleMapsObjects[guid];
 
         return obj[propertyName];

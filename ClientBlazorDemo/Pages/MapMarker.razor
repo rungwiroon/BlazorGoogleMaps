@@ -1,6 +1,7 @@
 ﻿@page "/mapMarker"
 @using GoogleMapsComponents
 @using GoogleMapsComponents.Maps
+@using System.Diagnostics
 
 <h1>Google Map Markers</h1>
 
@@ -65,7 +66,7 @@
             return;
         }
 
-        var lastMarker = markers.Pop();;
+        var lastMarker = markers.Pop();
         await lastMarker.SetMap(null);
     }
 

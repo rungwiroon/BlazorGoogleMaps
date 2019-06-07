@@ -45,7 +45,7 @@ namespace GoogleMapsComponents.Maps
         /// <summary>
         /// Map on which to display Rectangle.
         /// </summary>
-        [JsonConverter(typeof(JsObjectRefConverter<Map>))]
+        //[JsonConverter(typeof(JsObjectRefConverter<Map>))]
         public Map Map { get; set; }
 
         /// <summary>

@@ -1,4 +1,5 @@
 ﻿using Microsoft.JSInterop;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ namespace GoogleMapsComponents
 {
     internal class JsObjectRef1 : IJsObjectRef
     {
-        protected readonly Guid _guid;
+        protected Guid _guid;
 
         public Guid Guid
         {
@@ -23,6 +24,12 @@ namespace GoogleMapsComponents
         public JsObjectRef1(Guid guid)
         {
             _guid = guid;
+        }
+
+        [JsonConstructor]
+        public JsObjectRef1(string guidString)
+        {
+            _guid = new Guid(guidString);
         }
 
         public override bool Equals(object obj)
