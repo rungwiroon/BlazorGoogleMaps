@@ -43,7 +43,11 @@
         {
             Position = await map1.InteropObject.GetCenter(),
             Map = map1.InteropObject,
-            Label = $"Test {markers.Count()}"
+            Label = $"Test {markers.Count()}",
+            Icon = new Icon()
+            {
+                Url = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
+            }
         });
 
         //await marker.SetMap(map1);
@@ -88,7 +92,7 @@
             return;
         }
 
-        var lastMarker = markers.Last();
+        var lastMarker = markers.Peek();
         var center = await map1.InteropObject.GetCenter();
         await lastMarker.SetPosition(center);
     }

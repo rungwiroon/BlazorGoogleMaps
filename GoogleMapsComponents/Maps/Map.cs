@@ -30,16 +30,19 @@ namespace GoogleMapsComponents.Maps
             MapOptions opts = null)
         {
             var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Map", mapDiv, opts);
-            var map = new Map(jsObjectRef);
+            var dataObjectRef = await jsObjectRef.GetObjectReference("data");
+            var data = new MapData(dataObjectRef);
+            var map = new Map(jsObjectRef, data);
 
             JsObjectRefInstances.Add(map);
 
             return map;
         }
 
-        private Map(JsObjectRef jsObjectRef)
+        private Map(JsObjectRef jsObjectRef, MapData data)
         {
             _jsObjectRef = jsObjectRef;
+            Data = data;
         }
 
         public void Dispose()

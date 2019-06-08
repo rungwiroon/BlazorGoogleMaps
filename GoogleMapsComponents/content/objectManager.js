@@ -154,10 +154,25 @@ window.googleMapsObjectManager = {
         return uuid;
     },
 
-    readObjectPropertyValue: function (guid, propertyName) {
-        let obj = window._blazorGoogleMapsObjects[guid];
+    readObjectPropertyValue: function (args) {
+        let obj = window._blazorGoogleMapsObjects[args[0]];
 
-        return obj[propertyName];
+        return obj[args[1]];
+    },
+
+    readObjectPropertyValueWithReturnedObjectRef: function (args) {
+        //console.log(args);
+
+        let obj = window._blazorGoogleMapsObjects[args[0]];
+
+        //console.log(obj);
+
+        let result = obj[args[1]];
+        let uuid = uuidv4();
+
+        window._blazorGoogleMapsObjects[uuid] = result;
+
+        return uuid;
     }
 
     //invokeAsync: async function (guid, methodName, jsonArgs) {

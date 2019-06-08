@@ -142,6 +142,24 @@ namespace GoogleMapsComponents
             return new JsObjectRef(_jsRuntime, new Guid(guid));
         }
 
+        public Task<T> GetValue<T>(string propertyName)
+        {
+            return _jsRuntime.MyInvokeAsync<T>(
+                "googleMapsObjectManager.readObjectPropertyValue",
+                 _guid.ToString(),
+                 propertyName);
+        }
+
+        public async Task<JsObjectRef> GetObjectReference(string propertyName)
+        {
+            var guid = await _jsRuntime.MyInvokeAsync<string>(
+                "googleMapsObjectManager.readObjectPropertyValueWithReturnedObjectRef",
+                 _guid.ToString(),
+                 propertyName);
+
+            return new JsObjectRef(_jsRuntime, new Guid(guid));
+        }
+
         public override bool Equals(object obj)
         {
             var other = obj as JsObjectRef;

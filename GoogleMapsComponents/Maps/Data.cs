@@ -34,7 +34,7 @@ namespace GoogleMapsComponents.Maps
         /// <summary>
         /// Creates an empty collection, with the given DataOptions.
         /// </summary>
-        private MapData(JsObjectRef jsObjectRef)
+        internal MapData(JsObjectRef jsObjectRef)
         {
             _jsObjectRef = jsObjectRef;
         }

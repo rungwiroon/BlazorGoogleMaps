@@ -2,6 +2,7 @@
 using Microsoft.JSInterop;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using OneOf;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -42,6 +43,11 @@ namespace GoogleMapsComponents
                 {
                     if (arg == null)
                         return arg;
+
+                    if (arg is IOneOf oneof)
+                    {
+                        arg = oneof.Value;
+                    }
 
                     var argType = arg.GetType();
 
