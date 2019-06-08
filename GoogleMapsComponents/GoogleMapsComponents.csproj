@@ -29,18 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="content\circleJsInterop.js" />
-    <None Remove="content\directionServiceInterop.js" />
-    <None Remove="content\drawingManagerJsInterop.js" />
-    <None Remove="content\googleMapJsInterop.js" />
-    <None Remove="content\heatmapLayerJsInterop.js" />
-    <None Remove="content\infoWindowJsInterop.js" />
-    <None Remove="content\mapEventJsInterop.js" />
-    <None Remove="content\markerJsInterop.js" />
     <None Remove="content\objectManager.js" />
-    <None Remove="content\polygonJsInterop.js" />
-    <None Remove="content\polylineJsInterop.js" />
-    <None Remove="content\rectangleJsInterop.js" />
   </ItemGroup>
 
   <ItemGroup>
