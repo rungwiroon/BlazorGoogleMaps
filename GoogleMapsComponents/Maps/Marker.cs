@@ -68,12 +68,10 @@ namespace GoogleMapsComponents.Maps
                 "getLabel");
         }
 
-        public async Task<Map> GetMap()
+        public Task<Map> GetMap()
         {
-            var guid = await _jsObjectRef.InvokeAsync<string>(
+            return _jsObjectRef.InvokeAsync<Map>(
                 "getMap");
-
-            return (Map)JsObjectRefInstances.GetInstance(guid);
         }
 
         public Task<LatLngLiteral> GetPosition()

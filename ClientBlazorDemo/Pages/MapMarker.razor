@@ -48,6 +48,17 @@
 
         //await marker.SetMap(map1);
 
+        //var map = await marker.GetMap();
+
+        //if (map == map1.InteropObject)
+        //{
+        //    Console.WriteLine("Yess");
+        //}
+        //else
+        //{
+        //    Console.WriteLine("Nooo");
+        //}
+
         markers.Push(marker);
 
         await marker.AddListener<MouseEvent>("click", e =>

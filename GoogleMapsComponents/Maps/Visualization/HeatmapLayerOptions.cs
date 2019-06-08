@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -30,7 +31,8 @@ namespace GoogleMapsComponents.Maps.Visualization
         /// <summary>
         /// The map on which to display the layer.
         /// </summary>
-        public MapComponent Map { get; set; }
+        [JsonConverter(typeof(JsObjectRefConverter<Map>))]
+        public Map Map { get; set; }
 
         /// <summary>
         /// The maximum intensity of the heatmap. 

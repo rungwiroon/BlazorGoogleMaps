@@ -14,7 +14,7 @@ namespace GoogleMapsComponents.Maps.Drawing
     public class DrawingManager : IDisposable
     {
         private readonly JsObjectRef _jsObjectRef;
-        private MapComponent _map;
+        private Map _map;
 
         /// <summary>
         /// Creates a DrawingManager that allows users to draw overlays on the map, and switch between the type of overlay to be drawn with a drawing control.
@@ -59,7 +59,7 @@ namespace GoogleMapsComponents.Maps.Drawing
         /// Returns the Map to which the DrawingManager is attached, which is the Map on which the overlays created will be placed.
         /// </summary>
         /// <returns></returns>
-        public MapComponent GetMap()
+        public Map GetMap()
         {
             return _map;
         }
@@ -72,7 +72,7 @@ namespace GoogleMapsComponents.Maps.Drawing
         /// <returns></returns>
         public Task SetDrawingMode(OverlayType drawingMode)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                 "setDrawingMode",
                 drawingMode);
         }
@@ -81,9 +81,9 @@ namespace GoogleMapsComponents.Maps.Drawing
         /// Attaches the DrawingManager object to the specified Map.
         /// </summary>
         /// <param name="map"></param>
-        public async Task SetMap(MapComponent map)
+        public async Task SetMap(Map map)
         {
-            await _jsObjectRef.InvokeAsync<bool>(
+            await _jsObjectRef.InvokeAsync(
                    "googleMapDrawingManagerJsFunctions.setMap",
                    map);
 
@@ -96,7 +96,7 @@ namespace GoogleMapsComponents.Maps.Drawing
         /// <param name="options"></param>
         public Task SetOptions(DrawingManagerOptions options)
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            return _jsObjectRef.InvokeAsync(
                    "setOptions",
                    options);
         }

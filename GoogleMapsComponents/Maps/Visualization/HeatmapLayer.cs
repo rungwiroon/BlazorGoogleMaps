@@ -11,7 +11,7 @@ namespace GoogleMapsComponents.Maps.Visualization
     /// </summary>
     public class HeatmapLayer : IDisposable
     {
-        private MapComponent _map;
+        private Map _map;
 
         //private readonly string jsObjectName = "googleMapHeatmapLayerJsFunctions";
 
@@ -55,7 +55,7 @@ namespace GoogleMapsComponents.Maps.Visualization
                 "getData");
         }
 
-        public MapComponent GetMap()
+        public Map GetMap()
         {
             return _map;
         }
@@ -86,7 +86,7 @@ namespace GoogleMapsComponents.Maps.Visualization
         /// Renders the heatmap on the specified map. If map is set to null, the heatmap will be removed.
         /// </summary>
         /// <param name="map"></param>
-        public Task SetMap(MapComponent map)
+        public Task SetMap(Map map)
         {
             _map = map;
 

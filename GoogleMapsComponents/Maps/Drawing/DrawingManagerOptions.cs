@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -36,7 +37,8 @@ namespace GoogleMapsComponents.Maps.Drawing
         /// <summary>
         /// The Map to which the DrawingManager is attached, which is the Map on which the overlays created will be placed.
         /// </summary>
-        public MapComponent Map { get; set; }
+        [JsonConverter(typeof(JsObjectRefConverter<Map>))]
+        public Map Map { get; set; }
 
         /// <summary>
         /// Options to apply to any new markers created with this DrawingManager. 

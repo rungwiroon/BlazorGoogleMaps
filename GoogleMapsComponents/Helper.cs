@@ -32,17 +32,11 @@ namespace GoogleMapsComponents
                         });
         }
 
-        internal static Task<TRes> MyInvokeAsync<TRes>(
+        internal static async Task<TRes> MyInvokeAsync<TRes>(
             this IJSRuntime jsRuntime,
             string identifier, 
             params object[] args)
         {
-            //var type = typeof(TRes);
-            //if (typeof(IJsObjectRef).IsAssignableFrom(type))
-            //{
-            //    args = 
-            //}
-
             var jsFriendlyArgs = args
                 .Select(arg =>
                 {
@@ -62,10 +56,10 @@ namespace GoogleMapsComponents
                     {
                         return arg;
                     }
-                    else if (arg is Action)
+                    else if (arg is Action action)
                     {
                         return new DotNetObjectRef(
-                            new JsCallableAction(jsRuntime, (Action)arg));
+                            new JsCallableAction(jsRuntime, action));
                     }
                     else if (argType.IsGenericType
                         && (argType.GetGenericTypeDefinition() == typeof(Action<>)))
@@ -80,11 +74,11 @@ namespace GoogleMapsComponents
                     {
                         return new DotNetObjectRef(arg);
                     }
-                    else if (arg is IJsObjectRef)
+                    else if (arg is IJsObjectRef jsObjectRef)
                     {
                         //Debug.WriteLine("Serialize IJsObjectRef");
 
-                        var guid = ((IJsObjectRef)arg).Guid;
+                        var guid = jsObjectRef.Guid;
                         return SerializeObject(new JsObjectRef1(guid));
                     }
                     else
@@ -93,7 +87,16 @@ namespace GoogleMapsComponents
                     }
                 });
 
-            return jsRuntime.InvokeAsync<TRes>(identifier, jsFriendlyArgs);
+            if(typeof(IJsObjectRef).IsAssignableFrom(typeof(TRes)))
+            {
+                var guid = await jsRuntime.InvokeAsync<string>(identifier, jsFriendlyArgs);
+
+                return (TRes)JsObjectRefInstances.GetInstance(guid);
+            }
+            else
+            {
+                return await jsRuntime.InvokeAsync<TRes>(identifier, jsFriendlyArgs);
+            }
         }
 
         internal static T ToEnum<T>(string str)

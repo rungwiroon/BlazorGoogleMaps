@@ -16,7 +16,7 @@ namespace GoogleMapsComponents.Maps
     public class MapData : IEnumerable<Maps.Data.Feature>, IDisposable
     {
         private readonly JsObjectRef _jsObjectRef;
-        private MapComponent _map;
+        private Map _map;
 
         /// <summary>
         /// Creates an empty collection, with the given DataOptions.
@@ -142,7 +142,7 @@ namespace GoogleMapsComponents.Maps
         /// Returns the map on which the features are displayed.
         /// </summary>
         /// <returns></returns>
-        public MapComponent GetMap()
+        public Map GetMap()
         {
             return _map;
         }
@@ -260,7 +260,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="map"></param>
         /// <returns></returns>
-        public Task SetMap(MapComponent map)
+        public Task SetMap(Map map)
         {
             _map = map;
 
