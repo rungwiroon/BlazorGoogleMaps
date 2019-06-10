@@ -1,5 +1,6 @@
 ﻿using Microsoft.JSInterop;
 using Newtonsoft.Json.Linq;
+using OneOf;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -56,15 +57,17 @@ namespace GoogleMapsComponents.Maps
                 "getDraggable");
         }
 
-        public Task<object> GetIcon()
+        public async Task<OneOf<string, Icon, Symbol>> GetIcon()
         {
-            return _jsObjectRef.InvokeAsync<object>(
+            var result = await _jsObjectRef.InvokeAsync<string, Icon, Symbol>(
                 "getIcon");
+
+            return result;
         }
 
-        public Task<MarkerLabel> GetLabel()
+        public Task<OneOf<string, MarkerLabel>> GetLabel()
         {
-            return _jsObjectRef.InvokeAsync<MarkerLabel>(
+            return _jsObjectRef.InvokeAsync<OneOf<string, MarkerLabel>>(
                 "getLabel");
         }
 

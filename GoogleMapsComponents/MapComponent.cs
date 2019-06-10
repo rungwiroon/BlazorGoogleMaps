@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace GoogleMapsComponents
 {
+    [Obsolete]
     public class MapComponent : ComponentBase, IDisposable
     {
         [Inject]

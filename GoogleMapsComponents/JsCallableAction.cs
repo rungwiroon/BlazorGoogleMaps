@@ -35,9 +35,8 @@ namespace GoogleMapsComponents
                 .Select(x =>
                 {
                     var obj = x.jToken.ToObject(x.type);
-                    var actionArg = obj as  IActionArgument;
 
-                    if(actionArg != null)
+                    if (obj is IActionArgument actionArg)
                         actionArg.JsObjectRef = new JsObjectRef(_jsRuntime, new Guid(guid));
 
                     return obj;

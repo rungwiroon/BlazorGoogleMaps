@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using GoogleMapsComponents.Maps;
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using OneOf;
 using System;
@@ -93,15 +95,138 @@ namespace GoogleMapsComponents
                     }
                 });
 
-            if(typeof(IJsObjectRef).IsAssignableFrom(typeof(TRes)))
+            if (typeof(IJsObjectRef).IsAssignableFrom(typeof(TRes)))
             {
                 var guid = await jsRuntime.InvokeAsync<string>(identifier, jsFriendlyArgs);
 
                 return (TRes)JsObjectRefInstances.GetInstance(guid);
             }
+            else if (typeof(IOneOf).IsAssignableFrom(typeof(TRes)))
+            {
+                var resultObject = await jsRuntime.InvokeAsync<string>(identifier, jsFriendlyArgs);
+                object result = null;
+
+                if (resultObject is string someText)
+                {
+                    try
+                    {
+                        var jo = JObject.Parse(someText);
+
+                        if (jo.ContainsKey("dotnetTypeName"))
+                        {
+                            var typeName = jo.SelectToken("dotnetTypeName").Value<string>();
+                            var asm = typeof(Map).Assembly;
+                            var type = asm.GetType(typeName);
+                            result = jo.ToObject(type);
+                        }
+                        else
+                        {
+                            result = someText;
+                        }
+                    }
+                    catch
+                    {
+                        result = someText;
+                    }
+                }
+
+                return (TRes)result;
+            }
             else
             {
                 return await jsRuntime.InvokeAsync<TRes>(identifier, jsFriendlyArgs);
+            }
+        }
+
+        private static async Task<object> InvokeAsync(
+            this IJSRuntime jsRuntime,
+            string identifier,
+            params object[] args)
+        {
+            var resultObject = await jsRuntime.MyInvokeAsync<string>(identifier, args);
+            object result = null;
+
+            if (resultObject is string someText)
+            {
+                try
+                {
+                    var jo = JObject.Parse(someText);
+
+                    if (jo.ContainsKey("dotnetTypeName"))
+                    {
+                        var typeName = jo.SelectToken("dotnetTypeName").Value<string>();
+                        var asm = typeof(Map).Assembly;
+                        var type = asm.GetType(typeName);
+                        result = jo.ToObject(type);
+                    }
+                    else
+                    {
+                        result = someText;
+                    }
+                }
+                catch
+                {
+                    result = someText;
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// For use when returned result will be one of multiple type
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="U"></typeparam>
+        /// <typeparam name="V"></typeparam>
+        /// <param name="jsRuntime"></param>
+        /// <param name="identifier"></param>
+        /// <param name="args"></param>
+        /// <returns>Discriminated union of specified types</returns>
+        internal static async Task<OneOf<T, U>> MyInvokeAsync<T, U>(
+            this IJSRuntime jsRuntime,
+            string identifier,
+            params object[] args)
+        {
+            var result = await jsRuntime.InvokeAsync(identifier, args);
+
+            switch (result)
+            {
+                case T t:
+                    return t;
+                case U u:
+                    return u;
+                default:
+                    return default;
+            }
+        }
+
+        /// <summary>
+        /// For use when returned result will be one of multiple type
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="U"></typeparam>
+        /// <param name="jsRuntime"></param>
+        /// <param name="identifier"></param>
+        /// <param name="args"></param>
+        /// <returns>Discriminated union of specified types</returns>
+        internal static async Task<OneOf<T, U, V>> MyInvokeAsync<T, U, V>(
+            this IJSRuntime jsRuntime,
+            string identifier,
+            params object[] args)
+        {
+            var result = await jsRuntime.InvokeAsync(identifier, args);
+
+            switch (result)
+            {
+                case T t:
+                    return t;
+                case U u:
+                    return u;
+                case V v:
+                    return v;
+                default:
+                    return default;
             }
         }
 
@@ -114,7 +239,7 @@ namespace GoogleMapsComponents
                 if (enumMemberAttribute.Value == str) return (T)Enum.Parse(enumType, name);
             }
 
-            //throw exception or whatever handling you want or
+            //throw exception or whatever handling you want
             return default;
         }
     }

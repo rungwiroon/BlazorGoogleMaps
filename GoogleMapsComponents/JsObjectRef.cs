@@ -1,5 +1,6 @@
 ﻿using Microsoft.JSInterop;
 using Newtonsoft.Json;
+using OneOf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -131,6 +132,43 @@ namespace GoogleMapsComponents
             );
         }
 
+        /// <summary>
+        /// Use when returned result will be one of defined types
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="U"></typeparam>
+        /// <param name="jsRuntime"></param>
+        /// <param name="identifier"></param>
+        /// <param name="args"></param>
+        /// <returns>Discriminated union of specified types</returns>
+        public Task<OneOf<T, U>> InvokeAsync<T, U>(string functionName, params object[] args)
+        {
+            return _jsRuntime.MyInvokeAsync<T, U>(
+                "googleMapsObjectManager.invoke",
+                new object[] { _guid.ToString(), functionName }
+                    .Concat(args).ToArray()
+            );
+        }
+
+        /// <summary>
+        /// Use when returned result will be one of defined types
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="U"></typeparam>
+        /// <typeparam name="V"></typeparam>
+        /// <param name="jsRuntime"></param>
+        /// <param name="identifier"></param>
+        /// <param name="args"></param>
+        /// <returns>Discriminated union of specified types</returns>
+        public Task<OneOf<T, U, V>> InvokeAsync<T, U, V>(string functionName, params object[] args)
+        {
+            return _jsRuntime.MyInvokeAsync<T, U, V>(
+                "googleMapsObjectManager.invoke",
+                new object[] { _guid.ToString(), functionName }
+                    .Concat(args).ToArray()
+            );
+        }
+
         public async Task<JsObjectRef> InvokeWithReturnedObjectRefAsync(string functionName, params object[] args)
         {
             var guid = await _jsRuntime.MyInvokeAsync<string>(
@@ -162,15 +200,13 @@ namespace GoogleMapsComponents
 
         public override bool Equals(object obj)
         {
-            var other = obj as JsObjectRef;
-
-            if (other == null)
+            if (obj is JsObjectRef other)
             {
-                return false;
+                return other.Guid == this.Guid;
             }
             else
             {
-                return other.Guid == this.Guid;
+                return false;
             }
         }
 

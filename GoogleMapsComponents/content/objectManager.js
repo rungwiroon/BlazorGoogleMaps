@@ -90,10 +90,9 @@ window.googleMapsObjectManager = {
         window._blazorGoogleMapsObjects = window._blazorGoogleMapsObjects || [];
 
         let args2 = args.slice(2).map(arg => tryParseJson(arg));
-
         //console.log(args2);
-
-        let constructor = stringToFunction(args[1]);
+        let functionName = args[1];
+        let constructor = stringToFunction(functionName);
         let obj = new constructor(...args2);
         let guid = args[0];
 
@@ -131,11 +130,17 @@ window.googleMapsObjectManager = {
 
         var result = obj[args[1]](...args2);
 
+        //console.log(result);
+
         if (result !== null
-            && typeof result === "object"
-            && "get" in result) {
-            console.log({ guidString: result.get("guidString") });
-            return result.get("guidString");
+            && typeof result === "object") {
+            if ("get" in result) {
+                return result.get("guidString");
+            } else if ("dotnetTypeName" in result) {
+                return JSON.stringify(result);
+            } else {
+                return result;
+            }
         } else {
             return result;
         }

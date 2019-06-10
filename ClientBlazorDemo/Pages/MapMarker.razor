@@ -48,11 +48,21 @@
             {
                 Url = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
             }
+            //Icon = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
         });
 
         //await marker.SetMap(map1);
 
         //var map = await marker.GetMap();
+
+        var icon = await marker.GetIcon();
+
+        Console.WriteLine($"Get icon result type is : {icon.Value.GetType()}");
+
+        icon.Switch(
+            s => Console.WriteLine(s),
+            i => Console.WriteLine(i.Url),
+            _ => { });
 
         //if (map == map1.InteropObject)
         //{

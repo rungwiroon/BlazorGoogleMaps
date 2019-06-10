@@ -18,14 +18,7 @@ namespace GoogleMapsComponents
 
         public override T ReadJson(JsonReader reader, Type objectType, T existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
-            Console.WriteLine("What?");
-
-            var jo = JObject.Load(reader);
-            Console.WriteLine(jo);
-
-            var guid = jo["guidString"].ToObject<string>();
-
-            return (T)JsObjectRefInstances.GetInstance(guid);
+            throw new NotSupportedException();
         }
     }
 }
