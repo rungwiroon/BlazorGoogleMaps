@@ -13,29 +13,35 @@ namespace GoogleMapsComponents.Maps
     /// Every Map has a Data object by default, so most of the time there is no need to construct one.
     /// The Data object is a collection of Features.
     /// </summary>
-    public class MapData : JsObjectRef, IEnumerable<Maps.Data.Feature>
+    public class MapData : IEnumerable<Maps.Data.Feature>, IDisposable
     {
-        private MapComponent _map;
-
-        protected MapData(IJSRuntime jsRuntime, MapComponent mapComponent)
-            : base(jsRuntime, new Guid(mapComponent.DivId))
-        {
-            _map = mapComponent;
-        }
+        private readonly JsObjectRef _jsObjectRef;
+        private Map _map;
 
         /// <summary>
         /// Creates an empty collection, with the given DataOptions.
         /// </summary>
         /// <param name="options"></param>
-        public MapData(IJSRuntime jsRuntime, Data.DataOptions options)
-            : base(jsRuntime)
+        public async static Task<MapData> CreateAsync(IJSRuntime jsRuntime, Data.DataOptions opts = null)
         {
+            var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Data", opts);
 
+            var obj = new MapData(jsObjectRef);
+
+            return obj;
         }
 
-        public override void Dispose()
+        /// <summary>
+        /// Creates an empty collection, with the given DataOptions.
+        /// </summary>
+        internal MapData(JsObjectRef jsObjectRef)
         {
+            _jsObjectRef = jsObjectRef;
+        }
 
+        public void Dispose()
+        {
+            _jsObjectRef.Dispose();
         }
 
         public IEnumerator<Data.Feature> GetEnumerator()
@@ -57,9 +63,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<Data.Feature> Add(OneOf<Data.Feature, Data.FeatureOptions> feature)
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<Data.Feature>(
-                "googleMapDataJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<Data.Feature>(
                 "add",
                 feature);
         }
@@ -83,9 +87,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<bool> Contains(Data.Feature feature)
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
-                "googleMapDataJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<bool>(
                 "contains",
                 feature);
         }
@@ -96,9 +98,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<ControlPosition> GetControlPosition()
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<ControlPosition>(
-                "googleMapDataJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<ControlPosition>(
                 "getControlPosition");
         }
 
@@ -110,9 +110,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<IEnumerable<string>> GetControls()
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<IEnumerable<string>>(
-                "googleMapDataJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<IEnumerable<string>>(
                 "getControls");
         }
 
@@ -123,9 +121,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<string> GetDrawingMode()
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<string>(
-                "googleMapDataJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<string>(
                 "getDrawingMode");
         }
 
@@ -137,9 +133,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<Data.Feature> GetFeatureById(OneOf<int, string> id)
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<Data.Feature>(
-                "googleMapDataJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<Data.Feature>(
                 "getFeatureById",
                 id.Value);
         }
@@ -148,7 +142,7 @@ namespace GoogleMapsComponents.Maps
         /// Returns the map on which the features are displayed.
         /// </summary>
         /// <returns></returns>
-        public MapComponent GetMap()
+        public Map GetMap()
         {
             return _map;
         }
@@ -188,9 +182,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task OverrideSytle(Data.Feature feature, Data.StyleOptions style)
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
-                "googleMapDataJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync(
                 "overrideSytle",
                 feature,
                 style);
@@ -203,9 +195,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task Remove(Data.Feature feature)
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
-                "googleMapDataJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync(
                 "remove",
                 feature);
         }
@@ -218,9 +208,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task RevertStyle(Data.Feature feature = null)
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<object>(
-                "googleMapDataJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync(
                 "revertStyle",
                 feature);
         }
@@ -232,7 +220,9 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task SetControlPosition(ControlPosition controlPosition)
         {
-            throw new NotImplementedException();
+            return _jsObjectRef.InvokeAsync(
+                "setControlPosition",
+                controlPosition);
         }
 
         /// <summary>
@@ -245,7 +235,9 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task SetControls(IEnumerable<string> controls)
         {
-            throw new NotImplementedException();
+            return _jsObjectRef.InvokeAsync(
+                "setControls",
+                controls);
         }
 
         /// <summary>
@@ -257,7 +249,9 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task SetDrawingMode(string drawingMode)
         {
-            throw new NotImplementedException();
+            return _jsObjectRef.InvokeAsync(
+                "setDrawingMode",
+                drawingMode);
         }
 
         /// <summary>
@@ -266,9 +260,13 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="map"></param>
         /// <returns></returns>
-        public Task SetMap(MapComponent map)
+        public Task SetMap(Map map)
         {
-            throw new NotImplementedException();
+            _map = map;
+
+            return _jsObjectRef.InvokeAsync(
+                "setMap",
+                map);
         }
 
         /// <summary>
@@ -291,6 +289,22 @@ namespace GoogleMapsComponents.Maps
         public Task<object> ToGeoJson()
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<MapEventListener> AddListener(string eventName, Action handler)
+        {
+            var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
+                "addListener", eventName, handler);
+
+            return new MapEventListener(listenerRef);
+        }
+
+        public async Task<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
+        {
+            var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
+                "addListener", eventName, handler);
+
+            return new MapEventListener(listenerRef);
         }
     }
 }

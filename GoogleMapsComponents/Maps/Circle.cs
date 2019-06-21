@@ -9,39 +9,37 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// A circle on the Earth's surface; also known as a "spherical cap".
     /// </summary>
-    public class Circle : JsObjectRef
+    public class Circle : IDisposable
     {
-        private MapComponent _map;
+        private Map _map;
+        private readonly JsObjectRef _jsObjectRef;
 
         /// <summary>
         /// Create a circle using the passed CircleOptions, which specify the center, radius, and style.
         /// </summary>
         /// <param name="opts"></param>
-        public Circle(IJSRuntime jsRuntime, CircleOptions opts = null)
-            : base(jsRuntime)
+        public async static Task<Circle> CreateAsync(IJSRuntime jsRuntime, CircleOptions opts = null)
         {
+            var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Circle", opts);
+
+            var obj = new Circle(jsObjectRef, opts);
+
+            return obj;
+        }
+
+        private Circle(JsObjectRef jsObjectRef, CircleOptions opts = null)
+        {
+            _jsObjectRef = jsObjectRef;
+
             if (opts != null)
             {
                 _map = opts.Map;
-
-                _jsRuntime.InvokeWithDefinedGuidAsync<bool>(
-                    "googleMapCircleJsFunctions.init",
-                    _guid.ToString(),
-                    opts);
-            }
-            else
-            {
-                _jsRuntime.InvokeWithDefinedGuidAsync<bool>(
-                    "googleMapCircleJsFunctions.init",
-                    _guid.ToString());
             }
         }
 
-        public override void Dispose()
+        public void Dispose()
         {
-            _jsRuntime.InvokeWithDefinedGuidAsync<bool>(
-                    "googleMapCircleJsFunctions.dispose",
-                    _guid.ToString());
+            _jsObjectRef.Dispose();
         }
 
         /// <summary>
@@ -50,10 +48,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<LatLngBoundsLiteral> GetBounds()
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<LatLngBoundsLiteral>(
-                "googleMapCircleJsFunctions.invoke",
-                _guid.ToString(),
-                "getBounds");
+            return _jsObjectRef.InvokeAsync<LatLngBoundsLiteral>("getBounds");
         }
 
         /// <summary>
@@ -62,10 +57,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<LatLngLiteral> GetCenter()
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<LatLngLiteral>(
-                "googleMapCircleJsFunctions.invoke",
-                _guid.ToString(),
-                "getBounds");
+            return _jsObjectRef.InvokeAsync<LatLngLiteral>("getCenter");
         }
 
         /// <summary>
@@ -74,10 +66,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<bool> GetDraggable()
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
-                "googleMapCircleJsFunctions.invoke",
-                _guid.ToString(),
-                "GetDraggable");
+            return _jsObjectRef.InvokeAsync<bool>("getDraggable");
         }
 
         /// <summary>
@@ -86,17 +75,14 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<bool> GetEditable()
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
-                "googleMapCircleJsFunctions.invoke",
-                _guid.ToString(),
-                "getEditable");
+            return _jsObjectRef.InvokeAsync<bool>("getEditable");
         }
 
         /// <summary>
         /// Returns the map on which this circle is displayed.
         /// </summary>
         /// <returns></returns>
-        public MapComponent GetMap()
+        public Map GetMap()
         {
             return _map;
         }
@@ -107,10 +93,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<double> GetRadius()
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<double>(
-                "googleMapCircleJsFunctions.invoke",
-                _guid.ToString(),
-                "getDraggable");
+            return _jsObjectRef.InvokeAsync<double>("getRadius");
         }
 
         /// <summary>
@@ -119,10 +102,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<bool> GetVisible()
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
-                "googleMapCircleJsFunctions.invoke",
-                _guid.ToString(),
-                "getVisible");
+            return _jsObjectRef.InvokeAsync<bool>("getVisible");
         }
 
         /// <summary>
@@ -131,11 +111,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="center"></param>
         public Task SetCenter(LatLngLiteral center)
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
-                "googleMapCircleJsFunctions.invoke",
-                _guid.ToString(),
-                "setCenter",
-                center);
+            return _jsObjectRef.InvokeAsync("setCenter", center);
         }
 
         /// <summary>
@@ -144,11 +120,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="draggable"></param>
         public Task SetDraggable(bool draggable)
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
-                "googleMapCircleJsFunctions.invoke",
-                _guid.ToString(),
-                "setDraggable",
-                draggable);
+            return _jsObjectRef.InvokeAsync("setDraggable", draggable);
         }
 
         /// <summary>
@@ -157,34 +129,25 @@ namespace GoogleMapsComponents.Maps
         /// <param name="editable"></param>
         public Task SetEditable(bool editable)
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
-                "googleMapCircleJsFunctions.invoke",
-                _guid.ToString(),
-                "setEditable",
-                editable);
+            return _jsObjectRef.InvokeAsync("setEditable", editable);
         }
 
         /// <summary>
         /// Renders the circle on the specified map. If map is set to null, the circle will be removed.
         /// </summary>
         /// <param name="map"></param>
-        public Task SetMap(MapComponent map)
+        public Task SetMap(Map map)
         {
             _map = map;
 
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
-                "googleMapCircleJsFunctions.setMap",
-                _guid.ToString(),
-                map.DivId);
+            return _jsObjectRef.InvokeAsync(
+                "setMap",
+                map);
         }
 
         public Task SetOptions(CircleOptions options)
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
-                "googleMapCircleJsFunctions.invoke",
-                _guid.ToString(),
-                "setOptions",
-                options);
+            return _jsObjectRef.InvokeAsync("setOptions", options);
         }
 
         /// <summary>
@@ -193,11 +156,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="radius"></param>
         public Task SetRadius(double radius)
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
-                "googleMapCircleJsFunctions.invoke",
-                _guid.ToString(),
-                "setRadius",
-                radius);
+            return _jsObjectRef.InvokeAsync("setRadius", radius);
         }
 
         /// <summary>
@@ -206,11 +165,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="visible"></param>
         public Task SetVisible(bool visible)
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
-                "googleMapCircleJsFunctions.invoke",
-                _guid.ToString(),
-                "setVisible",
-                visible);
+            return _jsObjectRef.InvokeAsync("setVisible", visible);
         }
     }
 }

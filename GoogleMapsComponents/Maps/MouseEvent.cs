@@ -9,29 +9,21 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// This object is returned from various mouse events on the map and overlays.
     /// </summary>
-    public class MouseEventArgs : MapEventArgs
+    public class MouseEvent : IActionArgument
     {
-        public string Id { get; set; }
+        public JsObjectRef JsObjectRef { get; set; }
 
         /// <summary>
         /// The latitude/longitude that was below the cursor when the event occurred.
         /// </summary>
         public LatLngLiteral LatLng { get; set; }
 
-        //public MouseEventArgs(string id)
-        //{
-        //    Id = id;
-        //}
-
         /// <summary>
         /// Prevents this event from propagating further.
         /// </summary>
-        public void Stop()
+        public Task Stop()
         {
-            //JSRuntime.Current.InvokeAsync<bool>(
-            //       "googleMapEventJsFunctions.invokeEventArgsFunction",
-            //       Id, 
-            //       "stop");
+            return JsObjectRef.InvokeAsync("stop");
         }
     }
 }

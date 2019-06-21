@@ -49,8 +49,8 @@ namespace GoogleMapsComponents.Maps
         /// <summary>
         /// Map on which to display Polygon.
         /// </summary>
-        [JsonConverter(typeof(MapComponentConverter))]
-        public MapComponent Map { get; set; }
+        [JsonConverter(typeof(JsObjectRefConverter<Map>))]
+        public Map Map { get; set; }
 
         /// <summary>
         /// The ordered sequence of coordinates that designates a closed loop. 

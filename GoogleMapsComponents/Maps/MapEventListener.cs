@@ -6,24 +6,28 @@ using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
 {
-    public class MapEventListener : JsObjectRef
+    /// <summary>
+    /// google.maps.MapsEventListener interface
+    /// An event listener, created by google.maps.event.addListener() and friends.
+    /// </summary>
+    public class MapEventListener : IDisposable
     {
-        protected MapEventJsInterop _mapEventJsInterop;
+        private readonly JsObjectRef _jsObjectRef;
 
-        internal MapEventListener(IJSRuntime jsRuntime, MapEventJsInterop mapEventJsInterop, Guid guid)
-            : base(jsRuntime, guid)
+        internal MapEventListener(JsObjectRef jsObjectRef)
         {
-            _mapEventJsInterop = mapEventJsInterop;
+            _jsObjectRef = jsObjectRef;
         }
 
-        public override void Dispose()
+        public void Dispose()
         {
-            Remove();
+            _ = RemoveAsync();
         }
 
-        public Task Remove()
+        public async Task RemoveAsync()
         {
-            return _mapEventJsInterop.UnsubscribeMapEvent(Guid.ToString());
+            await _jsObjectRef.InvokeAsync<object>("remove");
+            await _jsObjectRef.DisposeAsync();
         }
     }
 }

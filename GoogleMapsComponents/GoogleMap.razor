@@ -1,9 +1,12 @@
 ﻿@using Maps
 @using System.Diagnostics
+@using Microsoft.AspNetCore.Components;
 
 @inherits MapComponent
 
-<div id="@Id" style="height: 500px"></div>
+@implements IDisposable
+
+<div ref="@Element" id="@Id" style="height: 500px"></div>
 
 @functions {
     [Parameter]
@@ -15,14 +18,11 @@
     [Parameter]
     private Action OnAfterInit { get; set; }
 
-    protected override void OnInit()
-    {
+    private ElementRef Element { get; set; }
 
-    }
-
-    protected async override Task OnAfterRenderAsync()
+    protected override async Task OnAfterRenderAsync()
     {
-        await InitAsync(Id, Options);
+        await InitAsync(Element, Options);
 
         //Debug.WriteLine("Init finished");
 
@@ -34,8 +34,6 @@
 
     protected override bool ShouldRender()
     {
-        var renderUI = false;
-
-        return renderUI;
+        return false;
     }
 }

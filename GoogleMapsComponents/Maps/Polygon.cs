@@ -6,40 +6,39 @@ using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
 {
-    public class Polygon : JsObjectRef
+    public class Polygon : IDisposable
     {
-        private MapComponent _map;
+        private readonly JsObjectRef _jsObjectRef;
+        private Map _map;
 
         /// <summary>
         /// Create a polygon using the passed PolygonOptions, which specify the polygon's path, the stroke style for the polygon's edges, and the fill style for the polygon's interior regions. 
         /// A polygon may contain one or more paths, where each path consists of an array of LatLngs.
         /// </summary>
         /// <param name="opts"></param>
-        public Polygon(IJSRuntime jsRuntime, PolygonOptions opts = null)
-            : base(jsRuntime)
+        public async static Task<Polygon> CreateAsync(IJSRuntime jsRuntime, PolygonOptions opts = null)
         {
-            if (opts != null)
-            {
-                _map = opts.Map;
+            var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Polygon", opts);
 
-                _jsRuntime.InvokeWithDefinedGuidAsync<bool>(
-                    "googleMapPolygonJsFunctions.init",
-                    _guid.ToString(),
-                    opts);
-            }
-            else
-            {
-                _jsRuntime.InvokeWithDefinedGuidAsync<bool>(
-                    "googleMapPolygonJsFunctions.init",
-                    _guid.ToString());
-            }
+            var obj = new Polygon(jsObjectRef, opts);
+
+            return obj;
         }
 
-        public override void Dispose()
+        /// <summary>
+        /// Create a polygon using the passed PolygonOptions, which specify the polygon's path, the stroke style for the polygon's edges, and the fill style for the polygon's interior regions. 
+        /// A polygon may contain one or more paths, where each path consists of an array of LatLngs.
+        /// </summary>
+        /// <param name="opts"></param>
+        private Polygon(JsObjectRef jsObjectRef, PolygonOptions opts = null)
         {
-            _jsRuntime.InvokeWithDefinedGuidAsync<bool>(
-                "googleMapPolygonJsFunctions.dispose",
-                _guid.ToString());
+            _jsObjectRef = jsObjectRef;
+            _map = opts?.Map;
+        }
+
+        public void Dispose()
+        {
+            _jsObjectRef.Dispose();
         }
 
         /// <summary>
@@ -48,9 +47,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<bool> GetDraggble()
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
-                "googleMapPolygonJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<bool>(
                 "getDraggble");
         }
 
@@ -60,9 +57,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<bool> GetEditable()
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
-                "googleMapPolygonJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<bool>(
                 "getEditable");
         }
 
@@ -70,7 +65,7 @@ namespace GoogleMapsComponents.Maps
         /// Returns the map on which this shape is attached.
         /// </summary>
         /// <returns></returns>
-        public MapComponent GetMap()
+        public Map GetMap()
         {
             return _map;
         }
@@ -81,9 +76,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<IEnumerable<LatLngLiteral>> GetPath()
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<IEnumerable<LatLngLiteral>>(
-                "googleMapPolygonJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<IEnumerable<LatLngLiteral>>(
                 "getPath");
         }
 
@@ -93,9 +86,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<IEnumerable<IEnumerable<LatLngLiteral>>> GetPaths()
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<IEnumerable<IEnumerable<LatLngLiteral>>>(
-                "googleMapPolygonJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<IEnumerable<IEnumerable<LatLngLiteral>>>(
                 "getPaths");
         }
 
@@ -105,9 +96,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<bool> GetVisible()
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
-                "googleMapPolygonJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync<bool>(
                 "getVisible");
         }
 
@@ -118,9 +107,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="draggble"></param>
         public Task SetDraggble(bool draggble)
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
-                "googleMapPolygonJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync(
                 "setDraggble",
                 draggble);
         }
@@ -131,9 +118,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="editable"></param>
         public Task SetEditable(bool editable)
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
-                "googleMapPolygonJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync(
                 "setEditable",
                 editable);
         }
@@ -142,14 +127,13 @@ namespace GoogleMapsComponents.Maps
         /// Renders this shape on the specified map. If map is set to null, the shape will be removed.
         /// </summary>
         /// <param name="map"></param>
-        public Task SetMap(MapComponent map)
+        public Task SetMap(Map map)
         {
             _map = map;
 
-            return _jsRuntime.InvokeWithDefinedGuidAsync<bool>(
-                "googleMapPolygonJsFunctions.setMap",
-                _guid.ToString(),
-                map?.DivId);
+            return _jsObjectRef.InvokeAsync(
+                "setMap",
+                map);
         }
 
         /// <summary>
@@ -158,9 +142,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="options"></param>
         public Task SetOptions(PolygonOptions options)
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
-                "googleMapPolygonJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync(
                 "setOptions",
                 options);
         }
@@ -171,9 +153,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="path"></param>
         public Task SetPath(IEnumerable<LatLngLiteral> path)
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
-                "googleMapPolygonJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync(
                 "setPath",
                 path);
         }
@@ -184,9 +164,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="paths"></param>
         public Task SetPaths(IEnumerable<IEnumerable<LatLngLiteral>> paths)
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
-                "googleMapPolygonJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync(
                 "setPaths",
                 paths);
         }
@@ -197,9 +175,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="visible"></param>
         public Task SetVisible(bool visible)
         {
-            return _jsRuntime.InvokeWithDefinedGuidAndMethodAsync<bool>(
-                "googleMapPolygonJsFunctions.invoke",
-                _guid.ToString(),
+            return _jsObjectRef.InvokeAsync(
                 "setVisible",
                 visible);
         }

@@ -1,6 +1,7 @@
 ﻿@page "/mapMarker"
 @using GoogleMapsComponents
 @using GoogleMapsComponents.Maps
+@using System.Diagnostics
 
 <h1>Google Map Markers</h1>
 
@@ -16,7 +17,7 @@
 
     private MapOptions mapOptions;
 
-    private List<Marker> markers = new List<Marker>();
+    private Stack<Marker> markers = new Stack<Marker>();
 
     private List<String> _events = new List<String>();
 
@@ -38,22 +39,48 @@
 
     private async Task AddMarker()
     {
-        var marker = new Marker(map1.JsRuntime, map1.JsEventInterop, new MarkerOptions()
+        var marker = await Marker.CreateAsync(map1.JsRuntime, new MarkerOptions()
         {
-            Position = await map1.GetCenter(),
-            Map = map1,
-            Label = $"Test {markers.Count()}"
+            Position = await map1.InteropObject.GetCenter(),
+            Map = map1.InteropObject,
+            Label = $"Test {markers.Count()}",
+            Icon = new Icon()
+            {
+                Url = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
+            }
+            //Icon = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
         });
 
-        markers.Add(marker);
+        //await marker.SetMap(map1);
 
-        await marker.AddListener("click", e =>
+        //var map = await marker.GetMap();
+
+        var icon = await marker.GetIcon();
+
+        Console.WriteLine($"Get icon result type is : {icon.Value.GetType()}");
+
+        icon.Switch(
+            s => Console.WriteLine(s),
+            i => Console.WriteLine(i.Url),
+            _ => { });
+
+        //if (map == map1.InteropObject)
+        //{
+        //    Console.WriteLine("Yess");
+        //}
+        //else
+        //{
+        //    Console.WriteLine("Nooo");
+        //}
+
+        markers.Push(marker);
+
+        await marker.AddListener<MouseEvent>("click", e =>
         {
             _events.Add("click");
             StateHasChanged();
 
-            var mouseEvent = e as MouseEventArgs;
-            mouseEvent.Stop();
+            e.Stop();
         });
     }
 
@@ -64,10 +91,8 @@
             return;
         }
 
-        var lastMarker = markers.Last();
+        var lastMarker = markers.Pop();
         await lastMarker.SetMap(null);
-
-        markers.RemoveAt(markers.Count - 1);
     }
 
     private async Task Recenter()
@@ -77,8 +102,8 @@
             return;
         }
 
-        var lastMarker = markers.Last();
-        var center = await map1.GetCenter();
+        var lastMarker = markers.Peek();
+        var center = await map1.InteropObject.GetCenter();
         await lastMarker.SetPosition(center);
     }
 

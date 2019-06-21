@@ -34,7 +34,7 @@ namespace GoogleMapsComponents.Maps
         /// Location of destination. This can be specified as either a string to be geocoded, or a LatLng, or a Place. 
         /// Required.
         /// </summary>
-        [JsonConverter(typeof(OrginDestinationConverter))]
+        [JsonConverter(typeof(OneOfConverter))]
         public OneOf<string, LatLngLiteral, Place> Destination { get; set; }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace GoogleMapsComponents.Maps
         /// This can be specified as either a string to be geocoded, or a LatLng, or a Place. 
         /// Required.
         /// </summary>
-        [JsonConverter(typeof(OrginDestinationConverter))]
+        [JsonConverter(typeof(OneOfConverter))]
         public OneOf<string, LatLngLiteral, Place> Origin { get; set; }
 
         /// <summary>

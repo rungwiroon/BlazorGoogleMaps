@@ -1,6 +1,7 @@
 ﻿@page "/mapPolyline"
 @using GoogleMapsComponents
 @using GoogleMapsComponents.Maps
+@using System.Diagnostics
 
 <h1>Polylines</h1>
 
@@ -47,16 +48,16 @@
 
     private async Task OnAfterMapInit()
     {
-        await map1.AddListener("click", async (e) => await OnClick(e));
+        await map1.InteropObject.AddListener<MouseEvent>("click", async (e) => await OnClick(e));
     }
 
-    private void StartDrawingPolyline()
+    private async Task StartDrawingPolyline()
     {
-        polyline = new Polyline(map1.JsRuntime, new PolylineOptions()
+        polyline = await Polyline.CreateAsync(map1.JsRuntime, new PolylineOptions()
         {
             Draggable = true,
             Editable = true,
-            Map = map1
+            Map = map1.InteropObject
         });
 
         path.Clear();
@@ -70,13 +71,13 @@
         path.Clear();
     }
 
-    private void StartDrawingPolygon()
+    private async Task StartDrawingPolygon()
     {
-        polygon = new Polygon(map1.JsRuntime, new PolygonOptions()
+        polygon = await Polygon.CreateAsync(map1.JsRuntime, new PolygonOptions()
         {
             Draggable = true,
             Editable = true,
-            Map = map1
+            Map = map1.InteropObject
         });
 
         path.Clear();
@@ -90,38 +91,36 @@
         path.Clear();
     }
 
-    private void DrawingRectangle()
+    private async Task DrawingRectangle()
     {
-        rectangle = new Rectangle(map1.JsRuntime, new RectangleOptions()
+        rectangle = await Rectangle.CreateAsync(map1.JsRuntime, new RectangleOptions()
         {
             Draggable = true,
             Editable = true,
-            Map = map1
+            Map = map1.InteropObject
         });
 
         path.Clear();
     }
 
-    private void DrawingCircle()
+    private async Task DrawingCircle()
     {
-        circle = new Circle(map1.JsRuntime, new CircleOptions()
+        circle = await Circle.CreateAsync(map1.JsRuntime, new CircleOptions()
         {
             Draggable = true,
             Editable = true,
-            Map = map1,
+            Map = map1.InteropObject,
             Radius = 1000
         });
 
         path.Clear();
     }
 
-    private async Task OnClick(MapEventArgs e)
+    private async Task OnClick(MouseEvent e)
     {
-        var mouseEvent = e as MouseEventArgs;
-
         //Debug.WriteLine($"Onclick : {mouseEvent.LatLng}");
 
-        path.Add(mouseEvent.LatLng);
+        path.Add(e.LatLng);
 
         if (polyline != null)
         {

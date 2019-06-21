@@ -10,6 +10,15 @@
     <LangVersion>7.3</LangVersion>
     <RazorLangVersion>3.0</RazorLangVersion>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+    <PackageId>BlazorGoogleMaps</PackageId>
+    <Version>0.3.0-alpha</Version>
+    <Authors>Rungwiroon</Authors>
+    <Company>QueueStack Solution</Company>
+    <Product>BlazorGoogleMaps</Product>
+    <Description>Blazor GoogleMaps components</Description>
+    <PackageProjectUrl>https://github.com/rungwiroon/BlazorGoogleMaps</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/rungwiroon/BlazorGoogleMaps</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,17 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="content\circleJsInterop.js" />
-    <None Remove="content\directionServiceInterop.js" />
-    <None Remove="content\drawingManagerJsInterop.js" />
-    <None Remove="content\googleMapJsInterop.js" />
-    <None Remove="content\heatmapLayerJsInterop.js" />
-    <None Remove="content\infoWindowJsInterop.js" />
-    <None Remove="content\mapEventJsInterop.js" />
-    <None Remove="content\markerJsInterop.js" />
-    <None Remove="content\polygonJsInterop.js" />
-    <None Remove="content\polylineJsInterop.js" />
-    <None Remove="content\rectangleJsInterop.js" />
+    <None Remove="content\objectManager.js" />
   </ItemGroup>
 
   <ItemGroup>

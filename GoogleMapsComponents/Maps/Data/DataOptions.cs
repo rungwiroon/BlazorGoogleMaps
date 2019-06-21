@@ -1,4 +1,5 @@
-﻿using OneOf;
+﻿using Newtonsoft.Json;
+using OneOf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,7 +44,8 @@ namespace GoogleMapsComponents.Maps.Data
         /// <summary>
         /// Map on which to display the features in the collection.
         /// </summary>
-        public MapComponent Map { get; set; }
+        [JsonConverter(typeof(JsObjectRefConverter<Map>))]
+        public Map Map { get; set; }
 
         /// <summary>
         /// Style for all features in the collection. 

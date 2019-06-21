@@ -31,16 +31,16 @@
 
     private async Task AddMarker()
     {
-        var position = await map1.GetCenter();
+        var position = await map1.InteropObject.GetCenter();
 
-        var marker = new Marker(map1.JsRuntime, map1.JsEventInterop, new MarkerOptions()
+        var marker = await Marker.CreateAsync(map1.JsRuntime, new MarkerOptions()
         {
             Position = position,
-            Map = map1,
+            Map = map1.InteropObject,
             Label = $"Test {markerCount}"
         });
 
-        var infoWindow = new InfoWindow(map1.JsRuntime, new InfoWindowOptions()
+        var infoWindow = await InfoWindow.CreateAsync(map1.JsRuntime, new InfoWindowOptions()
         {
             Position = new LatLngLiteral()
             {
@@ -52,11 +52,11 @@
 
         var infoWindowContent = $"Test {markerCount}";
 
-        await marker.AddListener("click", async e =>
+        await marker.AddListener("click", async () =>
         {
             await infoWindow.SetContent(infoWindowContent);
             await infoWindow.SetPosition(position);
-            await infoWindow.Open(map1);
+            await infoWindow.Open(map1.InteropObject);
         });
 
         markerCount++;

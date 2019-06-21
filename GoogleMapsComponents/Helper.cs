@@ -1,8 +1,12 @@
-﻿using Microsoft.JSInterop;
+﻿using GoogleMapsComponents.Maps;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
+using OneOf;
 using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
@@ -11,55 +15,219 @@ namespace GoogleMapsComponents
 {
     internal static class Helper
     {
-        internal static Task<TRes> MyInvokeAsync<TRes>(
+        internal static Task MyInvokeAsync(
             this IJSRuntime jsRuntime,
-            string identifier, 
+            string identifier,
             params object[] args)
         {
-            var argsJson = JsonConvert.SerializeObject(args,
-                            Formatting.None,
-                            new JsonSerializerSettings
-                            {
-                                NullValueHandling = NullValueHandling.Ignore,
-                                ContractResolver = new CamelCasePropertyNamesContractResolver()
-                            });
-
-            return jsRuntime.InvokeAsync<TRes>(identifier, argsJson);
+            return jsRuntime.MyInvokeAsync<object>(identifier, args);
         }
 
-        internal static Task<TRes> InvokeWithDefinedGuidAsync<TRes>(
-            this IJSRuntime jsRuntime,
-            string identifier, 
-            string guid, 
-            params object[] args)
+        private static string SerializeObject(object obj)
         {
-            var argsJson = JsonConvert.SerializeObject(args,
-                            Formatting.None,
-                            new JsonSerializerSettings
-                            {
-                                NullValueHandling = NullValueHandling.Ignore,
-                                ContractResolver = new CamelCasePropertyNamesContractResolver()
-                            });
-
-            return jsRuntime.InvokeAsync<TRes>(identifier, guid, argsJson);
+            return JsonConvert.SerializeObject(
+                        obj,
+                        Formatting.None,
+                        new JsonSerializerSettings
+                        {
+                            NullValueHandling = NullValueHandling.Ignore,
+                            ContractResolver = new CamelCasePropertyNamesContractResolver()
+                        });
         }
 
-        internal static Task<TRes> InvokeWithDefinedGuidAndMethodAsync<TRes>(
+        internal static async Task<TRes> MyInvokeAsync<TRes>(
             this IJSRuntime jsRuntime,
             string identifier, 
-            string guid, 
-            string method, 
             params object[] args)
         {
-            var argsJson = JsonConvert.SerializeObject(args,
-                            Formatting.None,
-                            new JsonSerializerSettings
-                            {
-                                NullValueHandling = NullValueHandling.Ignore,
-                                ContractResolver = new CamelCasePropertyNamesContractResolver()
-                            });
+            var jsFriendlyArgs = args
+                .Select(arg =>
+                {
+                    if (arg == null)
+                        return arg;
 
-            return jsRuntime.InvokeAsync<TRes>(identifier, guid, method, argsJson);
+                    if (arg is IOneOf oneof)
+                    {
+                        arg = oneof.Value;
+                    }
+
+                    var argType = arg.GetType();
+
+                    if (arg is ElementRef
+                        || arg is string
+                        || arg is int
+                        || arg is long
+                        || arg is double
+                        || arg is float
+                        || arg is decimal
+                        || arg is DateTime)
+                    {
+                        return arg;
+                    }
+                    else if (arg is Action action)
+                    {
+                        return new DotNetObjectRef(
+                            new JsCallableAction(jsRuntime, action));
+                    }
+                    else if (argType.IsGenericType
+                        && (argType.GetGenericTypeDefinition() == typeof(Action<>)))
+                    {
+                        var genericArguments = argType.GetGenericArguments();
+
+                        //Debug.WriteLine($"Generic args : {genericArguments.Count()}");
+
+                        return new DotNetObjectRef(new JsCallableAction(jsRuntime, (Delegate)arg, genericArguments));
+                    }
+                    else if (arg is JsCallableAction)
+                    {
+                        return new DotNetObjectRef(arg);
+                    }
+                    else if (arg is IJsObjectRef jsObjectRef)
+                    {
+                        //Debug.WriteLine("Serialize IJsObjectRef");
+
+                        var guid = jsObjectRef.Guid;
+                        return SerializeObject(new JsObjectRef1(guid));
+                    }
+                    else
+                    {
+                        return SerializeObject(arg);
+                    }
+                });
+
+            if (typeof(IJsObjectRef).IsAssignableFrom(typeof(TRes)))
+            {
+                var guid = await jsRuntime.InvokeAsync<string>(identifier, jsFriendlyArgs);
+
+                return (TRes)JsObjectRefInstances.GetInstance(guid);
+            }
+            else if (typeof(IOneOf).IsAssignableFrom(typeof(TRes)))
+            {
+                var resultObject = await jsRuntime.InvokeAsync<string>(identifier, jsFriendlyArgs);
+                object result = null;
+
+                if (resultObject is string someText)
+                {
+                    try
+                    {
+                        var jo = JObject.Parse(someText);
+
+                        if (jo.ContainsKey("dotnetTypeName"))
+                        {
+                            var typeName = jo.SelectToken("dotnetTypeName").Value<string>();
+                            var asm = typeof(Map).Assembly;
+                            var type = asm.GetType(typeName);
+                            result = jo.ToObject(type);
+                        }
+                        else
+                        {
+                            result = someText;
+                        }
+                    }
+                    catch
+                    {
+                        result = someText;
+                    }
+                }
+
+                return (TRes)result;
+            }
+            else
+            {
+                return await jsRuntime.InvokeAsync<TRes>(identifier, jsFriendlyArgs);
+            }
+        }
+
+        private static async Task<object> InvokeAsync(
+            this IJSRuntime jsRuntime,
+            string identifier,
+            params object[] args)
+        {
+            var resultObject = await jsRuntime.MyInvokeAsync<string>(identifier, args);
+            object result = null;
+
+            if (resultObject is string someText)
+            {
+                try
+                {
+                    var jo = JObject.Parse(someText);
+
+                    if (jo.ContainsKey("dotnetTypeName"))
+                    {
+                        var typeName = jo.SelectToken("dotnetTypeName").Value<string>();
+                        var asm = typeof(Map).Assembly;
+                        var type = asm.GetType(typeName);
+                        result = jo.ToObject(type);
+                    }
+                    else
+                    {
+                        result = someText;
+                    }
+                }
+                catch
+                {
+                    result = someText;
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// For use when returned result will be one of multiple type
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="U"></typeparam>
+        /// <typeparam name="V"></typeparam>
+        /// <param name="jsRuntime"></param>
+        /// <param name="identifier"></param>
+        /// <param name="args"></param>
+        /// <returns>Discriminated union of specified types</returns>
+        internal static async Task<OneOf<T, U>> MyInvokeAsync<T, U>(
+            this IJSRuntime jsRuntime,
+            string identifier,
+            params object[] args)
+        {
+            var result = await jsRuntime.InvokeAsync(identifier, args);
+
+            switch (result)
+            {
+                case T t:
+                    return t;
+                case U u:
+                    return u;
+                default:
+                    return default;
+            }
+        }
+
+        /// <summary>
+        /// For use when returned result will be one of multiple type
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="U"></typeparam>
+        /// <param name="jsRuntime"></param>
+        /// <param name="identifier"></param>
+        /// <param name="args"></param>
+        /// <returns>Discriminated union of specified types</returns>
+        internal static async Task<OneOf<T, U, V>> MyInvokeAsync<T, U, V>(
+            this IJSRuntime jsRuntime,
+            string identifier,
+            params object[] args)
+        {
+            var result = await jsRuntime.InvokeAsync(identifier, args);
+
+            switch (result)
+            {
+                case T t:
+                    return t;
+                case U u:
+                    return u;
+                case V v:
+                    return v;
+                default:
+                    return default;
+            }
         }
 
         internal static T ToEnum<T>(string str)
@@ -70,7 +238,8 @@ namespace GoogleMapsComponents
                 var enumMemberAttribute = ((EnumMemberAttribute[])enumType.GetField(name).GetCustomAttributes(typeof(EnumMemberAttribute), true)).Single();
                 if (enumMemberAttribute.Value == str) return (T)Enum.Parse(enumType, name);
             }
-            //throw exception or whatever handling you want or
+
+            //throw exception or whatever handling you want
             return default;
         }
     }
