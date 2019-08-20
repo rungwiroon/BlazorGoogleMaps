@@ -9,20 +9,20 @@
 
 <div ref="@map1ElementRef" id="map1" style="height: 450px"></div>
 <div>
-    <button onclick="@SyncBounds">Sync map bounds</button>
-    <button onclick="@SyncMapCenter">Sync map center</button>
-    <button onclick="@SetMapHeading">Set map heading</button>
-    <button onclick="@ToggleMapType">Toggle map type</button>
-    <button onclick="@ToggleTilt">Toggle map tilt</button>
-    <button onclick="@ZoomIn">Zoom in</button>
+    <button @onclick="SyncBounds">Sync map bounds</button>
+    <button @onclick="SyncMapCenter">Sync map center</button>
+    <button @onclick="SetMapHeading">Set map heading</button>
+    <button @onclick="ToggleMapType">Toggle map type</button>
+    <button @onclick="ToggleTilt">Toggle map tilt</button>
+    <button @onclick="ZoomIn">Zoom in</button>
 </div>
 
-<div ref="@map2ElementRef" id="map2" style="height: 450px"></div>
+<div @ref="@map2ElementRef" id="map2" style="height: 450px"></div>
 
 @functions {
     private Map map1, map2;
 
-    private ElementRef map1ElementRef, map2ElementRef;
+    private ElementReference map1ElementRef, map2ElementRef;
 
     protected override async Task OnAfterRenderAsync()
     {

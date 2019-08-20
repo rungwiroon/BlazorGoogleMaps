@@ -37,7 +37,7 @@ namespace GoogleMapsComponents
 
         internal static async Task<TRes> MyInvokeAsync<TRes>(
             this IJSRuntime jsRuntime,
-            string identifier, 
+            string identifier,
             params object[] args)
         {
             var jsFriendlyArgs = args
@@ -53,47 +53,49 @@ namespace GoogleMapsComponents
 
                     var argType = arg.GetType();
 
-                    if (arg is ElementRef
-                        || arg is string
-                        || arg is int
-                        || arg is long
-                        || arg is double
-                        || arg is float
-                        || arg is decimal
-                        || arg is DateTime)
+                    switch (arg)
                     {
-                        return arg;
-                    }
-                    else if (arg is Action action)
-                    {
-                        return new DotNetObjectRef(
-                            new JsCallableAction(jsRuntime, action));
-                    }
-                    else if (argType.IsGenericType
-                        && (argType.GetGenericTypeDefinition() == typeof(Action<>)))
-                    {
-                        var genericArguments = argType.GetGenericArguments();
+                        case ElementReference _:
+                        case string _:
+                        case int _:
+                        case long _:
+                        case double _:
+                        case float _:
+                        case decimal _:
+                        case DateTime _:
+                            return arg;
+                        case Action action:
+                            return DotNetObjectRef.Create(new JsCallableAction(jsRuntime, action));
+                        default:
+                            {
+                                if (argType.IsGenericType
+                                    && (argType.GetGenericTypeDefinition() == typeof(Action<>)))
+                                {
+                                    var genericArguments = argType.GetGenericArguments();
 
-                        //Debug.WriteLine($"Generic args : {genericArguments.Count()}");
+                                    //Debug.WriteLine($"Generic args : {genericArguments.Count()}");
 
-                        return new DotNetObjectRef(new JsCallableAction(jsRuntime, (Delegate)arg, genericArguments));
-                    }
-                    else if (arg is JsCallableAction)
-                    {
-                        return new DotNetObjectRef(arg);
-                    }
-                    else if (arg is IJsObjectRef jsObjectRef)
-                    {
-                        //Debug.WriteLine("Serialize IJsObjectRef");
+                                    return DotNetObjectRef.Create(new JsCallableAction(jsRuntime, (Delegate)arg, genericArguments));
+                                }
 
-                        var guid = jsObjectRef.Guid;
-                        return SerializeObject(new JsObjectRef1(guid));
-                    }
-                    else
-                    {
-                        return SerializeObject(arg);
+                                switch (arg)
+                                {
+                                    case JsCallableAction _:
+                                        return DotNetObjectRef.Create(arg);
+                                    case IJsObjectRef jsObjectRef:
+                                        {
+                                            //Debug.WriteLine("Serialize IJsObjectRef");
+                                            var guid = jsObjectRef.Guid;
+                                            return SerializeObject(new JsObjectRef1(guid));
+                                        }
+                                    default:
+                                        return SerializeObject(arg);
+                                }
+                            }
                     }
                 });
+
+
 
             if (typeof(IJsObjectRef).IsAssignableFrom(typeof(TRes)))
             {
@@ -134,7 +136,9 @@ namespace GoogleMapsComponents
             }
             else
             {
-                return await jsRuntime.InvokeAsync<TRes>(identifier, jsFriendlyArgs);
+                //Blazor: IJSRuntime.InvokeAsync serialization broken for arrays of objects
+                //https://github.com/aspnet/AspNetCore/issues/8743
+                return await jsRuntime.InvokeAsync<TRes>(identifier, (object)new object[] { jsFriendlyArgs });
             }
         }
 

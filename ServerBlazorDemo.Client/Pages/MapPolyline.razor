@@ -5,7 +5,7 @@
 
 <h1>Polylines</h1>
 
-<GoogleMap ref="@map1" Id="map1" Options="@mapOptions" OnAfterInit="async () => await OnAfterMapInit()"></GoogleMap>
+<GoogleMap @ref="map1" @ref:suppressField id="map1" Options="mapOptions" OnAfterInit="async () => await OnAfterMapInit()"></GoogleMap>
 <button @onclick="StartDrawingPolyline">Start drawing polyline</button>
 <button @onclick="EndDrawingPolyline">End drawing polyline</button>
 <br />
@@ -16,7 +16,7 @@
 <br />
 <button @onclick="DrawingCircle">Drawing circle</button>
 
-@functions {
+@code  {
     private GoogleMap map1;
 
     private MapOptions mapOptions;
