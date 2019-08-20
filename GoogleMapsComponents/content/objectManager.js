@@ -88,7 +88,7 @@ function uuidv4() {
 window.googleMapsObjectManager = {
     createObject: function (args) {
         window._blazorGoogleMapsObjects = window._blazorGoogleMapsObjects || [];
-
+        args = args[0];
         let args2 = args.slice(2).map(arg => tryParseJson(arg));
         //console.log(args2);
         let functionName = args[1];
@@ -99,7 +99,7 @@ window.googleMapsObjectManager = {
         if ("set" in obj) {
             obj.set("guidString", guid);
         }
-        
+
         window._blazorGoogleMapsObjects[guid] = obj;
     },
 
@@ -119,6 +119,9 @@ window.googleMapsObjectManager = {
     },
 
     invoke: function (args) {
+        if (args[0].constructor === Array) {
+            args = args[0];
+        }
         let args2 = args.slice(2).map(arg => tryParseJson(arg));
 
         let obj = window._blazorGoogleMapsObjects[args[0]];
@@ -148,7 +151,7 @@ window.googleMapsObjectManager = {
 
     invokeWithReturnedObjectRef: function (args) {
         //console.log(args);
-
+        args = args[0];
         let result = googleMapsObjectManager.invoke(args);
         let uuid = uuidv4();
 
@@ -167,6 +170,7 @@ window.googleMapsObjectManager = {
 
     readObjectPropertyValueWithReturnedObjectRef: function (args) {
         //console.log(args);
+        args = args[0];
 
         let obj = window._blazorGoogleMapsObjects[args[0]];
 

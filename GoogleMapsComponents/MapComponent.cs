@@ -17,14 +17,14 @@ namespace GoogleMapsComponents
 
         public Map InteropObject { get; private set; }
 
-        public async Task InitAsync(ElementRef element, MapOptions options = null)
+        public async Task InitAsync(ElementReference element, MapOptions options = null)
         {
             InteropObject = await Map.CreateAsync(JsRuntime, element, options);
         }
 
         public void Dispose()
         {
-            InteropObject.Dispose();
+            InteropObject?.Dispose();
         }
     }
 }

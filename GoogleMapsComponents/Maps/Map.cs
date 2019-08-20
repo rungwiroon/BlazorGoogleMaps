@@ -1,5 +1,4 @@
 ﻿using GoogleMapsComponents.Maps.Coordinates;
-using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Newtonsoft.Json;
 using OneOf;
@@ -7,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 
 namespace GoogleMapsComponents.Maps
 {
@@ -20,13 +20,13 @@ namespace GoogleMapsComponents.Maps
 
         public Guid Guid => _jsObjectRef.Guid;
 
-        public Dictionary<ControlPosition, List<ElementRef>> Controls { get; private set; }
+        public Dictionary<ControlPosition, List<ElementReference>> Controls { get; private set; }
 
         public MapData Data { get; private set; }
 
         public static async Task<Map> CreateAsync(
-            IJSRuntime jsRuntime, 
-            ElementRef mapDiv,
+            IJSRuntime jsRuntime,
+            ElementReference mapDiv,
             MapOptions opts = null)
         {
             var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Map", mapDiv, opts);
