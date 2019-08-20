@@ -8,8 +8,7 @@
 <GoogleMap @ref:suppressField @ref="@map1" Id="map1" Options="@mapOptions" OnAfterInit="async () => await OnAfterInitAsync()">
 </GoogleMap>
 
-<input type="checkbox" bind="@DisablePoiInfoWindow" />Disable POI's popup info window
-<br>
+<input type="checkbox" bind="@DisablePoiInfoWindow" />Disable POI's popup info window<br>
 
 <MapEventList @ref:suppressField @ref="@eventList" Events="@_events"></MapEventList>
 
@@ -45,7 +44,7 @@
 
         await map1.InteropObject.AddListener("center_changed", OnCenterChanged);
 
-        await map1.InteropObject.AddListener<MouseEvent>("click", async (e) => await OnClick(e));
+        await map1.InteropObject.AddListener<MouseEvent>("click", async(e) => await OnClick(e));
 
         await map1.InteropObject.AddListener("dblclick", OnDoubleClick);
 
@@ -107,7 +106,7 @@
 
         StateHasChanged();
 
-        if (DisablePoiInfoWindow)
+        if(DisablePoiInfoWindow)
         {
             await e.Stop();
         }
