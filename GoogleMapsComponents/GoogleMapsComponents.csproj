@@ -10,26 +10,23 @@
     <LangVersion>7.3</LangVersion>
     <RazorLangVersion>3.0</RazorLangVersion>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
-    <PackageId>BlazorGoogleMaps</PackageId>
-    <Version>0.3.0-alpha</Version>
-    <Authors>Rungwiroon</Authors>
-    <Company>QueueStack Solution</Company>
-    <Product>BlazorGoogleMaps</Product>
-    <Description>Blazor GoogleMaps components</Description>
-    <PackageProjectUrl>https://github.com/rungwiroon/BlazorGoogleMaps</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/rungwiroon/BlazorGoogleMaps</RepositoryUrl>
+    <PackageId>Vlasdkoqw</PackageId>
+    <Version>1</Version>
+    <Authors>Vlasdkoqw</Authors>
+    <Company>a</Company>
+    <Product>a</Product>
+    <Description></Description>
+    <PackageProjectUrl></PackageProjectUrl>
+    <RepositoryUrl></RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <AssemblyName>Vlasdkoqw</AssemblyName>
+    <RootNamespace>Vlasdkoqw</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- .js/.css files will be referenced via <script>/<link> tags; other content files will just be included in the app's 'dist' directory without any tags referencing them -->
-    <EmbeddedResource Include="content\**\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
-    <EmbeddedResource Include="content\**\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
-    <EmbeddedResource Include="content\**" Exclude="**\*.js;**\*.css" LogicalName="blazor:file:%(RecursiveDir)%(Filename)%(Extension)" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="content\objectManager.js" />
+    <EmbeddedResource Include="wwwroot\background.png" />
+    <EmbeddedResource Include="wwwroot\objectManager.js" />
+    <EmbeddedResource Include="wwwroot\styles.css" />
   </ItemGroup>
 
   <ItemGroup>
@@ -41,6 +38,11 @@
 
   <ItemGroup>
     <Folder Include="Maps\Data\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\background.png" />
+    <None Include="wwwroot\styles.css" />
   </ItemGroup>
 
 </Project>

@@ -1,10 +1,10 @@
-﻿@using Maps
-@using System.Diagnostics
+﻿@using System.Diagnostics
+@using GoogleMapsComponents.Maps
 @using Microsoft.AspNetCore.Components;
 
-@inherits MapComponent
+@inherits GoogleMapsComponents.MapComponent
 
-@implements IDisposable
+@implements System.IDisposable
 
 <div @ref="Element" @ref:suppressField id="Id" style="height: 500px"></div>
 
