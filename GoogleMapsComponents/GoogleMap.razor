@@ -6,19 +6,19 @@
 
 @implements System.IDisposable
 
-<div @ref="Element" @ref:suppressField id="Id" style="height: 500px"></div>
+<div ref="@Element" id="@Id" style="height: 500px"></div>
 
-@code  {
+@functions {
     [Parameter]
-    public string Id { get; set; }
-
-    [Parameter]
-    public MapOptions Options { get; set; }
+    private string Id { get; set; }
 
     [Parameter]
-    public Action OnAfterInit { get; set; }
+    private MapOptions Options { get; set; }
 
-    private ElementReference Element { get; set; }
+    [Parameter]
+    private Action OnAfterInit { get; set; }
+
+    private ElementRef Element { get; set; }
 
     protected override async Task OnAfterRenderAsync()
     {

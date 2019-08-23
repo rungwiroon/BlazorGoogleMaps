@@ -4,7 +4,7 @@
 
 <h1>Google Map Info Window</h1>
 
-<GoogleMap ref="@map1" Id="map1" Options="@mapOptions"></GoogleMap>
+<GoogleMap @ref:suppressField @ref="@map1" Id="map1" Options="@mapOptions"></GoogleMap>
 <button @onclick="AddMarker">Add marker</button>
 
 @functions {
@@ -15,7 +15,7 @@
     //private List<Marker> markers = new List<Marker>();
     private int markerCount;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         mapOptions = new MapOptions()
         {
