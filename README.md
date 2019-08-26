@@ -1,6 +1,42 @@
 # BlazorGoogleMaps
 Blazor interop for GoogleMap library
 
+## Usage
+1. Add google map script tag to wwwroot/index.html
+```
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_GOES_HERE&v=3"></script>
+```
+
+2. Use component 
+```
+@page "/map"
+@using GoogleMapsComponents
+@using GoogleMapsComponents.Maps
+
+<h1>Google Map</h1>
+
+<GoogleMap @ref:suppressField @ref="@map1" Id="map1" Options="@mapOptions"></GoogleMap>
+
+@functions {
+	private GoogleMap map1;
+	private MapOptions mapOptions;	
+
+	protected override void OnInitialized()
+	{
+		mapOptions = new MapOptions()
+		{
+			Zoom = 13,
+			Center = new LatLngLiteral()
+			{
+				Lat = 13.505892,
+				Lng = 100.8162
+			},
+			MapTypeId = MapTypeId.Roadmap
+		};
+	}		
+}
+
+```
 ## Current status
 * Map
 * Marker
