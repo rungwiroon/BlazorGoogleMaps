@@ -5,16 +5,16 @@
 
 <h1>Polylines</h1>
 
-<GoogleMap ref="@map1" Id="map1" Options="@mapOptions" OnAfterInit="async () => await OnAfterMapInit()"></GoogleMap>
-<button onclick="@StartDrawingPolyline">Start drawing polyline</button>
-<button onclick="@EndDrawingPolyline">End drawing polyline</button>
+<GoogleMap @ref:suppressField @ref="@map1" Id="map1" Options="@mapOptions" OnAfterInit="async () => await OnAfterMapInit()"></GoogleMap>
+<button @onclick="StartDrawingPolyline">Start drawing polyline</button>
+<button @onclick="EndDrawingPolyline">End drawing polyline</button>
 <br />
-<button onclick="@StartDrawingPolygon">Start drawing polygon</button>
-<button onclick="@EndDrawingPolygon">End drawing polygon</button>
+<button @onclick="StartDrawingPolygon">Start drawing polygon</button>
+<button @onclick="EndDrawingPolygon">End drawing polygon</button>
 <br />
-<button onclick="@DrawingRectangle">Drawing rectangle</button>
+<button @onclick="DrawingRectangle">Drawing rectangle</button>
 <br />
-<button onclick="@DrawingCircle">Drawing circle</button>
+<button @onclick="DrawingCircle">Drawing circle</button>
 
 @functions {
     private GoogleMap map1;
@@ -32,7 +32,7 @@
     private Rectangle rectangle;
     private Circle circle;
 
-    protected override void OnInit()
+    protected override void OnInitialized()
     {
         mapOptions = new MapOptions()
         {
@@ -152,7 +152,7 @@
             //path.Clear();
             rectangle = null;
         }
-        else if(circle != null)
+        else if (circle != null)
         {
             await circle.SetCenter(path.First());
             circle = null;
