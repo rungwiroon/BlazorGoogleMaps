@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace GoogleMapsComponents
 {
@@ -17,7 +18,7 @@ namespace GoogleMapsComponents
 
         public Map InteropObject { get; private set; }
 
-        public async Task InitAsync(ElementRef element, MapOptions options = null)
+        public async Task InitAsync(ElementReference element, MapOptions options = null)
         {
             InteropObject = await Map.CreateAsync(JsRuntime, element, options);
         }

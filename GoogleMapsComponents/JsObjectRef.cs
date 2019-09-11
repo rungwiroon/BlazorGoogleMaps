@@ -106,7 +106,7 @@ namespace GoogleMapsComponents
             DisposeAsync();
         }
 
-        public Task DisposeAsync()
+        public ValueTask<object> DisposeAsync()
         {
             return _jsRuntime.InvokeAsync<object>(
                 "googleMapsObjectManager.dispose",

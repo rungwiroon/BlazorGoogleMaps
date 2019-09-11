@@ -37,7 +37,7 @@ namespace GoogleMapsComponents
 
         internal static async Task<TRes> MyInvokeAsync<TRes>(
             this IJSRuntime jsRuntime,
-            string identifier, 
+            string identifier,
             params object[] args)
         {
             var jsFriendlyArgs = args
@@ -53,7 +53,7 @@ namespace GoogleMapsComponents
 
                     var argType = arg.GetType();
 
-                    if (arg is ElementRef
+                    if (arg is ElementReference
                         || arg is string
                         || arg is int
                         || arg is long
@@ -66,7 +66,7 @@ namespace GoogleMapsComponents
                     }
                     else if (arg is Action action)
                     {
-                        return new DotNetObjectRef(
+                        return DotNetObjectReference.Create(
                             new JsCallableAction(jsRuntime, action));
                     }
                     else if (argType.IsGenericType
@@ -76,11 +76,11 @@ namespace GoogleMapsComponents
 
                         //Debug.WriteLine($"Generic args : {genericArguments.Count()}");
 
-                        return new DotNetObjectRef(new JsCallableAction(jsRuntime, (Delegate)arg, genericArguments));
+                        return DotNetObjectReference.Create(new JsCallableAction(jsRuntime, (Delegate)arg, genericArguments));
                     }
                     else if (arg is JsCallableAction)
                     {
-                        return new DotNetObjectRef(arg);
+                        return DotNetObjectReference.Create(arg);
                     }
                     else if (arg is IJsObjectRef jsObjectRef)
                     {
