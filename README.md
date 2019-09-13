@@ -6,7 +6,7 @@ Blazor interop for GoogleMap library
 ```
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_GOES_HERE&v=3"></script>
 ```
-For servers side also needed to link to recourse manually in preview8. This could change in future releases. Add this line into _Host.cshtml
+For servers side also needed to link to recourse manually in preview9. This could change in future releases. Add this line into _Host.cshtml
 ```
 <script src="_content/BlazorGoogleMaps/objectManager.js"></script>
 ```
@@ -19,7 +19,7 @@ For servers side also needed to link to recourse manually in preview8. This coul
 
 <h1>Google Map</h1>
 
-<GoogleMap @ref:suppressField @ref="@map1" Id="map1" Options="@mapOptions"></GoogleMap>
+<GoogleMap @ref="@map1" Id="map1" Options="@mapOptions"></GoogleMap>
 
 @functions {
 	private GoogleMap map1;
