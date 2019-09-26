@@ -15,6 +15,11 @@ namespace GoogleMapsComponents.Maps
         private Map _map;
 
         /// <summary>
+        /// Access polyline using guid and window._blazorGoogleMapsObjects[GUID_STRING]
+        /// </summary>
+        public Guid Guid => _jsObjectRef.Guid;
+
+        /// <summary>
         /// Create a polyline using the passed PolylineOptions, which specify both the path of the polyline and the stroke style to use when drawing the polyline.
         /// </summary>
         public async static Task<Polyline> CreateAsync(IJSRuntime jsRuntime, PolylineOptions opts = null)

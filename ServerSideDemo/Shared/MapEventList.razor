@@ -1,0 +1,12 @@
+﻿@using Microsoft.AspNetCore.Components
+<ul>
+    @foreach (var evnt in Events)
+    {
+        <li>@evnt</li>
+    }
+</ul>
+
+@code {
+    [Parameter]
+    public List<string> Events { get; set; }
+}
