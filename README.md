@@ -39,8 +39,10 @@ For servers side also needed to link to recourse manually in preview9. This coul
 		};
 	}		
 }
-
 ```
+## Known Issues
+Adding map in razor page without _Host.cshtml use  RenderComponentAsync<T> to render componenent or/and try changing the Rendermode to Server in the host file
+
 ## Current status
 * Map
 * Marker
