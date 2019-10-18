@@ -25,7 +25,7 @@ namespace GoogleMapsComponents
 
         public void Dispose()
         {
-            InteropObject.Dispose();
+            InteropObject?.Dispose();
         }
     }
 }
