@@ -75,9 +75,10 @@
 
         markers.Push(marker);
 
-        await marker.AddListener<MouseEvent>("click", e =>
+        await marker.AddListener<MouseEvent>("click", async e =>
         {
-            _events.Add("click");
+            var markerLabel = await marker.GetLabel();
+            _events.Add("click on " + markerLabel);
             StateHasChanged();
 
             e.Stop();

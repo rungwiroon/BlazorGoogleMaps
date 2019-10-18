@@ -65,10 +65,9 @@ namespace GoogleMapsComponents.Maps
             return result;
         }
 
-        public Task<OneOf<string, MarkerLabel>> GetLabel()
+        public Task<string> GetLabel()
         {
-            return _jsObjectRef.InvokeAsync<OneOf<string, MarkerLabel>>(
-                "getLabel");
+            return _jsObjectRef.InvokeAsync<string>("getLabel");
         }
 
         public Task<Map> GetMap()
