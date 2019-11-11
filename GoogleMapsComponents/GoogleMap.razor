@@ -10,7 +10,7 @@
 
 @implements System.IDisposable
 
-<div @ref="@Element" id="@Id" style="height: 500px"></div>
+<div @ref="@Element" id="@Id" style="@StyleStr"></div>
 
 @code {
     [Parameter]
@@ -21,6 +21,26 @@
 
     [Parameter]
     public Action OnAfterInit { get; set; }
+
+    [Parameter]
+    public int Height { get; set; } = 500;
+
+    //Provides style string
+    private string StyleStr 
+    {
+        get
+        {
+            string tmpStyle = "";
+            
+            //Height
+            if (Height > 0)
+            {
+                tmpStyle = string.Format("height: {0}px;", Height);
+            }
+
+            return tmpStyle;
+        }
+    }
 
     private ElementReference Element { get; set; }
 
