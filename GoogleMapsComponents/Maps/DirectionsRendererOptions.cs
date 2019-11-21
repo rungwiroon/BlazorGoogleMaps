@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace GoogleMapsComponents.Maps
 {
@@ -33,6 +34,7 @@ namespace GoogleMapsComponents.Maps
         /// <summary>
         /// Map on which to display the directions.
         /// </summary>
+        [JsonConverter(typeof(JsObjectRefConverter<Map>))]
         public Map Map { get; set; }
 
         /// <summary>
