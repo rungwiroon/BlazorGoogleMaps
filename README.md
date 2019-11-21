@@ -1,10 +1,6 @@
 # BlazorGoogleMaps
 Blazor interop for GoogleMap library
 
-## Nuget
-<a href="https://www.nuget.org/packages/BlazorGoogleMaps" />
-<img src="https://img.shields.io/nuget/dt/BlazorGoogleMaps" />
-
 ## Usage
 1. Add google map script tag to wwwroot/index.html in Client side or _Host.cshtml in Server Side
 ```
