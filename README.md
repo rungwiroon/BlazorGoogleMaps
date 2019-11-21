@@ -53,8 +53,10 @@ Adding map in razor page without _Host.cshtml use  RenderComponentAsync<T> to re
 * InfoWindow
 * Polygon, LineString, Rectangle, Circle
 
+## Work In Progress
+* Routes
+
 ## Todo
 * Data 
 * StreetView
 * Places
-* Routes
