@@ -49,13 +49,11 @@ namespace GoogleMapsComponents.Maps
         /// <param name="callback"></param>
         public async Task<DirectionResponse> Route(DirectionsRequest request)
         {
-            var json = await _jsObjectRef.InvokeAsync<string>(
+            await _jsObjectRef.InvokeAsync(
                     $"{jsObjectName}.route",
                     request);
 
-            var directionResponse = JsonConvert.DeserializeObject<DirectionResponse>(json);
-
-            return directionResponse;
+            return null;
         }
     }
 }

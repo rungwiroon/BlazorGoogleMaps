@@ -85,6 +85,17 @@ function uuidv4() {
     );
 }
 
+function renderRoute(request, dirRender) {
+    let directionsService = new google.maps.DirectionsService();
+
+    directionsService.route(request, function(response, status) {
+      if (status == 'OK') {
+        console.dir(dirRender.getMap());
+        dirRender.setDirections(response);
+      }
+    });
+  }
+
 window.googleMapsObjectManager = {
     createObject: function (args) {
         window._blazorGoogleMapsObjects = window._blazorGoogleMapsObjects || [];
@@ -118,31 +129,33 @@ window.googleMapsObjectManager = {
         delete window._blazorGoogleMapsObjects[guid];
     },
 
-    invoke: function (args) {
+    invoke: async function (args) {
         let args2 = args.slice(2).map(arg => tryParseJson(arg));
 
         let obj = window._blazorGoogleMapsObjects[args[0]];
 
-        //console.log("Invoke " + methodName);
-        //console.dir(window._blazorGoogleMapsObjects);
-        //console.dir(args);
-        //console.dir(args2);
 
-        var result = obj[args[1]](...args2);
+        //If function is route, then handle callback in promise.
+        if (args[1] == "googleMapDirectionServiceFunctions.route"){
+            renderRoute(args2[0], obj);
+        }
+        else{
+            var result = obj[args[1]](...args2);
 
-        //console.log(result);
+            //console.log(result);
 
-        if (result !== null
-            && typeof result === "object") {
-            if ("get" in result) {
-                return result.get("guidString");
-            } else if ("dotnetTypeName" in result) {
-                return JSON.stringify(result);
+            if (result !== null
+                && typeof result === "object") {
+                if ("get" in result) {
+                    return result.get("guidString");
+                } else if ("dotnetTypeName" in result) {
+                    return JSON.stringify(result);
+                } else {
+                    return result;
+                }
             } else {
                 return result;
             }
-        } else {
-            return result;
         }
     },
 

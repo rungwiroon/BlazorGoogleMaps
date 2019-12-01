@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace GoogleMapsComponents.Maps
 {
@@ -15,6 +16,7 @@ namespace GoogleMapsComponents.Maps
         /// Waypoint location. Can be an address string, a LatLng, or a Place. 
         /// Optional.
         /// </summary>
+        [JsonConverter(typeof(OneOfConverter))]
         public OneOf<string, LatLngLiteral, Place> Location { get; set; }
 
         /// <summary>
