@@ -90,7 +90,7 @@ function renderRoute(request, dirRender) {
 
     directionsService.route(request, function(response, status) {
       if (status == 'OK') {
-        console.dir(dirRender.getMap());
+        //console.dir(dirRender.getMap());
         dirRender.setDirections(response);
       }
     });
