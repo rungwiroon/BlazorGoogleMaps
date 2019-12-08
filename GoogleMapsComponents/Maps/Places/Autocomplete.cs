@@ -25,7 +25,7 @@ namespace GoogleMapsComponents.Maps.Places
 
         public void Dispose()
         {
-            _jsObjectRef.Dispose();
+            _jsObjectRef?.Dispose();
         }
     }
 }
