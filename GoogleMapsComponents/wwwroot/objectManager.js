@@ -160,11 +160,17 @@ window.googleMapsObjectManager = {
             });
     
             //Wait for promise
-            let result = await promise;
-            obj.setDirections(result);
-            
-            let jsonRest = JSON.stringify(cleanDirectionResult(result));
-            return jsonRest;
+            try {
+                let result = await promise;
+                obj.setDirections(result);
+                
+                let jsonRest = JSON.stringify(cleanDirectionResult(result));
+                return jsonRest;
+            } catch (error) {
+                console.log(error);
+                return error;
+            }
+
         }
         else{
             var result = obj[args[1]](...args2);

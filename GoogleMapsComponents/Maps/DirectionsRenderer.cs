@@ -34,9 +34,18 @@ namespace GoogleMapsComponents.Maps
             var response = await _jsObjectRef.InvokeAsync<string>(
                     "googleMapDirectionServiceFunctions.route",
                     request);
-            var DirResult = JsonConvert.DeserializeObject<DirectionsResult>(response);
+            try
+            {
+                var DirResult = JsonConvert.DeserializeObject<DirectionsResult>(response);
 
-            return DirResult;
+                return DirResult;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error parsing DirectionsResult Object. Message: " + e.Message);
+                return null;
+            }
+            
         }
 
         public Task<Map> GetMap()
