@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
+using Newtonsoft.Json;
 
 namespace GoogleMapsComponents.Maps
 {
@@ -28,18 +29,14 @@ namespace GoogleMapsComponents.Maps
             _jsObjectRef.Dispose();
         }
 
-        public async Task Route(DirectionsRequest request)
+        public async Task<DirectionsResult> Route(DirectionsRequest request)
         {
-            await _jsObjectRef.InvokeAsync(
+            var response = await _jsObjectRef.InvokeAsync<string>(
                     "googleMapDirectionServiceFunctions.route",
                     request);
-        }
+            var DirResult = JsonConvert.DeserializeObject<DirectionsResult>(response);
 
-        public async Task<DirectionsResult> GetAnimation()
-        {
-            return await _jsObjectRef.InvokeAsync<DirectionsResult>(
-                "getDirections");
-
+            return DirResult;
         }
 
         public Task<Map> GetMap()

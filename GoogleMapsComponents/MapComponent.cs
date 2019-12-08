@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace GoogleMapsComponents
 {
-    [Obsolete]
+    //[Obsolete] //<-- No Idea why this is here.
     public class MapComponent : ComponentBase, IDisposable
     {
         [Inject]
