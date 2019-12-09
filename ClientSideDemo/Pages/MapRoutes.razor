@@ -6,6 +6,7 @@
 
 <GoogleMap @ref="@map1" Id="map1" Options="@mapOptions" Height="350" OnAfterInit="@(async () => await OnAfterInitAsync())"></GoogleMap>
 <button @onclick="@AddDirections">Add Direction</button>
+
 <p>
     Duration: @_durationTotalString <br />
     Distance: @_distanceTotalString <br />
