@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GoogleMapsComponents", "Goo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{575D69F2-3102-4FE1-A094-23A553B772AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerSideDemo", "ServerSideDemo\ServerSideDemo.csproj", "{4529EAF0-F632-485C-B76D-3B908767D0ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerSideDemo", "ServerSideDemo\ServerSideDemo.csproj", "{4529EAF0-F632-485C-B76D-3B908767D0ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientSideDemo", "ClientSideDemo\ClientSideDemo.csproj", "{4391E333-F33D-4E18-8D45-1C6E73B77285}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientSideDemo", "ClientSideDemo\ClientSideDemo.csproj", "{4391E333-F33D-4E18-8D45-1C6E73B77285}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

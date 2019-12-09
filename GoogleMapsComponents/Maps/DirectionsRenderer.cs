@@ -10,7 +10,7 @@ namespace GoogleMapsComponents.Maps
     {
         private readonly JsObjectRef _jsObjectRef;
 
-        public async static Task<DirectionsRenderer> CreateAsync(IJSRuntime jsRuntime, DirectionsRendererOptions opts = null)
+        public static async Task<DirectionsRenderer> CreateAsync(IJSRuntime jsRuntime, DirectionsRendererOptions opts = null)
         {
             var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.DirectionsRenderer", opts);
             var obj = new DirectionsRenderer(jsObjectRef);
@@ -25,7 +25,7 @@ namespace GoogleMapsComponents.Maps
 
         public void Dispose()
         {
-            _jsObjectRef.Dispose();
+            _jsObjectRef?.Dispose();
         }
 
         public async Task Route(DirectionsRequest request)
@@ -57,7 +57,7 @@ namespace GoogleMapsComponents.Maps
         public async Task SetDirections(DirectionsResult directions)
         {
             await _jsObjectRef.InvokeAsync(
-                "setDirections", 
+                "setDirections",
                 directions);
         }
 

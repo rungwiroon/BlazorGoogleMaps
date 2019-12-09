@@ -22,25 +22,19 @@
     [Parameter]
     public Action OnAfterInit { get; set; }
 
+    private int _height = 500;
+
+    /// <summary>
+    /// Default height 500px
+    /// </summary>
     [Parameter]
-    public int Height { get; set; } = 500;
-
-    //Provides style string
-    private string StyleStr 
+    public int Height
     {
-        get
-        {
-            string tmpStyle = "";
-            
-            //Height
-            if (Height > 0)
-            {
-                tmpStyle = string.Format("height: {0}px;", Height);
-            }
-
-            return tmpStyle;
-        }
+        get => _height;
+        set => _height = value <= 0 ? 500 : value;
     }
+
+    private string StyleStr => $"height: {Height}px;";
 
     private ElementReference Element { get; set; }
 
@@ -58,4 +52,6 @@
     {
         return false;
     }
+
+
 }
