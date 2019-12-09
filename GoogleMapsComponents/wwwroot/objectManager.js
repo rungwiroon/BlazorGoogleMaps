@@ -85,16 +85,23 @@ function uuidv4() {
     );
 }
 
-function renderRoute(request, dirRender) {
-    let directionsService = new google.maps.DirectionsService();
+//Strips the DirectionResult from some of the heaviest collections.
+function cleanDirectionResult(dirResponse) {
+    let tmpdirobj = JSON.parse(JSON.stringify(dirResponse));
 
-    directionsService.route(request, function(response, status) {
-      if (status == 'OK') {
-        console.dir(dirRender.getMap());
-        dirRender.setDirections(response);
-      }
+    tmpdirobj.routes.forEach((r) => {
+        r.overview_path = [];
+        r.overview_polyline = [];
+
+        r.legs.forEach((l) => {
+            l.lat_lngs = [];
+            l.path = [];
+            l.steps = [];
+        });        
     });
-  }
+
+    return tmpdirobj;
+}
 
 window.googleMapsObjectManager = {
     createObject: function (args) {
@@ -137,7 +144,33 @@ window.googleMapsObjectManager = {
 
         //If function is route, then handle callback in promise.
         if (args[1] == "googleMapDirectionServiceFunctions.route"){
-            renderRoute(args2[0], obj);
+            let dirRequest = args2[0];
+
+            let promise = new Promise((resolve, reject) => {
+                let directionsService = new google.maps.DirectionsService();
+                directionsService.route(dirRequest, (result, status) => {
+                   if (status == 'OK') {
+                       resolve(result);
+                   }
+                   else
+                   {
+                       reject(status);
+                   }
+                });
+            });
+    
+            //Wait for promise
+            try {
+                let result = await promise;
+                obj.setDirections(result);
+                
+                let jsonRest = JSON.stringify(cleanDirectionResult(result));
+                return jsonRest;
+            } catch (error) {
+                console.log(error);
+                return error;
+            }
+
         }
         else{
             var result = obj[args[1]](...args2);
