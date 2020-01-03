@@ -40,7 +40,7 @@ For servers side also needed to link to recourse manually in preview9. This coul
 	}		
 }
 ```
-3. Adding Direction Example
+3. Route Direction Example
 ```
 @using GoogleMapsComponents
 @using GoogleMapsComponents.Maps
@@ -49,12 +49,18 @@ For servers side also needed to link to recourse manually in preview9. This coul
 
 <GoogleMap @ref="@map1" Id="map1" Options="@mapOptions" Height="350" OnAfterInit="@(async () => await OnAfterInitAsync())"></GoogleMap>
 <button @onclick="AddDirections">Add Direction</button>
+<p>
+    Duration: @_durationTotalString <br />
+    Distance: @_distanceTotalString <br />
+</p>
 
 @code {
 	private GoogleMap map1;
 	private MapOptions mapOptions;	
 	private DirectionsRenderer dirRend;
-	
+	private string _durationTotalString;
+    	private string _distanceTotalString;
+    
 	protected override void OnInitialized()
 	{
 		mapOptions = new MapOptions()
@@ -92,7 +98,12 @@ For servers side also needed to link to recourse manually in preview9. This coul
 		dr.TravelMode = TravelMode.Driving;
 		
 		//Calculate Route
-		await dirRend.Route(dr);
+		var directionsResult = await dirRend.Route(dr);
+		foreach (var route in directionsResult.Routes.SelectMany(x => x.Legs))
+		{
+		    _durationTotalString += route.Duration.Text;
+		    _distanceTotalString += route.Distance.Text;
+		}
     	}		
 }
 ```
@@ -104,9 +115,9 @@ Adding map in razor page without _Host.cshtml use  RenderComponentAsync<T> to re
 * Marker
 * InfoWindow
 * Polygon, LineString, Rectangle, Circle
+* Routes
 
 ## Work In Progress
-* Routes
 
 ## Todo
 * Data 
