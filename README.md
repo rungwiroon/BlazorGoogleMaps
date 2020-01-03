@@ -2,7 +2,7 @@
 Blazor interop for GoogleMap library
 
 ## Usage
-1. Add google map script tag to wwwroot/index.html in Client side or _Host.cshtml in Server Side
+1. Add google map script HEAD tag to wwwroot/index.html in Client side or _Host.cshtml in Server Side
 ```
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_GOES_HERE&v=3"></script>
 ```
