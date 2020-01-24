@@ -53,7 +53,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public Task Close()
         {
-            return _jsObjectRef.InvokeAsync<bool>("close");
+            return _jsObjectRef.InvokeAsync("close");
         }
 
         public Task<string> GetContent()
