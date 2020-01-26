@@ -11,7 +11,7 @@
     <RazorLangVersion>3.0</RazorLangVersion>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
     <PackageId>BlazorGoogleMaps</PackageId>
-    <Version>0.5.1-alpha</Version>
+    <Version>0.5.2</Version>
     <Authors>Rungwiroon</Authors>
     <Company>QueueStack Solution</Company>
     <Product>BlazorGoogleMaps</Product>
@@ -19,6 +19,7 @@
     <PackageProjectUrl>https://github.com/rungwiroon/BlazorGoogleMaps</PackageProjectUrl>
     <RepositoryUrl>https://github.com/rungwiroon/BlazorGoogleMaps</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>

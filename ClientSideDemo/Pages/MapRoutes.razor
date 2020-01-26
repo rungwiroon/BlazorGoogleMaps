@@ -6,6 +6,7 @@
 
 <GoogleMap @ref="@map1" Id="map1" Options="@mapOptions" Height="350" OnAfterInit="@(async () => await OnAfterInitAsync())"></GoogleMap>
 <button @onclick="@AddDirections">Add Direction</button>
+<button @onclick="@RemoveRoute">Remove route</button>
 
 <p>
     Duration: @_durationTotalString <br />
@@ -31,6 +32,12 @@
             },
             MapTypeId = MapTypeId.Roadmap
         };
+    }
+
+    private async Task RemoveRoute()
+    {
+        await dirRend.SetDirections(null);
+        await dirRend.SetMap(null);
     }
 
     private async Task OnAfterInitAsync()

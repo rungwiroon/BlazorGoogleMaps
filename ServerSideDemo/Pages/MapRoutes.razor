@@ -6,6 +6,7 @@
 
 <GoogleMap @ref="@map1" Id="map1" Options="@mapOptions" Height="350" OnAfterInit="@(async () => await OnAfterInitAsync())"></GoogleMap>
 <button @onclick="@AddDirections">Add Direction</button>
+<button @onclick="@RemoveRoute">Remove route</button>
 <p>
     Duration: @_durationTotalString <br />
     Distance: @_distanceTotalString <br />
@@ -17,6 +18,7 @@
     private DirectionsRenderer dirRend;
     private string _durationTotalString;
     private string _distanceTotalString;
+    private DirectionsResult _directionsResult;
 
     protected override void OnInitialized()
     {
@@ -30,6 +32,12 @@
             },
             MapTypeId = MapTypeId.Roadmap
         };
+    }
+
+    private async Task RemoveRoute()
+    {
+        await dirRend.SetDirections(null);
+        await dirRend.SetMap(null);
     }
 
     private async Task OnAfterInitAsync()
@@ -55,8 +63,8 @@
         dr.TravelMode = TravelMode.Driving;
 
         //Calculate Route
-        var directionsResult = await dirRend.Route(dr);
-        foreach (var route in directionsResult.Routes.SelectMany(x => x.Legs))
+        _directionsResult = await dirRend.Route(dr);
+        foreach (var route in _directionsResult.Routes.SelectMany(x => x.Legs))
         {
             _durationTotalString += route.Duration.Text;
             _distanceTotalString += route.Distance.Text;
