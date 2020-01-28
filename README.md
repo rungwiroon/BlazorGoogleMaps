@@ -1,12 +1,14 @@
 # BlazorGoogleMaps
 Blazor interop for GoogleMap library
 
+[![NuGet version (BlazorGoogleMaps)](https://img.shields.io/nuget/v/BlazorGoogleMaps)](https://www.nuget.org/packages/BlazorGoogleMaps/)
+
 ## Usage
 1. Add google map script HEAD tag to wwwroot/index.html in Client side or _Host.cshtml in Server Side
 ```
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_GOES_HERE&v=3"></script>
 ```
-For servers side also needed to link to recourse manually in preview9. This could change in future releases. Add this line into _Host.cshtml
+Add path project js file in filewwwroot/index.html in Client side or _Host.cshtml in Server Side
 ```
 <script src="_content/BlazorGoogleMaps/objectManager.js"></script>
 ```
