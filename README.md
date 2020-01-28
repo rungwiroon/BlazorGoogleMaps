@@ -8,7 +8,7 @@ Blazor interop for GoogleMap library
 ```
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_GOES_HERE&v=3"></script>
 ```
-Add path project js file in filewwwroot/index.html in Client side or _Host.cshtml in Server Side
+Add path to project js file in filewwwroot/index.html in Client side or _Host.cshtml in Server Side. bellow < script src="_content/BlazorGoogleMaps/objectManager.js"></ script >
 ```
 <script src="_content/BlazorGoogleMaps/objectManager.js"></script>
 ```
