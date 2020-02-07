@@ -2,6 +2,7 @@
 @using GoogleMapsComponents
 @using GoogleMapsComponents.Maps
 @using System.Diagnostics
+@using GoogleMapsComponents.Maps.Coordinates
 
 <h1>Google Map Markers</h1>
 
@@ -23,7 +24,9 @@
 
     private MapEventList eventList;
 
-    protected override void OnInitialized()
+    private LatLngBounds bounds;
+
+    protected override async Task OnInitializedAsync()
     {
         mapOptions = new MapOptions()
         {
@@ -39,17 +42,29 @@
 
     private async Task AddMarker()
     {
+        if (bounds == null)
+        {
+            bounds = await LatLngBounds.CreateAsync(map1.JsRuntime);
+        }
+
         var marker = await Marker.CreateAsync(map1.JsRuntime, new MarkerOptions()
         {
             Position = await map1.InteropObject.GetCenter(),
             Map = map1.InteropObject,
-            Label = $"Test {markers.Count()}",
+            Label = $"Test {markers.Count}",
             Icon = new Icon()
             {
                 Url = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
             }
             //Icon = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
         });
+
+        var pos = await marker.GetPosition();
+        await bounds.Extend(pos);
+
+        var boundsLiteral = await bounds.ToJson();
+
+        await map1.InteropObject.FitBounds(boundsLiteral, OneOf.OneOf<int, Padding>.FromT0(5));
 
         //await marker.SetMap(map1);
 
@@ -81,7 +96,7 @@
             _events.Add("click on " + markerLabel);
             StateHasChanged();
 
-            e.Stop();
+            await e.Stop();
         });
     }
 
