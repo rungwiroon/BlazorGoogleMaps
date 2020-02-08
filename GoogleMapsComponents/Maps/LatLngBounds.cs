@@ -13,10 +13,8 @@ namespace GoogleMapsComponents.Maps
         private readonly JsObjectRef _jsObjectRef;
 
         /// <summary>
-        /// Constructs a rectangle from the points at its south-west and north-east corners..
+        /// Constructs a new empty bounds
         /// </summary>
-        /// <param name="sw">South west corner</param>
-        /// <param name="ne">North east corner</param>
         public async static Task<LatLngBounds> CreateAsync(IJSRuntime jsRuntime)
         {
             var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.LatLngBounds");
@@ -34,6 +32,24 @@ namespace GoogleMapsComponents.Maps
         public void Dispose()
         {
             _jsObjectRef.Dispose();
+        }
+
+        /// <summary>
+        /// Returns true if the given lat/lng is in this bounds.
+        /// </summary>
+        /// <returns></returns>
+        public Task<bool> Contains(LatLngLiteral other)
+        {
+            return _jsObjectRef.InvokeAsync<bool>("contains", other);
+        }
+
+        /// <summary>
+        /// Returns true if this bounds approximately equals the given bounds.
+        /// </summary>
+        /// <returns></returns>
+        public Task<bool> Equals(LatLngBoundsLiteral other)
+        {
+            return _jsObjectRef.InvokeAsync<bool>("equals", other);
         }
 
         /// <summary>
@@ -73,6 +89,24 @@ namespace GoogleMapsComponents.Maps
         }
         
         /// <summary>
+        /// Returns true if this bounds shares any points with the other bounds.
+        /// </summary>
+        /// <returns></returns>
+        public Task<bool> Intersects(LatLngBoundsLiteral other)
+        {
+            return _jsObjectRef.InvokeAsync<bool>("intersects", other);
+        }
+
+        /// <summary>
+        /// Returns true if the bounds are empty.
+        /// </summary>
+        /// <returns></returns>
+        public Task<bool> IsEmpty()
+        {
+            return _jsObjectRef.InvokeAsync<bool>("isEmpty");
+        }
+
+        /// <summary>
         /// Returns the literal representation of this bounds
         /// </summary>
         /// <returns></returns>
@@ -82,21 +116,31 @@ namespace GoogleMapsComponents.Maps
         }
 
         /// <summary>
-        /// Returns true if this bounds shares any points with the other bounds.
-        /// </summary>
-        /// <returns></returns>
-        public Task<bool> Intersects(LatLngBoundsLiteral other)
-        {
-            return _jsObjectRef.InvokeAsync<bool>("intersects", other);
-        }
-        
-        /// <summary>
         /// Returns true if the bounds are empty.
         /// </summary>
         /// <returns></returns>
-        public Task<bool> IsEmpty()
+        public Task<LatLngLiteral> ToSpan()
         {
-            return _jsObjectRef.InvokeAsync<bool>("isEmpty");
+            return _jsObjectRef.InvokeAsync<LatLngLiteral>("toSpan");
+        }
+
+        /// <summary>
+        /// Returns a string of the form "lat_lo,lng_lo,lat_hi,lng_hi" for this bounds,
+        /// where "lo" corresponds to the southwest corner of the bounding box, while "hi"
+        /// corresponds to the northeast corner of that box.
+        /// </summary>
+        /// <returns></returns>
+        public Task<string> ToUrlValue(double precision)
+        {
+            return _jsObjectRef.InvokeAsync<string>("toUrlValue", precision);
+        }
+
+        /// <summary>
+        /// Extends this bounds to contain the union of this and the given bounds.
+        /// </summary>
+        public Task Union(LatLngBoundsLiteral other)
+        {
+            return _jsObjectRef.InvokeAsync("union", other);
         }
     }
 }

@@ -10,6 +10,8 @@
 <button @onclick="AddMarker">Add marker</button>
 <button @onclick="RemoveMarker">Remove marker</button>
 <button @onclick="Recenter">Re-center marker</button>
+<button @onclick="FitBounds">Fit to markers</button>
+
 
 <MapEventList @ref="@eventList" Events="@_events"></MapEventList>
 
@@ -26,7 +28,7 @@
 
     private LatLngBounds bounds;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         mapOptions = new MapOptions()
         {
@@ -40,16 +42,21 @@
         };
     }
 
-    private async Task AddMarker()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (bounds == null)
+        if (firstRender)
         {
             bounds = await LatLngBounds.CreateAsync(map1.JsRuntime);
         }
+    }
+
+    private async Task AddMarker()
+    {
+        var mapCenter = await map1.InteropObject.GetCenter();
 
         var marker = await Marker.CreateAsync(map1.JsRuntime, new MarkerOptions()
         {
-            Position = await map1.InteropObject.GetCenter(),
+            Position = mapCenter,
             Map = map1.InteropObject,
             Label = $"Test {markers.Count}",
             Icon = new Icon()
@@ -59,17 +66,8 @@
             //Icon = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
         });
 
-        var pos = await marker.GetPosition();
-        await bounds.Extend(pos);
-
-        var boundsLiteral = await bounds.ToJson();
-
-        await map1.InteropObject.FitBounds(boundsLiteral, OneOf.OneOf<int, Padding>.FromT0(5));
-
-        //await marker.SetMap(map1);
-
-        //var map = await marker.GetMap();
-
+        await bounds.Extend(mapCenter);
+        
         var icon = await marker.GetIcon();
 
         Console.WriteLine($"Get icon result type is : {icon.Value.GetType()}");
@@ -78,15 +76,6 @@
             s => Console.WriteLine(s),
             i => Console.WriteLine(i.Url),
             _ => { });
-
-        //if (map == map1.InteropObject)
-        //{
-        //    Console.WriteLine("Yess");
-        //}
-        //else
-        //{
-        //    Console.WriteLine("Nooo");
-        //}
 
         markers.Push(marker);
 
@@ -123,4 +112,14 @@
         await lastMarker.SetPosition(center);
     }
 
+    private async Task FitBounds()
+    {
+        if (await this.bounds.IsEmpty())
+        {
+            return;
+        }
+
+        var boundsLiteral = await bounds.ToJson();
+        await map1.InteropObject.FitBounds(boundsLiteral, OneOf.OneOf<int, Padding>.FromT0(5));
+    }
 }
