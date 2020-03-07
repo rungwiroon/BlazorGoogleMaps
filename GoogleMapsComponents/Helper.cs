@@ -25,7 +25,7 @@ namespace GoogleMapsComponents
 
         private static string SerializeObject(object obj)
         {
-            return JsonConvert.SerializeObject(
+            var value = JsonConvert.SerializeObject(
                         obj,
                         Formatting.None,
                         new JsonSerializerSettings
@@ -33,6 +33,8 @@ namespace GoogleMapsComponents
                             NullValueHandling = NullValueHandling.Ignore,
                             ContractResolver = new CamelCasePropertyNamesContractResolver()
                         });
+
+            return value;
         }
 
         internal static async Task<TRes> MyInvokeAsync<TRes>(
@@ -53,45 +55,47 @@ namespace GoogleMapsComponents
 
                     var argType = arg.GetType();
 
-                    if (arg is ElementReference
-                        || arg is string
-                        || arg is int
-                        || arg is long
-                        || arg is double
-                        || arg is float
-                        || arg is decimal
-                        || arg is DateTime)
+                    switch (arg)
                     {
-                        return arg;
-                    }
-                    else if (arg is Action action)
-                    {
-                        return DotNetObjectReference.Create(
-                            new JsCallableAction(jsRuntime, action));
-                    }
-                    else if (argType.IsGenericType
-                        && (argType.GetGenericTypeDefinition() == typeof(Action<>)))
-                    {
-                        var genericArguments = argType.GetGenericArguments();
+                        case ElementReference _:
+                        case string _:
+                        case int _:
+                        case long _:
+                        case double _:
+                        case float _:
+                        case decimal _:
+                        case DateTime _:
+                        case bool _:
+                            return arg;
+                        case Action action:
+                            return DotNetObjectReference.Create(new JsCallableAction(jsRuntime, action));
+                        default:
+                            {
+                                if (argType.IsGenericType
+                                    && (argType.GetGenericTypeDefinition() == typeof(Action<>)))
+                                {
+                                    var genericArguments = argType.GetGenericArguments();
 
-                        //Debug.WriteLine($"Generic args : {genericArguments.Count()}");
+                                    //Debug.WriteLine($"Generic args : {genericArguments.Count()}");
 
-                        return DotNetObjectReference.Create(new JsCallableAction(jsRuntime, (Delegate)arg, genericArguments));
-                    }
-                    else if (arg is JsCallableAction)
-                    {
-                        return DotNetObjectReference.Create(arg);
-                    }
-                    else if (arg is IJsObjectRef jsObjectRef)
-                    {
-                        //Debug.WriteLine("Serialize IJsObjectRef");
+                                    return DotNetObjectReference.Create(new JsCallableAction(jsRuntime, (Delegate)arg, genericArguments));
+                                }
 
-                        var guid = jsObjectRef.Guid;
-                        return SerializeObject(new JsObjectRef1(guid));
-                    }
-                    else
-                    {
-                        return SerializeObject(arg);
+                                switch (arg)
+                                {
+                                    case JsCallableAction _:
+                                        return DotNetObjectReference.Create(arg);
+                                    case IJsObjectRef jsObjectRef:
+                                        {
+                                            //Debug.WriteLine("Serialize IJsObjectRef");
+
+                                            var guid = jsObjectRef.Guid;
+                                            return SerializeObject(new JsObjectRef1(guid));
+                                        }
+                                    default:
+                                        return SerializeObject(arg);
+                                }
+                            }
                     }
                 });
 
@@ -101,7 +105,8 @@ namespace GoogleMapsComponents
 
                 return (TRes)JsObjectRefInstances.GetInstance(guid);
             }
-            else if (typeof(IOneOf).IsAssignableFrom(typeof(TRes)))
+
+            if (typeof(IOneOf).IsAssignableFrom(typeof(TRes)))
             {
                 var resultObject = await jsRuntime.InvokeAsync<string>(identifier, jsFriendlyArgs);
                 object result = null;
