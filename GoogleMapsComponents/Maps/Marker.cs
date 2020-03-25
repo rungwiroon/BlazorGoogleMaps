@@ -204,10 +204,10 @@ namespace GoogleMapsComponents.Maps
                 shape);
         }
 
-        public Task SetTiltle(string title)
+        public Task SetTitle(string title)
         {
             return _jsObjectRef.InvokeAsync(
-                "setTiltle",
+                "setTitle",
                 title);
         }
 
