@@ -5,7 +5,7 @@
 
 <h1>Polylines</h1>
 
-<GoogleMap  @ref="@map1" Id="map1" Options="@mapOptions" OnAfterInit="async () => await OnAfterMapInit()"></GoogleMap>
+<GoogleMap @ref="@map1" Id="map1" Options="@mapOptions" OnAfterInit="async () => await OnAfterMapInit()"></GoogleMap>
 <button @onclick="StartDrawingPolyline">Start drawing polyline</button>
 <button @onclick="EndDrawingPolyline">End drawing polyline</button>
 <br />
@@ -61,9 +61,11 @@
         });
 
         path.Clear();
+
+
     }
 
-    private void EndDrawingPolyline()
+    private async Task EndDrawingPolyline()
     {
         polylines.Add(polyline);
 

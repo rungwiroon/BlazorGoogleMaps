@@ -80,8 +80,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<IEnumerable<LatLngLiteral>> GetPath()
         {
-            return _jsObjectRef.InvokeAsync<IEnumerable<LatLngLiteral>>(
-                "getPath");
+            return _jsObjectRef.InvokeAsync<IEnumerable<LatLngLiteral>>("getPath");
         }
 
         /// <summary>
