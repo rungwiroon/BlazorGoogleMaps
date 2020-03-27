@@ -16,6 +16,8 @@
 <br />
 <button @onclick="DrawingCircle">Drawing circle</button>
 
+<MapEventList @ref="@eventList" Events="@_events"></MapEventList>
+
 @functions {
     private GoogleMap map1;
 
@@ -31,6 +33,11 @@
 
     private Rectangle rectangle;
     private Circle circle;
+
+    private MapEventList eventList;
+
+    private List<String> _events = new List<String>();
+
 
     protected override void OnInitialized()
     {
@@ -62,7 +69,11 @@
 
         path.Clear();
 
-
+        await polyline.AddListener("click", () =>
+        {
+            _events.Insert(0, "click polyline");
+            _events = _events.Take(100).ToList();
+        });
     }
 
     private async Task EndDrawingPolyline()
