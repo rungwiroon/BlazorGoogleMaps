@@ -172,12 +172,20 @@ window.googleMapsObjectManager = {
 
         }
         else {
-            var result = obj[args[1]](...args2);
-
-            //console.log(result);
+            var result = null;
+            try {
+                result = obj[args[1]](...args2);
+            } catch (e) {
+                console.log(e);
+            }
 
             if (result !== null
                 && typeof result === "object") {
+                if (result.hasOwnProperty("geocoded_waypoints") && result.hasOwnProperty("routes")) {
+                    
+                    let jsonRest = cleanDirectionResult(result);
+                    return jsonRest;
+                }
                 if ("getArray" in result) {
                     return result.getArray();
                 }

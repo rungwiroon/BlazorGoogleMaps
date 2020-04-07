@@ -67,6 +67,12 @@ namespace GoogleMapsComponents.Maps
                 directions);
         }
 
+        public Task<DirectionsResult> GetDirections()
+        {
+            return _jsObjectRef.InvokeAsync<DirectionsResult>(
+                "getDirections");
+        }
+
         public async Task SetMap(Map map)
         {
             await _jsObjectRef.InvokeAsync(
