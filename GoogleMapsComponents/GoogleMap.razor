@@ -10,7 +10,7 @@
 
 @implements System.IDisposable
 
-<div @ref="@Element" id="@Id" style="@StyleStr"></div>
+<div @ref="@Element" id="@Id" class="@CssClass" style="@StyleStr"></div>
 
 @code {
     [Parameter]
@@ -22,19 +22,22 @@
     [Parameter]
     public Action OnAfterInit { get; set; }
 
-    private int _height = 500;
+    [Parameter]
+    public string CssClass { get; set; }
+
+    private string _height = "500px";
 
     /// <summary>
     /// Default height 500px
     /// </summary>
     [Parameter]
-    public int Height
+    public string Height
     {
         get => _height;
-        set => _height = value <= 0 ? 500 : value;
+        set => _height = value ?? "500px";
     }
 
-    private string StyleStr => $"height: {Height}px;";
+    private string StyleStr => $"height: {Height};";
 
     private ElementReference Element { get; set; }
 

@@ -25,6 +25,7 @@ namespace GoogleMapsComponents
                 || value.Value is double
                 || value.Value is float
                 || value.Value is decimal
+                || value.Value is SymbolPath
                 || value.Value is DateTime)
             {
                 serializer.Serialize(writer, value.Value);

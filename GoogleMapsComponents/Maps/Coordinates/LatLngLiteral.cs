@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,6 +17,7 @@ namespace GoogleMapsComponents.Maps
         /// This means that if the value specified is less than -90, it will be set to -90. 
         /// And if the value is greater than 90, it will be set to 90.
         /// </summary>
+        [JsonProperty("lat")]
         public double Lat { get; set; }
 
         /// <summary>
@@ -23,6 +25,7 @@ namespace GoogleMapsComponents.Maps
         /// For example, a value of -190 will be converted to 170. A value of 190 will be converted to -170. 
         /// This reflects the fact that longitudes wrap around the globe.
         /// </summary>
+        [JsonProperty("lng")]
         public double Lng { get; set; }
 
         public override string ToString()

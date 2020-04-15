@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using OneOf;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,6 +13,8 @@ namespace GoogleMapsComponents.Maps
     /// </summary>
     public class Symbol
     {
+        [JsonConverter(typeof(OneOfConverter))]
+        public OneOf<SymbolPath, string> Path { get; set; }
         /// <summary>
         /// The position of the symbol relative to the marker or polyline. 
         /// The coordinates of the symbol's path are translated left and up by the anchor's x and y coordinates respectively. 

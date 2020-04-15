@@ -45,7 +45,7 @@ namespace GoogleMapsComponents.Maps
                 Console.WriteLine("Error parsing DirectionsResult Object. Message: " + e.Message);
                 return null;
             }
-            
+
         }
 
         public Task<Map> GetMap()
@@ -67,10 +67,21 @@ namespace GoogleMapsComponents.Maps
                 directions);
         }
 
-        public Task<DirectionsResult> GetDirections()
+        public async Task<DirectionsResult> GetDirections()
         {
-            return _jsObjectRef.InvokeAsync<DirectionsResult>(
+            var response = await _jsObjectRef.InvokeAsync<string>(
                 "getDirections");
+            try
+            {
+                var DirResult = JsonConvert.DeserializeObject<DirectionsResult>(response);
+
+                return DirResult;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error parsing DirectionsResult Object. Message: " + e.Message);
+                return null;
+            }
         }
 
         public async Task SetMap(Map map)

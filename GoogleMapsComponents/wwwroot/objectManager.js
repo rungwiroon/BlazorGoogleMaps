@@ -90,7 +90,7 @@ function cleanDirectionResult(dirResponse) {
     let tmpdirobj = JSON.parse(JSON.stringify(dirResponse));
 
     tmpdirobj.routes.forEach((r) => {
-        r.overview_path = [];
+      //  r.overview_path = [];
         r.overview_polyline = [];
 
         r.legs.forEach((l) => {
@@ -162,8 +162,11 @@ window.googleMapsObjectManager = {
             try {
                 let result = await promise;
                 obj.setDirections(result);
-
+                
                 let jsonRest = JSON.stringify(cleanDirectionResult(result));
+                //let jsonRest = cleanDirectionResult(result);
+                //console.log(JSON.stringify(jsonRest));
+                //let jsonRest = JSON.stringify(result);
                 return jsonRest;
             } catch (error) {
                 console.log(error);
@@ -183,7 +186,7 @@ window.googleMapsObjectManager = {
                 && typeof result === "object") {
                 if (result.hasOwnProperty("geocoded_waypoints") && result.hasOwnProperty("routes")) {
                     
-                    let jsonRest = cleanDirectionResult(result);
+                    let jsonRest = JSON.stringify(cleanDirectionResult(result));
                     return jsonRest;
                 }
                 if ("getArray" in result) {
