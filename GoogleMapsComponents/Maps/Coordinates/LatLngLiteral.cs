@@ -25,6 +25,17 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public double Lng { get; set; }
 
+        public LatLngLiteral()
+        {
+
+        }
+
+        public LatLngLiteral(double lng, double lat)
+        {
+            Lng = lng;
+            Lat = lat;
+        }
+
         public override string ToString()
         {
             return $"{Lat}, {Lng}";
