@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -37,6 +38,7 @@ namespace GoogleMapsComponents.Maps
         /// An array of LatLngs representing the entire course of this route. 
         /// The path is simplified in order to make it suitable in contexts where a small number of vertices is required (such as Static Maps API URLs).
         /// </summary>
+        [JsonProperty("overview_path")]
         public IEnumerable<LatLngLiteral> OverviewPath { get; set; }
 
         /// <summary>

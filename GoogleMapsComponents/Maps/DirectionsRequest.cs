@@ -61,7 +61,7 @@ namespace GoogleMapsComponents.Maps
         /// Whether or not route alternatives should be provided. 
         /// Optional.
         /// </summary>
-        public bool? ProvideRouteAlternative { get; set; }
+        public bool? ProvideRouteAlternatives { get; set; }
 
         /// <summary>
         /// Region code used as a bias for geocoding requests. 
