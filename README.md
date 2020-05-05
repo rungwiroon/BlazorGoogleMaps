@@ -121,6 +121,7 @@ Adding map in razor page without _Host.cshtml use  RenderComponentAsync<T> to re
 * Routes
 * Coordinates
   * Bounds
+ * Styles
 
 ## Work In Progress
 
