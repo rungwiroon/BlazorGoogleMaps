@@ -20,7 +20,7 @@
     public MapOptions Options { get; set; }
 
     [Parameter]
-    public Action OnAfterInit { get; set; }
+    public EventCallback OnAfterInit { get; set; }
 
     [Parameter]
     public string CssClass { get; set; }
@@ -49,7 +49,7 @@
 
         //Debug.WriteLine("Init finished");
 
-        OnAfterInit?.Invoke();
+        await OnAfterInit.InvokeAsync(null);
     }
 
     protected override bool ShouldRender()
