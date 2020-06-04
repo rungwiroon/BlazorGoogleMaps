@@ -13,6 +13,15 @@
     return fn;
 }
 
+const dateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
+
+function dateObjectReviver(key, value) {
+    if (typeof value === "string" && dateFormat.test(value)) {
+        return new Date(value);
+    }
+    return value;
+}
+
 function tryParseJson(item) {
     //console.log(item);
 
@@ -52,7 +61,7 @@ function tryParseJson(item) {
     let item2 = null;
 
     try {
-        item2 = JSON.parse(item);
+        item2 = JSON.parse(item, dateObjectReviver);
     } catch (e) {
         return item.replace(/['"]+/g, '');
     }

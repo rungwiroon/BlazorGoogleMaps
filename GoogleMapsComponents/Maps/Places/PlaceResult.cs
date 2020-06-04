@@ -56,6 +56,14 @@ namespace GoogleMapsComponents.Maps.Places
         public string PlaceId { get; set; }
 
         /// <summary>
+        /// Plus codes can be used as a replacement for street addresses in places where they do not exist (where buildings are not numbered or streets are not named).
+        /// The plus code is formatted as a global code and a compound code
+        /// Typically, both the global code and compound code are returned. However, if the result is in a remote location (for example, an ocean or desert) only the global code may be returned.
+        /// </summary>
+        [JsonPropertyName("plus_code")]
+        public PlacePlusCode PlusCode { get; set; }
+
+        /// <summary>
         /// URL of the official Google page for this place. This is the Google-owned page that contains
         /// the best available information about the Place. Only available with PlacesService.getDetails.
         /// </summary>
