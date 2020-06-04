@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 namespace GoogleMapsComponents.Maps
 {
     /// <summary>
@@ -10,6 +7,7 @@ namespace GoogleMapsComponents.Maps
     /// Some fields in the leg may not be returned for all requests. 
     /// Note that though this result is "JSON-like," it is not strictly JSON, as it directly and indirectly includes LatLng objects..
     /// </summary>
+
     public class DirectionsLeg
     {
         /// <summary>
@@ -37,28 +35,34 @@ namespace GoogleMapsComponents.Maps
         /// This property may be undefined as the duration may be unknown. 
         /// Only available to Premium Plan customers when drivingOptions is defined when making the request.
         /// </summary>
+
+        [JsonProperty("duration_in_traffic")]
         public Duration DurationInTraffic { get; set; }
 
         /// <summary>
         /// The address of the destination of this leg.
         /// </summary>
+        [JsonProperty("end_address")]
         public string EndAddress { get; set; }
 
         /// <summary>
         /// The DirectionsService calculates directions between locations by using the nearest transportation option (usually a road) at the start and end locations. 
         /// end_location indicates the actual geocoded destination, which may be different than the end_location of the last step if, for example, the road is not near the destination of this leg.
         /// </summary>
+        [JsonProperty("end_location")]
         public LatLngLiteral EndLocation { get; set; }
 
         /// <summary>
         /// The address of the origin of this leg.
         /// </summary>
+        [JsonProperty("start_address")]
         public string StartAddress { get; set; }
 
         /// <summary>
         /// The DirectionsService calculates directions between locations by using the nearest transportation option (usually a road) at the start and end locations. 
         /// start_location indicates the actual geocoded origin, which may be different than the start_location of the first step if, for example, the road is not near the origin of this leg.
         /// </summary>
+        [JsonProperty("start_location")]
         public LatLngLiteral StartLocation { get; set; }
 
         /// <summary>
@@ -72,6 +76,7 @@ namespace GoogleMapsComponents.Maps
         /// When using the Directions Service to implement draggable directions, it is recommended to disable dragging of alternative routes.
         /// Only the main route should be draggable.Users can drag the main route until it matches an alternative route.
         /// </summary>
+        [JsonProperty("via_waypoints")]
         public IEnumerable<LatLngLiteral> ViaWaypoints { get; set; }
     }
 }
