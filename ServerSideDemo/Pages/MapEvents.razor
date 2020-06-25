@@ -62,6 +62,7 @@
         await map1.InteropObject.AddListener("maptypeid_changed", OnMapTypeIdChanged);
 
         await map1.InteropObject.AddListener<MouseEvent>("mousemove", OnMouseMove);
+        await map1.InteropObject.AddListener<MouseEvent>("mousedown", OnMouseMove);
 
         await map1.InteropObject.AddListener("mouseout", OnMouseOut);
 
