@@ -100,7 +100,6 @@ function cleanDirectionResult(dirResponse) {
 
     tmpdirobj.routes.forEach((r) => {
       //  r.overview_path = [];
-        r.overview_polyline = [];
 
         r.legs.forEach((l) => {
             l.lat_lngs = [];
