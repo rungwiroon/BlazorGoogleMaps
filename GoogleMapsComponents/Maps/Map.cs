@@ -48,6 +48,7 @@ namespace GoogleMapsComponents.Maps
         public void Dispose()
         {
             JsObjectRefInstances.Remove(_jsObjectRef.Guid.ToString());
+            _jsObjectRef.JSRuntime.InvokeAsync<object>("googleMapsObjectManager.disposeMapElements", Guid.ToString());
             _jsObjectRef.Dispose();
         }
 

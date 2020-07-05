@@ -140,6 +140,28 @@ window.googleMapsObjectManager = {
         return guid;
     },
 
+    disposeMapElements(mapGuid) {
+        var keysToRemove = [];
+       
+        for (var key in _blazorGoogleMapsObjects) {
+            if (_blazorGoogleMapsObjects.hasOwnProperty(key)) {
+                var element = _blazorGoogleMapsObjects[key];
+                if (element.hasOwnProperty("map")
+                    && element.hasOwnProperty("guidString")
+                    && element.map.guidString === mapGuid) {
+                    keysToRemove.push(element.guidString);
+                }
+            }
+        }
+
+        for (var keyToRemove in keysToRemove) {
+            if (keysToRemove.hasOwnProperty(keyToRemove)) {
+                var elementToRemove = keysToRemove[keyToRemove];
+                delete window._blazorGoogleMapsObjects[elementToRemove];
+            }
+        }
+    },
+
     disposeObject: function (guid) {
         delete window._blazorGoogleMapsObjects[guid];
     },
@@ -221,7 +243,7 @@ window.googleMapsObjectManager = {
 
         //console.log("invokeWithReturnedObjectRef " + uuid);
 
-        window._blazorGoogleMapsObjects[uuid] = result;
+        //window._blazorGoogleMapsObjects[uuid] = result;
 
         return uuid;
     },

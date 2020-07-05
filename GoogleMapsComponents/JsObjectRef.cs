@@ -109,7 +109,7 @@ namespace GoogleMapsComponents
         public ValueTask<object> DisposeAsync()
         {
             return _jsRuntime.InvokeAsync<object>(
-                "googleMapsObjectManager.dispose",
+                "googleMapsObjectManager.disposeObject",
                 _guid.ToString()
             );
         }
