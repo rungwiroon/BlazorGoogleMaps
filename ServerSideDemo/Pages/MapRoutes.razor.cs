@@ -49,7 +49,7 @@ namespace ServerSideDemo.Pages
         {
             //Adding a waypoint
             var waypoints = new List<DirectionsWaypoint>();
-            waypoints.Add(new DirectionsWaypoint() { Location = "Bethlehem, PA", Stopover = false });
+            waypoints.Add(new DirectionsWaypoint() { Location = "Bethlehem, PA", Stopover = true });
 
             //Direction Request
             DirectionsRequest dr = new DirectionsRequest();
@@ -63,8 +63,19 @@ namespace ServerSideDemo.Pages
             };
 
             //Calculate Route
-            _directionsResult = await dirRend.Route(dr);
-            foreach (var route in _directionsResult.Routes.SelectMany(x => x.Legs))
+            _directionsResult = await dirRend.Route(dr, new DirectionsRequestOptions()
+            {
+                StripLegsStepsLatLngs = false,
+                StripOverviewPath = false,
+                StripOverviewPolyline = false,
+                StripLegsStepsPath = false,
+                StripLegsSteps = false
+            });
+
+
+            var routes = _directionsResult.Routes.SelectMany(x => x.Legs).ToList();
+
+            foreach (var route in routes)
             {
                 _durationTotalString += route.DurationInTraffic?.Text;
                 _distanceTotalString += route.Distance.Text;

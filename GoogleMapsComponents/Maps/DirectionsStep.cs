@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace GoogleMapsComponents.Maps
 {
@@ -35,11 +36,6 @@ namespace GoogleMapsComponents.Maps
         public string Instructions { get; set; }
 
         /// <summary>
-        /// A sequence of LatLngs describing the course of this step.
-        /// </summary>
-        public IEnumerable<LatLngLiteral> Path { get; set; }
-
-        /// <summary>
         /// The starting location of this step.
         /// </summary>
         public LatLngLiteral StartLocation { get; set; }
@@ -60,5 +56,15 @@ namespace GoogleMapsComponents.Maps
         /// The mode of travel used in this step.
         /// </summary>
         public TravelMode TravelMode { get; set; }
+
+
+        [JsonProperty("lat_lngs")]
+        public IEnumerable<LatLngLiteral> LatLngs { get; set; }
+
+        /// <summary>
+        /// A sequence of LatLngs describing the course of this step.
+        /// </summary>
+        [JsonProperty("path")]
+        public IEnumerable<LatLngLiteral> Path { get; set; }
     }
 }

@@ -25,7 +25,7 @@ namespace ServerSideDemo
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
-            services.AddServerSideBlazor();
+            services.AddServerSideBlazor().AddHubOptions(config => config.MaximumReceiveMessageSize = 1048576);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

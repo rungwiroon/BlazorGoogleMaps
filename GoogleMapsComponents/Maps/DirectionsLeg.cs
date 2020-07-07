@@ -78,5 +78,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         [JsonProperty("via_waypoints")]
         public IEnumerable<LatLngLiteral> ViaWaypoints { get; set; }
+
+        
     }
 }

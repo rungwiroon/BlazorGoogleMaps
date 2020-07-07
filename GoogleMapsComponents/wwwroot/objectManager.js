@@ -95,16 +95,34 @@ function uuidv4() {
 }
 
 //Strips the DirectionResult from some of the heaviest collections.
-function cleanDirectionResult(dirResponse) {
+//ServerSide (Client Side have no issues) reach MaximumReceiveMessageSize (32kb) and crash if we return all data
+//Workaround is to increase limit MaximumReceiveMessageSize
+function cleanDirectionResult(dirResponse, dirRequestOptions) {
     let tmpdirobj = JSON.parse(JSON.stringify(dirResponse));
 
     tmpdirobj.routes.forEach((r) => {
-      //  r.overview_path = [];
+        if (dirRequestOptions == undefined || dirRequestOptions.stripOverviewPath) {
+            r.overview_path = [];
+        }
+
+        if (dirRequestOptions == undefined || dirRequestOptions.stripOverviewPolyline) {
+            r.overview_polyline = '';//Previously was []. Why??? it is a string
+        }
 
         r.legs.forEach((l) => {
-            l.lat_lngs = [];
-            l.path = [];
-            l.steps = [];
+            if (dirRequestOptions == undefined || dirRequestOptions.stripLegsSteps) {
+                l.steps = [];
+            } else {
+                l.steps.forEach((step) => {
+                    if (dirRequestOptions == undefined || dirRequestOptions.stripLegsStepsLatLngs) {
+                        step.lat_lngs = [];
+                    }
+
+                    if (dirRequestOptions == undefined || dirRequestOptions.stripLegsStepsPath) {
+                        step.path = [];
+                    }
+                });
+            }
         });
     });
 
@@ -175,6 +193,7 @@ window.googleMapsObjectManager = {
         //If function is route, then handle callback in promise.
         if (args[1] == "googleMapDirectionServiceFunctions.route") {
             let dirRequest = args2[0];
+            let dirRequestOptions = args2[1];
 
             let promise = new Promise((resolve, reject) => {
                 let directionsService = new google.maps.DirectionsService();
@@ -193,10 +212,8 @@ window.googleMapsObjectManager = {
                 let result = await promise;
                 obj.setDirections(result);
                 
-                let jsonRest = JSON.stringify(cleanDirectionResult(result));
-                //let jsonRest = cleanDirectionResult(result);
+                let jsonRest = JSON.stringify(cleanDirectionResult(result, dirRequestOptions));
                 //console.log(JSON.stringify(jsonRest));
-                //let jsonRest = JSON.stringify(result);
                 return jsonRest;
             } catch (error) {
                 console.log(error);
@@ -236,13 +253,13 @@ window.googleMapsObjectManager = {
     },
 
     invokeWithReturnedObjectRef: function (args) {
-        //console.log(args);
-
         let result = googleMapsObjectManager.invoke(args);
         let uuid = uuidv4();
 
+        
         //console.log("invokeWithReturnedObjectRef " + uuid);
 
+        //Removed since here exists only events and whats point of having event in this array????
         //window._blazorGoogleMapsObjects[uuid] = result;
 
         return uuid;
@@ -255,11 +272,8 @@ window.googleMapsObjectManager = {
     },
 
     readObjectPropertyValueWithReturnedObjectRef: function (args) {
-        //console.log(args);
 
         let obj = window._blazorGoogleMapsObjects[args[0]];
-
-        //console.log(obj);
 
         let result = obj[args[1]];
         let uuid = uuidv4();
@@ -268,30 +282,4 @@ window.googleMapsObjectManager = {
 
         return uuid;
     }
-
-    //invokeAsync: async function (guid, methodName, jsonArgs) {
-    //    console.log("Invoke : route " + guid);
-
-    //    //console.log("Invoke " + methodName);
-    //    //console.dir(args);
-
-    //    let args = [];
-
-    //    if (typeof args === 'undefined') {
-    //        args = JSON.parse(jsonArgs);
-    //    }
-
-    //    let obj = window._blazorGoogleMapsObjects[guid];
-
-    //    let promise = new Promise((resolve, reject) => {
-    //        return obj[methodName](...args, function (...args2) {
-
-    //            //console.dir(args2);
-
-    //            resolve(JSON.stringify(args2));
-    //        });
-    //    });
-
-    //    return await promise;
-    //}
 };

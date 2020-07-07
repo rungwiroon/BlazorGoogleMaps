@@ -29,16 +29,26 @@ namespace GoogleMapsComponents.Maps
             _jsObjectRef?.Dispose();
         }
 
-        public async Task<DirectionsResult> Route(DirectionsRequest request)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="directionsRequestOptions">Lets you specify which route response paths to opt out from clearing.</param>
+        /// <returns></returns>
+        public async Task<DirectionsResult> Route(DirectionsRequest request, DirectionsRequestOptions directionsRequestOptions = null)
         {
+            if (directionsRequestOptions == null)
+            {
+                directionsRequestOptions = new DirectionsRequestOptions();
+            }
+
             var response = await _jsObjectRef.InvokeAsync<string>(
                     "googleMapDirectionServiceFunctions.route",
-                    request);
+                    request, directionsRequestOptions);
             try
             {
-                var DirResult = JsonConvert.DeserializeObject<DirectionsResult>(response);
-
-                return DirResult;
+                var dirResult = JsonConvert.DeserializeObject<DirectionsResult>(response);
+                return dirResult;
             }
             catch (Exception e)
             {
