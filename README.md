@@ -113,6 +113,12 @@ Add path to project javascript functions file in wwwroot/index.html in Client si
 ## Known Issues
 Adding map in razor page without _Host.cshtml use  RenderComponentAsync<T> to render componenent or/and try changing the Rendermode to Server in the host file
 
+Server Side issue with Route DirectionsResult when using DirectionsRequestOptions all paths are included (all set to false). MaximumReceiveMessageSize reaches limit of 32kb. Then limit should be increased or set to null (unlimited)
+```
+In Startup.ConfigureServices
+services.AddServerSideBlazor().AddHubOptions(config => config.MaximumReceiveMessageSize = 1048576);
+```
+
 ## Current status
 * Map
 * Marker
