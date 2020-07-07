@@ -45,6 +45,7 @@ namespace GoogleMapsComponents.Maps
         /// An encoded polyline representation of the route in overview_path. 
         /// This polyline is an approximate (smoothed) path of the resulting directions.
         /// </summary>
+        [JsonProperty("overview_polyline")]
         public string OverviewPolyline { get; set; }
 
         /// <summary>
