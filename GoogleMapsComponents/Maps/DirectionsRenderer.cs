@@ -43,8 +43,8 @@ namespace GoogleMapsComponents.Maps
             }
 
             var response = await _jsObjectRef.InvokeAsync<string>(
-                    "googleMapDirectionServiceFunctions.route",
-                    request, directionsRequestOptions);
+                "googleMapDirectionServiceFunctions.route",
+                request, directionsRequestOptions);
             try
             {
                 var dirResult = JsonConvert.DeserializeObject<DirectionsResult>(response);
@@ -77,15 +77,25 @@ namespace GoogleMapsComponents.Maps
                 directions);
         }
 
-        public async Task<DirectionsResult> GetDirections()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="directionsRequestOptions">Lets you specify which route response paths to opt out from clearing.</param>
+        /// <returns></returns>
+        public async Task<DirectionsResult> GetDirections(DirectionsRequestOptions directionsRequestOptions = null)
         {
+            if (directionsRequestOptions == null)
+            {
+                directionsRequestOptions = new DirectionsRequestOptions();
+            }
+
             var response = await _jsObjectRef.InvokeAsync<string>(
-                "getDirections");
+                "getDirections",
+                directionsRequestOptions);
             try
             {
-                var DirResult = JsonConvert.DeserializeObject<DirectionsResult>(response);
-
-                return DirResult;
+                var dirResult = JsonConvert.DeserializeObject<DirectionsResult>(response);
+                return dirResult;
             }
             catch (Exception e)
             {

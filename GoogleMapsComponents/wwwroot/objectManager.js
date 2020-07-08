@@ -160,7 +160,7 @@ window.googleMapsObjectManager = {
 
     disposeMapElements(mapGuid) {
         var keysToRemove = [];
-       
+
         for (var key in _blazorGoogleMapsObjects) {
             if (_blazorGoogleMapsObjects.hasOwnProperty(key)) {
                 var element = _blazorGoogleMapsObjects[key];
@@ -211,7 +211,7 @@ window.googleMapsObjectManager = {
             try {
                 let result = await promise;
                 obj.setDirections(result);
-                
+
                 let jsonRest = JSON.stringify(cleanDirectionResult(result, dirRequestOptions));
                 //console.log(JSON.stringify(jsonRest));
                 return jsonRest;
@@ -221,42 +221,55 @@ window.googleMapsObjectManager = {
             }
 
         }
-        else {
-            var result = null;
-            try {
-                result = obj[args[1]](...args2);
-            } catch (e) {
-                console.log(e);
-            }
+        else
+            if (args[1] == "getDirections") {
+                let dirRequestOptions = args2[0];
 
-            if (result !== null
-                && typeof result === "object") {
-                if (result.hasOwnProperty("geocoded_waypoints") && result.hasOwnProperty("routes")) {
-                    
-                    let jsonRest = JSON.stringify(cleanDirectionResult(result));
-                    return jsonRest;
+                try {
+                    var result = obj[args[1]]();
+                } catch (e) {
+                    console.log(e);
                 }
-                if ("getArray" in result) {
-                    return result.getArray();
+
+                let jsonRest = JSON.stringify(cleanDirectionResult(result, dirRequestOptions));
+                return jsonRest;
+            }
+            else {
+                var result = null;
+                try {
+                    result = obj[args[1]](...args2);
+                } catch (e) {
+                    console.log(e);
                 }
-                if ("get" in result) {
-                    return result.get("guidString");
-                } else if ("dotnetTypeName" in result) {
-                    return JSON.stringify(result);
+
+                if (result !== null
+                    && typeof result === "object") {
+                    if (result.hasOwnProperty("geocoded_waypoints") && result.hasOwnProperty("routes")) {
+
+                        let jsonRest = JSON.stringify(cleanDirectionResult(result));
+                        return jsonRest;
+                    }
+                    if ("getArray" in result) {
+                        return result.getArray();
+                    }
+                    if ("get" in result) {
+                        return result.get("guidString");
+                    } else if ("dotnetTypeName" in result) {
+                        return JSON.stringify(result);
+                    } else {
+                        return result;
+                    }
                 } else {
                     return result;
                 }
-            } else {
-                return result;
             }
-        }
     },
 
     invokeWithReturnedObjectRef: function (args) {
         let result = googleMapsObjectManager.invoke(args);
         let uuid = uuidv4();
 
-        
+
         //console.log("invokeWithReturnedObjectRef " + uuid);
 
         //Removed since here exists only events and whats point of having event in this array????
