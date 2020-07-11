@@ -9,9 +9,11 @@ using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
 {
-    public class Marker : IDisposable
+    public class Marker : IDisposable, IJsObjectRef
     {
         private readonly JsObjectRef _jsObjectRef;
+
+        public Guid Guid => _jsObjectRef.Guid;
 
         public async static Task<Marker> CreateAsync(IJSRuntime jsRuntime, MarkerOptions opts = null)
         {
