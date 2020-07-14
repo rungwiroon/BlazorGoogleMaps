@@ -147,6 +147,33 @@ window.googleMapsObjectManager = {
         window._blazorGoogleMapsObjects[guid] = obj;
     },
 
+    //Used to create multiple objects of the same type passing a set of creation parameters coherent 
+    //with object we need to create 
+    //This allows a single JSInteropt invocation for multiple objects creation with a consistent gain 
+    //in terms of performance
+    createMultipleObject: function (args) {
+        window._blazorGoogleMapsObjects = window._blazorGoogleMapsObjects || [];
+
+        let args2 = args.slice(2).map(arg => tryParseJson(arg));
+        //console.log(args2);
+        let functionName = args[1];
+        let constructor = stringToFunction(functionName);
+
+        let guids = JSON.parse(args[0]);
+
+        for (var i = 0; i < args2.length; i++) {
+            let args3 = [];
+            args3.push(args2[i]);
+            let obj = new constructor(...args3);
+
+            if ("set" in obj) {
+                obj.set("guidString", guids[i]);
+            }
+
+            window._blazorGoogleMapsObjects[guids[i]] = obj;
+        }
+    },
+
     addObject: function (obj, guid) {
         if (guid === null || typeof guid === "undefined") {
             guid = uuidv4();
@@ -156,7 +183,7 @@ window.googleMapsObjectManager = {
         window._blazorGoogleMapsObjects[guid] = obj;
 
         return guid;
-    },
+    },        
 
     disposeMapElements(mapGuid) {
         var keysToRemove = [];
@@ -184,11 +211,16 @@ window.googleMapsObjectManager = {
         delete window._blazorGoogleMapsObjects[guid];
     },
 
+    disposeMultipleObjects: function (guids) {
+        for (var i = 0; i < guids.length; i++) {
+            this.disposeObject(guids[i]);
+        }
+    },
+
     invoke: async function (args) {
         let args2 = args.slice(2).map(arg => tryParseJson(arg));
 
         let obj = window._blazorGoogleMapsObjects[args[0]];
-
 
         //If function is route, then handle callback in promise.
         if (args[1] == "googleMapDirectionServiceFunctions.route") {
@@ -265,10 +297,38 @@ window.googleMapsObjectManager = {
             }
     },
 
+    //Function could be extended in future: at the moment it is scoped for 
+    //simple "Get" and "Set" properties of multiple objects of the same type
+    invokeMultiple: async function (args) {
+        let args2 = args.slice(2).map(arg => tryParseJson(arg));
+
+        var results = {};
+        let objs = [];
+        let guids = JSON.parse(args[0]);
+
+        for (var i = 0; i < guids.length; i++) {
+            objs[i] = window._blazorGoogleMapsObjects[guids[i]];
+            let args3 = [];
+            args3 = args3.concat(guids[i]).concat(args[1]).concat(args2[i]);
+
+            let result = googleMapsObjectManager.invoke(args3);
+
+            if (Promise.resolve(result)) {   
+                results[guids[i]] = await result;
+            }
+            else {
+                results[guids[i]] = result;
+            }
+        }                        
+
+        //console.log(results);
+
+        return results;
+    },
+
     invokeWithReturnedObjectRef: function (args) {
         let result = googleMapsObjectManager.invoke(args);
         let uuid = uuidv4();
-
 
         //console.log("invokeWithReturnedObjectRef " + uuid);
 
@@ -276,6 +336,25 @@ window.googleMapsObjectManager = {
         //window._blazorGoogleMapsObjects[uuid] = result;
 
         return uuid;
+    },
+
+    invokeMultipleWithReturnedObjectRef: function (args) {
+
+        let guids = args[0];
+        let otherArgs = args.slice(1, args.length - 1);
+        let what = args[args.length - 1];
+
+        let results = {};
+
+        for (var i = 0; i < guids.length; i++) {
+            let uuid = uuidv4();
+            let args2 = [];
+            args2 = args2.concat(guids[i]).concat(otherArgs).concat(what[i]);          
+
+            results[uuid] = googleMapsObjectManager.invoke(args2);
+        }
+
+        return results;
     },
 
     readObjectPropertyValue: function (args) {
