@@ -74,9 +74,9 @@ namespace GoogleMapsComponents.Maps.Extension
 
         public async Task RemoveMultipleAsync(List<string> filterKeys = null)
         {
-            if (keys.Count >0)
+            if ((filterKeys != null) && (filterKeys.Count > 0))
             {
-                List<string> foundKeys = Markers.Keys.Intersect(keys).ToList();                
+                List<string> foundKeys = Markers.Keys.Intersect(filterKeys).ToList();                
                 if (foundKeys.Count > 0)
                 {
                     List<Guid> foundGuids = Markers.Where(e => foundKeys.Contains(e.Key)).Select(e => e.Value.Guid).ToList();
