@@ -6,6 +6,8 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using OneOf;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -136,7 +138,7 @@ namespace GoogleMapsComponents
                 }
 
                 return (TRes)result;
-            }
+            }            
             else
             {
                 return await jsRuntime.InvokeAsync<TRes>(identifier, jsFriendlyArgs);

@@ -84,6 +84,35 @@ namespace GoogleMapsComponents
             return CreateAsync(jsRuntime, Guid.NewGuid(), constructorFunctionName, args);
         }
 
+        public async static Task<Dictionary<string, JsObjectRef>> CreateMultipleAsync(
+            IJSRuntime jsRuntime,
+            string constructorFunctionName,
+            Dictionary<string, object> args)
+        {
+            Dictionary<string, Guid> internalMapping = args.ToDictionary(e => e.Key, e => Guid.NewGuid());
+            Dictionary<Guid, object> dictArgs = internalMapping.ToDictionary(e => e.Value, e => args[e.Key]);
+            Dictionary<Guid, JsObjectRef> result = await CreateMultipleAsync(
+                jsRuntime,
+                constructorFunctionName,
+                dictArgs);
+
+            return internalMapping.ToDictionary(e => e.Key, e => result[e.Value]);
+        }
+
+        public async Task<Dictionary<string, JsObjectRef>> AddMultipleAsync(
+            string constructorFunctionName,
+            Dictionary<string, object> args)
+        {
+            Dictionary<string, Guid> internalMapping = args.ToDictionary(e => e.Key, e => Guid.NewGuid());
+            Dictionary<Guid, object> dictArgs = internalMapping.ToDictionary(e => e.Value, e => args[e.Key]);
+            Dictionary<Guid, JsObjectRef> result = await CreateMultipleAsync(
+                 _jsRuntime,
+                 constructorFunctionName,
+                 dictArgs);
+
+            return internalMapping.ToDictionary(e => e.Key, e => result[e.Value]);
+        }
+
         public async static Task<JsObjectRef> CreateAsync(
             IJSRuntime jsRuntime,
             Guid guid,
@@ -101,6 +130,22 @@ namespace GoogleMapsComponents
             return jsObjectRef;
         }
 
+        public async static Task<Dictionary<Guid, JsObjectRef>> CreateMultipleAsync(
+            IJSRuntime jsRuntime,
+            string functionName,
+            Dictionary<Guid, object> dictArgs)
+        {
+            Dictionary<Guid, JsObjectRef> jsObjectRefs = dictArgs.ToDictionary(e => e.Key, e => new JsObjectRef(jsRuntime, e.Key));
+
+            await jsRuntime.MyInvokeAsync<object>(
+                "googleMapsObjectManager.createMultipleObject",
+                new object[] { dictArgs.Select(e => e.Key.ToString()).ToList(), functionName }
+                    .Concat(dictArgs.Values).ToArray()
+            );
+
+            return jsObjectRefs;
+        }        
+
         public virtual void Dispose()
         {
             DisposeAsync();
@@ -114,6 +159,14 @@ namespace GoogleMapsComponents
             );
         }
 
+        public ValueTask<object> DisposeMultipleAsync(List<Guid> guids)
+        {
+            return _jsRuntime.InvokeAsync<object>(
+                "googleMapsObjectManager.disposeMultipleObjects",
+                guids.Select(e => e.ToString()).ToList()
+            );
+        }
+
         public Task InvokeAsync(string functionName, params object[] args)
         {
             return _jsRuntime.MyInvokeAsync(
@@ -123,12 +176,30 @@ namespace GoogleMapsComponents
             );
         }
 
+        public Task InvokeMultipleAsync(string functionName, Dictionary<Guid, object> dictArgs)
+        {
+            return _jsRuntime.MyInvokeAsync(
+                "googleMapsObjectManager.invokeMultiple",
+                new object[] { dictArgs.Select(e => e.Key.ToString()).ToList(), functionName }
+                    .Concat(dictArgs.Values).ToArray()
+            );
+        }
+
         public Task<T> InvokeAsync<T>(string functionName, params object[] args)
         {
             return _jsRuntime.MyInvokeAsync<T>(
                 "googleMapsObjectManager.invoke",
                 new object[] { _guid.ToString(), functionName }
                     .Concat(args).ToArray()
+            );
+        }
+
+        public Task<Dictionary<string, T>> InvokeMultipleAsync<T>(string functionName, Dictionary<Guid, object> dictArgs)
+        {
+            return _jsRuntime.MyInvokeAsync<Dictionary<string, T>>(
+                "googleMapsObjectManager.invokeMultiple",
+                new object[] { dictArgs.Select(e => e.Key.ToString()).ToList(), functionName }
+                    .Concat(dictArgs.Values).ToArray()
             );
         }
 
@@ -179,6 +250,17 @@ namespace GoogleMapsComponents
 
             return new JsObjectRef(_jsRuntime, new Guid(guid));
         }
+
+        //public async Task<List<JsObjectRef>> InvokeMultipleWithReturnedObjectRefAsync(string functionName, string eventname, Dictionary<Guid, object> dictArgs)
+        //{
+        //    List<string> guids = await _jsRuntime.MyInvokeAsync<List<string>>(
+        //        "googleMapsObjectManager.invokeMultipleWithReturnedObjectRef",
+        //        new object[] { dictArgs.Select(e => e.Key.ToString()).ToList(), functionName, eventname }
+        //            .Concat(dictArgs.Values).ToArray()
+        //    );
+
+        //    return guids.Select(e => new JsObjectRef(_jsRuntime, new Guid(e))).ToList();
+        //}
 
         public Task<T> GetValue<T>(string propertyName)
         {
