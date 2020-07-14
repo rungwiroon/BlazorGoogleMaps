@@ -8,22 +8,36 @@ using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps.Extension
 {
+    /// <summary>
+    /// A class able to manage a lot of Marker objects and get / set their
+    /// properties at the same time, eventually with different values
+    /// Main concept is that each Marker to can be distinguished by other ones need
+    /// to have a "unique key" with a "external world mean", so not necessary it's GUID
+    ///
+    /// All properties should be called With a Dictionary<string, {property type}> indicating for each Marker(related to that key) the corresponding related property value
+    /// </summary>
     public class MarkerList : IDisposable
     {
         private readonly JsObjectRef _jsObjectRef;
 
         public readonly Dictionary<string, Marker> Markers;
 
-        public async static Task<MarkerList> CreateAsync(IJSRuntime jsRuntime, Dictionary<string, MarkerOptions> opts)
+        /// <summary>
+        /// Create markers list
+        /// </summary>
+        /// <param name="jsRuntime"></param>
+        /// <param name="opts">Dictionary of desired Marker keys and MarkerOptions values. Key as any type unique key. Not nessary Guid</param>
+        /// <returns>new instance of MarkerList class will be returned with its Markers dictionary member populated with the corresponding results</returns>
+        public static async Task<MarkerList> CreateAsync(IJSRuntime jsRuntime, Dictionary<string, MarkerOptions> opts)
         {
             JsObjectRef jsObjectRef = new JsObjectRef(jsRuntime, Guid.NewGuid());
-            
+
             MarkerList obj;
             if (opts.Count > 0)
             {
                 Dictionary<string, JsObjectRef> jsObjectRefs = await JsObjectRef.CreateMultipleAsync(
-                    jsRuntime, 
-                    "google.maps.Marker", 
+                    jsRuntime,
+                    "google.maps.Marker",
                     opts.ToDictionary(e => e.Key, e => (object)e.Value));
                 Dictionary<string, Marker> objs = jsObjectRefs.ToDictionary(e => e.Key, e => new Marker(e.Value));
                 obj = new MarkerList(jsObjectRef, objs);
@@ -32,7 +46,7 @@ namespace GoogleMapsComponents.Maps.Extension
             {
                 obj = new MarkerList(jsObjectRef, null);
             }
-            
+
             return obj;
         }
 
@@ -51,6 +65,11 @@ namespace GoogleMapsComponents.Maps.Extension
             }
         }
 
+        /// <summary>
+        /// only keys not matching with existent Marker keys will be created
+        /// </summary>
+        /// <param name="opts"></param>
+        /// <returns></returns>
         public async Task AddMultipleAsync(Dictionary<string, MarkerOptions> opts)
         {
             if (opts.Count > 0)
@@ -69,14 +88,19 @@ namespace GoogleMapsComponents.Maps.Extension
                 {
                     Markers.Add(key, objs[key]);
                 }
-            }            
-        }        
+            }
+        }
 
+        /// <summary>
+        /// only Marker having keys matching with existent keys will be removed
+        /// </summary>
+        /// <param name="filterKeys"></param>
+        /// <returns></returns>
         public async Task RemoveMultipleAsync(List<string> filterKeys = null)
         {
             if ((filterKeys != null) && (filterKeys.Count > 0))
             {
-                List<string> foundKeys = Markers.Keys.Intersect(filterKeys).ToList();                
+                List<string> foundKeys = Markers.Keys.Intersect(filterKeys).ToList();
                 if (foundKeys.Count > 0)
                 {
                     List<Guid> foundGuids = Markers.Where(e => foundKeys.Contains(e.Key)).Select(e => e.Value.Guid).ToList();
@@ -96,9 +120,9 @@ namespace GoogleMapsComponents.Maps.Extension
         public async Task RemoveMultipleAsync(List<Guid> guids)
         {
             if (guids.Count > 0)
-            {                
+            {
                 List<string> foundKeys = Markers.Where(e => guids.Contains(e.Value.Guid)).Select(e => e.Key).ToList();
-                if (foundKeys.Count > 0)                
+                if (foundKeys.Count > 0)
                 {
                     List<Guid> foundGuids = Markers.Values.Where(e => guids.Contains(e.Guid)).Select(e => e.Guid).ToList();
                     await _jsObjectRef.DisposeMultipleAsync(foundGuids);
@@ -167,7 +191,7 @@ namespace GoogleMapsComponents.Maps.Extension
             else
             {
                 return ComputeEmptyResult<Animation>();
-            }            
+            }
         }
 
         public Task<Dictionary<string, bool>> GetClickables(List<string> filterKeys = null)
@@ -186,7 +210,7 @@ namespace GoogleMapsComponents.Maps.Extension
             else
             {
                 return ComputeEmptyResult<bool>();
-            }            
+            }
         }
 
         public Task<Dictionary<string, string>> GetCursors(List<string> filterKeys = null)
@@ -205,7 +229,7 @@ namespace GoogleMapsComponents.Maps.Extension
             else
             {
                 return ComputeEmptyResult<string>();
-            }            
+            }
         }
 
         public Task<Dictionary<string, bool>> GetDraggables(List<string> filterKeys = null)
@@ -224,7 +248,7 @@ namespace GoogleMapsComponents.Maps.Extension
             else
             {
                 return ComputeEmptyResult<bool>();
-            }            
+            }
         }
 
         public Task<Dictionary<string, OneOf<string, Icon, Symbol>>> GetIcons(List<string> filterKeys = null)
@@ -243,7 +267,7 @@ namespace GoogleMapsComponents.Maps.Extension
             else
             {
                 return ComputeEmptyResult<OneOf<string, Icon, Symbol>>();
-            }           
+            }
         }
 
         public Task<Dictionary<string, string>> GetLabels(List<string> filterKeys = null)
@@ -262,7 +286,7 @@ namespace GoogleMapsComponents.Maps.Extension
             else
             {
                 return ComputeEmptyResult<string>();
-            }                     
+            }
         }
 
         public Task<Dictionary<string, Map>> GetMaps(List<string> filterKeys = null)
@@ -281,12 +305,12 @@ namespace GoogleMapsComponents.Maps.Extension
             else
             {
                 return ComputeEmptyResult<Map>();
-            }            
+            }
         }
-       
+
         public Task<Dictionary<string, LatLngLiteral>> GetPositions(List<string> filterKeys = null)
         {
-            List<string> matchingKeys = ComputeMathingKeys(filterKeys);            
+            List<string> matchingKeys = ComputeMathingKeys(filterKeys);
 
             if (matchingKeys.Any())
             {
@@ -338,7 +362,7 @@ namespace GoogleMapsComponents.Maps.Extension
             else
             {
                 return ComputeEmptyResult<string>();
-            }            
+            }
         }
 
         public Task<Dictionary<string, bool>> GetVisibles(List<string> filterKeys = null)
@@ -357,7 +381,7 @@ namespace GoogleMapsComponents.Maps.Extension
             else
             {
                 return ComputeEmptyResult<bool>();
-            }            
+            }
         }
 
         public Task<Dictionary<string, int>> GetZIndexes(List<string> filterKeys = null)
@@ -376,7 +400,7 @@ namespace GoogleMapsComponents.Maps.Extension
             else
             {
                 return ComputeEmptyResult<int>();
-            }            
+            }
         }
 
         /// <summary>
@@ -496,7 +520,7 @@ namespace GoogleMapsComponents.Maps.Extension
         }
 
         public Task SetVisibles(Dictionary<string, bool> visibles)
-        {            
+        {
             Dictionary<Guid, object> dictArgs = visibles.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
             return _jsObjectRef.InvokeMultipleAsync(
                 "setVisible",
@@ -509,6 +533,6 @@ namespace GoogleMapsComponents.Maps.Extension
             return _jsObjectRef.InvokeMultipleAsync(
                 "setZIndex",
                 dictArgs);
-        }        
+        }
     }
 }
