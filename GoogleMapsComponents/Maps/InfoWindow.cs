@@ -7,7 +7,27 @@ using System.Threading.Tasks;
 namespace GoogleMapsComponents.Maps
 {
     /// <summary>
-    /// An overlay that looks like a bubble and is often connected to a marker.
+    /// A class able to manage a lot of Marker objects and get / set their properties at the same time, eventually with different values
+    /// 
+    /// Main concept is that each Marker to can be distinguished by other ones need to have a "unique key" with a "external world mean", so not necessary it's GUID
+    /// In real cases Markers are be linked to places, activities, transit stops and so on -> So, what better way to choose as Marker "unique key" the "id" of the object each marker is related to?
+    /// A string key has been selected as type due to its implicit versatility.
+    /// 
+    /// To create Markers, simply call MarkerList.CreateAsync with a Dictionary of desired Marker keys and MarkerOptions values
+    /// After that, a new instance of MarkerList class will be returned with its Markers dictionary member populated with the corresponding results
+    /// 
+    /// At run-time is possible to: 
+    /// 1) add Marker to the same MarketList class using AddMultipleAsync method (only keys not matching with existent Marker keys will be created)
+    ///    Markers dictionary will contains "union distinct" of existent Marker's keys and new keys
+    /// 2) remove Marker from the MarketList class (only Marker having keys matching with existent keys will be removed)
+    ///    Markers dictionary will contains "original - required and found" Marker's keys (eventually any is all Marker are removed)
+    /// 
+    /// Each definer getter properties can be used as follow: 
+    /// a) without parameter -> all eventually defined markers related property will be returned (if any)
+    /// b) with a List<string> of keys -> all eventually mathing keys with Markers Dictionary keys produces related merkers property extracion (if any defined)
+    /// 
+    /// Each setter properties can be used as follow:
+    /// With a Dictionary<string, {property type}> indicating for each Marker (related to that key) the corresponding related property value
     /// </summary>
     public class InfoWindow : IDisposable, IJsObjectRef
     {
