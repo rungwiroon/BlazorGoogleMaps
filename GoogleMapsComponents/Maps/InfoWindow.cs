@@ -65,10 +65,26 @@ namespace GoogleMapsComponents.Maps
         private InfoWindow(JsObjectRef jsObjectRef, InfoWindowOptions opts)
         {
             _jsObjectRef = jsObjectRef;
+            EventListeners = new Dictionary<string, List<MapEventListener>>();
         }
 
         public void Dispose()
         {
+            foreach (string key in EventListeners.Keys)
+            {
+                //Probably superfluous...
+                if (EventListeners[key] != null)
+                {
+                    foreach (MapEventListener eventListener in EventListeners[key])
+                    {
+                        eventListener.Dispose();
+                    }
+
+                    EventListeners[key].Clear();
+                }
+            }
+
+            EventListeners.Clear();
             _jsObjectRef.Dispose();
         }
 
