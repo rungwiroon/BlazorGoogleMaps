@@ -9,9 +9,13 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// An overlay that looks like a bubble and is often connected to a marker.
     /// </summary>
-    public class InfoWindow : IDisposable
+    public class InfoWindow : IDisposable, IJsObjectRef
     {
         private readonly JsObjectRef _jsObjectRef;
+
+        public readonly Dictionary<string, List<MapEventListener>> EventListeners;
+
+        public Guid Guid => _jsObjectRef.Guid;
 
         /// <summary>
         /// Creates an info window with the given options. 
@@ -98,6 +102,46 @@ namespace GoogleMapsComponents.Maps
             return _jsObjectRef.InvokeAsync(
                 "setZIndex",
                 zIndex);
+        }
+
+        public async Task<MapEventListener> AddListener(string eventName, Action handler)
+        {
+            JsObjectRef listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync("addListener", eventName, handler);
+            MapEventListener eventListener = new MapEventListener(listenerRef);
+
+            if (!EventListeners.ContainsKey(eventName))
+            {
+                EventListeners.Add(eventName, new List<MapEventListener>());
+            }
+            EventListeners[eventName].Add(eventListener);
+
+            return eventListener;
+        }
+
+        public async Task<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
+        {
+            JsObjectRef listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync("addListener", eventName, handler);
+            MapEventListener eventListener = new MapEventListener(listenerRef);
+
+            if (!EventListeners.ContainsKey(eventName))
+            {
+                EventListeners.Add(eventName, new List<MapEventListener>());
+            }
+            EventListeners[eventName].Add(eventListener);
+
+            return eventListener;
+        }
+
+        public async Task ClearListeners(string eventName)
+        {
+            if (EventListeners.ContainsKey(eventName))
+            {
+                await _jsObjectRef.InvokeAsync("clearListeners", eventName);
+
+                //IMHO is better preserving the knowledge that Marker had some EventListeners attached to "eventName" in the past
+                //so, instead to clear the list and remove the key from dictionary, I prefer to leave the key with an empty list
+                EventListeners[eventName].Clear();
+            }
         }
     }
 }
