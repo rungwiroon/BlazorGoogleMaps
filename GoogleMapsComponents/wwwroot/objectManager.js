@@ -183,7 +183,7 @@ window.googleMapsObjectManager = {
         window._blazorGoogleMapsObjects[guid] = obj;
 
         return guid;
-    },        
+    },
 
     disposeMapElements(mapGuid) {
         var keysToRemove = [];
@@ -221,9 +221,10 @@ window.googleMapsObjectManager = {
         let args2 = args.slice(2).map(arg => tryParseJson(arg));
 
         let obj = window._blazorGoogleMapsObjects[args[0]];
+        let functionToInvoke = args[1];
 
         //If function is route, then handle callback in promise.
-        if (args[1] == "googleMapDirectionServiceFunctions.route") {
+        if (functionToInvoke == "googleMapDirectionServiceFunctions.route") {
             let dirRequest = args2[0];
             let dirRequestOptions = args2[1];
 
@@ -253,48 +254,59 @@ window.googleMapsObjectManager = {
             }
 
         }
-        else
-            if (args[1] == "getDirections") {
-                let dirRequestOptions = args2[0];
-
-                try {
-                    var result = obj[args[1]]();
-                } catch (e) {
-                    console.log(e);
-                }
-
-                let jsonRest = JSON.stringify(cleanDirectionResult(result, dirRequestOptions));
-                return jsonRest;
+        //Used in HeatampLayer. We must use LatLng since LatLngLiteral doesnt work
+        else if (functionToInvoke == "setData") {
+            var pointArray = new google.maps.MVCArray();
+            for (i = 0; i < args2[0].length; i++) {
+                pointArray.push(new google.maps.LatLng(args2[0][i].lat, args2[0][i].lng))
             }
-            else {
-                var result = null;
-                try {
-                    result = obj[args[1]](...args2);
-                } catch (e) {
-                    console.log(e);
+
+            try {
+                result = obj.setData(pointArray);
+            } catch (e) {
+                console.log(e);
+            }
+        }
+        else if (functionToInvoke == "getDirections") {
+            let dirRequestOptions = args2[0];
+
+            try {
+                var result = obj[functionToInvoke]();
+            } catch (e) {
+                console.log(e);
+            }
+
+            let jsonRest = JSON.stringify(cleanDirectionResult(result, dirRequestOptions));
+            return jsonRest;
+        } else {
+            var result = null;
+            try {
+                result = obj[functionToInvoke](...args2);
+            } catch (e) {
+                console.log(e);
+            }
+
+            if (result !== null
+                && typeof result === "object") {
+                if (result.hasOwnProperty("geocoded_waypoints") && result.hasOwnProperty("routes")) {
+
+                    let jsonRest = JSON.stringify(cleanDirectionResult(result));
+                    return jsonRest;
                 }
-
-                if (result !== null
-                    && typeof result === "object") {
-                    if (result.hasOwnProperty("geocoded_waypoints") && result.hasOwnProperty("routes")) {
-
-                        let jsonRest = JSON.stringify(cleanDirectionResult(result));
-                        return jsonRest;
-                    }
-                    if ("getArray" in result) {
-                        return result.getArray();
-                    }
-                    if ("get" in result) {
-                        return result.get("guidString");
-                    } else if ("dotnetTypeName" in result) {
-                        return JSON.stringify(result);
-                    } else {
-                        return result;
-                    }
+                if ("getArray" in result) {
+                    return result.getArray();
+                }
+                if ("get" in result) {
+                    return result.get("guidString");
+                } else if ("dotnetTypeName" in result) {
+                    return JSON.stringify(result);
                 } else {
                     return result;
                 }
+            } else {
+                return result;
             }
+        }
     },
 
     //Function could be extended in future: at the moment it is scoped for 
@@ -313,13 +325,13 @@ window.googleMapsObjectManager = {
 
             let result = googleMapsObjectManager.invoke(args3);
 
-            if (Promise.resolve(result)) {   
+            if (Promise.resolve(result)) {
                 results[guids[i]] = await result;
             }
             else {
                 results[guids[i]] = result;
             }
-        }                        
+        }
 
         //console.log(results);
 
@@ -349,7 +361,7 @@ window.googleMapsObjectManager = {
         for (var i = 0; i < guids.length; i++) {
             let uuid = uuidv4();
             let args2 = [];
-            args2 = args2.concat(guids[i]).concat(otherArgs).concat(what[i]);          
+            args2 = args2.concat(guids[i]).concat(otherArgs).concat(what[i]);
 
             results[uuid] = googleMapsObjectManager.invoke(args2);
         }

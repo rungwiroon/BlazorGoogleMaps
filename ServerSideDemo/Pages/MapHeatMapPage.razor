@@ -1,0 +1,11 @@
+﻿@page "/map-heat-map"
+@using GoogleMapsComponents
+@using GoogleMapsComponents.Maps
+@using System.Diagnostics
+@using GoogleMapsComponents.Maps.Coordinates
+
+<h1>Google Map Markers</h1>
+
+<GoogleMap @ref="@map1" Id="map1" Options="@mapOptions"></GoogleMap>
+<button @onclick="@AddHeatMap">Add Heat Map</button>
+
