@@ -1,0 +1,14 @@
+﻿@page "/ground-overlay"
+@using GoogleMapsComponents
+@using GoogleMapsComponents.Maps
+@using System.Diagnostics
+@using GoogleMapsComponents.Maps.Coordinates
+
+<h1>Google Map Ground Overlay</h1>
+
+<GoogleMap @ref="@map1" Id="map1" Options="@mapOptions"></GoogleMap>
+<button @onclick="@AddOverlay">Add Overlay</button>
+<button @onclick="@RemoveOverlay">Remove Overlay</button>
+
+
+<MapEventList @ref="@eventList" Events="@_events"></MapEventList>

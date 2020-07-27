@@ -7,5 +7,8 @@ namespace GoogleMapsComponents.Maps
 {
     public class GroundOverlayOptions
     {
+        public string Url { get; set; }
+
+        public LatLngBoundsLiteral Bounds { get; set; }
     }
 }
