@@ -52,17 +52,15 @@ namespace ServerSideDemo.Pages
         }
         private async Task AddOverlay()
         {
-            _mapoverlay = await GroundOverlay.CreateAsync(map1.JsRuntime, new GroundOverlayOptions()
+            _mapoverlay = await GroundOverlay.CreateAsync(map1.JsRuntime, "https://www.lib.utexas.edu/maps/historical/newark_nj_1922.jpg", new LatLngBoundsLiteral()
             {
-                Url = "https://www.lib.utexas.edu/maps/historical/newark_nj_1922.jpg",
-                Bounds = new LatLngBoundsLiteral()
-                {
-                    North = 40.773941,
-                    South = 40.712216,
-                    East = -74.12544,
-                    West = -74.22655
-                }
-
+                North = 40.773941,
+                South = 40.712216,
+                East = -74.12544,
+                West = -74.22655
+            }, new GroundOverlayOptions()
+            {
+                Opacity = 0.5
             });
 
             await _mapoverlay.SetMap(map1.InteropObject);

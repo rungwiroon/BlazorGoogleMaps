@@ -14,9 +14,9 @@ namespace GoogleMapsComponents.Maps
 
         public Guid Guid => _jsObjectRef.Guid;
 
-        public async static Task<GroundOverlay> CreateAsync(IJSRuntime jsRuntime, GroundOverlayOptions opts)
+        public async static Task<GroundOverlay> CreateAsync(IJSRuntime jsRuntime, string url, LatLngBoundsLiteral bounds, GroundOverlayOptions opts = null)
         {
-            var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.GroundOverlay", opts.Url, opts.Bounds);
+            var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.GroundOverlay", url, bounds, opts);
             var obj = new GroundOverlay(jsObjectRef);
 
             return obj;
@@ -42,6 +42,18 @@ namespace GoogleMapsComponents.Maps
             return eventListener;
         }
 
+        /// <summary>
+        /// The opacity of the overlay, expressed as a number between 0 and 1. Optional. Defaults to 1.
+        /// </summary>
+        /// <param name="opacity"></param>
+        /// <returns></returns>
+        public async Task SetOpacity(double opacity)
+        {
+            if (opacity > 1) return;
+            if (opacity < 0) return;
+
+            await _jsObjectRef.InvokeAsync("setOpacity", opacity);
+        }
 
         public async Task SetMap(Map map)
         {
