@@ -9,10 +9,14 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// A circle on the Earth's surface; also known as a "spherical cap".
     /// </summary>
-    public class Circle : IDisposable
+    public class Circle : IDisposable, IJsObjectRef
     {
         private Map _map;
         private readonly JsObjectRef _jsObjectRef;
+
+        public readonly Dictionary<string, List<MapEventListener>> EventListeners;
+
+        public Guid Guid => _jsObjectRef.Guid;
 
         /// <summary>
         /// Create a circle using the passed CircleOptions, which specify the center, radius, and style.
@@ -27,7 +31,7 @@ namespace GoogleMapsComponents.Maps
             return obj;
         }
 
-        private Circle(JsObjectRef jsObjectRef, CircleOptions opts = null)
+        internal Circle(JsObjectRef jsObjectRef, CircleOptions opts = null)
         {
             _jsObjectRef = jsObjectRef;
 
@@ -35,10 +39,28 @@ namespace GoogleMapsComponents.Maps
             {
                 _map = opts.Map;
             }
+
+            EventListeners = new Dictionary<string, List<MapEventListener>>();
         }
 
         public void Dispose()
         {
+            foreach (string key in EventListeners.Keys)
+            {
+                //Probably superfluous...
+                if (EventListeners[key] != null)
+                {
+                    foreach (MapEventListener eventListener in EventListeners[key])
+                    {
+                        eventListener.Dispose();
+                    }
+
+                    EventListeners[key].Clear();
+                }
+            }
+
+            EventListeners.Clear();
+
             _jsObjectRef.Dispose();
         }
 
@@ -172,16 +194,42 @@ namespace GoogleMapsComponents.Maps
         {
             var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
                 "addListener", eventName, handler);
+            MapEventListener eventListener = new MapEventListener(listenerRef);
 
-            return new MapEventListener(listenerRef);
+            if (!EventListeners.ContainsKey(eventName))
+            {
+                EventListeners.Add(eventName, new List<MapEventListener>());
+            }
+            EventListeners[eventName].Add(eventListener);
+
+            return eventListener;
         }
 
         public async Task<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
         {
             var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
                 "addListener", eventName, handler);
+            MapEventListener eventListener = new MapEventListener(listenerRef);
 
-            return new MapEventListener(listenerRef);
+            if (!EventListeners.ContainsKey(eventName))
+            {
+                EventListeners.Add(eventName, new List<MapEventListener>());
+            }
+            EventListeners[eventName].Add(eventListener);
+
+            return eventListener;
+        }
+
+        public async Task ClearListeners(string eventName)
+        {
+            if (EventListeners.ContainsKey(eventName))
+            {
+                await _jsObjectRef.InvokeAsync("clearListeners", eventName);
+
+                //IMHO is better preserving the knowledge that Marker had some EventListeners attached to "eventName" in the past
+                //so, instead to clear the list and remove the key from dictionary, I prefer to leave the key with an empty list
+                EventListeners[eventName].Clear();
+            }
         }
     }
 }
