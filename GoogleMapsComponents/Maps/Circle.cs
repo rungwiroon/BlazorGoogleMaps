@@ -9,12 +9,14 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// A circle on the Earth's surface; also known as a "spherical cap".
     /// </summary>
-    public class Circle : IDisposable
+    public class Circle : IDisposable, IJsObjectRef
     {
         private Map _map;
         private readonly JsObjectRef _jsObjectRef;
 
         public readonly Dictionary<string, List<MapEventListener>> EventListeners;
+
+        public Guid Guid => _jsObjectRef.Guid;
 
         /// <summary>
         /// Create a circle using the passed CircleOptions, which specify the center, radius, and style.
@@ -29,7 +31,7 @@ namespace GoogleMapsComponents.Maps
             return obj;
         }
 
-        private Circle(JsObjectRef jsObjectRef, CircleOptions opts = null)
+        internal Circle(JsObjectRef jsObjectRef, CircleOptions opts = null)
         {
             _jsObjectRef = jsObjectRef;
 
