@@ -9,24 +9,12 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// CircleOptions object used to define the properties that can be set on a Circle.
     /// </summary>
-    public class CircleOptions
+    public class CircleOptions: BaseListableEntityOptions
     {
         /// <summary>
         /// The center of the Circle.
         /// </summary>
-        public LatLngLiteral Center { get; set; }
-
-        /// <summary>
-        /// Indicates whether this Circle handles mouse events. 
-        /// Defaults to true.
-        /// </summary>
-        public bool? Clickable { get; set; }
-
-        /// <summary>
-        /// If set to true, the user can drag this circle over the map. 
-        /// Defaults to false.
-        /// </summary>
-        public bool? Draggable { get; set; }
+        public LatLngLiteral Center { get; set; }               
 
         /// <summary>
         /// If set to true, the user can edit this circle by dragging the control points shown at the center and around the circumference of the circle. 
@@ -44,12 +32,6 @@ namespace GoogleMapsComponents.Maps
         /// The fill opacity between 0.0 and 1.0.
         /// </summary>
         public float? FillOpacity { get; set; }
-
-        /// <summary>
-        /// Map on which to display the Circle.
-        /// </summary>
-        [JsonConverter(typeof(JsObjectRefConverter<Map>))]
-        public Map Map { get; set; }
 
         /// <summary>
         /// The radius in meters on the Earth's surface.
@@ -76,17 +58,6 @@ namespace GoogleMapsComponents.Maps
         /// <summary>
         /// The stroke width in pixels.
         /// </summary>
-        public int StrokeWeight { get; set; }
-
-        /// <summary>
-        /// Whether this circle is visible on the map. 
-        /// Defaults to true.
-        /// </summary>
-        public bool? Visible { get; set; }
-
-        /// <summary>
-        /// The zIndex compared to other polys.
-        /// </summary>
-        public int? ZIndex { get; set; }
+        public int StrokeWeight { get; set; }      
     }
 }
