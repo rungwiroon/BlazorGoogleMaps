@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps.Extension
 {
-    public abstract class BaseListableEntityList<T, U> : IDisposable
-        where T : BaseListableEntity<U>
-        where U : BaseListableEntityOptions
+    public abstract class BaseListableEntityList<TEntityBase, TEntityOptionsBase> : IDisposable
+        where TEntityBase : ListableEntityBase<TEntityOptionsBase>
+        where TEntityOptionsBase : ListableEntityOptionsBase
     {
         protected readonly JsObjectRef _jsObjectRef;
 
-        public readonly Dictionary<string, T> BaseListableEntities;
+        public readonly Dictionary<string, TEntityBase> BaseListableEntities;
 
-        protected BaseListableEntityList(JsObjectRef jsObjectRef, Dictionary<string, T> baseListableEntities)
+        protected BaseListableEntityList(JsObjectRef jsObjectRef, Dictionary<string, TEntityBase> baseListableEntities)
         {
             _jsObjectRef = jsObjectRef;
             BaseListableEntities = baseListableEntities;
@@ -34,14 +34,14 @@ namespace GoogleMapsComponents.Maps.Extension
         /// </summary>
         /// <param name="opts"></param>
         /// <returns></returns>
-        public async Task AddMultipleAsync(Dictionary<string, U> opts, string googleMapListableEntityTypeName)
+        public async Task AddMultipleAsync(Dictionary<string, TEntityOptionsBase> opts, string googleMapListableEntityTypeName)
         {
             if (opts.Count > 0)
             {
                 Dictionary<string, JsObjectRef> jsObjectRefs = await _jsObjectRef.AddMultipleAsync(
                     googleMapListableEntityTypeName,
                     opts.ToDictionary(e => e.Key, e => (object)e.Value));
-                Dictionary<string, T> objs = jsObjectRefs.ToDictionary(e => e.Key, e => Activator.CreateInstance(typeof(T), e.Value) as T);
+                Dictionary<string, TEntityBase> objs = jsObjectRefs.ToDictionary(e => e.Key, e => Activator.CreateInstance(typeof(TEntityBase), e.Value) as TEntityBase);
 
                 //Someone can try to create element yet inside listable entities... really not the best approach... but manage it
                 List<string> alreadyCreated = BaseListableEntities.Keys.Intersect(objs.Select(e => e.Key)).ToList();
@@ -134,9 +134,9 @@ namespace GoogleMapsComponents.Maps.Extension
         }
 
         //Create an empty result of the correct type in case of no matching keys
-        protected Task<Dictionary<string, V>> ComputeEmptyResult<V>()
+        protected Task<Dictionary<string, T>> ComputeEmptyResult<T>()
         {
-            return Task<Dictionary<string, V>>.Factory.StartNew(() => { return new Dictionary<string, V>(); });
+            return Task<Dictionary<string, T>>.Factory.StartNew(() => { return new Dictionary<string, T>(); });
         }
 
         public Task<Dictionary<string, Map>> GetMaps(List<string> filterKeys = null)
@@ -217,7 +217,7 @@ namespace GoogleMapsComponents.Maps.Extension
                 dictArgs);
         }
 
-        public Task SetOptions(Dictionary<string, U> options)
+        public Task SetOptions(Dictionary<string, TEntityOptionsBase> options)
         {
             Dictionary<Guid, object> dictArgs = options.ToDictionary(e => BaseListableEntities[e.Key].Guid, e => (object)e.Value);
             return _jsObjectRef.InvokeMultipleAsync(

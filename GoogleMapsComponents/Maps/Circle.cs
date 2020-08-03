@@ -9,7 +9,7 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// A circle on the Earth's surface; also known as a "spherical cap".
     /// </summary>
-    public class Circle : BaseListableEntity<CircleOptions>
+    public class Circle : ListableEntityBase<CircleOptions>
     {
         /// <summary>
         /// Create a circle using the passed CircleOptions, which specify the center, radius, and style.

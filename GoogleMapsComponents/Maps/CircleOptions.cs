@@ -9,7 +9,7 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// CircleOptions object used to define the properties that can be set on a Circle.
     /// </summary>
-    public class CircleOptions: BaseListableEntityOptions
+    public class CircleOptions: ListableEntityOptionsBase
     {
         /// <summary>
         /// The center of the Circle.

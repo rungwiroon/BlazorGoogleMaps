@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
 {
-    public class Marker : BaseListableEntity<MarkerOptions>
+    public class Marker : ListableEntityBase<MarkerOptions>
     {
         public async static Task<Marker> CreateAsync(IJSRuntime jsRuntime, MarkerOptions opts = null)            
         {

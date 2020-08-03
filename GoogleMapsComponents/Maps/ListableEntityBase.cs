@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
 {
-    public abstract class BaseListableEntity<T> : IDisposable, IJsObjectRef
-        where T: BaseListableEntityOptions
+    public abstract class ListableEntityBase<TEntityOptions> : IDisposable, IJsObjectRef
+        where TEntityOptions : ListableEntityOptionsBase
     {
         protected readonly JsObjectRef _jsObjectRef;
 
@@ -15,7 +15,7 @@ namespace GoogleMapsComponents.Maps
 
         public Guid Guid => _jsObjectRef.Guid;
 
-        internal BaseListableEntity(JsObjectRef jsObjectRef)
+        internal ListableEntityBase(JsObjectRef jsObjectRef)
         {
             _jsObjectRef = jsObjectRef;
             EventListeners = new Dictionary<string, List<MapEventListener>>();
@@ -26,14 +26,14 @@ namespace GoogleMapsComponents.Maps
             foreach (string key in EventListeners.Keys)
             {
                 //Probably superfluous...
-                if (EventListeners[key] != null)
+                if ((EventListeners.TryGetValue(key, out var eventsList) && eventsList != null))
                 {
-                    foreach (MapEventListener eventListener in EventListeners[key])
+                    foreach (MapEventListener eventListener in eventsList)
                     {
                         eventListener.Dispose();
                     }
 
-                    EventListeners[key].Clear();
+                    eventsList.Clear();
                 }
             }
 
@@ -46,8 +46,6 @@ namespace GoogleMapsComponents.Maps
             return _jsObjectRef.InvokeAsync<Map>(
                 "getMap");
         }
-
-
 
         /// <summary>
         /// Renders the mao entity on the specified map or panorama. 

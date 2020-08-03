@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace GoogleMapsComponents.Maps
 {
-    public abstract class BaseListableEntityOptions
+    public abstract class ListableEntityOptionsBase
     {
         /// <summary>
         /// Indicates whether Entity handles mouse events. 
