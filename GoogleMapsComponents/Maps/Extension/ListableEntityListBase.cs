@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps.Extension
 {
-    public abstract class BaseListableEntityList<TEntityBase, TEntityOptionsBase> : IDisposable
+    public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposable
         where TEntityBase : ListableEntityBase<TEntityOptionsBase>
         where TEntityOptionsBase : ListableEntityOptionsBase
     {
@@ -14,7 +14,7 @@ namespace GoogleMapsComponents.Maps.Extension
 
         public readonly Dictionary<string, TEntityBase> BaseListableEntities;
 
-        protected BaseListableEntityList(JsObjectRef jsObjectRef, Dictionary<string, TEntityBase> baseListableEntities)
+        protected ListableEntityListBase(JsObjectRef jsObjectRef, Dictionary<string, TEntityBase> baseListableEntities)
         {
             _jsObjectRef = jsObjectRef;
             BaseListableEntities = baseListableEntities;
@@ -34,7 +34,7 @@ namespace GoogleMapsComponents.Maps.Extension
         /// </summary>
         /// <param name="opts"></param>
         /// <returns></returns>
-        public async Task AddMultipleAsync(Dictionary<string, TEntityOptionsBase> opts, string googleMapListableEntityTypeName)
+        public virtual async Task AddMultipleAsync(Dictionary<string, TEntityOptionsBase> opts, string googleMapListableEntityTypeName)
         {
             if (opts.Count > 0)
             {
@@ -60,7 +60,7 @@ namespace GoogleMapsComponents.Maps.Extension
         /// </summary>
         /// <param name="filterKeys"></param>
         /// <returns></returns>
-        public async Task RemoveMultipleAsync(List<string> filterKeys = null)
+        public virtual async Task RemoveMultipleAsync(List<string> filterKeys = null)
         {
             if ((filterKeys != null) && (filterKeys.Count > 0))
             {
@@ -81,7 +81,7 @@ namespace GoogleMapsComponents.Maps.Extension
             }
         }
 
-        public async Task RemoveMultipleAsync(List<Guid> guids)
+        public virtual async Task RemoveMultipleAsync(List<Guid> guids)
         {
             if (guids.Count > 0)
             {
@@ -105,7 +105,7 @@ namespace GoogleMapsComponents.Maps.Extension
         //Find the eventual match between required keys (if any) and yet stored markers key (if any)
         //If filterKeys is null or empty all keys are returned
         //Otherwise only eventually yet stored marker keys that matches with filterKeys
-        protected List<string> ComputeMathingKeys(List<string> filterKeys = null)
+        protected virtual List<string> ComputeMathingKeys(List<string> filterKeys = null)
         {
             List<string> matchingKeys;
 
@@ -119,27 +119,27 @@ namespace GoogleMapsComponents.Maps.Extension
             }
 
             return matchingKeys;
-        }        
+        }
 
         //Creates mapping between matching keys and markers Guid
-        protected Dictionary<Guid, string> ComputeInternalMapping(List<string> matchingKeys)
+        protected virtual Dictionary<Guid, string> ComputeInternalMapping(List<string> matchingKeys)
         {
             return BaseListableEntities.Where(e => matchingKeys.Contains(e.Key)).ToDictionary(e => BaseListableEntities[e.Key].Guid, e => e.Key);
         }
 
         //Creates mapping between markers Guid and empty array of parameters (getter has no parameter)
-        protected Dictionary<Guid, object> ComputeDictArgs(List<string> matchingKeys)
+        protected virtual Dictionary<Guid, object> ComputeDictArgs(List<string> matchingKeys)
         {
             return BaseListableEntities.Where(e => matchingKeys.Contains(e.Key)).ToDictionary(e => e.Value.Guid, e => (object)(new object[] { }));
         }
 
         //Create an empty result of the correct type in case of no matching keys
-        protected Task<Dictionary<string, T>> ComputeEmptyResult<T>()
+        protected virtual Task<Dictionary<string, T>> ComputeEmptyResult<T>()
         {
             return Task<Dictionary<string, T>>.Factory.StartNew(() => { return new Dictionary<string, T>(); });
         }
 
-        public Task<Dictionary<string, Map>> GetMaps(List<string> filterKeys = null)
+        public virtual Task<Dictionary<string, Map>> GetMaps(List<string> filterKeys = null)
         {
             List<string> matchingKeys = ComputeMathingKeys(filterKeys);
 
@@ -158,7 +158,7 @@ namespace GoogleMapsComponents.Maps.Extension
             }
         }
 
-        public Task<Dictionary<string, bool>> GetDraggables(List<string> filterKeys = null)
+        public virtual Task<Dictionary<string, bool>> GetDraggables(List<string> filterKeys = null)
         {
             List<string> matchingKeys = ComputeMathingKeys(filterKeys);
 
@@ -177,7 +177,7 @@ namespace GoogleMapsComponents.Maps.Extension
             }
         }
 
-        public Task<Dictionary<string, bool>> GetVisibles(List<string> filterKeys = null)
+        public virtual Task<Dictionary<string, bool>> GetVisibles(List<string> filterKeys = null)
         {
             List<string> matchingKeys = ComputeMathingKeys(filterKeys);
 
@@ -201,7 +201,7 @@ namespace GoogleMapsComponents.Maps.Extension
         /// If map is set to null, the marker will be removed.
         /// </summary>
         /// <param name="map"></param>
-        public async Task SetMaps(Dictionary<string, Map> maps)
+        public virtual async Task SetMaps(Dictionary<string, Map> maps)
         {
             Dictionary<Guid, object> dictArgs = maps.ToDictionary(e => BaseListableEntities[e.Key].Guid, e => (object)e.Value);
             await _jsObjectRef.InvokeMultipleAsync(
@@ -209,7 +209,7 @@ namespace GoogleMapsComponents.Maps.Extension
                    dictArgs);
         }
 
-        public Task SetDraggables(Dictionary<string, bool> draggables)
+        public virtual Task SetDraggables(Dictionary<string, bool> draggables)
         {
             Dictionary<Guid, object> dictArgs = draggables.ToDictionary(e => BaseListableEntities[e.Key].Guid, e => (object)e.Value);
             return _jsObjectRef.InvokeMultipleAsync(
@@ -217,7 +217,7 @@ namespace GoogleMapsComponents.Maps.Extension
                 dictArgs);
         }
 
-        public Task SetOptions(Dictionary<string, TEntityOptionsBase> options)
+        public virtual Task SetOptions(Dictionary<string, TEntityOptionsBase> options)
         {
             Dictionary<Guid, object> dictArgs = options.ToDictionary(e => BaseListableEntities[e.Key].Guid, e => (object)e.Value);
             return _jsObjectRef.InvokeMultipleAsync(
@@ -225,7 +225,7 @@ namespace GoogleMapsComponents.Maps.Extension
                 dictArgs);
         }
 
-        public Task SetVisibles(Dictionary<string, bool> visibles)
+        public virtual Task SetVisibles(Dictionary<string, bool> visibles)
         {
             Dictionary<Guid, object> dictArgs = visibles.ToDictionary(e => BaseListableEntities[e.Key].Guid, e => (object)e.Value);
             return _jsObjectRef.InvokeMultipleAsync(

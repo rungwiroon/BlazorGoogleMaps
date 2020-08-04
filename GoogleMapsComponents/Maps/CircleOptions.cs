@@ -9,12 +9,12 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// CircleOptions object used to define the properties that can be set on a Circle.
     /// </summary>
-    public class CircleOptions: ListableEntityOptionsBase
+    public class CircleOptions : ListableEntityOptionsBase
     {
         /// <summary>
         /// The center of the Circle.
         /// </summary>
-        public LatLngLiteral Center { get; set; }               
+        public LatLngLiteral Center { get; set; }
 
         /// <summary>
         /// If set to true, the user can edit this circle by dragging the control points shown at the center and around the circumference of the circle. 
@@ -58,6 +58,6 @@ namespace GoogleMapsComponents.Maps
         /// <summary>
         /// The stroke width in pixels.
         /// </summary>
-        public int StrokeWeight { get; set; }      
+        public int StrokeWeight { get; set; }
     }
 }

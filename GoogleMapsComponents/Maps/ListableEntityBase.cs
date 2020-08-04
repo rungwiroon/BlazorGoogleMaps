@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
 {
-    public abstract class ListableEntityBase<TEntityOptions> : IDisposable, IJsObjectRef
+    public class ListableEntityBase<TEntityOptions> : IDisposable, IJsObjectRef
         where TEntityOptions : ListableEntityOptionsBase
     {
         protected readonly JsObjectRef _jsObjectRef;
@@ -41,7 +41,7 @@ namespace GoogleMapsComponents.Maps
             _jsObjectRef.Dispose();
         }
 
-        public Task<Map> GetMap()
+        public virtual Task<Map> GetMap()
         {
             return _jsObjectRef.InvokeAsync<Map>(
                 "getMap");
@@ -52,16 +52,14 @@ namespace GoogleMapsComponents.Maps
         /// If map is set to null, the map entity will be removed.
         /// </summary>
         /// <param name="map"></param>
-        public async Task SetMap(Map map)
+        public virtual async Task SetMap(Map map)
         {
-            await _jsObjectRef.InvokeAsync(
-                   "setMap",
-                   map);
+            await _jsObjectRef.InvokeAsync("setMap", map);
 
             //_map = map;
         }
 
-        public async Task<MapEventListener> AddListener(string eventName, Action handler)
+        public virtual async Task<MapEventListener> AddListener(string eventName, Action handler)
         {
             JsObjectRef listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync("addListener", eventName, handler);
             MapEventListener eventListener = new MapEventListener(listenerRef);
@@ -75,7 +73,7 @@ namespace GoogleMapsComponents.Maps
             return eventListener;
         }
 
-        public async Task<MapEventListener> AddListener<V>(string eventName, Action<V> handler)
+        public virtual async Task<MapEventListener> AddListener<V>(string eventName, Action<V> handler)
         {
             JsObjectRef listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync("addListener", eventName, handler);
             MapEventListener eventListener = new MapEventListener(listenerRef);
@@ -89,7 +87,7 @@ namespace GoogleMapsComponents.Maps
             return eventListener;
         }
 
-        public async Task ClearListeners(string eventName)
+        public virtual async Task ClearListeners(string eventName)
         {
             if (EventListeners.ContainsKey(eventName))
             {

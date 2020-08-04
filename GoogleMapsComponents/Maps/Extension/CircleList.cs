@@ -15,15 +15,9 @@ namespace GoogleMapsComponents.Maps.Extension
     ///
     /// All properties should be called With a Dictionary<string, {property type}> indicating for each Circle(related to that key) the corresponding related property value
     /// </summary>
-    class CircleList: BaseListableEntityList<Circle, CircleOptions>
+    public class CircleList : ListableEntityListBase<Circle, CircleOptions>
     {
-        public Dictionary<string, Circle> Circles
-        {
-            get
-            {
-                return base.BaseListableEntities;
-            }
-        }
+        public Dictionary<string, Circle> Circles => base.BaseListableEntities;
 
         /// <summary>
         /// Create circles list
@@ -54,7 +48,7 @@ namespace GoogleMapsComponents.Maps.Extension
         }
 
         private CircleList(JsObjectRef jsObjectRef, Dictionary<string, Circle> circles)
-            :base(jsObjectRef, circles)
+            : base(jsObjectRef, circles)
         {
         }
 
@@ -66,8 +60,8 @@ namespace GoogleMapsComponents.Maps.Extension
         /// <returns></returns>
         public async Task AddMultipleAsync(Dictionary<string, CircleOptions> opts)
         {
-            await base.AddMultipleAsync(opts, "google.maps.Circle");            
-        }           
+            await base.AddMultipleAsync(opts, "google.maps.Circle");
+        }
 
         public Task<Dictionary<string, LatLngBoundsLiteral>> GetBounds(List<string> filterKeys = null)
         {
@@ -105,7 +99,7 @@ namespace GoogleMapsComponents.Maps.Extension
             {
                 return ComputeEmptyResult<LatLngLiteral>();
             }
-        }        
+        }
 
         public Task<Dictionary<string, bool>> GetEditables(List<string> filterKeys = null)
         {
@@ -124,7 +118,7 @@ namespace GoogleMapsComponents.Maps.Extension
             {
                 return ComputeEmptyResult<bool>();
             }
-        }        
+        }
 
         public Task<Dictionary<string, double>> GetRadiuses(List<string> filterKeys = null)
         {
@@ -143,7 +137,7 @@ namespace GoogleMapsComponents.Maps.Extension
             {
                 return ComputeEmptyResult<double>();
             }
-        }        
+        }
 
         public Task SetCenters(Dictionary<string, LatLngLiteral> centers)
         {
@@ -151,15 +145,15 @@ namespace GoogleMapsComponents.Maps.Extension
             return _jsObjectRef.InvokeMultipleAsync(
                 "setCenter",
                 dictArgs);
-        }        
-        
+        }
+
         public Task SetEditables(Dictionary<string, bool> editables)
         {
             Dictionary<Guid, object> dictArgs = editables.ToDictionary(e => Circles[e.Key].Guid, e => (object)e.Value);
             return _jsObjectRef.InvokeMultipleAsync(
                 "setEditable",
                 dictArgs);
-        }                
+        }
 
         public Task SetRadiuses(Dictionary<string, double> radiuses)
         {
@@ -167,6 +161,6 @@ namespace GoogleMapsComponents.Maps.Extension
             return _jsObjectRef.InvokeMultipleAsync(
                 "setRadius",
                 dictArgs);
-        }               
+        }
     }
 }

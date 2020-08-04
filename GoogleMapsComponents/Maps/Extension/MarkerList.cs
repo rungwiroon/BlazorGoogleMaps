@@ -16,15 +16,9 @@ namespace GoogleMapsComponents.Maps.Extension
     ///
     /// All properties should be called With a Dictionary<string, {property type}> indicating for each Marker(related to that key) the corresponding related property value
     /// </summary>
-    public class MarkerList : BaseListableEntityList<Marker, MarkerOptions>
+    public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
     {
-        public Dictionary<string, Marker> Markers
-        {
-            get
-            {
-                return base.BaseListableEntities;
-            }
-        }
+        public Dictionary<string, Marker> Markers => base.BaseListableEntities;
 
         /// <summary>
         /// Create markers list
@@ -55,7 +49,7 @@ namespace GoogleMapsComponents.Maps.Extension
         }
 
         private MarkerList(JsObjectRef jsObjectRef, Dictionary<string, Marker> markers)
-            :base(jsObjectRef, markers)
+            : base(jsObjectRef, markers)
         {
         }
 
@@ -66,8 +60,8 @@ namespace GoogleMapsComponents.Maps.Extension
         /// <returns></returns>
         public async Task AddMultipleAsync(Dictionary<string, MarkerOptions> opts)
         {
-            await base.AddMultipleAsync(opts, "google.maps.Marker");           
-        }        
+            await base.AddMultipleAsync(opts, "google.maps.Marker");
+        }
 
         public Task<Dictionary<string, Animation>> GetAnimations(List<string> filterKeys = null)
         {
@@ -124,7 +118,7 @@ namespace GoogleMapsComponents.Maps.Extension
             {
                 return ComputeEmptyResult<string>();
             }
-        }        
+        }
 
         public Task<Dictionary<string, OneOf<string, Icon, Symbol>>> GetIcons(List<string> filterKeys = null)
         {
@@ -162,7 +156,7 @@ namespace GoogleMapsComponents.Maps.Extension
             {
                 return ComputeEmptyResult<string>();
             }
-        }        
+        }
 
         public Task<Dictionary<string, LatLngLiteral>> GetPositions(List<string> filterKeys = null)
         {
@@ -219,7 +213,7 @@ namespace GoogleMapsComponents.Maps.Extension
             {
                 return ComputeEmptyResult<string>();
             }
-        }        
+        }
 
         public Task<Dictionary<string, int>> GetZIndexes(List<string> filterKeys = null)
         {
@@ -269,7 +263,7 @@ namespace GoogleMapsComponents.Maps.Extension
             return _jsObjectRef.InvokeMultipleAsync(
                 "setCursor",
                 dictArgs);
-        }        
+        }
 
         public Task SetIcons(Dictionary<string, string> icons)
         {
@@ -293,7 +287,7 @@ namespace GoogleMapsComponents.Maps.Extension
             return _jsObjectRef.InvokeMultipleAsync(
                 "setLabel",
                 dictArgs);
-        }        
+        }
 
         public Task SetOpacities(Dictionary<string, float> opacities)
         {
@@ -301,7 +295,7 @@ namespace GoogleMapsComponents.Maps.Extension
             return _jsObjectRef.InvokeMultipleAsync(
                 "setOpacity",
                 dictArgs);
-        }        
+        }
 
         public Task SetPositions(Dictionary<string, LatLngLiteral> latLngs)
         {
@@ -325,7 +319,7 @@ namespace GoogleMapsComponents.Maps.Extension
             return _jsObjectRef.InvokeMultipleAsync(
                 "setTitle",
                 dictArgs);
-        }        
+        }
 
         public Task SetZIndexes(Dictionary<string, int> zIndexes)
         {

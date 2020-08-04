@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
 {
-    public class MarkerOptions: ListableEntityOptionsBase
+    public class MarkerOptions : ListableEntityOptionsBase
     {
         /// <summary>
         /// The offset from the marker's position to the tip of an InfoWindow that has been opened with the marker as anchor.
@@ -17,7 +17,7 @@ namespace GoogleMapsComponents.Maps
         /// <summary>
         /// Which animation to play when marker is added to a map.
         /// </summary>
-        public Animation? Animation { get; set; }       
+        public Animation? Animation { get; set; }
 
         /// <summary>
         /// If false, disables cross that appears beneath the marker when dragging. 
@@ -28,7 +28,7 @@ namespace GoogleMapsComponents.Maps
         /// <summary>
         /// Mouse cursor to show on hover
         /// </summary>
-        public string Cursor { get; set; }        
+        public string Cursor { get; set; }
 
         /// <summary>
         /// Icon for the foreground. 
@@ -41,7 +41,7 @@ namespace GoogleMapsComponents.Maps
         /// Adds a label to the marker. The label can either be a string, or a MarkerLabel object.
         /// </summary>
         [JsonConverter(typeof(OneOfConverter))]
-        public OneOf<string, MarkerLabel> Label { get; set; }        
+        public OneOf<string, MarkerLabel> Label { get; set; }
 
         /// <summary>
         /// The marker's opacity between 0.0 and 1.0.
@@ -68,6 +68,6 @@ namespace GoogleMapsComponents.Maps
         /// <summary>
         /// Rollover text
         /// </summary>
-        public string Title { get; set; }        
+        public string Title { get; set; }
     }
 }
