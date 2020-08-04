@@ -9,15 +9,8 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// A circle on the Earth's surface; also known as a "spherical cap".
     /// </summary>
-    public class Circle : IDisposable, IJsObjectRef
+    public class Circle : ListableEntityBase<CircleOptions>
     {
-        private Map _map;
-        private readonly JsObjectRef _jsObjectRef;
-
-        public readonly Dictionary<string, List<MapEventListener>> EventListeners;
-
-        public Guid Guid => _jsObjectRef.Guid;
-
         /// <summary>
         /// Create a circle using the passed CircleOptions, which specify the center, radius, and style.
         /// </summary>
@@ -25,44 +18,14 @@ namespace GoogleMapsComponents.Maps
         public async static Task<Circle> CreateAsync(IJSRuntime jsRuntime, CircleOptions opts = null)
         {
             var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Circle", opts);
-
-            var obj = new Circle(jsObjectRef, opts);
-
+            var obj = new Circle(jsObjectRef);
             return obj;
         }
 
-        internal Circle(JsObjectRef jsObjectRef, CircleOptions opts = null)
+        internal Circle(JsObjectRef jsObjectRef)
+            :base(jsObjectRef)
         {
-            _jsObjectRef = jsObjectRef;
-
-            if (opts != null)
-            {
-                _map = opts.Map;
-            }
-
-            EventListeners = new Dictionary<string, List<MapEventListener>>();
-        }
-
-        public void Dispose()
-        {
-            foreach (string key in EventListeners.Keys)
-            {
-                //Probably superfluous...
-                if (EventListeners[key] != null)
-                {
-                    foreach (MapEventListener eventListener in EventListeners[key])
-                    {
-                        eventListener.Dispose();
-                    }
-
-                    EventListeners[key].Clear();
-                }
-            }
-
-            EventListeners.Clear();
-
-            _jsObjectRef.Dispose();
-        }
+        }        
 
         /// <summary>
         /// Gets the LatLngBounds of this Circle.
@@ -98,16 +61,7 @@ namespace GoogleMapsComponents.Maps
         public Task<bool> GetEditable()
         {
             return _jsObjectRef.InvokeAsync<bool>("getEditable");
-        }
-
-        /// <summary>
-        /// Returns the map on which this circle is displayed.
-        /// </summary>
-        /// <returns></returns>
-        public Map GetMap()
-        {
-            return _map;
-        }
+        }        
 
         /// <summary>
         /// Returns the radius of this circle (in meters).
@@ -152,20 +106,7 @@ namespace GoogleMapsComponents.Maps
         public Task SetEditable(bool editable)
         {
             return _jsObjectRef.InvokeAsync("setEditable", editable);
-        }
-
-        /// <summary>
-        /// Renders the circle on the specified map. If map is set to null, the circle will be removed.
-        /// </summary>
-        /// <param name="map"></param>
-        public Task SetMap(Map map)
-        {
-            _map = map;
-
-            return _jsObjectRef.InvokeAsync(
-                "setMap",
-                map);
-        }
+        }        
 
         public Task SetOptions(CircleOptions options)
         {
@@ -188,48 +129,6 @@ namespace GoogleMapsComponents.Maps
         public Task SetVisible(bool visible)
         {
             return _jsObjectRef.InvokeAsync("setVisible", visible);
-        }
-
-        public async Task<MapEventListener> AddListener(string eventName, Action handler)
-        {
-            var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
-                "addListener", eventName, handler);
-            MapEventListener eventListener = new MapEventListener(listenerRef);
-
-            if (!EventListeners.ContainsKey(eventName))
-            {
-                EventListeners.Add(eventName, new List<MapEventListener>());
-            }
-            EventListeners[eventName].Add(eventListener);
-
-            return eventListener;
-        }
-
-        public async Task<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
-        {
-            var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
-                "addListener", eventName, handler);
-            MapEventListener eventListener = new MapEventListener(listenerRef);
-
-            if (!EventListeners.ContainsKey(eventName))
-            {
-                EventListeners.Add(eventName, new List<MapEventListener>());
-            }
-            EventListeners[eventName].Add(eventListener);
-
-            return eventListener;
-        }
-
-        public async Task ClearListeners(string eventName)
-        {
-            if (EventListeners.ContainsKey(eventName))
-            {
-                await _jsObjectRef.InvokeAsync("clearListeners", eventName);
-
-                //IMHO is better preserving the knowledge that Marker had some EventListeners attached to "eventName" in the past
-                //so, instead to clear the list and remove the key from dictionary, I prefer to leave the key with an empty list
-                EventListeners[eventName].Clear();
-            }
-        }
+        }        
     }
 }

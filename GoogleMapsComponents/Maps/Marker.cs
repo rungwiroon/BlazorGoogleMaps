@@ -1,23 +1,15 @@
 ﻿using Microsoft.JSInterop;
-using Newtonsoft.Json.Linq;
 using OneOf;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
 {
-    public class Marker : IDisposable, IJsObjectRef
+    public class Marker : ListableEntityBase<MarkerOptions>
     {
-        private readonly JsObjectRef _jsObjectRef;
-
-        public readonly Dictionary<string, List<MapEventListener>> EventListeners;
-
-        public Guid Guid => _jsObjectRef.Guid;
-
-        public async static Task<Marker> CreateAsync(IJSRuntime jsRuntime, MarkerOptions opts = null)
+        public async static Task<Marker> CreateAsync(IJSRuntime jsRuntime, MarkerOptions opts = null)            
         {
             var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Marker", opts);
             var obj = new Marker(jsObjectRef);
@@ -25,29 +17,8 @@ namespace GoogleMapsComponents.Maps
         }
 
         internal Marker(JsObjectRef jsObjectRef)
+            :base(jsObjectRef)
         {
-            _jsObjectRef = jsObjectRef;
-            EventListeners = new Dictionary<string, List<MapEventListener>>();
-        }
-
-        public void Dispose()
-        {
-            foreach (string key in EventListeners.Keys)
-            {
-                //Probably superfluous...
-                if (EventListeners[key] != null)
-                {
-                    foreach (MapEventListener eventListener in EventListeners[key])
-                    {
-                        eventListener.Dispose();
-                    }
-
-                    EventListeners[key].Clear();
-                }
-            }
-
-            EventListeners.Clear();
-            _jsObjectRef.Dispose();
         }
 
         public async Task<Animation> GetAnimation()
@@ -87,12 +58,6 @@ namespace GoogleMapsComponents.Maps
         public Task<string> GetLabel()
         {
             return _jsObjectRef.InvokeAsync<string>("getLabel");
-        }
-
-        public Task<Map> GetMap()
-        {
-            return _jsObjectRef.InvokeAsync<Map>(
-                "getMap");
         }
 
         public Task<LatLngLiteral> GetPosition()
@@ -179,21 +144,7 @@ namespace GoogleMapsComponents.Maps
             return _jsObjectRef.InvokeAsync(
                 "setLabel",
                 label);
-        }
-
-        /// <summary>
-        /// Renders the marker on the specified map or panorama. 
-        /// If map is set to null, the marker will be removed.
-        /// </summary>
-        /// <param name="map"></param>
-        public async Task SetMap(Map map)
-        {
-            await _jsObjectRef.InvokeAsync(
-                   "setMap",
-                   map);
-
-            //_map = map;
-        }
+        }        
 
         public Task SetOpacity(float opacity)
         {
@@ -242,46 +193,6 @@ namespace GoogleMapsComponents.Maps
             return _jsObjectRef.InvokeAsync(
                 "setZIndex",
                 zIndex);
-        }
-
-        public async Task<MapEventListener> AddListener(string eventName, Action handler)
-        {
-            JsObjectRef listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync("addListener", eventName, handler);
-            MapEventListener eventListener = new MapEventListener(listenerRef);
-
-            if (!EventListeners.ContainsKey(eventName))
-            {
-                EventListeners.Add(eventName, new List<MapEventListener>());
-            }
-            EventListeners[eventName].Add(eventListener);
-
-            return eventListener;
-        }
-
-        public async Task<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
-        {
-            JsObjectRef listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync("addListener", eventName, handler);
-            MapEventListener eventListener = new MapEventListener(listenerRef);
-
-            if (!EventListeners.ContainsKey(eventName))
-            {
-                EventListeners.Add(eventName, new List<MapEventListener>());
-            }
-            EventListeners[eventName].Add(eventListener);
-
-            return eventListener;
-        }
-
-        public async Task ClearListeners(string eventName)
-        {
-            if (EventListeners.ContainsKey(eventName))
-            {
-                await _jsObjectRef.InvokeAsync("clearListeners", eventName);
-                
-                //IMHO is better preserving the knowledge that Marker had some EventListeners attached to "eventName" in the past
-                //so, instead to clear the list and remove the key from dictionary, I prefer to leave the key with an empty list
-                EventListeners[eventName].Clear();
-            }
         }
     }
 }
