@@ -1,0 +1,37 @@
+﻿@page "/map-legend"
+
+<h1>Google Map Legend</h1>
+
+<GoogleMap @ref="@map1" Id="map1" Options="@mapOptions" OnAfterInit="@AfterMapInit"></GoogleMap>
+
+<div id="legend" @ref="@legendReference" style="visibility: hidden"><h3>Legend</h3></div>
+
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+    }
+
+    #map {
+        height: 400px;
+        width: 100%;
+    }
+
+    #legend {
+        font-family: Arial, sans-serif;
+        background: #fff;
+        padding: 10px;
+        margin: 10px;
+        border: 3px solid #000;
+    }
+
+        #legend h3 {
+            margin-top: 0;
+        }
+
+        #legend img {
+            vertical-align: middle;
+        }
+</style>

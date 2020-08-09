@@ -129,6 +129,38 @@ function cleanDirectionResult(dirResponse, dirRequestOptions) {
     return tmpdirobj;
 }
 
+function getGooglePositionFromString(positionString) {
+    //https://developers.google.com/maps/documentation/javascript/reference/control#ControlPosition
+    switch (positionString) {
+        case "BOTTOM_CENTER":
+            return google.maps.ControlPosition.BOTTOM_CENTER;
+        case "BOTTOM_LEFT":
+            return google.maps.ControlPosition.BOTTOM_LEFT;
+        case "BOTTOM_RIGHT":
+            return google.maps.ControlPosition.BOTTOM_RIGHT;
+        case "LEFT_BOTTOM":
+            return google.maps.ControlPosition.LEFT_BOTTOM;
+        case "LEFT_CENTER":
+            return google.maps.ControlPosition.LEFT_CENTER;
+        case "LEFT_CENTER":
+            return google.maps.ControlPosition.LEFT_CENTER;
+        case "RIGHT_BOTTOM":
+            return google.maps.ControlPosition.RIGHT_BOTTOM;
+        case "RIGHT_CENTER":
+            return google.maps.ControlPosition.RIGHT_CENTER;
+        case "RIGHT_TOP":
+            return google.maps.ControlPosition.RIGHT_TOP;
+        case "TOP_CENTER":
+            return google.maps.ControlPosition.TOP_CENTER;
+        case "TOP_LEFT":
+            return google.maps.ControlPosition.TOP_LEFT;
+        case "TOP_RIGHT":
+            return google.maps.ControlPosition.TOP_RIGHT;
+        default:
+            return google.maps.ControlPosition.BOTTOM_CENTER;
+    }
+}
+
 window.googleMapsObjectManager = {
     createObject: function (args) {
         window._blazorGoogleMapsObjects = window._blazorGoogleMapsObjects || [];
@@ -185,6 +217,14 @@ window.googleMapsObjectManager = {
         return guid;
     },
 
+    addControls(args) {
+        let map = _blazorGoogleMapsObjects[args[0]];
+        let elem = args[2];
+        //I know i am lazy. Two quotes appear after serialization
+        let position = getGooglePositionFromString(args[1].replace("\"", "").replace("\"", ""));
+
+        map.controls[position].push(elem);
+    },
     disposeMapElements(mapGuid) {
         var keysToRemove = [];
 

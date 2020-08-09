@@ -20,8 +20,6 @@ namespace GoogleMapsComponents.Maps
 
         public Guid Guid => _jsObjectRef.Guid;
 
-        public Dictionary<ControlPosition, List<ElementReference>> Controls { get; private set; }
-
         public MapData Data { get; private set; }
 
         public static async Task<Map> CreateAsync(
@@ -43,6 +41,11 @@ namespace GoogleMapsComponents.Maps
         {
             _jsObjectRef = jsObjectRef;
             Data = data;
+        }
+
+        public async Task AddControl(ControlPosition position, ElementReference reference)
+        {
+            await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("googleMapsObjectManager.addControls", this.Guid.ToString(), position, reference);
         }
 
         public void Dispose()
