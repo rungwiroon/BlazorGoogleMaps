@@ -1,0 +1,258 @@
+﻿@page "/mapEvents"
+@using GoogleMapsComponents
+@using GoogleMapsComponents.Maps
+@using System.Diagnostics
+
+<h1>Map Events</h1>
+
+<GoogleMap  @ref="@map1" Id="map1" Options="@mapOptions" OnAfterInit="@(async () => await OnAfterInitAsync())">
+</GoogleMap>
+
+<input type="checkbox" bind="@DisablePoiInfoWindow" />Disable POI's popup info window
+<br>
+
+<MapEventList  @ref="@eventList" Events="@_events"></MapEventList>
+
+@code {
+    private GoogleMap map1;
+    private MapEventList eventList;
+
+    private MapOptions mapOptions;
+
+    private List<String> _events = new List<String>();
+
+    private bool DisablePoiInfoWindow { get; set; } = false;
+
+    protected override void OnInitialized()
+    {
+        mapOptions = new MapOptions()
+        {
+            Zoom = 13,
+            Center = new LatLngLiteral()
+            {
+                Lat = 13.505892,
+                Lng = 100.8162
+            },
+            MapTypeId = MapTypeId.Roadmap
+        };
+    }
+
+    private async Task OnAfterInitAsync()
+    {
+        //Debug.WriteLine("Start OnAfterRenderAsync");
+
+        await map1.InteropObject.AddListener("bounds_changed", OnBoundsChanged);
+
+        await map1.InteropObject.AddListener("center_changed", OnCenterChanged);
+
+        await map1.InteropObject.AddListener<MouseEvent>("click", async (e) => await OnClick(e));
+
+        await map1.InteropObject.AddListener("dblclick", OnDoubleClick);
+
+        await map1.InteropObject.AddListener("drag", OnDrag);
+
+        await map1.InteropObject.AddListener("dragend", OnDragEnd);
+
+        await map1.InteropObject.AddListener("dragstart", OnDragStart);
+
+        await map1.InteropObject.AddListener("heading_changed", OnHeadingChanged);
+
+        await map1.InteropObject.AddListener("idle", OnIdle);
+
+        await map1.InteropObject.AddListener("maptypeid_changed", OnMapTypeIdChanged);
+
+        await map1.InteropObject.AddListener<MouseEvent>("mousemove", OnMouseMove);
+
+        await map1.InteropObject.AddListener("mouseout", OnMouseOut);
+
+        await map1.InteropObject.AddListener("mouseover", OnMouseOver);
+
+        await map1.InteropObject.AddListener("projection_changed", OnProjectionChanged);
+
+        await map1.InteropObject.AddListener("rightclick", OnRightClick);
+
+        await map1.InteropObject.AddListener("tilesloaded", OnTilesLoaded);
+
+        await map1.InteropObject.AddListener("tilt_changed", OnTiltChanged);
+
+        await map1.InteropObject.AddListener("zoom_changed", OnZoomChanged);
+    }
+
+    private void OnBoundsChanged()
+    {
+        //Console.WriteLine("Bounds changed.");
+
+        _events.Insert(0, "Bounds changed.");
+        _events = _events.Take(100).ToList();
+
+        StateHasChanged();
+    }
+
+    private void OnCenterChanged()
+    {
+        //Console.WriteLine("Center changed.");
+
+        _events.Insert(0, "Center changed.");
+        _events = _events.Take(100).ToList();
+
+        StateHasChanged();
+    }
+
+    private async Task OnClick(MouseEvent e)
+    {
+        //Console.WriteLine("Click.");
+
+        _events.Insert(0, $"Click {e.LatLng}.");
+        _events = _events.Take(100).ToList();
+
+        StateHasChanged();
+
+        if (DisablePoiInfoWindow)
+        {
+            await e.Stop();
+        }
+    }
+
+    private void OnDoubleClick()
+    {
+        //Console.WriteLine("Double click.");
+
+        _events.Insert(0, "Double click.");
+        _events = _events.Take(100).ToList();
+
+        StateHasChanged();
+    }
+
+    private void OnDrag()
+    {
+        //Console.WriteLine("Drag.");
+
+        _events.Insert(0, "Drag.");
+        _events = _events.Take(100).ToList();
+
+        StateHasChanged();
+    }
+
+    private void OnDragEnd()
+    {
+        //Console.WriteLine("Drag end.");
+
+        _events.Insert(0, "Drag end.");
+
+        StateHasChanged();
+    }
+
+    private void OnDragStart()
+    {
+        //Console.WriteLine("Drag start.");
+
+        _events.Insert(0, "Drag start.");
+        _events = _events.Take(100).ToList();
+
+        StateHasChanged();
+    }
+
+    private void OnHeadingChanged()
+    {
+        //Console.WriteLine("Heading changed.");
+
+        _events.Insert(0, "Heading changed.");
+        _events = _events.Take(100).ToList();
+
+        StateHasChanged();
+    }
+
+    private void OnIdle()
+    {
+        //Console.WriteLine("Idle.");
+
+        _events.Insert(0, "Idle.");
+        _events = _events.Take(100).ToList();
+
+        StateHasChanged();
+    }
+
+    private void OnMapTypeIdChanged()
+    {
+        //Console.WriteLine("OnMapTypeIdChanged.");
+
+        _events.Insert(0, "OnMapTypeIdChanged.");
+        _events = _events.Take(100).ToList();
+
+        StateHasChanged();
+    }
+
+    private void OnMouseMove(MouseEvent e)
+    {
+        //Console.WriteLine("OnMouseMove.");
+
+        _events.Insert(0, $"OnMouseMove {e.LatLng}.");
+        _events = _events.Take(100).ToList();
+
+        StateHasChanged();
+    }
+
+    private void OnMouseOut()
+    {
+        //Console.WriteLine("OnMouseOut.");
+
+        _events.Insert(0, "OnMouseOut.");
+        _events = _events.Take(100).ToList();
+
+        StateHasChanged();
+    }
+
+    private void OnMouseOver()
+    {
+        //Console.WriteLine("OnMouseOver.");
+
+        _events.Insert(0, "OnMouseOver.");
+
+        StateHasChanged();
+    }
+
+    private void OnProjectionChanged()
+    {
+        //Console.WriteLine("OnProjectionChanged.");
+
+        _events.Insert(0, "OnProjectionChanged.");
+
+        StateHasChanged();
+    }
+
+    private void OnRightClick()
+    {
+        //Console.WriteLine("OnRightClick.");
+
+        _events.Insert(0, "OnRightClick.");
+
+        StateHasChanged();
+    }
+
+    private void OnTilesLoaded()
+    {
+        //Console.WriteLine("OnTilesLoaded.");
+
+        _events.Insert(0, "OnTilesLoaded.");
+
+        StateHasChanged();
+    }
+
+    private void OnTiltChanged()
+    {
+        //Console.WriteLine("OnTiltChanged.");
+
+        _events.Insert(0, "OnTiltChanged.");
+
+        StateHasChanged();
+    }
+
+    private void OnZoomChanged()
+    {
+        //Console.WriteLine("OnZoomChanged.");
+
+        _events.Insert(0, "OnZoomChanged.");
+
+        StateHasChanged();
+    }
+}

@@ -1,0 +1,64 @@
+﻿@page "/mapInfoWindow"
+@using GoogleMapsComponents
+@using GoogleMapsComponents.Maps
+
+<h1>Google Map Info Window</h1>
+
+<GoogleMap @ref="@map1" Id="map1" Options="@mapOptions"></GoogleMap>
+<button @onclick="AddMarker">Add marker</button>
+
+@functions {
+    private GoogleMap map1;
+
+    private MapOptions mapOptions;
+
+    //private List<Marker> markers = new List<Marker>();
+    private int markerCount;
+
+    protected override void OnInitialized()
+    {
+        mapOptions = new MapOptions()
+        {
+            Zoom = 13,
+            Center = new LatLngLiteral()
+            {
+                Lat = 13.505892,
+                Lng = 100.8162
+            },
+            MapTypeId = MapTypeId.Roadmap
+        };
+    }
+
+    private async Task AddMarker()
+    {
+        var position = await map1.InteropObject.GetCenter();
+
+        var marker = await Marker.CreateAsync(map1.JsRuntime, new MarkerOptions()
+        {
+            Position = position,
+            Map = map1.InteropObject,
+            Label = $"Test {markerCount}"
+        });
+
+        var infoWindow = await InfoWindow.CreateAsync(map1.JsRuntime, new InfoWindowOptions()
+        {
+            Position = new LatLngLiteral()
+            {
+                Lat = 13.505892,
+                Lng = 100.8162
+            },
+            //Content = "Test"
+        });
+
+        var infoWindowContent = $"Test {markerCount}";
+
+        await marker.AddListener("click", async () =>
+        {
+            await infoWindow.SetContent(infoWindowContent);
+            await infoWindow.SetPosition(position);
+            await infoWindow.Open(map1.InteropObject);
+        });
+
+        markerCount++;
+    }
+}
