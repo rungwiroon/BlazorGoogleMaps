@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace GoogleMapsComponents.Maps
 {
@@ -35,7 +37,8 @@ namespace GoogleMapsComponents.Maps
     }
 
     public abstract class GoogleMapStyleElement
-    { }
+    {
+    }
 
     public class GoogleMapStyleColor : GoogleMapStyleElement
     {
@@ -87,11 +90,12 @@ namespace GoogleMapsComponents.Maps
             MapTypeStyle s = new MapTypeStyle();
             s.elementType = elementType;
             s.featureType = featureType;
-            s.stylers = new[] { (GoogleMapStyleVisibility)visibility };
+            s.stylers = new[] {(GoogleMapStyleVisibility) visibility};
             _styles.Add(s);
 
             return this;
         }
+
         /// <summary>
         /// For example AddColor("", "geometry", (GoogleMapStyleColor)"#1d2c4d");
         /// Color is casted into <see cref="GoogleMapStyleColor"/>  element
@@ -105,7 +109,7 @@ namespace GoogleMapsComponents.Maps
             MapTypeStyle s = new MapTypeStyle();
             s.elementType = elementType;
             s.featureType = featureType;
-            s.stylers = new[] { (GoogleMapStyleColor)colorHex };
+            s.stylers = new[] {(GoogleMapStyleColor) colorHex};
             _styles.Add(s);
 
             return this;
@@ -123,10 +127,69 @@ namespace GoogleMapsComponents.Maps
             MapTypeStyle s = new MapTypeStyle();
             s.elementType = elementType;
             s.featureType = featureType;
-            s.stylers = new[] { element };
+            s.stylers = new[] {element};
             _styles.Add(s);
 
             return this;
+        }
+
+        /// <summary>
+        /// Json from https://mapstyle.withgoogle.com/
+        /// </summary>
+        /// <param name="json"></param>
+        /// <returns></returns>
+        public GoogleMapStyleBuilder AddStyle(string json)
+        {
+            var dirResult = JsonConvert.DeserializeObject<dynamic>(json);
+            foreach (var styleItem in dirResult)
+            {
+                MapTypeStyle s = new MapTypeStyle();
+                s.elementType = styleItem.elementType;
+                s.featureType = styleItem.featureType;
+                if (IsPropertyExist(styleItem, "stylers"))
+                {
+                    if (IsPropertyExist(styleItem.stylers[0], "visibility"))
+                    {
+                        string stylerValue = styleItem.stylers[0].visibility?.ToString();
+                        if (!string.IsNullOrEmpty(stylerValue))
+                        {
+                            s.stylers = new[] {new GoogleMapStyleVisibility() {visibility = stylerValue}};
+                        }
+                    }
+
+                    if (IsPropertyExist(styleItem.stylers[0], "color"))
+                    {
+                        string stylerValue = styleItem.stylers[0].color?.ToString();
+                        if (!string.IsNullOrEmpty(stylerValue))
+                        {
+                            s.stylers = new[] {new GoogleMapStyleColor() {color = stylerValue}};
+                        }
+                    }
+                }
+
+                _styles.Add(s);
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Only works for json dynamic
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        private bool IsPropertyExist(dynamic settings, string name)
+        {
+            try
+            {
+                var value = settings[name];
+                return true;
+            }
+            catch (KeyNotFoundException)
+            {
+                return false;
+            }
         }
     }
 }
