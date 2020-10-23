@@ -1,7 +1,6 @@
 ﻿@page "/mapPolyline"
 @using GoogleMapsComponents
 @using GoogleMapsComponents.Maps
-@using System.Diagnostics
 
 <h1>Polylines</h1>
 
@@ -17,20 +16,20 @@
 <button @onclick="DrawingCircle">Drawing circle</button>
 
 @functions {
-    private GoogleMap map1;
+    private GoogleMap map1 = default!;
 
-    private MapOptions mapOptions;
+    private MapOptions mapOptions = default!;
 
     private List<LatLngLiteral> path = new List<LatLngLiteral>();
 
     private List<Polyline> polylines = new List<Polyline>();
-    private Polyline polyline;
+    private Polyline? polyline;
 
     private List<Polygon> polygons = new List<Polygon>();
-    private Polygon polygon;
+    private Polygon polygon = default!;
 
-    private Rectangle rectangle;
-    private Circle circle;
+    private Rectangle? rectangle;
+    private Circle? circle;
 
     protected override void OnInitialized()
     {
@@ -65,7 +64,10 @@
 
     private void EndDrawingPolyline()
     {
-        polylines.Add(polyline);
+
+        if (polyline is { }) {
+            polylines.Add(polyline);
+        }
 
         polyline = null;
         path.Clear();

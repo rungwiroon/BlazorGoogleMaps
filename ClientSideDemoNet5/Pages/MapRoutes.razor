@@ -14,11 +14,11 @@
 </p>
 
 @code {
-    private GoogleMap map1;
-    private MapOptions mapOptions;
-    private DirectionsRenderer dirRend;
-    private string _durationTotalString;
-    private string _distanceTotalString;
+    private GoogleMap map1 = default!;
+    private MapOptions mapOptions = default!;
+    private DirectionsRenderer dirRend = default!;
+    private string? _durationTotalString;
+    private string? _distanceTotalString;
 
     protected override void OnInitialized()
     {

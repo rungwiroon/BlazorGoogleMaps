@@ -13,15 +13,15 @@
 <MapEventList @ref="@eventList" Events="@_events"></MapEventList>
 
 @functions {
-    private GoogleMap map1;
+    private GoogleMap map1 = default!;
 
-    private MapOptions mapOptions;
+    private MapOptions mapOptions = default!;
 
     private Stack<Marker> markers = new Stack<Marker>();
 
     private List<String> _events = new List<String>();
 
-    private MapEventList eventList;
+    private MapEventList eventList = default!;
 
     protected override void OnInitialized()
     {

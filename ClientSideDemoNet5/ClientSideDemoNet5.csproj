@@ -1,21 +1,20 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
-  <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-    <LangVersion>8.0</LangVersion>
-    <Nullable>enable</Nullable>
-    <RuntimeIdentifier>browser-wasm</RuntimeIdentifier>
-    <UseBlazorWebAssembly>true</UseBlazorWebAssembly>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <LangVersion>8.0</LangVersion>
+        <Nullable>enable</Nullable>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0-preview.8.20407.11" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.0-preview.8.20414.8" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.0-preview.8.20414.8" PrivateAssets="all" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0-rc.2.20475.5" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.0-rc.2.20475.17" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.0-rc.2.20475.17" PrivateAssets="all" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\GoogleMapsComponents\GoogleMapsComponents.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\GoogleMapsComponents\GoogleMapsComponents.csproj" />
+    </ItemGroup>
 
 </Project>

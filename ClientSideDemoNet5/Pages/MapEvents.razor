@@ -1,7 +1,6 @@
 ﻿@page "/mapEvents"
 @using GoogleMapsComponents
 @using GoogleMapsComponents.Maps
-@using System.Diagnostics
 
 <h1>Map Events</h1>
 
@@ -14,10 +13,10 @@
 <MapEventList  @ref="@eventList" Events="@_events"></MapEventList>
 
 @code {
-    private GoogleMap map1;
-    private MapEventList eventList;
+    private GoogleMap map1 = default!;
+    private MapEventList eventList = default!;
 
-    private MapOptions mapOptions;
+    private MapOptions mapOptions = default!;
 
     private List<String> _events = new List<String>();
 

@@ -8,9 +8,9 @@
 <button @onclick="AddMarker">Add marker</button>
 
 @functions {
-    private GoogleMap map1;
+    private GoogleMap map1 = default!;
 
-    private MapOptions mapOptions;
+    private MapOptions mapOptions = default!;
 
     //private List<Marker> markers = new List<Marker>();
     private int markerCount;
