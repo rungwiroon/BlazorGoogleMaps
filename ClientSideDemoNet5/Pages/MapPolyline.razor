@@ -1,0 +1,166 @@
+﻿@page "/mapPolyline"
+@using GoogleMapsComponents
+@using GoogleMapsComponents.Maps
+
+<h1>Polylines</h1>
+
+<GoogleMap  @ref="@map1" Id="map1" Options="@mapOptions" OnAfterInit="async () => await OnAfterMapInit()"></GoogleMap>
+<button @onclick="StartDrawingPolyline">Start drawing polyline</button>
+<button @onclick="EndDrawingPolyline">End drawing polyline</button>
+<br />
+<button @onclick="StartDrawingPolygon">Start drawing polygon</button>
+<button @onclick="EndDrawingPolygon">End drawing polygon</button>
+<br />
+<button @onclick="DrawingRectangle">Drawing rectangle</button>
+<br />
+<button @onclick="DrawingCircle">Drawing circle</button>
+
+@functions {
+    private GoogleMap map1 = default!;
+
+    private MapOptions mapOptions = default!;
+
+    private List<LatLngLiteral> path = new List<LatLngLiteral>();
+
+    private List<Polyline> polylines = new List<Polyline>();
+    private Polyline? polyline;
+
+    private List<Polygon> polygons = new List<Polygon>();
+    private Polygon? polygon;
+
+    private Rectangle? rectangle;
+    private Circle? circle;
+
+    protected override void OnInitialized()
+    {
+        mapOptions = new MapOptions()
+        {
+            Zoom = 13,
+            Center = new LatLngLiteral()
+            {
+                Lat = 13.505892,
+                Lng = 100.8162
+            },
+            MapTypeId = MapTypeId.Roadmap
+        };
+    }
+
+    private async Task OnAfterMapInit()
+    {
+        await map1.InteropObject.AddListener<MouseEvent>("click", async (e) => await OnClick(e));
+    }
+
+    private async Task StartDrawingPolyline()
+    {
+        polyline = await Polyline.CreateAsync(map1.JsRuntime, new PolylineOptions()
+        {
+            Draggable = true,
+            Editable = true,
+            Map = map1.InteropObject
+        });
+
+        path.Clear();
+    }
+
+    private void EndDrawingPolyline()
+    {
+
+        if (polyline is { }) {
+            polylines.Add(polyline);
+        }
+
+        polyline = null;
+        path.Clear();
+    }
+
+    private async Task StartDrawingPolygon()
+    {
+        polygon = await Polygon.CreateAsync(map1.JsRuntime, new PolygonOptions()
+        {
+            Draggable = true,
+            Editable = true,
+            Map = map1.InteropObject
+        });
+
+        path.Clear();
+    }
+
+    private void EndDrawingPolygon()
+    {
+        if (polygon is { }) {
+            polygons.Add(polygon);
+        }
+
+        polygon = null;
+        path.Clear();
+    }
+
+    private async Task DrawingRectangle()
+    {
+        rectangle = await Rectangle.CreateAsync(map1.JsRuntime, new RectangleOptions()
+        {
+            Draggable = true,
+            Editable = true,
+            Map = map1.InteropObject
+        });
+
+        path.Clear();
+    }
+
+    private async Task DrawingCircle()
+    {
+        circle = await Circle.CreateAsync(map1.JsRuntime, new CircleOptions()
+        {
+            Draggable = true,
+            Editable = true,
+            Map = map1.InteropObject,
+            Radius = 1000
+        });
+
+        path.Clear();
+    }
+
+    private async Task OnClick(MouseEvent e)
+    {
+        //Debug.WriteLine($"Onclick : {mouseEvent.LatLng}");
+
+        path.Add(e.LatLng);
+
+        if (polyline != null)
+        {
+            //Debug.WriteLine($"Path length : {path.Count()}");
+
+            await polyline.SetPath(path);
+        }
+        else if (polygon != null)
+        {
+            await polygon.SetPath(path);
+        }
+        else if (rectangle != null)
+        {
+            if (path.Count < 2)
+            {
+                return;
+            }
+
+            var bounds = new LatLngBoundsLiteral()
+            {
+                East = path[1].Lng,
+                North = path[0].Lat,
+                South = path[1].Lat,
+                West = path[0].Lng
+            };
+
+            await rectangle.SetBounds(bounds);
+
+            //path.Clear();
+            rectangle = null;
+        }
+        else if (circle != null)
+        {
+            await circle.SetCenter(path.First());
+            circle = null;
+        }
+    }
+
+}

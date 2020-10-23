@@ -1,29 +1,27 @@
 ﻿@using System
-@using System.Diagnostics
 @using Maps
 @using System.Threading.Tasks
 @using Microsoft.AspNetCore.Components
-@using Microsoft.Extensions.Options
-
 
 @inherits MapComponent
-
 @implements System.IDisposable
 
 <div @ref="@Element" id="@Id" class="@CssClass" style="@StyleStr"></div>
 
 @code {
-    [Parameter]
-    public string Id { get; set; }
+    #nullable enable
 
     [Parameter]
-    public MapOptions Options { get; set; }
+    public string? Id { get; set; }
+
+    [Parameter]
+    public MapOptions? Options { get; set; }
 
     [Parameter]
     public EventCallback OnAfterInit { get; set; }
 
     [Parameter]
-    public string CssClass { get; set; }
+    public string? CssClass { get; set; }
 
     private string _height = "500px";
 
