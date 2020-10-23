@@ -1,12 +1,11 @@
 ﻿using GoogleMapsComponents.Maps.Coordinates;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Newtonsoft.Json;
 using OneOf;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
+
+#nullable enable
 
 namespace GoogleMapsComponents.Maps
 {
@@ -25,7 +24,7 @@ namespace GoogleMapsComponents.Maps
         public static async Task<Map> CreateAsync(
             IJSRuntime jsRuntime,
             ElementReference mapDiv,
-            MapOptions opts = null)
+            MapOptions? opts = null)
         {
             var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Map", mapDiv, opts);
             var dataObjectRef = await jsObjectRef.GetObjectReference("data");

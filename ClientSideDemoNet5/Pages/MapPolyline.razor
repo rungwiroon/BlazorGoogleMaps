@@ -26,7 +26,7 @@
     private Polyline? polyline;
 
     private List<Polygon> polygons = new List<Polygon>();
-    private Polygon polygon = default!;
+    private Polygon? polygon;
 
     private Rectangle? rectangle;
     private Circle? circle;
@@ -87,7 +87,9 @@
 
     private void EndDrawingPolygon()
     {
-        polygons.Add(polygon);
+        if (polygon is { }) {
+            polygons.Add(polygon);
+        }
 
         polygon = null;
         path.Clear();
