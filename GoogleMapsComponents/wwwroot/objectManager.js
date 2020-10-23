@@ -425,5 +425,24 @@ window.googleMapsObjectManager = {
         window._blazorGoogleMapsObjects[uuid] = result;
 
         return uuid;
+    },
+
+    addClusteringMarkers(guid, mapGuid, markers) {
+        const map = window._blazorGoogleMapsObjects[mapGuid];
+
+        const originalMarkers = markers.map((marker, i) => {
+            return window._blazorGoogleMapsObjects[marker.guid];
+        });
+
+        const markerCluster = new MarkerClusterer(map, originalMarkers, {
+            imagePath:
+                "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m"
+        });
+
+        if ("set" in markerCluster) {
+            markerCluster.set("guidString", guid);
+        }
+
+        window._blazorGoogleMapsObjects[guid] = markerCluster;
     }
 };
