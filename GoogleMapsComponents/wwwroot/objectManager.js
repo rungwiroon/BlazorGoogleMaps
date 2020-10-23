@@ -13,10 +13,10 @@
     return fn;
 }
 
-const dateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
+const blazorGoogleMapsDateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
 
 function dateObjectReviver(key, value) {
-    if (typeof value === "string" && dateFormat.test(value)) {
+    if (typeof value === "string" && blazorGoogleMapsDateFormat.test(value)) {
         return new Date(value);
     }
     return value;
