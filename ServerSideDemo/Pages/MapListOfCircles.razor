@@ -1,0 +1,14 @@
+﻿@page "/list-of-circles"
+
+
+@inject IJSRuntime JsRuntime
+
+<h1>Maps</h1>
+
+<div @ref="@ElementRef" id="map1" style="height: 450px"></div>
+<div>
+    <button @onclick="AddCircles">Add Circles</button>    
+</div>
+
+<MapEventList @ref="@eventList" Events="@_events"></MapEventList>
+

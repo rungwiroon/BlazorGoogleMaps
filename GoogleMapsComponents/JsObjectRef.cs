@@ -137,14 +137,26 @@ namespace GoogleMapsComponents
         {
             Dictionary<Guid, JsObjectRef> jsObjectRefs = dictArgs.ToDictionary(e => e.Key, e => new JsObjectRef(jsRuntime, e.Key));
 
-            await jsRuntime.MyInvokeAsync<object>(
-                "googleMapsObjectManager.createMultipleObject",
-                new object[] { dictArgs.Select(e => e.Key.ToString()).ToList(), functionName }
-                    .Concat(dictArgs.Values).ToArray()
-            );
+            // I'm not sure there is a guarantee that dict Keys and values are in the same order. 
+            // Better to freeze them in KeyvaluePair
+            var pairs = dictArgs.ToList();
+            List<string> guids = pairs.Select(e => e.Key.ToString()).ToList();
+            List<object> functionArgs = pairs.Select(p => p.Value).ToList();
+            var args = new object[] { guids, functionName }.Concat(functionArgs).ToArray();
 
+            await jsRuntime.MyInvokeAsync<object>("googleMapsObjectManager.createMultipleObject", args);
             return jsObjectRefs;
-        }        
+        }
+
+        public async Task<JsObjectRef> InvokeMultipleWithReturnedObjectRefAsync<T>(string functionName,
+                                                                                string eventname,
+                                                                                IList<Guid> guids,
+                                                                                Action<T> callback)
+        {
+            var args = new object[] { guids, functionName, eventname, callback};
+            var ret = await this._jsRuntime.MyInvokeAsync<object>("googleMapsObjectManager.invokeMultipleWithReturnedObjectRef", args);
+            return null;
+        }
 
         public virtual void Dispose()
         {

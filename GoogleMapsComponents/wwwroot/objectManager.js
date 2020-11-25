@@ -392,18 +392,20 @@ window.googleMapsObjectManager = {
 
     invokeMultipleWithReturnedObjectRef: function (args) {
 
-        let guids = args[0];
+        let guids = tryParseJson(args[0]);
         let otherArgs = args.slice(1, args.length - 1);
         let what = args[args.length - 1];
 
         let results = {};
 
         for (var i = 0; i < guids.length; i++) {
+            objectUuid = guids[i];
+            let invokeArgs = [];
+            invokeArgs = invokeArgs.concat(objectUuid).concat(otherArgs).concat(what);
+            
             let uuid = uuidv4();
-            let args2 = [];
-            args2 = args2.concat(guids[i]).concat(otherArgs).concat(what[i]);
-
-            results[uuid] = googleMapsObjectManager.invoke(args2);
+            let result = googleMapsObjectManager.invoke(invokeArgs);
+            results[uuid] = result;
         }
 
         return results;

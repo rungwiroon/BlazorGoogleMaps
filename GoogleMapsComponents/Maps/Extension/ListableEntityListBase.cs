@@ -232,5 +232,48 @@ namespace GoogleMapsComponents.Maps.Extension
                 "setVisible",
                 dictArgs);
         }
+
+        public async Task AddListener(string eventName, Action<TEntityBase> handler)
+        {
+            //Just for debugging 
+            bool testItems = false;
+            if (testItems)
+            {
+                foreach (TEntityBase item in this.BaseListableEntities.Values)
+                {
+                    await item.AddListener(eventName, () => handler(item));
+                    //await item.AddListener(eventName,handler);
+                    //break;
+                }
+            }
+
+            Action<MouseEvent> _handler=(e) =>
+            {
+                var key = e.JsObjectRef.Guid.ToString();
+                //Seems that the guid is of the click, not the item.
+                if (this.BaseListableEntities.TryGetValue(key.ToString(), out var item))
+                    handler(item);
+            };
+
+            var guids = BaseListableEntities.Select(e => e.Value.Guid).ToList();
+            JsObjectRef listenerRef = await _jsObjectRef.InvokeMultipleWithReturnedObjectRefAsync("addListener",
+                                                                                                  eventName,
+                                                                                                  guids,
+                                                                                                  _handler);
+            //MapEventListener eventListener = new MapEventListener(listenerRef);
+
+            //if (!EventListeners.ContainsKey(eventName))
+            //{
+            //    EventListeners.Add(eventName, new List<MapEventListener>());
+            //}
+            //EventListeners[eventName].Add(eventListener);
+
+            //return eventListener;
+
+
+            //invokeMultipleWithReturnedObjectRef
+
+
+        }
     }
 }
