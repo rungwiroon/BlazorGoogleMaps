@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -40,8 +41,18 @@ namespace GoogleMapsComponents.Maps.Extension
             {
                 Dictionary<string, JsObjectRef> jsObjectRefs = await _jsObjectRef.AddMultipleAsync(
                     googleMapListableEntityTypeName,
-                    opts.ToDictionary(e => e.Key, e => (object)e.Value));
-                Dictionary<string, TEntityBase> objs = jsObjectRefs.ToDictionary(e => e.Key, e => Activator.CreateInstance(typeof(TEntityBase), e.Value) as TEntityBase);
+                    opts.ToDictionary(e => e.Key, e => (object) e.Value));
+
+                Dictionary<string, TEntityBase> objs = jsObjectRefs.ToDictionary(e => e.Key, e =>
+                {
+                    //Alternate if there are more constructors
+                    //var ctor = typeof(TEntityBase).GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(c => !c.GetParameters().Any());
+                    var ctor = typeof(TEntityBase).GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault();
+                    BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Instance;
+                    return (TEntityBase) ctor.Invoke(new object[] {e.Value});
+                    //Old version which didnt catched internal consturctors
+                    //return Activator.CreateInstance(typeof(TEntityBase), flags, null, e.Value) as TEntityBase;
+                });
 
                 //Someone can try to create element yet inside listable entities... really not the best approach... but manage it
                 List<string> alreadyCreated = BaseListableEntities.Keys.Intersect(objs.Select(e => e.Key)).ToList();
@@ -130,7 +141,7 @@ namespace GoogleMapsComponents.Maps.Extension
         //Creates mapping between markers Guid and empty array of parameters (getter has no parameter)
         protected virtual Dictionary<Guid, object> ComputeDictArgs(List<string> matchingKeys)
         {
-            return BaseListableEntities.Where(e => matchingKeys.Contains(e.Key)).ToDictionary(e => e.Value.Guid, e => (object)(new object[] { }));
+            return BaseListableEntities.Where(e => matchingKeys.Contains(e.Key)).ToDictionary(e => e.Value.Guid, e => (object) (new object[] { }));
         }
 
         //Create an empty result of the correct type in case of no matching keys
@@ -149,8 +160,9 @@ namespace GoogleMapsComponents.Maps.Extension
                 Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
 
                 return _jsObjectRef.InvokeMultipleAsync<Map>(
-                    "getMap",
-                    dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
+                        "getMap",
+                        dictArgs)
+                    .ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
             }
             else
             {
@@ -168,8 +180,9 @@ namespace GoogleMapsComponents.Maps.Extension
                 Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
 
                 return _jsObjectRef.InvokeMultipleAsync<bool>(
-                    "getDraggable",
-                    dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
+                        "getDraggable",
+                        dictArgs)
+                    .ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
             }
             else
             {
@@ -187,8 +200,9 @@ namespace GoogleMapsComponents.Maps.Extension
                 Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
 
                 return _jsObjectRef.InvokeMultipleAsync<bool>(
-                    "getVisible",
-                    dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
+                        "getVisible",
+                        dictArgs)
+                    .ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
             }
             else
             {
@@ -203,15 +217,15 @@ namespace GoogleMapsComponents.Maps.Extension
         /// <param name="map"></param>
         public virtual async Task SetMaps(Dictionary<string, Map> maps)
         {
-            Dictionary<Guid, object> dictArgs = maps.ToDictionary(e => BaseListableEntities[e.Key].Guid, e => (object)e.Value);
+            Dictionary<Guid, object> dictArgs = maps.ToDictionary(e => BaseListableEntities[e.Key].Guid, e => (object) e.Value);
             await _jsObjectRef.InvokeMultipleAsync(
-                   "setMap",
-                   dictArgs);
+                "setMap",
+                dictArgs);
         }
 
         public virtual Task SetDraggables(Dictionary<string, bool> draggables)
         {
-            Dictionary<Guid, object> dictArgs = draggables.ToDictionary(e => BaseListableEntities[e.Key].Guid, e => (object)e.Value);
+            Dictionary<Guid, object> dictArgs = draggables.ToDictionary(e => BaseListableEntities[e.Key].Guid, e => (object) e.Value);
             return _jsObjectRef.InvokeMultipleAsync(
                 "setDraggable",
                 dictArgs);
@@ -219,7 +233,7 @@ namespace GoogleMapsComponents.Maps.Extension
 
         public virtual Task SetOptions(Dictionary<string, TEntityOptionsBase> options)
         {
-            Dictionary<Guid, object> dictArgs = options.ToDictionary(e => BaseListableEntities[e.Key].Guid, e => (object)e.Value);
+            Dictionary<Guid, object> dictArgs = options.ToDictionary(e => BaseListableEntities[e.Key].Guid, e => (object) e.Value);
             return _jsObjectRef.InvokeMultipleAsync(
                 "setOptions",
                 dictArgs);
@@ -227,7 +241,7 @@ namespace GoogleMapsComponents.Maps.Extension
 
         public virtual Task SetVisibles(Dictionary<string, bool> visibles)
         {
-            Dictionary<Guid, object> dictArgs = visibles.ToDictionary(e => BaseListableEntities[e.Key].Guid, e => (object)e.Value);
+            Dictionary<Guid, object> dictArgs = visibles.ToDictionary(e => BaseListableEntities[e.Key].Guid, e => (object) e.Value);
             return _jsObjectRef.InvokeMultipleAsync(
                 "setVisible",
                 dictArgs);
