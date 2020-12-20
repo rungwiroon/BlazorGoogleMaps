@@ -8,6 +8,8 @@
 <GoogleMap @ref="@map1" Id="map1" Options="@mapOptions" OnAfterInit="async () => await OnAfterMapInit()"></GoogleMap>
 <button @onclick="StartDrawingPolyline">Start drawing polyline</button>
 <button @onclick="EndDrawingPolyline">End drawing polyline</button>
+<button @onclick="AddArrowsToPolyline">Add arrow symbols to polyline</button>
+<button @onclick="RemoveArrowsFromPolyline">Remove arrow symbols from polyline</button>
 <br />
 <button @onclick="StartDrawingPolygon">Start drawing polygon</button>
 <button @onclick="EndDrawingPolygon">End drawing polygon</button>
@@ -82,6 +84,29 @@
 
         polyline = null;
         path.Clear();
+    }
+
+    private void AddArrowsToPolyline() {
+        foreach (var polyline in polylines) {
+            polyline.SetOptions(new PolylineOptions {
+                Icons=new IconSequence[] {
+                    new IconSequence { Icon=new Symbol { Path=SymbolPath.FORWARD_CLOSED_ARROW }, Offset="100%" },
+                    new IconSequence { Icon=new Symbol { Path=SymbolPath.FORWARD_OPEN_ARROW }, Offset="80%" },
+                    new IconSequence { Icon=new Symbol { Path=SymbolPath.FORWARD_OPEN_ARROW }, Offset="60%" },
+                    new IconSequence { Icon=new Symbol { Path=SymbolPath.FORWARD_OPEN_ARROW }, Offset="40%" },
+                    new IconSequence { Icon=new Symbol { Path=SymbolPath.FORWARD_OPEN_ARROW }, Offset="20%" },
+                }
+            });
+        }
+    }
+
+    private void RemoveArrowsFromPolyline() {
+        foreach (var polyline in polylines) {
+            polyline.SetOptions(new PolylineOptions {
+                Icons=new IconSequence[] {
+                }
+            });
+        }
     }
 
     private async Task StartDrawingPolygon()
