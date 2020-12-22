@@ -62,6 +62,21 @@ namespace GoogleMapsComponents.Maps.Extension
           await this.SetOptions(dictToChange);
         }
 
+        public class EntityMouseEvent
+        {
+          public MouseEvent MouseEvent { get; set; }
+          public string Key { get; set; }
+          public TEntityBase Entity { get; set; }
+        }
+
+        public event EventHandler<EntityMouseEvent> EntityClicked;
+
+        private void FireEvent<TEvent>(EventHandler<TEvent> eventHandler, TEvent ea) {
+            if (eventHandler!=null) {
+                eventHandler(this,ea);
+            }
+        }
+
         /// <summary>
         /// only keys not matching with existent listable entity keys will be created
         /// </summary>
@@ -93,7 +108,13 @@ namespace GoogleMapsComponents.Maps.Extension
                 //Now we can add all required object as NEW object
                 foreach (string key in objs.Keys)
                 {
-                    BaseListableEntities.Add(key, objs[key]);
+                    var entity = objs[key];
+                    BaseListableEntities.Add(key, entity);
+                    if (this.EntityClicked!=null) {
+                        await entity.AddListener<MouseEvent>("click",(e) => {
+                            this.FireEvent(this.EntityClicked,new EntityMouseEvent { MouseEvent=e,Key=key,Entity=entity });
+                        });
+                    }
                 }
             }
         }

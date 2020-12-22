@@ -30,19 +30,12 @@ namespace GoogleMapsComponents.Maps.Extension
             JsObjectRef jsObjectRef = new JsObjectRef(jsRuntime, Guid.NewGuid());
 
             CircleList obj;
-            if (opts.Count > 0)
-            {
                 Dictionary<string, JsObjectRef> jsObjectRefs = await JsObjectRef.CreateMultipleAsync(
                     jsRuntime,
                     "google.maps.Circle",
                     opts.ToDictionary(e => e.Key, e => (object)e.Value));
                 Dictionary<string, Circle> objs = jsObjectRefs.ToDictionary(e => e.Key, e => new Circle(e.Value));
                 obj = new CircleList(jsObjectRef, objs);
-            }
-            else
-            {
-                obj = new CircleList(jsObjectRef, null);
-            }
 
             return obj;
         }
@@ -59,7 +52,7 @@ namespace GoogleMapsComponents.Maps.Extension
         /// <returns>
         /// The managed list. Assign to the variable you used as parameter.
         /// </returns>
-        public static async Task<CircleList> ManageAsync(CircleList list,IJSRuntime jsRuntime, Dictionary<string, CircleOptions> opts)
+        public static async Task<CircleList> ManageAsync(CircleList list,IJSRuntime jsRuntime, Dictionary<string, CircleOptions> opts,Action<MouseEvent,string,Circle> clickCallback=null)
         {
           if (opts.Count==0) {
             if (list!=null) {
@@ -68,10 +61,14 @@ namespace GoogleMapsComponents.Maps.Extension
             }
           } else {
             if (list==null) {
-              list = await CircleList.CreateAsync(jsRuntime,opts);
-            } else {
-              await list.SetMultipleAsync(opts);
+              list = await CircleList.CreateAsync(jsRuntime,new Dictionary<string, CircleOptions>());
+              if (clickCallback!=null) {
+                list.EntityClicked+=(sender,e)=>{
+                  clickCallback(e.MouseEvent,e.Key,e.Entity);
+                };
+              }
             }
+              await list.SetMultipleAsync(opts);
           }
           return list;
         }

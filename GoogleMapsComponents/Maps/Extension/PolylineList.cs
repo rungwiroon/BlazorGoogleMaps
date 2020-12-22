@@ -31,19 +31,12 @@ namespace GoogleMapsComponents.Maps.Extension
             JsObjectRef jsObjectRef = new JsObjectRef(jsRuntime, Guid.NewGuid());
 
             PolylineList obj;
-            if (opts.Count > 0)
-            {
                 Dictionary<string, JsObjectRef> jsObjectRefs = await JsObjectRef.CreateMultipleAsync(
                     jsRuntime,
                     "google.maps.Polyline",
                     opts.ToDictionary(e => e.Key, e => (object)e.Value));
                 Dictionary<string, Polyline> objs = jsObjectRefs.ToDictionary(e => e.Key, e => new Polyline(e.Value));
                 obj = new PolylineList(jsObjectRef, objs);
-            }
-            else
-            {
-                obj = new PolylineList(jsObjectRef, null);
-            }
 
             return obj;
         }
@@ -60,7 +53,7 @@ namespace GoogleMapsComponents.Maps.Extension
         /// <returns>
         /// The managed list. Assign to the variable you used as parameter.
         /// </returns>
-        public static async Task<PolylineList> ManageAsync(PolylineList list,IJSRuntime jsRuntime, Dictionary<string, PolylineOptions> opts)
+        public static async Task<PolylineList> ManageAsync(PolylineList list,IJSRuntime jsRuntime, Dictionary<string, PolylineOptions> opts,Action<MouseEvent,string,Polyline> clickCallback=null)
         {
           if (opts.Count==0) {
             if (list!=null) {
@@ -69,10 +62,14 @@ namespace GoogleMapsComponents.Maps.Extension
             }
           } else {
             if (list==null) {
-              list = await PolylineList.CreateAsync(jsRuntime,opts);
-            } else {
-              await list.SetMultipleAsync(opts);
+              list = await PolylineList.CreateAsync(jsRuntime,new Dictionary<string, PolylineOptions>());
+              if (clickCallback!=null) {
+                list.EntityClicked+=(sender,e)=>{
+                  clickCallback(e.MouseEvent,e.Key,e.Entity);
+                };
+              }
             }
+              await list.SetMultipleAsync(opts);
           }
           return list;
         }
