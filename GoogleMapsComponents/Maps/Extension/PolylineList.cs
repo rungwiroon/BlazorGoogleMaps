@@ -4,44 +4,45 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GoogleMapsComponents.Maps;
 
 namespace GoogleMapsComponents.Maps.Extension
 {
     /// <summary>
-    /// A class able to manage a lot of Circle objects and get / set their
+    /// A class able to manage a lot of Polyline objects and get / set their
     /// properties at the same time, eventually with different values
-    /// Main concept is that each Circle to can be distinguished by other ones need
+    /// Main concept is that each Polyline to can be distinguished by other ones need
     /// to have a "unique key" with a "external world mean", so not necessary it's GUID
     ///
-    /// All properties should be called With a Dictionary<string, {property type}> indicating for each Circle(related to that key) the corresponding related property value
+    /// All properties should be called With a Dictionary<string, {property type}> indicating for each Polyline(related to that key) the corresponding related property value
     /// </summary>
-    public class CircleList : ListableEntityListBase<Circle, CircleOptions>
+    public class PolylineList : ListableEntityListBase<Polyline, PolylineOptions>
     {
-        public Dictionary<string, Circle> Circles => base.BaseListableEntities;
+        public Dictionary<string, Polyline> Polylines => base.BaseListableEntities;
 
         /// <summary>
         /// Create circles list
         /// </summary>
         /// <param name="jsRuntime"></param>
-        /// <param name="opts">Dictionary of desired Circle keys and CircleOptions values. Key as any type unique key. Not nessary Guid</param>
-        /// <returns>new instance of CircleList class will be returned with its Circles dictionary member populated with the corresponding results</returns>
-        public static async Task<CircleList> CreateAsync(IJSRuntime jsRuntime, Dictionary<string, CircleOptions> opts)
+        /// <param name="opts">Dictionary of desired Polyline keys and PolylineOptions values. Key as any type unique key. Not nessary Guid</param>
+        /// <returns>new instance of PolylineList class will be returned with its Polylines dictionary member populated with the corresponding results</returns>
+        public static async Task<PolylineList> CreateAsync(IJSRuntime jsRuntime, Dictionary<string, PolylineOptions> opts)
         {
             JsObjectRef jsObjectRef = new JsObjectRef(jsRuntime, Guid.NewGuid());
 
-            CircleList obj;
+            PolylineList obj;
             if (opts.Count > 0)
             {
                 Dictionary<string, JsObjectRef> jsObjectRefs = await JsObjectRef.CreateMultipleAsync(
                     jsRuntime,
-                    "google.maps.Circle",
+                    "google.maps.Polyline",
                     opts.ToDictionary(e => e.Key, e => (object)e.Value));
-                Dictionary<string, Circle> objs = jsObjectRefs.ToDictionary(e => e.Key, e => new Circle(e.Value));
-                obj = new CircleList(jsObjectRef, objs);
+                Dictionary<string, Polyline> objs = jsObjectRefs.ToDictionary(e => e.Key, e => new Polyline(e.Value));
+                obj = new PolylineList(jsObjectRef, objs);
             }
             else
             {
-                obj = new CircleList(jsObjectRef, null);
+                obj = new PolylineList(jsObjectRef, null);
             }
 
             return obj;
@@ -59,7 +60,7 @@ namespace GoogleMapsComponents.Maps.Extension
         /// <returns>
         /// The managed list. Assign to the variable you used as parameter.
         /// </returns>
-        public static async Task<CircleList> ManageAsync(CircleList list,IJSRuntime jsRuntime, Dictionary<string, CircleOptions> opts)
+        public static async Task<PolylineList> ManageAsync(PolylineList list,IJSRuntime jsRuntime, Dictionary<string, PolylineOptions> opts)
         {
           if (opts.Count==0) {
             if (list!=null) {
@@ -68,7 +69,7 @@ namespace GoogleMapsComponents.Maps.Extension
             }
           } else {
             if (list==null) {
-              list = await CircleList.CreateAsync(jsRuntime,opts);
+              list = await PolylineList.CreateAsync(jsRuntime,opts);
             } else {
               await list.SetMultipleAsync(opts);
             }
@@ -76,8 +77,8 @@ namespace GoogleMapsComponents.Maps.Extension
           return list;
         }
 
-        private CircleList(JsObjectRef jsObjectRef, Dictionary<string, Circle> circles)
-            : base(jsObjectRef, circles)
+        private PolylineList(JsObjectRef jsObjectRef, Dictionary<string, Polyline> polylines)
+            : base(jsObjectRef, polylines)
         {
         }
 
@@ -86,19 +87,19 @@ namespace GoogleMapsComponents.Maps.Extension
         /// </summary>
         /// <param name="opts"></param>
         /// <returns></returns>
-        public async Task SetMultipleAsync(Dictionary<string, CircleOptions> opts)
+        public async Task SetMultipleAsync(Dictionary<string, PolylineOptions> opts)
         {
-          await base.SetMultipleAsync(opts, "google.maps.Circle");
+          await base.SetMultipleAsync(opts, "google.maps.Polyline");
         }
 
         /// <summary>
-        /// Only keys not matching with existent Circle keys will be created
+        /// Only keys not matching with existent Polyline keys will be created
         /// </summary>
         /// <param name="opts"></param>
         /// <returns></returns>
-        public async Task AddMultipleAsync(Dictionary<string, CircleOptions> opts)
+        public async Task AddMultipleAsync(Dictionary<string, PolylineOptions> opts)
         {
-            await base.AddMultipleAsync(opts, "google.maps.Circle");
+            await base.AddMultipleAsync(opts, "google.maps.Polyline");
         }
 
         public Task<Dictionary<string, LatLngBoundsLiteral>> GetBounds(List<string> filterKeys = null)
@@ -179,7 +180,7 @@ namespace GoogleMapsComponents.Maps.Extension
 
         public Task SetCenters(Dictionary<string, LatLngLiteral> centers)
         {
-            Dictionary<Guid, object> dictArgs = centers.ToDictionary(e => Circles[e.Key].Guid, e => (object)e.Value);
+            Dictionary<Guid, object> dictArgs = centers.ToDictionary(e => Polylines[e.Key].Guid, e => (object)e.Value);
             return _jsObjectRef.InvokeMultipleAsync(
                 "setCenter",
                 dictArgs);
@@ -187,7 +188,7 @@ namespace GoogleMapsComponents.Maps.Extension
 
         public Task SetEditables(Dictionary<string, bool> editables)
         {
-            Dictionary<Guid, object> dictArgs = editables.ToDictionary(e => Circles[e.Key].Guid, e => (object)e.Value);
+            Dictionary<Guid, object> dictArgs = editables.ToDictionary(e => Polylines[e.Key].Guid, e => (object)e.Value);
             return _jsObjectRef.InvokeMultipleAsync(
                 "setEditable",
                 dictArgs);
@@ -195,7 +196,7 @@ namespace GoogleMapsComponents.Maps.Extension
 
         public Task SetRadiuses(Dictionary<string, double> radiuses)
         {
-            Dictionary<Guid, object> dictArgs = radiuses.ToDictionary(e => Circles[e.Key].Guid, e => (object)e.Value);
+            Dictionary<Guid, object> dictArgs = radiuses.ToDictionary(e => Polylines[e.Key].Guid, e => (object)e.Value);
             return _jsObjectRef.InvokeMultipleAsync(
                 "setRadius",
                 dictArgs);

@@ -9,15 +9,8 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// A polyline is a linear overlay of connected line segments on the map.
     /// </summary>
-    public class Polyline : IDisposable
+    public class Polyline : ListableEntityBase<PolylineOptions>, IDisposable
     {
-        private readonly JsObjectRef _jsObjectRef;
-        private Map _map;
-
-        /// <summary>
-        /// Access polyline using guid and window._blazorGoogleMapsObjects[GUID_STRING]
-        /// </summary>
-        public Guid Guid => _jsObjectRef.Guid;
 
         /// <summary>
         /// Create a polyline using the passed PolylineOptions, which specify both the path of the polyline and the stroke style to use when drawing the polyline.
@@ -32,17 +25,19 @@ namespace GoogleMapsComponents.Maps
         }
 
         /// <summary>
-        /// Create a polyline using the passed PolylineOptions, which specify both the path of the polyline and the stroke style to use when drawing the polyline.
+        /// Constructor for use in ListableEntityListBase. Must be the first constructor!
         /// </summary>
-        private Polyline(JsObjectRef jsObjectRef, PolylineOptions opts = null)
+        internal Polyline(JsObjectRef jsObjectRef)
+            :base(jsObjectRef)
         {
-            _jsObjectRef = jsObjectRef;
-            _map = opts?.Map;
         }
 
-        public void Dispose()
+        /// <summary>
+        /// Create a polyline using the passed PolylineOptions, which specify both the path of the polyline and the stroke style to use when drawing the polyline.
+        /// </summary>
+        private Polyline(JsObjectRef jsObjectRef, PolylineOptions opts)
+            :this(jsObjectRef)
         {
-            _jsObjectRef.Dispose();
         }
 
         /// <summary>
@@ -63,15 +58,6 @@ namespace GoogleMapsComponents.Maps
         {
             return _jsObjectRef.InvokeAsync<bool>(
                 "getEditable");
-        }
-
-        /// <summary>
-        /// Returns the map on which this shape is attached.
-        /// </summary>
-        /// <returns></returns>
-        public Map GetMap()
-        {
-            return _map;
         }
 
         /// <summary>
@@ -118,21 +104,6 @@ namespace GoogleMapsComponents.Maps
                 editable);
         }
 
-        /// <summary>
-        /// Renders this shape on the specified map. 
-        /// If map is set to null, the shape will be removed.
-        /// </summary>
-        /// <param name="map"></param>
-        /// <returns></returns>
-        public Task SetMap(Map map)
-        {
-            _map = map;
-
-            return _jsObjectRef.InvokeAsync(
-                "setMap",
-                map);
-        }
-
         public Task SetOptions(PolylineOptions options)
         {
             return _jsObjectRef.InvokeAsync(
@@ -164,20 +135,5 @@ namespace GoogleMapsComponents.Maps
                 visible);
         }
 
-        public async Task<MapEventListener> AddListener(string eventName, Action handler)
-        {
-            var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
-                "addListener", eventName, handler);
-
-            return new MapEventListener(listenerRef);
-        }
-
-        public async Task<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
-        {
-            var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
-                "addListener", eventName, handler);
-
-            return new MapEventListener(listenerRef);
-        }
     }
 }

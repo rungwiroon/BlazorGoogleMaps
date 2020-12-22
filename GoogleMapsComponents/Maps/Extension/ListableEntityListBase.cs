@@ -31,6 +31,38 @@ namespace GoogleMapsComponents.Maps.Extension
         }
 
         /// <summary>
+        /// Set the set of entities; entities will be removed, added or changed to mirror the given set.
+        /// </summary>
+        /// <param name="opts"></param>
+        /// <returns></returns>
+        public async Task SetMultipleAsync(Dictionary<string, TEntityOptionsBase> opts, string googleMapListableEntityTypeName)
+        {
+          var nonVisibles = new Dictionary<string,bool>();
+          var lToRemove = new List<string>();
+          var dictToAdd = new Dictionary<string,TEntityOptionsBase>();
+          var dictToChange = new Dictionary<string,TEntityOptionsBase>();
+          foreach (var sKey in this.BaseListableEntities.Keys) {
+            if (!opts.ContainsKey(sKey)) {
+              lToRemove.Add(sKey);
+            }
+          }
+          foreach (var sKey in lToRemove) {
+            nonVisibles[sKey]=false;
+          }
+          foreach (var sKey in opts.Keys) {
+            if (this.BaseListableEntities.ContainsKey(sKey)) {
+              dictToChange[sKey]=opts[sKey];
+            } else {
+              dictToAdd[sKey]=opts[sKey];
+            }
+          }
+          await this.SetVisibles(nonVisibles);
+          await this.RemoveMultipleAsync(lToRemove);
+          await this.AddMultipleAsync(dictToAdd,googleMapListableEntityTypeName);
+          await this.SetOptions(dictToChange);
+        }
+
+        /// <summary>
         /// only keys not matching with existent listable entity keys will be created
         /// </summary>
         /// <param name="opts"></param>

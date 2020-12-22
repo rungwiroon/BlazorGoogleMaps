@@ -48,9 +48,48 @@ namespace GoogleMapsComponents.Maps.Extension
             return obj;
         }
 
+        /// <summary>
+        /// Manage list over lifetime: Create and remove list depending on entity count; 
+        /// entities will be removed, added or changed to mirror the given set.
+        /// </summary>
+        /// <param name="list">
+        /// The list to manage. May be null.
+        /// </param>
+        /// <param name="jsRuntime"></param>
+        /// <param name="opts"></param>
+        /// <returns>
+        /// The managed list. Assign to the variable you used as parameter.
+        /// </returns>
+        public static async Task<MarkerList> ManageAsync(MarkerList list,IJSRuntime jsRuntime, Dictionary<string, MarkerOptions> opts)
+        {
+          if (opts.Count==0) {
+            if (list!=null) {
+              await list.SetMultipleAsync(opts);
+              list=null;
+            }
+          } else {
+            if (list==null) {
+              list = await MarkerList.CreateAsync(jsRuntime,opts);
+            } else {
+              await list.SetMultipleAsync(opts);
+            }
+          }
+          return list;
+        }
+
         private MarkerList(JsObjectRef jsObjectRef, Dictionary<string, Marker> markers)
             : base(jsObjectRef, markers)
         {
+        }
+
+        /// <summary>
+        /// Set the set of entities; entities will be removed, added or changed to mirror the given set.
+        /// </summary>
+        /// <param name="opts"></param>
+        /// <returns></returns>
+        public async Task SetMultipleAsync(Dictionary<string, MarkerOptions> opts)
+        {
+          await base.SetMultipleAsync(opts, "google.maps.Marker");
         }
 
         /// <summary>
