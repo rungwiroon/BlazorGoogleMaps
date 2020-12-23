@@ -69,6 +69,13 @@ namespace GoogleMapsComponents.Maps.Extension
           public TEntityBase Entity { get; set; }
         }
 
+        /// <summary>
+        /// Entity clicked event containing coordinates, entity key and value.
+        /// This event will be fired for entities which are being added after at least one 
+        /// event handler is added to this event.
+        /// Adding handlers to the event will slow down adding entities by a small amount.
+        /// If no handler is added, performance is not impaired.
+        /// </summary>
         public event EventHandler<EntityMouseEvent> EntityClicked;
 
         private void FireEvent<TEvent>(EventHandler<TEvent> eventHandler, TEvent ea) {
