@@ -409,6 +409,27 @@ window.googleMapsObjectManager = {
         return results;
     },
 
+    //add event listeners to multiple objects of the same type
+    addMultipleListeners: async function (args) {
+        let args2 = args.slice(2).map(arg => tryParseJson(arg));
+
+        var results = {};
+        let objs = [];
+        let guids = JSON.parse(args[0]);
+
+        for (var i = 0; i < guids.length; i++) {
+            objs[i] = window._blazorGoogleMapsObjects[guids[i]];
+            let args3 = [];
+            args3 = args3.concat(guids[i]).concat("addListener").concat(args[1]).concat(args2[i]);
+
+            let result = googleMapsObjectManager.invoke(args3);
+        }
+
+        //console.log(results);
+
+        return !0;
+    },
+
     readObjectPropertyValue: function (args) {
         let obj = window._blazorGoogleMapsObjects[args[0]];
 

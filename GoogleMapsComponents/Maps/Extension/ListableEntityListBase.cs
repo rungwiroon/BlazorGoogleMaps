@@ -117,14 +117,15 @@ namespace GoogleMapsComponents.Maps.Extension
                 {
                     var entity = objs[key];
                     BaseListableEntities.Add(key, entity);
+                }
+                //add event listener to the click event in one call to all added entities.
                     if (this.EntityClicked!=null) {
-                        await entity.AddListener<MouseEvent>("click",(e) => {
-                            this.FireEvent(this.EntityClicked,new EntityMouseEvent { MouseEvent=e,Key=key,Entity=entity });
+                    await this.AddListeners<MouseEvent>(objs.Keys,"click",(mev,key) => {
+                        this.FireEvent(this.EntityClicked,new EntityMouseEvent { MouseEvent=mev,Key=key,Entity=BaseListableEntities[key] });
                         });
                     }
                 }
             }
-        }
 
         /// <summary>
         /// only Marker having keys matching with existent keys will be removed
@@ -305,6 +306,14 @@ namespace GoogleMapsComponents.Maps.Extension
             return _jsObjectRef.InvokeMultipleAsync(
                 "setVisible",
                 dictArgs);
+        }
+
+        public virtual async Task AddListeners<V>(IEnumerable<string> enitityKeys, string eventName, Action<V,string> handler)
+        {
+            Dictionary<Guid, object> dictArgs = enitityKeys.ToDictionary(key => BaseListableEntities[key].Guid, key => (object)new Action<V>((e)=>{
+              handler(e,key);
+            }));
+            await _jsObjectRef.AddMultipleListenersAsync(eventName,dictArgs);
         }
     }
 }
