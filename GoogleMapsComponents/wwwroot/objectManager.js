@@ -63,7 +63,10 @@ function tryParseJson(item) {
     try {
         item2 = JSON.parse(item, dateObjectReviver);
     } catch (e) {
-        return item.replace(/['"]+/g, '');
+        //Hm. Not sure why this one was here. 
+        //Everything looks like working without it
+        //return item.replace(/['"]+/g, '');
+        return item;
     }
 
     if (typeof item2 === "object" && item2 !== null) {

@@ -40,6 +40,24 @@
             Label = $"Test {markerCount}"
         });
 
+        //var tableClass = "\" table table-striped table-dark\"";
+
+        var infoWindowContent = $@"<table class='table table-striped table-dark'><tbody>
+                        <tr>
+                        <td>Device</td>
+                        <td>{1}</td>
+                        </tr>
+                        <tr>
+                        <td>Latitude</td>
+                        <td>{25}</td>
+                        </tr>
+                        <tr>
+                        <td>Longitude</td>
+                        <td>{52}</td>
+                        </tr>
+                        </tbody>
+                        </table>";
+
         var infoWindow = await InfoWindow.CreateAsync(map1.JsRuntime, new InfoWindowOptions()
         {
             Position = new LatLngLiteral()
@@ -47,10 +65,11 @@
                 Lat = 13.505892,
                 Lng = 100.8162
             },
-            //Content = "Test"
+
+            //Content = infoWindowContent
         });
 
-        var infoWindowContent = $"Test {markerCount}";
+
 
         await marker.AddListener("click", async () =>
         {
