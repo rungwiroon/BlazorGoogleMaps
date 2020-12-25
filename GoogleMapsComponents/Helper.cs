@@ -39,11 +39,7 @@ namespace GoogleMapsComponents
             return value;
         }
 
-        internal static async Task<TRes> MyInvokeAsync<TRes>(
-            this IJSRuntime jsRuntime,
-            string identifier,
-            params object[] args)
-        {
+        private static IEnumerable<object> MakeArgJsFriendly( IJSRuntime jsRuntime,IEnumerable<object> args) {
             var jsFriendlyArgs = args
                 .Select(arg =>
                 {
@@ -100,6 +96,16 @@ namespace GoogleMapsComponents
                             }
                     }
                 });
+            return jsFriendlyArgs;
+        }
+
+        internal static async Task<TRes> MyInvokeAsync<TRes>(
+            this IJSRuntime jsRuntime,
+            string identifier,
+            params object[] args)
+        {
+
+            var jsFriendlyArgs = MakeArgJsFriendly(jsRuntime,args);
 
             if (typeof(IJsObjectRef).IsAssignableFrom(typeof(TRes)))
             {
@@ -143,6 +149,17 @@ namespace GoogleMapsComponents
             {
                 return await jsRuntime.InvokeAsync<TRes>(identifier, jsFriendlyArgs);
             }
+        }
+
+        internal static async Task<object> MyAddListenerAsync(
+            this IJSRuntime jsRuntime,
+            string identifier,
+            params object[] args)
+        {
+
+            var jsFriendlyArgs = MakeArgJsFriendly(jsRuntime,args);
+
+            return await jsRuntime.InvokeAsync<object>(identifier, jsFriendlyArgs);
         }
 
         private static async Task<object> InvokeAsync(

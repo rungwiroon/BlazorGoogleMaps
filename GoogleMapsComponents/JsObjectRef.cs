@@ -185,6 +185,15 @@ namespace GoogleMapsComponents
             );
         }
 
+        public Task AddMultipleListenersAsync(string eventName, Dictionary<Guid, object> dictArgs)
+        {
+            return _jsRuntime.MyAddListenerAsync(
+                "googleMapsObjectManager.addMultipleListeners",
+                new object[] { dictArgs.Select(e => e.Key.ToString()).ToList(), eventName }
+                    .Concat(dictArgs.Values).ToArray()
+            );
+        }
+
         public Task<T> InvokeAsync<T>(string functionName, params object[] args)
         {
             return _jsRuntime.MyInvokeAsync<T>(

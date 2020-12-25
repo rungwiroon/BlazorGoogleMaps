@@ -31,26 +31,62 @@ namespace GoogleMapsComponents.Maps.Extension
             JsObjectRef jsObjectRef = new JsObjectRef(jsRuntime, Guid.NewGuid());
 
             MarkerList obj;
-            if (opts.Count > 0)
-            {
                 Dictionary<string, JsObjectRef> jsObjectRefs = await JsObjectRef.CreateMultipleAsync(
                     jsRuntime,
                     "google.maps.Marker",
                     opts.ToDictionary(e => e.Key, e => (object)e.Value));
                 Dictionary<string, Marker> objs = jsObjectRefs.ToDictionary(e => e.Key, e => new Marker(e.Value));
                 obj = new MarkerList(jsObjectRef, objs);
-            }
-            else
-            {
-                obj = new MarkerList(jsObjectRef, null);
-            }
 
             return obj;
+        }
+
+        /// <summary>
+        /// Manage list over lifetime: Create and remove list depending on entity count; 
+        /// entities will be removed, added or changed to mirror the given set.
+        /// </summary>
+        /// <param name="list">
+        /// The list to manage. May be null.
+        /// </param>
+        /// <param name="jsRuntime"></param>
+        /// <param name="opts"></param>
+        /// <returns>
+        /// The managed list. Assign to the variable you used as parameter.
+        /// </returns>
+        public static async Task<MarkerList> ManageAsync(MarkerList list,IJSRuntime jsRuntime, Dictionary<string, MarkerOptions> opts,Action<MouseEvent,string,Marker> clickCallback=null)
+        {
+          if (opts.Count==0) {
+            if (list!=null) {
+              await list.SetMultipleAsync(opts);
+              list=null;
+            }
+          } else {
+            if (list==null) {
+              list = await MarkerList.CreateAsync(jsRuntime,new Dictionary<string, MarkerOptions>());
+              if (clickCallback!=null) {
+                list.EntityClicked+=(sender,e)=>{
+                  clickCallback(e.MouseEvent,e.Key,e.Entity);
+                };
+              }
+            }
+              await list.SetMultipleAsync(opts);
+          }
+          return list;
         }
 
         private MarkerList(JsObjectRef jsObjectRef, Dictionary<string, Marker> markers)
             : base(jsObjectRef, markers)
         {
+        }
+
+        /// <summary>
+        /// Set the set of entities; entities will be removed, added or changed to mirror the given set.
+        /// </summary>
+        /// <param name="opts"></param>
+        /// <returns></returns>
+        public async Task SetMultipleAsync(Dictionary<string, MarkerOptions> opts)
+        {
+          await base.SetMultipleAsync(opts, "google.maps.Marker");
         }
 
         /// <summary>
