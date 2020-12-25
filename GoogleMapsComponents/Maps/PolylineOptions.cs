@@ -9,7 +9,7 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// PolylineOptions object used to define the properties that can be set on a Polyline.
     /// </summary>
-    public class PolylineOptions
+    public class PolylineOptions : ListableEntityOptionsBase
     {
         /// <summary>
         /// Indicates whether this Polyline handles mouse events. 
