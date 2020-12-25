@@ -42,7 +42,7 @@ namespace GoogleMapsComponents.Maps.Extension
         }
 
         /// <summary>
-        /// Manage list over lifetime: Create and remove list depending on entity count; 
+        /// Sync list over lifetime: Create and remove list depending on entity count; 
         /// entities will be removed, added or changed to mirror the given set.
         /// </summary>
         /// <param name="list">
@@ -53,7 +53,7 @@ namespace GoogleMapsComponents.Maps.Extension
         /// <returns>
         /// The managed list. Assign to the variable you used as parameter.
         /// </returns>
-        public static async Task<MarkerList> ManageAsync(MarkerList list,IJSRuntime jsRuntime, Dictionary<string, MarkerOptions> opts,Action<MouseEvent,string,Marker> clickCallback=null)
+        public static async Task<MarkerList> SyncAsync(MarkerList list,IJSRuntime jsRuntime, Dictionary<string, MarkerOptions> opts,Action<MouseEvent,string,Marker> clickCallback=null)
         {
           if (opts.Count==0) {
             if (list!=null) {

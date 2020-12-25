@@ -63,7 +63,7 @@ namespace ServerSideDemo.Pages
     }
 
      private async Task RefreshCircleList() {
-      this.circleList = await CircleList.ManageAsync(this.circleList,this.map1.JsRuntime,circleOptionsByRef,async (ev,sKey,entity)=>{
+      this.circleList = await CircleList.SyncAsync(this.circleList,this.map1.JsRuntime,circleOptionsByRef,async (ev,sKey,entity)=>{
         // Circle has been clicked --> delete it.
         this.circleOptionsByRef.Remove(sKey);
         await this.RefreshCircleList();
