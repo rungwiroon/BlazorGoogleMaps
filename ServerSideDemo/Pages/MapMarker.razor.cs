@@ -120,6 +120,7 @@ namespace ServerSideDemo.Pages
                 Position = mapCenter,
                 Map = map1.InteropObject,
                 Label = $"Test {markers.Count}",
+                Animation = Animation.Bounce
                 //Icon = new Icon()
                 //{
                 //    Url = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"

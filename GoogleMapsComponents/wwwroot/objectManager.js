@@ -76,6 +76,16 @@ function tryParseJson(item) {
         } else {
             for (var propertyName in item2) {
                 let propertyValue = item2[propertyName];
+                if (propertyValue !== null && typeof propertyValue === "string" && propertyValue.indexOf("google.maps.Animation") == 0) {
+                    switch (propertyValue) {
+                        case "google.maps.Animation.DROP":
+                            item2[propertyName] = google.maps.Animation.DROP;
+                        case "google.maps.Animation.BOUNCE":
+                            item2[propertyName] = google.maps.Animation.BOUNCE;
+                    default:
+                    }
+                }
+
                 if (typeof propertyValue === "object"
                     && propertyValue !== null
                     && "guidString" in propertyValue) {
