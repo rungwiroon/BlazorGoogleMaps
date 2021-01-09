@@ -139,7 +139,7 @@ namespace GoogleMapsComponents.Maps
                 icon);
         }
 
-        public Task SetLabel(Symbol label)
+        public Task SetLabel(string label)
         {
             return _jsObjectRef.InvokeAsync(
                 "setLabel",
