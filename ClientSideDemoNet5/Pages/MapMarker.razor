@@ -9,6 +9,8 @@
 <button @onclick="AddMarker">Add marker</button>
 <button @onclick="RemoveMarker">Remove marker</button>
 <button @onclick="Recenter">Re-center marker</button>
+<input type="text" @bind="@labelText"/>
+<button @onclick="UpdateLabelText">Update marker label</button>
 
 <MapEventList @ref="@eventList" Events="@_events"></MapEventList>
 
@@ -22,6 +24,9 @@
     private List<String> _events = new List<String>();
 
     private MapEventList eventList = default!;
+
+    private string labelText = "";
+
 
     protected override void OnInitialized()
     {
@@ -78,6 +83,7 @@
         await marker.AddListener<MouseEvent>("click", async e =>
         {
             var markerLabel = await marker.GetLabel();
+            labelText = markerLabel;
             _events.Add("click on " + markerLabel);
             StateHasChanged();
 
@@ -106,6 +112,17 @@
         var lastMarker = markers.Peek();
         var center = await map1.InteropObject.GetCenter();
         await lastMarker.SetPosition(center);
+    }
+
+    private async Task UpdateLabelText()
+    {
+        if (!markers.Any())
+        {
+            return;
+        }
+
+        var lastMarker = markers.Peek();
+        await lastMarker.SetLabel(labelText);
     }
 
 }
