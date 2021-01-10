@@ -9,8 +9,8 @@
 <button @onclick="AddMarker">Add marker</button>
 <button @onclick="RemoveMarker">Remove marker</button>
 <button @onclick="Recenter">Re-center marker</button>
-<input type="text" @bind="@labelText"/>
-<button @onclick="UpdateLabelText">Update marker label</button>
+<input type="text" value="@labelText" @onchange="UpdateLabelText" />
+<button @onclick="ToggleLabelFontWeight">Toggle label font-weight</button>
 
 <MapEventList @ref="@eventList" Events="@_events"></MapEventList>
 
@@ -26,7 +26,6 @@
     private MapEventList eventList = default!;
 
     private string labelText = "";
-
 
     protected override void OnInitialized()
     {
@@ -44,17 +43,29 @@
 
     private async Task AddMarker()
     {
-        var marker = await Marker.CreateAsync(map1.JsRuntime, new MarkerOptions()
-        {
-            Position = await map1.InteropObject.GetCenter(),
-            Map = map1.InteropObject,
-            Label = $"Test {markers.Count()}",
-            Icon = new Icon()
+        var marker = await Marker.CreateAsync(map1.JsRuntime, markers.Count() % 2 == 0 ?
+            new MarkerOptions()
             {
-                Url = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
-            }
-            //Icon = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
-        });
+                Position = await map1.InteropObject.GetCenter(),
+                Map = map1.InteropObject,
+                Label = new MarkerLabel { Text = $"Test {markers.Count()}", FontWeight = "bold"},
+                Icon = new Icon()
+                {
+                    Url = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
+                }
+                //Icon = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
+            } :
+            new MarkerOptions()
+            {
+                Position = await map1.InteropObject.GetCenter(),
+                Map = map1.InteropObject,
+                Label = $"Test {markers.Count()}",
+                Icon = new Icon()
+                {
+                    Url = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
+                }
+                //Icon = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
+            });
 
         //await marker.SetMap(map1);
 
@@ -79,12 +90,12 @@
         //}
 
         markers.Push(marker);
+        labelText = await marker.GetLabelText();
 
         await marker.AddListener<MouseEvent>("click", async e =>
         {
-            var markerLabel = await marker.GetLabel();
-            labelText = markerLabel;
-            _events.Add("click on " + markerLabel);
+            string markerLabelText = await marker.GetLabelText();
+            _events.Add("click on " + markerLabelText);
             StateHasChanged();
 
             await e.Stop();
@@ -100,6 +111,7 @@
 
         var lastMarker = markers.Pop();
         await lastMarker.SetMap(null);
+        labelText = markers.Any() ? await markers.Peek().GetLabelText() : "";
     }
 
     private async Task Recenter()
@@ -114,7 +126,24 @@
         await lastMarker.SetPosition(center);
     }
 
-    private async Task UpdateLabelText()
+    private async Task UpdateLabelText(ChangeEventArgs e)
+    {
+        if (!markers.Any())
+        {
+            return;
+        }
+
+        string newLabelText = e.Value?.ToString() ?? "" ;
+        if (labelText != newLabelText)
+        {
+            labelText = newLabelText;
+
+            var lastMarker = markers.Peek();
+            await lastMarker.SetLabelText(labelText);
+        }
+    }
+
+    private async Task ToggleLabelFontWeight()
     {
         if (!markers.Any())
         {
@@ -122,7 +151,9 @@
         }
 
         var lastMarker = markers.Peek();
-        await lastMarker.SetLabel(labelText);
+        var lastMarkerLabel = await lastMarker.GetLabelMarkerLabel();
+        lastMarkerLabel.FontWeight = (lastMarkerLabel.FontWeight == "bold") ? "normal" : "bold";
+        await lastMarker.SetLabel(lastMarkerLabel);
     }
 
 }
