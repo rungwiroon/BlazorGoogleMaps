@@ -55,9 +55,23 @@ namespace GoogleMapsComponents.Maps
             return result;
         }
 
-        public Task<string> GetLabel()
+        public Task<OneOf<string, MarkerLabel>> GetLabel()
         {
-            return _jsObjectRef.InvokeAsync<string>("getLabel");
+            return _jsObjectRef.InvokeAsync<string, MarkerLabel>("getLabel");
+        }
+
+        public async Task<string> GetLabelText()
+        {
+            OneOf<string, MarkerLabel> markerLabel = await GetLabel();
+            return markerLabel.IsT0 ? markerLabel.AsT0 : markerLabel.AsT1.Text;
+        }
+
+        public async Task<MarkerLabel> GetLabelMarkerLabel()
+        {
+            OneOf<string, MarkerLabel> markerLabel = await GetLabel();
+            return markerLabel.IsT1 ?
+                markerLabel.AsT1 :
+                new MarkerLabel { Text = markerLabel.AsT0 };
         }
 
         public Task<LatLngLiteral> GetPosition()
@@ -139,11 +153,24 @@ namespace GoogleMapsComponents.Maps
                 icon);
         }
 
-        public Task SetLabel(Symbol label)
+        public Task SetLabel(OneOf<string, MarkerLabel> label)
         {
             return _jsObjectRef.InvokeAsync(
                 "setLabel",
                 label);
+        }
+
+        public async Task SetLabelText(string labelText)
+        {
+            OneOf<string, MarkerLabel> markerLabel = await GetLabel();
+            if (markerLabel.IsT1)
+            {
+                MarkerLabel label = markerLabel.AsT1;
+                label.Text = labelText;
+                await SetLabel(label);
+            }
+            else
+                await SetLabel(labelText);
         }
 
         public Task SetOpacity(float opacity)
