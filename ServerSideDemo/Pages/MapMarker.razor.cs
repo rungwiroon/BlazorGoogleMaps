@@ -120,13 +120,15 @@ namespace ServerSideDemo.Pages
                 Position = mapCenter,
                 Map = map1.InteropObject,
                 Label = $"Test {markers.Count}",
-                Animation = Animation.Bounce
+                //Animation = Animation.Bounce
                 //Icon = new Icon()
                 //{
                 //    Url = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
                 //}
                 //Icon = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
             });
+
+            markers.Push(marker);
 
             return;
             await bounds.Extend(mapCenter);
@@ -175,6 +177,29 @@ namespace ServerSideDemo.Pages
             await lastMarker.SetPosition(center);
         }
 
+
+        private async Task SetAnimation()
+        {
+            if (!markers.Any())
+            {
+                return;
+            }
+            var lastMarker = markers.Peek();
+            await lastMarker.SetAnimation(Animation.Bounce);
+            var position = await lastMarker.GetPosition();
+            _events.Add($"SetAnimation {position.Lat},{position.Lng} Animation.Bounce");
+        }
+        private async Task GetAnimation()
+        {
+            if (!markers.Any())
+            {
+                return;
+            }
+            var lastMarker = markers.Peek();
+            var animation = await lastMarker.GetAnimation();
+            var position = await lastMarker.GetPosition();
+            _events.Add($"GetAnimation {position.Lat},{position.Lng} {animation?.ToString()}");
+        }
         private async Task FitBounds()
         {
             if (await this.bounds.IsEmpty())

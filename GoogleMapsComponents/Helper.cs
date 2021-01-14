@@ -25,6 +25,29 @@ namespace GoogleMapsComponents
             return jsRuntime.MyInvokeAsync<object>(identifier, args);
         }
 
+        internal static T? ToNullableEnum<T>(string str)
+            where T : struct
+        {
+            var enumType = typeof(T);
+
+            if (int.TryParse(str, out var enumintValue))
+            {
+                return (T)Enum.Parse(enumType, enumintValue.ToString());
+            }
+
+
+            if (str == "null")
+                return null;
+
+            foreach (var name in Enum.GetNames(enumType))
+            {
+                var enumMemberAttribute = ((EnumMemberAttribute[])enumType.GetField(name).GetCustomAttributes(typeof(EnumMemberAttribute), true)).Single();
+                if (enumMemberAttribute.Value == str) return (T)Enum.Parse(enumType, name);
+            }
+
+            //throw exception or whatever handling you want
+            return default;
+        }
         private static string SerializeObject(object obj)
         {
             var value = JsonConvert.SerializeObject(
@@ -39,7 +62,8 @@ namespace GoogleMapsComponents
             return value;
         }
 
-        private static IEnumerable<object> MakeArgJsFriendly( IJSRuntime jsRuntime,IEnumerable<object> args) {
+        private static IEnumerable<object> MakeArgJsFriendly(IJSRuntime jsRuntime, IEnumerable<object> args)
+        {
             var jsFriendlyArgs = args
                 .Select(arg =>
                 {
@@ -105,7 +129,7 @@ namespace GoogleMapsComponents
             params object[] args)
         {
 
-            var jsFriendlyArgs = MakeArgJsFriendly(jsRuntime,args);
+            var jsFriendlyArgs = MakeArgJsFriendly(jsRuntime, args);
 
             if (typeof(IJsObjectRef).IsAssignableFrom(typeof(TRes)))
             {
@@ -144,7 +168,7 @@ namespace GoogleMapsComponents
                 }
 
                 return (TRes)result;
-            }            
+            }
             else
             {
                 return await jsRuntime.InvokeAsync<TRes>(identifier, jsFriendlyArgs);
@@ -157,7 +181,7 @@ namespace GoogleMapsComponents
             params object[] args)
         {
 
-            var jsFriendlyArgs = MakeArgJsFriendly(jsRuntime,args);
+            var jsFriendlyArgs = MakeArgJsFriendly(jsRuntime, args);
 
             return await jsRuntime.InvokeAsync<object>(identifier, jsFriendlyArgs);
         }

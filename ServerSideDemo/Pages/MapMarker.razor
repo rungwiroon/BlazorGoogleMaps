@@ -12,6 +12,8 @@
 <button @onclick="Recenter">Re-center marker</button>
 <button @onclick="FitBounds">Fit to markers</button>
 <button @onclick="InvokeClustering">Invoke map cluster</button>
+<button @onclick="@GetAnimation">GetAnimation </button>
+<button @onclick="@SetAnimation">SetAnimation </button>
 
 
 <MapEventList @ref="@eventList" Events="@_events"></MapEventList>

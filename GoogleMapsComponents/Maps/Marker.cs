@@ -21,12 +21,12 @@ namespace GoogleMapsComponents.Maps
         {
         }
 
-        public async Task<Animation> GetAnimation()
+        public async Task<Animation?> GetAnimation()
         {
-            var animation = await _jsObjectRef.InvokeAsync<string>(
+            var animation = await _jsObjectRef.InvokeAsync<object>(
                 "getAnimation");
 
-            return Helper.ToEnum<Animation>(animation);
+            return Helper.ToNullableEnum<Animation>(animation?.ToString());
         }
 
         public Task<bool> GetClickable()
@@ -113,9 +113,14 @@ namespace GoogleMapsComponents.Maps
         /// <param name="animation"></param>
         public Task SetAnimation(Animation animation)
         {
+            int animationCode = 0;
+            if (animation == Animation.Bounce)
+            {
+                animationCode = 1;
+            }
             return _jsObjectRef.InvokeAsync(
                 "setAnimation",
-                animation);
+                animationCode);
         }
 
         public Task SetClickable(bool flag)

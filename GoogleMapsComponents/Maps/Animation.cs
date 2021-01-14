@@ -19,7 +19,7 @@ namespace GoogleMapsComponents.Maps
         /// Marker bounces until animation is stopped.
         /// </summary>
         [EnumMember(Value = "google.maps.Animation.BOUNCE")]
-        Bounce,
+        Bounce = 1,
 
         /// <summary>
         /// Marker falls from the top of the map ending with a small bounce.

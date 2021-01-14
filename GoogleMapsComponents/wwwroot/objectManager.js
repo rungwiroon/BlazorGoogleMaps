@@ -80,9 +80,11 @@ function tryParseJson(item) {
                     switch (propertyValue) {
                         case "google.maps.Animation.DROP":
                             item2[propertyName] = google.maps.Animation.DROP;
+                            break;
                         case "google.maps.Animation.BOUNCE":
                             item2[propertyName] = google.maps.Animation.BOUNCE;
-                    default:
+                            break;
+                        default:
                     }
                 }
 
