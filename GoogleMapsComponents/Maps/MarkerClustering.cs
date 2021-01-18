@@ -61,6 +61,21 @@ namespace GoogleMapsComponents.Maps
             return eventListener;
         }
 
+        public virtual async Task SetMap(Map map)
+        {
+            await _jsObjectRef.InvokeAsync("setMap", map);
+        }
+
+        public virtual async Task ClearMarkers()
+        {
+            await _jsObjectRef.InvokeAsync("clearMarkers");
+        }
+
+        public virtual async Task FitMapToMarkers(int padding)
+        {
+            await _jsObjectRef.InvokeAsync("fitMapToMarkers", padding);
+        }
+
         public virtual async Task ClearListeners(string eventName)
         {
             if (EventListeners.ContainsKey(eventName))

@@ -24,6 +24,7 @@ namespace ServerSideDemo.Pages
         private MapEventList eventList;
 
         private LatLngBounds bounds;
+        private MarkerClustering _markerClustering;
 
         [Inject]
         public IJSRuntime JsObjectRef { get; set; }
@@ -50,6 +51,10 @@ namespace ServerSideDemo.Pages
             }
         }
 
+        private async Task ClearClustering()
+        {
+            await _markerClustering.ClearMarkers();
+        }
         private async Task InvokeClustering()
         {
             var coordinates = new List<LatLngLiteral>()
@@ -81,7 +86,8 @@ namespace ServerSideDemo.Pages
 
             var markers = await GetMarkers(coordinates, map1.InteropObject);
 
-            await MarkerClustering.CreateAsync(map1.JsRuntime, map1.InteropObject, markers);
+            _markerClustering = await MarkerClustering.CreateAsync(map1.JsRuntime, map1.InteropObject, markers);
+            await _markerClustering.FitMapToMarkers(1);
             //initMap
             //await JsObjectRef.InvokeAsync<object>("initMap", map1.InteropObject.Guid.ToString(), markers);
         }
