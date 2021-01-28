@@ -123,6 +123,15 @@ namespace GoogleMapsComponents.Maps
         }
 
         /// <summary>
+        /// Sets the radius of this circle (in meters).
+        /// </summary>
+        /// <param name="radius"></param>
+        public Task SetRadius(decimal radius)
+        {
+            return SetRadius(Convert.ToDouble(radius));
+        }
+
+        /// <summary>
         /// Hides this circle if set to false.
         /// </summary>
         /// <param name="visible"></param>

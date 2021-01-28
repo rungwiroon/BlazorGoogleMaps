@@ -125,6 +125,16 @@ namespace GoogleMapsComponents.Maps
         }
 
         /// <summary>
+        /// Returns a string of the form "lat_lo,lng_lo,lat_hi,lng_hi" for this bounds,
+        /// where "lo" corresponds to the southwest corner of the bounding box, while "hi"
+        /// corresponds to the northeast corner of that box.
+        /// </summary>
+        public Task<string> ToUrlValue(decimal precision)
+        {
+            return ToUrlValue(Convert.ToDouble(precision));
+        }
+
+        /// <summary>
         /// Extends this bounds to contain the union of this and the given bounds.
         /// </summary>
         public Task Union(LatLngBoundsLiteral other)
