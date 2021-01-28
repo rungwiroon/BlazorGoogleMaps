@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
 {
@@ -93,7 +90,15 @@ namespace GoogleMapsComponents.Maps
               North = lat;
             }
         }
-        
+
+        /// <summary>
+        /// Extend these boundaries by a given coordinate point.
+        /// </summary>
+        public void Extend(decimal lng, decimal lat)
+        {
+            Extend(Convert.ToDouble(lng), Convert.ToDouble(lat));
+        }
+
         /// <summary>
         /// Extend these boundaries by a given coordinate point.
         /// </summary>

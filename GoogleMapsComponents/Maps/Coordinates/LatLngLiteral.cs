@@ -1,8 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System;
+
+using Newtonsoft.Json;
 
 namespace GoogleMapsComponents.Maps
 {
@@ -30,13 +28,16 @@ namespace GoogleMapsComponents.Maps
 
         public LatLngLiteral()
         {
-
         }
 
         public LatLngLiteral(double lng, double lat)
         {
             Lng = lng;
             Lat = lat;
+        }
+
+        public LatLngLiteral(decimal lng, decimal lat) : this(Convert.ToDouble(lng), Convert.ToDouble(lat))
+        {
         }
 
         public override string ToString()
