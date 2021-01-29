@@ -13,6 +13,10 @@ Add path to project javascript functions file in wwwroot/index.html in Client si
 ```
 <script src="_content/BlazorGoogleMaps/objectManager.js"></script>
 ```
+Add the following script if you want to use marker clustering.
+```
+<script src="https://unpkg.com/@@googlemaps/markerclustererplus/dist/index.min.js"></script>
+```
 
 2. Use component in client and server side same
 ```
