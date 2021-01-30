@@ -472,7 +472,7 @@ window.googleMapsObjectManager = {
 
         const markerCluster = new MarkerClusterer(map, originalMarkers, {
             imagePath:
-                "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m"
+                "_content/BlazorGoogleMaps/m"
         });
 
         if ("set" in markerCluster) {
