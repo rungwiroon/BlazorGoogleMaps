@@ -51,9 +51,11 @@
 
     private async Task OnAfterMapInit()
     {
+
         this.autocomplete = await Autocomplete.CreateAsync(this.map1.JsRuntime, this.searchBox, new AutocompleteOptions
         {
-            StrictBounds = false
+            StrictBounds = false,
+            //ComponentRestrictions = new ComponentRestrictions { Country = new[] { "us" } }
         });
 
         //await autocomplete.SetFields(new []{ "address_components", "geometry", "icon", "name" });

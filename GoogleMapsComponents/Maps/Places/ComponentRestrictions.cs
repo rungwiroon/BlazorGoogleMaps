@@ -4,6 +4,6 @@ namespace GoogleMapsComponents.Maps.Places
 {
     public class ComponentRestrictions
     {
-        public OneOf<string,string[]> Country { get; set; }
+        public string[] Country { get; set; }
     }
 }
