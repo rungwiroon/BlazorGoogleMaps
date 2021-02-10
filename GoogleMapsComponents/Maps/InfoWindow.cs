@@ -111,6 +111,7 @@ namespace GoogleMapsComponents.Maps
             return _jsObjectRef.InvokeAsync<int>("getZIndex");
         }
 
+
         /// <summary>
         /// Opens this InfoWindow on the given map.
         /// </summary>
