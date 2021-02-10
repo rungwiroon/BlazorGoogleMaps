@@ -248,11 +248,12 @@
         StateHasChanged();
     }
 
-    private void OnZoomChanged()
+    private async void OnZoomChanged()
     {
         //Console.WriteLine("OnZoomChanged.");
-
-        _events.Insert(0, "OnZoomChanged.");
+        var currentzoom = await map1.InteropObject.GetZoom();
+        //Logger.LogInformation("Zoom result: {_currentzoom}");
+        _events.Insert(0, $"OnZoomChanged {currentzoom} ");
 
         StateHasChanged();
     }

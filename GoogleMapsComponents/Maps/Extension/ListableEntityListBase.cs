@@ -37,36 +37,43 @@ namespace GoogleMapsComponents.Maps.Extension
         /// <returns></returns>
         public async Task SetMultipleAsync(Dictionary<string, TEntityOptionsBase> opts, string googleMapListableEntityTypeName)
         {
-          var nonVisibles = new Dictionary<string,bool>();
-          var lToRemove = new List<string>();
-          var dictToAdd = new Dictionary<string,TEntityOptionsBase>();
-          var dictToChange = new Dictionary<string,TEntityOptionsBase>();
-          foreach (var sKey in this.BaseListableEntities.Keys) {
-            if (!opts.ContainsKey(sKey)) {
-              lToRemove.Add(sKey);
+            var nonVisibles = new Dictionary<string, bool>();
+            var lToRemove = new List<string>();
+            var dictToAdd = new Dictionary<string, TEntityOptionsBase>();
+            var dictToChange = new Dictionary<string, TEntityOptionsBase>();
+            foreach (var sKey in this.BaseListableEntities.Keys)
+            {
+                if (!opts.ContainsKey(sKey))
+                {
+                    lToRemove.Add(sKey);
+                }
             }
-          }
-          foreach (var sKey in lToRemove) {
-            nonVisibles[sKey]=false;
-          }
-          foreach (var sKey in opts.Keys) {
-            if (this.BaseListableEntities.ContainsKey(sKey)) {
-              dictToChange[sKey]=opts[sKey];
-            } else {
-              dictToAdd[sKey]=opts[sKey];
+            foreach (var sKey in lToRemove)
+            {
+                nonVisibles[sKey] = false;
             }
-          }
-          await this.SetVisibles(nonVisibles);
-          await this.RemoveMultipleAsync(lToRemove);
-          await this.AddMultipleAsync(dictToAdd,googleMapListableEntityTypeName);
-          await this.SetOptions(dictToChange);
+            foreach (var sKey in opts.Keys)
+            {
+                if (this.BaseListableEntities.ContainsKey(sKey))
+                {
+                    dictToChange[sKey] = opts[sKey];
+                }
+                else
+                {
+                    dictToAdd[sKey] = opts[sKey];
+                }
+            }
+            await this.SetVisibles(nonVisibles);
+            await this.RemoveMultipleAsync(lToRemove);
+            await this.AddMultipleAsync(dictToAdd, googleMapListableEntityTypeName);
+            await this.SetOptions(dictToChange);
         }
 
         public class EntityMouseEvent
         {
-          public MouseEvent MouseEvent { get; set; }
-          public string Key { get; set; }
-          public TEntityBase Entity { get; set; }
+            public MouseEvent MouseEvent { get; set; }
+            public string Key { get; set; }
+            public TEntityBase Entity { get; set; }
         }
 
         /// <summary>
@@ -78,9 +85,11 @@ namespace GoogleMapsComponents.Maps.Extension
         /// </summary>
         public event EventHandler<EntityMouseEvent> EntityClicked;
 
-        private void FireEvent<TEvent>(EventHandler<TEvent> eventHandler, TEvent ea) {
-            if (eventHandler!=null) {
-                eventHandler(this,ea);
+        private void FireEvent<TEvent>(EventHandler<TEvent> eventHandler, TEvent ea)
+        {
+            if (eventHandler != null)
+            {
+                eventHandler(this, ea);
             }
         }
 
@@ -95,7 +104,7 @@ namespace GoogleMapsComponents.Maps.Extension
             {
                 Dictionary<string, JsObjectRef> jsObjectRefs = await _jsObjectRef.AddMultipleAsync(
                     googleMapListableEntityTypeName,
-                    opts.ToDictionary(e => e.Key, e => (object) e.Value));
+                    opts.ToDictionary(e => e.Key, e => (object)e.Value));
 
                 Dictionary<string, TEntityBase> objs = jsObjectRefs.ToDictionary(e => e.Key, e =>
                 {
@@ -103,7 +112,7 @@ namespace GoogleMapsComponents.Maps.Extension
                     //var ctor = typeof(TEntityBase).GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(c => !c.GetParameters().Any());
                     var ctor = typeof(TEntityBase).GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault();
                     BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Instance;
-                    return (TEntityBase) ctor.Invoke(new object[] {e.Value});
+                    return (TEntityBase)ctor.Invoke(new object[] { e.Value });
                     //Old version which didnt catched internal consturctors
                     //return Activator.CreateInstance(typeof(TEntityBase), flags, null, e.Value) as TEntityBase;
                 });
@@ -119,13 +128,15 @@ namespace GoogleMapsComponents.Maps.Extension
                     BaseListableEntities.Add(key, entity);
                 }
                 //add event listener to the click event in one call to all added entities.
-                    if (this.EntityClicked!=null) {
-                    await this.AddListeners<MouseEvent>(objs.Keys,"click",(mev,key) => {
-                        this.FireEvent(this.EntityClicked,new EntityMouseEvent { MouseEvent=mev,Key=key,Entity=BaseListableEntities[key] });
-                        });
-                    }
+                if (this.EntityClicked != null)
+                {
+                    await this.AddListeners<MouseEvent>(objs.Keys, "click", (mev, key) =>
+                    {
+                        this.FireEvent(this.EntityClicked, new EntityMouseEvent { MouseEvent = mev, Key = key, Entity = BaseListableEntities[key] });
+                    });
                 }
             }
+        }
 
         /// <summary>
         /// only Marker having keys matching with existent keys will be removed
@@ -134,21 +145,23 @@ namespace GoogleMapsComponents.Maps.Extension
         /// <returns></returns>
         public virtual async Task RemoveMultipleAsync(List<string> filterKeys = null)
         {
-            if ((filterKeys != null) && (filterKeys.Count > 0))
+            if (filterKeys == null || !filterKeys.Any())
             {
-                List<string> foundKeys = BaseListableEntities.Keys.Intersect(filterKeys).ToList();
-                if (foundKeys.Count > 0)
-                {
-                    List<Guid> foundGuids = BaseListableEntities.Where(e => foundKeys.Contains(e.Key)).Select(e => e.Value.Guid).ToList();
-                    await _jsObjectRef.DisposeMultipleAsync(foundGuids);
+                filterKeys = BaseListableEntities.Keys.ToList();
+            }
 
-                    foreach (string key in foundKeys)
-                    {
-                        //Marker object needs to dispose call due to previous DisposeMultipleAsync call
-                        //Probably superfluous, but Garbage Collector may appreciate it... 
-                        BaseListableEntities[key] = null;
-                        BaseListableEntities.Remove(key);
-                    }
+            List<string> foundKeys = BaseListableEntities.Keys.Intersect(filterKeys).ToList();
+            if (foundKeys.Count > 0)
+            {
+                List<Guid> foundGuids = BaseListableEntities.Where(e => foundKeys.Contains(e.Key)).Select(e => e.Value.Guid).ToList();
+                await _jsObjectRef.DisposeMultipleAsync(foundGuids);
+
+                foreach (string key in foundKeys)
+                {
+                    //Marker object needs to dispose call due to previous DisposeMultipleAsync call
+                    //Probably superfluous, but Garbage Collector may appreciate it... 
+                    BaseListableEntities[key] = null;
+                    BaseListableEntities.Remove(key);
                 }
             }
         }
@@ -202,7 +215,7 @@ namespace GoogleMapsComponents.Maps.Extension
         //Creates mapping between markers Guid and empty array of parameters (getter has no parameter)
         protected virtual Dictionary<Guid, object> ComputeDictArgs(List<string> matchingKeys)
         {
-            return BaseListableEntities.Where(e => matchingKeys.Contains(e.Key)).ToDictionary(e => e.Value.Guid, e => (object) (new object[] { }));
+            return BaseListableEntities.Where(e => matchingKeys.Contains(e.Key)).ToDictionary(e => e.Value.Guid, e => (object)(new object[] { }));
         }
 
         //Create an empty result of the correct type in case of no matching keys
@@ -278,7 +291,7 @@ namespace GoogleMapsComponents.Maps.Extension
         /// <param name="map"></param>
         public virtual async Task SetMaps(Dictionary<string, Map> maps)
         {
-            Dictionary<Guid, object> dictArgs = maps.ToDictionary(e => BaseListableEntities[e.Key].Guid, e => (object) e.Value);
+            Dictionary<Guid, object> dictArgs = maps.ToDictionary(e => BaseListableEntities[e.Key].Guid, e => (object)e.Value);
             await _jsObjectRef.InvokeMultipleAsync(
                 "setMap",
                 dictArgs);
@@ -286,7 +299,7 @@ namespace GoogleMapsComponents.Maps.Extension
 
         public virtual Task SetDraggables(Dictionary<string, bool> draggables)
         {
-            Dictionary<Guid, object> dictArgs = draggables.ToDictionary(e => BaseListableEntities[e.Key].Guid, e => (object) e.Value);
+            Dictionary<Guid, object> dictArgs = draggables.ToDictionary(e => BaseListableEntities[e.Key].Guid, e => (object)e.Value);
             return _jsObjectRef.InvokeMultipleAsync(
                 "setDraggable",
                 dictArgs);
@@ -294,7 +307,7 @@ namespace GoogleMapsComponents.Maps.Extension
 
         public virtual Task SetOptions(Dictionary<string, TEntityOptionsBase> options)
         {
-            Dictionary<Guid, object> dictArgs = options.ToDictionary(e => BaseListableEntities[e.Key].Guid, e => (object) e.Value);
+            Dictionary<Guid, object> dictArgs = options.ToDictionary(e => BaseListableEntities[e.Key].Guid, e => (object)e.Value);
             return _jsObjectRef.InvokeMultipleAsync(
                 "setOptions",
                 dictArgs);
@@ -302,18 +315,19 @@ namespace GoogleMapsComponents.Maps.Extension
 
         public virtual Task SetVisibles(Dictionary<string, bool> visibles)
         {
-            Dictionary<Guid, object> dictArgs = visibles.ToDictionary(e => BaseListableEntities[e.Key].Guid, e => (object) e.Value);
+            Dictionary<Guid, object> dictArgs = visibles.ToDictionary(e => BaseListableEntities[e.Key].Guid, e => (object)e.Value);
             return _jsObjectRef.InvokeMultipleAsync(
                 "setVisible",
                 dictArgs);
         }
 
-        public virtual async Task AddListeners<V>(IEnumerable<string> enitityKeys, string eventName, Action<V,string> handler)
+        public virtual async Task AddListeners<V>(IEnumerable<string> enitityKeys, string eventName, Action<V, string> handler)
         {
-            Dictionary<Guid, object> dictArgs = enitityKeys.ToDictionary(key => BaseListableEntities[key].Guid, key => (object)new Action<V>((e)=>{
-              handler(e,key);
+            Dictionary<Guid, object> dictArgs = enitityKeys.ToDictionary(key => BaseListableEntities[key].Guid, key => (object)new Action<V>((e) =>
+            {
+                handler(e, key);
             }));
-            await _jsObjectRef.AddMultipleListenersAsync(eventName,dictArgs);
+            await _jsObjectRef.AddMultipleListenersAsync(eventName, dictArgs);
         }
     }
 }

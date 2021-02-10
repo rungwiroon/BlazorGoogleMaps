@@ -195,6 +195,15 @@ namespace ServerSideDemo.Pages
             await FitBounds();
         }
 
+        private async Task RemoveMarkers()
+        {
+            foreach (var markerListMarker in _markerList.Markers)
+            {
+                await markerListMarker.Value.SetMap(null);
+            }
+
+            await _markerList.RemoveMultipleAsync();
+        }
         private async Task RemoveMarker()
         {
             if (!markers.Any())

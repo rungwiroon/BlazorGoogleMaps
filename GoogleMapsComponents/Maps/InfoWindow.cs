@@ -118,7 +118,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="anchor"></param>
         public Task Open(Map map, object anchor = null)
         {
-            return _jsObjectRef.InvokeAsync("open", map);
+            return _jsObjectRef.InvokeAsync("open", map, anchor);
         }
 
         public Task SetContent(string content)
