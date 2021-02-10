@@ -202,7 +202,7 @@ namespace ServerSideDemo.Pages
                 await markerListMarker.Value.SetMap(null);
             }
 
-            await _markerList.RemoveMultipleAsync();
+            await _markerList.RemoveAllAsync();
         }
         private async Task RemoveMarker()
         {

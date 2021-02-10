@@ -138,6 +138,12 @@ namespace GoogleMapsComponents.Maps.Extension
             }
         }
 
+        public virtual async Task RemoveAllAsync()
+        {
+            await RemoveMultipleAsync(BaseListableEntities.Keys.ToList());
+
+        }
+
         /// <summary>
         /// only Marker having keys matching with existent keys will be removed
         /// </summary>
@@ -145,25 +151,26 @@ namespace GoogleMapsComponents.Maps.Extension
         /// <returns></returns>
         public virtual async Task RemoveMultipleAsync(List<string> filterKeys = null)
         {
-            if (filterKeys == null || !filterKeys.Any())
+            if ((filterKeys != null) && (filterKeys.Count > 0))
             {
-                filterKeys = BaseListableEntities.Keys.ToList();
-            }
 
-            List<string> foundKeys = BaseListableEntities.Keys.Intersect(filterKeys).ToList();
-            if (foundKeys.Count > 0)
-            {
-                List<Guid> foundGuids = BaseListableEntities.Where(e => foundKeys.Contains(e.Key)).Select(e => e.Value.Guid).ToList();
-                await _jsObjectRef.DisposeMultipleAsync(foundGuids);
-
-                foreach (string key in foundKeys)
+                List<string> foundKeys = BaseListableEntities.Keys.Intersect(filterKeys).ToList();
+                if (foundKeys.Count > 0)
                 {
-                    //Marker object needs to dispose call due to previous DisposeMultipleAsync call
-                    //Probably superfluous, but Garbage Collector may appreciate it... 
-                    BaseListableEntities[key] = null;
-                    BaseListableEntities.Remove(key);
+                    List<Guid> foundGuids = BaseListableEntities.Where(e => foundKeys.Contains(e.Key)).Select(e => e.Value.Guid).ToList();
+                    await _jsObjectRef.DisposeMultipleAsync(foundGuids);
+
+                    foreach (string key in foundKeys)
+                    {
+                        //Marker object needs to dispose call due to previous DisposeMultipleAsync call
+                        //Probably superfluous, but Garbage Collector may appreciate it... 
+                        BaseListableEntities[key] = null;
+                        BaseListableEntities.Remove(key);
+                    }
                 }
             }
+
+
         }
 
         public virtual async Task RemoveMultipleAsync(List<Guid> guids)
