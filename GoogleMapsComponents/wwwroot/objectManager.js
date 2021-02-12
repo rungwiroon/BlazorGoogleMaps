@@ -298,7 +298,9 @@ window.googleMapsObjectManager = {
             //Wait for promise
             try {
                 let result = await promise;
-                obj.setDirections(result);
+                if (typeof obj.setDirections === "function") {
+                    obj.setDirections(result);
+                }
 
                 let jsonRest = JSON.stringify(cleanDirectionResult(result, dirRequestOptions));
                 //console.log(JSON.stringify(jsonRest));
