@@ -1,10 +1,6 @@
 ﻿using Microsoft.JSInterop;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
@@ -14,7 +10,6 @@ namespace GoogleMapsComponents.Maps
     /// </summary>
     public class DirectionsService : IDisposable
     {
-        private readonly string jsObjectName = "googleMapDirectionServiceFunctions";
         private readonly JsObjectRef _jsObjectRef;
 
         /// <summary>
@@ -46,14 +41,29 @@ namespace GoogleMapsComponents.Maps
         /// Issue a directions search request.
         /// </summary>
         /// <param name="request"></param>
-        /// <param name="callback"></param>
-        public async Task<DirectionResponse> Route(DirectionsRequest request)
+        /// <param name="directionsRequestOptions">Lets you specify which route response paths to opt out from clearing.</param>
+        /// <returns></returns>
+        public async Task<DirectionsResult> Route(DirectionsRequest request, DirectionsRequestOptions directionsRequestOptions = null)
         {
-            await _jsObjectRef.InvokeAsync(
-                    $"{jsObjectName}.route",
-                    request);
+            if (directionsRequestOptions == null)
+            {
+                directionsRequestOptions = new DirectionsRequestOptions();
+            }
 
-            return null;
+            var response = await _jsObjectRef.InvokeAsync<string>(
+                "googleMapDirectionServiceFunctions.route",
+                request, directionsRequestOptions);
+            try
+            {
+                var dirResult = JsonConvert.DeserializeObject<DirectionsResult>(response);
+                return dirResult;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error parsing DirectionsResult Object. Message: " + e.Message);
+                return null;
+            }
+
         }
     }
 }
