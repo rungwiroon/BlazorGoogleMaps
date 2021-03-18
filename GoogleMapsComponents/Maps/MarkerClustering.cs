@@ -16,11 +16,15 @@ namespace GoogleMapsComponents.Maps
 
         public readonly Dictionary<string, List<MapEventListener>> EventListeners;
 
-        public static async Task<MarkerClustering> CreateAsync(IJSRuntime jsRuntime, Map map, IEnumerable<Marker> markers)
+        public static async Task<MarkerClustering> CreateAsync(
+            IJSRuntime jsRuntime,
+            Map map,
+            IEnumerable<Marker> markers,
+            string imagePath = "_content/BlazorGoogleMaps/m")
         {
             var guid = System.Guid.NewGuid();
             var jsObjectRef = new JsObjectRef(jsRuntime, guid);
-            await jsRuntime.InvokeVoidAsync("googleMapsObjectManager.addClusteringMarkers", guid.ToString(), map.Guid.ToString(), markers);
+            await jsRuntime.InvokeVoidAsync("googleMapsObjectManager.addClusteringMarkers", guid.ToString(), map.Guid.ToString(), markers, imagePath);
             var obj = new MarkerClustering(jsObjectRef);
             return obj;
         }
