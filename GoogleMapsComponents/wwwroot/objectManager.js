@@ -21,23 +21,6 @@ function dateObjectReviver(key, value) {
     }
     return value;
 }
-//deserializing normaly we get Converting circular structure to JSON error
-function simpleStringify(object) {
-    var simpleObject = {};
-    for (var prop in object) {
-        if (!object.hasOwnProperty(prop)) {
-            continue;
-        }
-        if (typeof (object[prop]) == 'object') {
-            continue;
-        }
-        if (typeof (object[prop]) == 'function') {
-            continue;
-        }
-        simpleObject[prop] = object[prop];
-    }
-    return JSON.stringify(simpleObject); // returns cleaned up JSON
-};
 
 function tryParseJson(item) {
     //console.log(item);
@@ -66,7 +49,28 @@ function tryParseJson(item) {
 
             var guid = googleMapsObjectManager.addObject(args[0]);
 
-            await item.invokeMethodAsync("Invoke", JSON.stringify(args), guid);
+            //Strip circular dependencies, map object and functions
+            //https://stackoverflow.com/questions/11616630/how-can-i-print-a-circular-structure-in-a-json-like-format
+            const getCircularReplacer = () => {
+                const seen = new WeakSet();
+                return (key, value) => {
+                    if (key == "map") return undefined;
+                    if (typeof (value) == 'function') return undefined;
+
+                    if (typeof value === "object" && value !== null) {
+                        if (seen.has(value)) {
+                            return;
+                        }
+                        seen.add(value);
+                    }
+                    return value;
+                };
+            };
+
+
+            //OLD code
+            //await item.invokeMethodAsync("Invoke", JSON.stringify(args), guid);
+            await item.invokeMethodAsync("Invoke", JSON.stringify(args, getCircularReplacer()), guid);
 
             googleMapsObjectManager.disposeObject(guid);
         };

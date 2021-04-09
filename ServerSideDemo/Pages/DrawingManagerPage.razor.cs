@@ -69,12 +69,15 @@ namespace ServerSideDemo.Pages
             };
 
             drawingManager = await DrawingManager.CreateAsync(JsRuntime, managerOptions);
-            //OverlayCompleteEvent
+
             //https://developers.google.com/maps/documentation/javascript/drawinglayer
             await drawingManager.AddListener<OverlayCompleteEvent>("overlaycomplete", (arg) =>
-           {
-               var ss = "asd" + arg.Overlay;
-           });
+            {
+                //Overlay object is JObject with all properties,
+                //so need to serialize, extract required info depending on your needs
+                var s = arg.Overlay.ToString();
+                var ss = "asd" + arg;
+            });
 
 
         }
