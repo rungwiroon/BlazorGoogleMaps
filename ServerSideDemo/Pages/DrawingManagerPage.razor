@@ -1,0 +1,10 @@
+﻿@page "/drawing-manager"
+@using GoogleMapsComponents
+@using GoogleMapsComponents.Maps
+@using System.Diagnostics
+@using GoogleMapsComponents.Maps.Coordinates
+
+<h1>Google Map Markers</h1>
+
+<GoogleMap @ref="@map1" Id="map1" Options="@mapOptions" OnAfterInit="@(async () => await OnAfterInitAsync())"></GoogleMap>
+@*<div id="map" @ref="@map1ElementRef" style="height: 450px"></div>*@

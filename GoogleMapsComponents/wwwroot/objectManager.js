@@ -21,6 +21,23 @@ function dateObjectReviver(key, value) {
     }
     return value;
 }
+//deserializing normaly we get Converting circular structure to JSON error
+function simpleStringify(object) {
+    var simpleObject = {};
+    for (var prop in object) {
+        if (!object.hasOwnProperty(prop)) {
+            continue;
+        }
+        if (typeof (object[prop]) == 'object') {
+            continue;
+        }
+        if (typeof (object[prop]) == 'function') {
+            continue;
+        }
+        simpleObject[prop] = object[prop];
+    }
+    return JSON.stringify(simpleObject); // returns cleaned up JSON
+};
 
 function tryParseJson(item) {
     //console.log(item);
