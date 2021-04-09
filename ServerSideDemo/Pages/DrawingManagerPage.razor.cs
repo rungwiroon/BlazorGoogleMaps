@@ -75,8 +75,7 @@ namespace ServerSideDemo.Pages
             {
                 //Overlay object is JObject with all properties,
                 //so need to serialize, extract required info depending on your needs
-                var s = arg.Overlay.ToString();
-                var ss = "asd" + arg;
+                var json = arg.Overlay.ToString();
             });
 
 
