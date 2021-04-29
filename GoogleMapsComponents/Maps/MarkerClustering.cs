@@ -20,11 +20,17 @@ namespace GoogleMapsComponents.Maps
             IJSRuntime jsRuntime,
             Map map,
             IEnumerable<Marker> markers,
-            string imagePath = "_content/BlazorGoogleMaps/m")
+            MarkerClustererOptions options = null
+           )
         {
+            if (options == null)
+            {
+                options = new MarkerClustererOptions();
+            }
+
             var guid = System.Guid.NewGuid();
             var jsObjectRef = new JsObjectRef(jsRuntime, guid);
-            await jsRuntime.InvokeVoidAsync("googleMapsObjectManager.addClusteringMarkers", guid.ToString(), map.Guid.ToString(), markers, imagePath);
+            await jsRuntime.InvokeVoidAsync("googleMapsObjectManager.addClusteringMarkers", guid.ToString(), map.Guid.ToString(), markers, options);
             var obj = new MarkerClustering(jsObjectRef);
             return obj;
         }
