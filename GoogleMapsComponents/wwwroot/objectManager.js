@@ -486,17 +486,14 @@ window.googleMapsObjectManager = {
         return uuid;
     },
 
-    addClusteringMarkers(guid, mapGuid, markers, imagePath) {
+    addClusteringMarkers(guid, mapGuid, markers, options) {
         const map = window._blazorGoogleMapsObjects[mapGuid];
 
         const originalMarkers = markers.map((marker, i) => {
             return window._blazorGoogleMapsObjects[marker.guid];
         });
 
-        const markerCluster = new MarkerClusterer(map, originalMarkers, {
-            imagePath:
-                imagePath
-        });
+        const markerCluster = new MarkerClusterer(map, originalMarkers, options);
 
         if ("set" in markerCluster) {
             markerCluster.set("guidString", guid);
