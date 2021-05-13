@@ -25,9 +25,9 @@ Add the following script if you want to use marker clustering.
 @using GoogleMapsComponents.Maps
 
 <h1>Google Map</h1>
-
-<GoogleMap @ref="@map1" Id="map1" Options="@mapOptions"></GoogleMap>
-
+<div style="height:@Height">
+<GoogleMap @ref="@map1" Id="map1" Options="@mapOptions" Height="100%"></GoogleMap>
+</div>
 @functions {
 	private GoogleMap map1;
 	private MapOptions mapOptions;	
@@ -66,6 +66,7 @@ Add the following script if you want to use marker clustering.
 	private MapOptions mapOptions;	
 	private DirectionsRenderer dirRend;
 	private string _durationTotalString;
+	private string Height = 300px; //Now you can use this to dynamically set the height
     	private string _distanceTotalString;
     
 	protected override void OnInitialized()
