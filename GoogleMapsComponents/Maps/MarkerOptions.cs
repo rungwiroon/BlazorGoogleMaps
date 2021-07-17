@@ -61,6 +61,11 @@ namespace GoogleMapsComponents.Maps
         public LatLngLiteral Position { get; set; }
 
         /// <summary>
+        /// 2021-07 supported only in beta google maps version
+        /// </summary>
+        public CollisionBehavior? CollisionBehavior { get; set; }
+
+        /// <summary>
         /// Image map region definition used for drag/click.
         /// </summary>
         public MarkerShape Shape { get; set; }

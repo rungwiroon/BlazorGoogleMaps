@@ -126,6 +126,7 @@ namespace ServerSideDemo.Pages
                 Position = mapCenter,
                 Map = map1.InteropObject,
                 Label = $"Test {markers.Count}",
+                //CollisionBehavior = CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY//2021-07 supported only in beta google maps version
                 //Animation = Animation.Bounce
                 //Icon = new Icon()
                 //{

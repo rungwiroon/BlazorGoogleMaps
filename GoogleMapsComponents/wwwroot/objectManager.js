@@ -109,6 +109,21 @@ function tryParseJson(item) {
                     }
                 }
 
+                if (propertyValue !== null && typeof propertyValue === "string" && propertyValue.indexOf("google.maps.CollisionBehavior") == 0) {
+                    switch (propertyValue) {
+                        case "google.maps.CollisionBehavior.REQUIRED":
+                            item2[propertyName] = google.maps.CollisionBehavior.REQUIRED;
+                            break;
+                        case "google.maps.CollisionBehavior.REQUIRED_AND_HIDES_OPTIONAL":
+                            item2[propertyName] = google.maps.CollisionBehavior.REQUIRED_AND_HIDES_OPTIONAL;
+                            break;
+                        case "google.maps.CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY":
+                            item2[propertyName] = google.maps.CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY;
+                            break;
+                        default:
+                    }
+                }
+
                 if (typeof propertyValue === "object"
                     && propertyValue !== null
                     && "guidString" in propertyValue) {
