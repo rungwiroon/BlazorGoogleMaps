@@ -194,6 +194,11 @@ namespace GoogleMapsComponents.Maps
             return _jsObjectRef.InvokeAsync("setZoom", zoom);
         }
 
+        public Task SetOptions(MapOptions mapOptions)
+        {
+            return _jsObjectRef.InvokeAsync("setOptions", mapOptions);
+        }
+
         public async Task<MapEventListener> AddListener(string eventName, Action handler)
         {
             var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
