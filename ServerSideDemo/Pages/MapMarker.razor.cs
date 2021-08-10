@@ -118,6 +118,30 @@ namespace ServerSideDemo.Pages
             return result;
         }
 
+        private async Task AddMarkerStyled()
+        {
+            var mapCenter = await map1.InteropObject.GetCenter();
+            ZIndex++;
+
+            var marker = await Marker.CreateAsync(map1.JsRuntime, new MarkerOptions()
+            {
+                Position = mapCenter,
+                Map = map1.InteropObject,
+                ZIndex = ZIndex,
+                Label = new MarkerLabel
+                {
+                    Text = $"Test {markers.Count()}",
+                    FontWeight = "bold",
+                    Color = "#5B32FF",
+                    FontSize = "24",
+                    ClassName = "map-marker-label"
+                },
+            });
+
+            markers.Push(marker);
+
+            return;
+        }
         private async Task AddMarker()
         {
             var mapCenter = await map1.InteropObject.GetCenter();

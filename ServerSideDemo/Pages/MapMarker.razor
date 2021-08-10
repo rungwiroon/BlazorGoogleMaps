@@ -7,11 +7,12 @@
 <h1>Google Map Markers</h1>
 
 <GoogleMap @ref="@map1" Id="map1" Options="@mapOptions"></GoogleMap>
-<button @onclick="AddMarker">Add marker</button>
-<button @onclick="RemoveMarker">Remove marker</button>
-<button @onclick="Recenter">Re-center marker</button>
-<button @onclick="FitBounds">Fit to markers</button>
-<button @onclick="InvokeClustering">Invoke map cluster</button>
+<button @onclick="@AddMarker">Add marker</button>
+<button @onclick="@AddMarkerStyled">Add styled font marker</button>
+<button @onclick="@RemoveMarker">Remove marker</button>
+<button @onclick="@Recenter">Re-center marker</button>
+<button @onclick="@FitBounds">Fit to markers</button>
+<button @onclick="@InvokeClustering">Invoke map cluster</button>
 <button @onclick="@ClearClustering">ClearClustering</button>
 <button @onclick="@GetAnimation">GetAnimation </button>
 <button @onclick="@SetAnimation">SetAnimation </button>
@@ -71,5 +72,32 @@
     .mdc-select__anchor,
     .mdc-select__menu {
         width: 100%;
+    }
+
+    .marker {
+        color: white;
+        background-color: black;
+        border: solid 1px black;
+        font-weight: 900;
+        padding: 4px;
+        top: -8px;
+    }
+
+        .marker::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translate(-50%, 0%);
+            border: solid 8px transparent;
+            border-top-color: black;
+        }
+
+    .map-marker-label {
+        position: absolute;
+        color: blue;
+        font-size: 16px;
+        font-weight: bold;
+        background: blueviolet
     }
 </style>
