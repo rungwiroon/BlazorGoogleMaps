@@ -128,20 +128,6 @@ In Startup.ConfigureServices
 services.AddServerSideBlazor().AddHubOptions(config => config.MaximumReceiveMessageSize = 1048576);
 ```
 
-## Current status
-* Map
-* Marker
-* Symbols
-* InfoWindow
-* Polygon, LineString, Rectangle, Circle
-* Routes
-* Coordinates
-  * Bounds
- * Styles
+## Samples
+ Please check server side samples https://github.com/rungwiroon/BlazorGoogleMaps/tree/master/ServerSideDemo which is most to date
 
-## Work In Progress
-
-## Todo
-* Data 
-* StreetView
-* Places
