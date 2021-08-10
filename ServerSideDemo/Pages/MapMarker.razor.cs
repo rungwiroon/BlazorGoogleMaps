@@ -128,6 +128,9 @@ namespace ServerSideDemo.Pages
                 Position = mapCenter,
                 Map = map1.InteropObject,
                 ZIndex = ZIndex,
+                //Note that font properties are overriden in class
+                //Please be cautious about versioning issues and some issues when using other tools
+                //https://developers.google.com/maps/documentation/javascript/reference/marker#MarkerLabel.className
                 Label = new MarkerLabel
                 {
                     Text = $"Test {markers.Count()}",
