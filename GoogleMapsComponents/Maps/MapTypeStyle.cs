@@ -64,6 +64,48 @@ namespace GoogleMapsComponents.Maps
         }
     }
 
+    public class GoogleMapStyleLightness : GoogleMapStyleElement
+    {
+        public int lightness;
+
+        public static explicit operator GoogleMapStyleLightness(int lightness)
+        {
+            return new GoogleMapStyleLightness
+            {
+                //Clamp the lightness value to be between -100 and + 100
+                lightness = lightness < -100 ? -100 : lightness > 100 ? 100 : lightness
+            };
+        }
+    }
+
+    public class GoogleMapStyleSaturation : GoogleMapStyleElement
+    {
+        public int saturation;
+
+        public static explicit operator GoogleMapStyleSaturation(int saturation)
+        {
+            return new GoogleMapStyleSaturation
+            {
+                //Clamp the saturation value to be between -100 and + 100
+                saturation = saturation < -100 ? -100 : saturation > 100 ? 100 : saturation
+            };
+        }
+    }
+
+    public class GoogleMapStyleWeight : GoogleMapStyleElement
+    {
+        public double weight;
+
+        public static explicit operator GoogleMapStyleWeight(double weight)
+        {
+            return new GoogleMapStyleWeight
+            {
+                //Clamp the weight value to be between 0 and 8
+                weight = weight < 0 ? 0 : weight > 8 ? 8 : weight
+            };
+        }
+    }
+
     /// <summary>
     /// More info at <br />
     /// https://developers.google.com/maps/documentation/javascript/examples/style-array?hl=fr
@@ -76,7 +118,6 @@ namespace GoogleMapsComponents.Maps
         {
             return _styles.ToArray();
         }
-
 
         /// <summary>
         /// AddVisibility("administrative", "", false).
@@ -116,7 +157,64 @@ namespace GoogleMapsComponents.Maps
         }
 
         /// <summary>
-        /// Use AddColor or AddVisibility. Else use custom explicit operator inheritance object
+        /// AddLightness("administrative", "", 45).
+        /// lightness is casted into <see cref="GoogleMapStyleLightness"/> element
+        /// </summary>
+        /// <param name="featureType"></param>
+        /// <param name="elementType"></param>
+        /// <param name="lightness">integer value between -100 and +100 : indicates the percentage change in brightness of the element.<br/>
+        /// Negative values increase darkness (where -100 specifies black) while positive values increase brightness (where +100 specifies white).</param>
+        public GoogleMapStyleBuilder AddLightness(string featureType, string elementType, int lightness)
+        {
+            MapTypeStyle s = new MapTypeStyle();
+            s.elementType = elementType;
+            s.featureType = featureType;
+            s.stylers = new[] { (GoogleMapStyleLightness)lightness };
+            _styles.Add(s);
+
+            return this;
+        }
+
+        /// <summary>
+        /// AddSaturation("administrative", "", -10).
+        /// saturation is casted into <see cref="GoogleMapStyleSaturation"/> element
+        /// </summary>
+        /// <param name="featureType"></param>
+        /// <param name="elementType"></param>
+        /// <param name="saturation">integer value between -100 and +100 : indicates the percentage change in intensity of the basic color to apply to the element.<br/>
+        /// E.g., -100 removes all intensity from the color of a feature, regardless of its starting color. The effect is to render the feature grayscale.</param>
+        public GoogleMapStyleBuilder AddSaturation(string featureType, string elementType, int saturation)
+        {
+            MapTypeStyle s = new MapTypeStyle();
+            s.elementType = elementType;
+            s.featureType = featureType;
+            s.stylers = new[] { (GoogleMapStyleSaturation)saturation };
+            _styles.Add(s);
+
+            return this;
+        }
+
+        /// <summary>
+        /// AddWeight("administrative", "", 2.5).
+        /// weight is casted into <see cref="GoogleMapStyleWeight"/> element
+        /// </summary>
+        /// <param name="featureType"></param>
+        /// <param name="elementType"></param>
+        /// <param name="weight">decimal value between 0 and 8 : sets the weight of the feature, in pixels.<br/>
+        /// Setting the weight to a high value may result in clipping near tile borders.</param>
+        public GoogleMapStyleBuilder AddWeight(string featureType, string elementType, double weight)
+        {
+            MapTypeStyle s = new MapTypeStyle();
+            s.elementType = elementType;
+            s.featureType = featureType;
+            s.stylers = new[] { (GoogleMapStyleWeight)weight };
+            _styles.Add(s);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Use AddColor, AddVisibility, AddLightness, AddSaturation, or AddWeight. Else use custom explicit operator inheritance object
         /// </summary>
         /// <param name="featureType"></param>
         /// <param name="elementType"></param>
@@ -163,6 +261,33 @@ namespace GoogleMapsComponents.Maps
                         if (!string.IsNullOrEmpty(stylerValue))
                         {
                             s.stylers = new[] {new GoogleMapStyleColor() {color = stylerValue}};
+                        }
+                    }
+
+                    if (IsPropertyExist(styleItem.stylers[0], "lightness"))
+                    {
+                        string stylerValue = styleItem.stylers[0].lightness?.ToString();
+                        if (!string.IsNullOrEmpty(stylerValue) && int.TryParse(stylerValue, out int l))
+                        {
+                            s.stylers = new[] { new GoogleMapStyleLightness { lightness = l } };
+                        }
+                    }
+
+                    if (IsPropertyExist(styleItem.stylers[0], "saturation"))
+                    {
+                        string stylerValue = styleItem.stylers[0].saturation?.ToString();
+                        if (!string.IsNullOrEmpty(stylerValue) && int.TryParse(stylerValue, out int sat))
+                        {
+                            s.stylers = new[] { new GoogleMapStyleSaturation { saturation = sat } };
+                        }
+                    }
+
+                    if (IsPropertyExist(styleItem.stylers[0], "weight"))
+                    {
+                        string stylerValue = styleItem.stylers[0].weight?.ToString();
+                        if (!string.IsNullOrEmpty(stylerValue) && double.TryParse(stylerValue, out double w))
+                        {
+                            s.stylers = new[] { new GoogleMapStyleWeight { weight = w } };
                         }
                     }
                 }
