@@ -40,7 +40,8 @@ namespace ServerSideDemo.Pages
                     Lat = 13.505892,
                     Lng = 100.8162
                 },
-                MapTypeId = MapTypeId.Roadmap
+                MapTypeId = MapTypeId.Roadmap,
+                MapId = "3a3b33f0edd6ed2a"
             };
         }
 

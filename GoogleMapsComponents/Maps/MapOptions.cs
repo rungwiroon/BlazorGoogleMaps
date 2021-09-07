@@ -168,7 +168,7 @@ namespace GoogleMapsComponents.Maps
         /// If false, disables zooming on the map using a mouse scroll wheel. 
         /// The scrollwheel is enabled by default.
         /// </summary>
-        public bool? Scrollwheel  { get; set; }
+        public bool? Scrollwheel { get; set; }
 
         /// <summary>
         /// A StreetViewPanorama to display when the Street View pegman is dropped on the map. 
@@ -217,5 +217,14 @@ namespace GoogleMapsComponents.Maps
         /// The display options for the Zoom control.
         /// </summary>
         public ZoomControlOptions ZoomControlOptions { get; set; }
+
+        /// <summary>
+        /// Type:  string optional
+        /// The unique identifier that represents a single instance of a Google Map.
+        /// You can create Map IDs and update a style associated with a
+        /// Map ID at any time in the Google Cloud Console Maps Management
+        /// page without changing embedded JSON styling in your application code.
+        /// </summary>
+        public string? MapId { get; set; }
     }
 }
