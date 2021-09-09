@@ -52,6 +52,8 @@ namespace ServerSideDemo.Pages
         {
             List<OverlayType> overlayTypes = new List<OverlayType>();
             overlayTypes.Add(OverlayType.Polygon);
+            overlayTypes.Add(OverlayType.Polyline);
+            overlayTypes.Add(OverlayType.Marker);
 
             var drawingControlOptions = new DrawingControlOptions()
             {
@@ -65,7 +67,7 @@ namespace ServerSideDemo.Pages
                 PolygonOptions = polygonOptions,
                 DrawingMode = OverlayType.Polygon,
                 DrawingControl = true,
-                //DrawingControlOptions = drawingControlOptions
+                DrawingControlOptions = drawingControlOptions
             };
 
             drawingManager = await DrawingManager.CreateAsync(JsRuntime, managerOptions);

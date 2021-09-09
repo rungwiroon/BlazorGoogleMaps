@@ -124,6 +124,37 @@ function tryParseJson(item) {
                     }
                 }
 
+                if (propertyValue !== null && typeof propertyValue === "object" && propertyValue.position !== undefined) {
+                    propertyValue.position = getGooglePositionFromString(propertyValue.position);
+                }
+
+                if (propertyValue !== null
+                    && typeof propertyValue === "object"
+                    && "drawingModes" in propertyValue
+                    && propertyValue.drawingModes !== undefined) {
+                    for (var drawingMode in propertyValue.drawingModes) {
+                        let drawingModeValue = propertyValue.drawingModes[drawingMode];
+                        switch (drawingModeValue) {
+                            case "google.maps.drawing.OverlayType.CIRCLE":
+                                propertyValue.drawingModes[drawingMode] = google.maps.drawing.OverlayType.CIRCLE;
+                                break;
+                            case "google.maps.drawing.OverlayType.MARKERL":
+                                propertyValue.drawingModes[drawingMode] = google.maps.drawing.OverlayType.MARKER;
+                                break;
+                            case "google.maps.drawing.OverlayType.POLYGON":
+                                propertyValue.drawingModes[drawingMode] = google.maps.drawing.OverlayType.POLYGON;
+                                break;
+                            case "google.maps.drawing.OverlayType.POLYLINE":
+                                propertyValue.drawingModes[drawingMode] = google.maps.drawing.OverlayType.POLYLINE;
+                                break;
+                            case "google.maps.drawing.OverlayType.RECTANGLE":
+                                propertyValue.drawingModes[drawingMode] = google.maps.drawing.OverlayType.RECTANGLE;
+                                break;
+                            default:
+                        }
+                    }
+                }
+
                 if (typeof propertyValue === "object"
                     && propertyValue !== null
                     && "guidString" in propertyValue) {
