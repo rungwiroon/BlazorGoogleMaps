@@ -38,7 +38,7 @@ namespace ServerSideDemo.Pages
 
             polygonOptions = new PolygonOptions()
             {
-                StrokeWeight = 0,
+                StrokeWeight = 1,
                 FillOpacity = 0.45f,
                 Draggable = true,
                 Editable = true,
@@ -65,7 +65,7 @@ namespace ServerSideDemo.Pages
             {
                 Map = map1.InteropObject,
                 PolygonOptions = polygonOptions,
-                DrawingMode = OverlayType.Polygon,
+                //DrawingMode = OverlayType.Polygon,
                 DrawingControl = true,
                 DrawingControlOptions = drawingControlOptions
             };
@@ -78,8 +78,21 @@ namespace ServerSideDemo.Pages
                 //Overlay object is JObject with all properties,
                 //so need to serialize, extract required info depending on your needs
                 var json = arg.Overlay.ToString();
+                Console.WriteLine(json);
             });
 
+
+        }
+
+        private async Task ChangeDrawingModeToLine()
+        {
+            await drawingManager.SetDrawingMode(OverlayType.Polyline); //has no visible effect, though it does seem to set the mode in the Csharp object
+
+        }
+
+        private async Task StopDrawingMode()
+        {
+            await drawingManager.SetDrawingMode(null);
 
         }
     }

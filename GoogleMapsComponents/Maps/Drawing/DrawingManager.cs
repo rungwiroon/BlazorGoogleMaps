@@ -70,7 +70,7 @@ namespace GoogleMapsComponents.Maps.Drawing
         /// A drawing mode of null means that the user can interact with the map as normal, and clicks do not draw anything.
         /// </summary>
         /// <returns></returns>
-        public Task SetDrawingMode(OverlayType drawingMode)
+        public Task SetDrawingMode(OverlayType? drawingMode)
         {
             return _jsObjectRef.InvokeAsync(
                 "setDrawingMode",

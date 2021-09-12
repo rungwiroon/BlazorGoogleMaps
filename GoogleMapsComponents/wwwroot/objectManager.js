@@ -90,6 +90,31 @@ function tryParseJson(item) {
         return item;
     }
 
+    if (typeof item2 === "string" && item2 !== null) {
+        if (item2.startsWith("google.maps.drawing.OverlayType")) {
+            switch (item2) {
+                case "google.maps.drawing.OverlayType.CIRCLE":
+                    item2 = google.maps.drawing.OverlayType.CIRCLE;
+                    break;
+                case "google.maps.drawing.OverlayType.MARKERL":
+                    item2 = google.maps.drawing.OverlayType.MARKER;
+                    break;
+                case "google.maps.drawing.OverlayType.POLYGON":
+                    item2 = google.maps.drawing.OverlayType.POLYGON;
+                    break;
+                case "google.maps.drawing.OverlayType.POLYLINE":
+                    item2 = google.maps.drawing.OverlayType.POLYLINE;
+                    break;
+                case "google.maps.drawing.OverlayType.RECTANGLE":
+                    item2 = google.maps.drawing.OverlayType.RECTANGLE;
+                    break;
+                default:
+            }
+
+            return item2;
+        }
+    }
+
     if (typeof item2 === "object" && item2 !== null) {
         if ("guidString" in item2) {
             //console.log("Found object has Guid property.");
