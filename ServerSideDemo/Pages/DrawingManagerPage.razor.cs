@@ -86,7 +86,7 @@ namespace ServerSideDemo.Pages
 
         private async Task ChangeDrawingModeToLine()
         {
-            await drawingManager.SetDrawingMode(OverlayType.Polyline); //has no visible effect, though it does seem to set the mode in the Csharp object
+            await drawingManager.SetDrawingMode(OverlayType.Polyline);
 
         }
 
