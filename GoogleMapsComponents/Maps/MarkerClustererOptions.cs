@@ -31,7 +31,7 @@ namespace GoogleMapsComponents.Maps
         public int? BatchSize { get; set; }
 
         /// <summary>
-        /// The name of the CSS class defining general styles
+        /// The name of the CSS class defining general styles for the cluster markers.
         /// </summary>
         public string? ClusterClass { get; set; }
 
@@ -49,9 +49,9 @@ namespace GoogleMapsComponents.Maps
         public int? GridSize { get; set; }
 
         /// <summary>
-        /// Whether to ignore hidden markers in clusters.You
+        /// Whether to ignore hidden markers in clusters. You
         /// may want to set this to `true` to ensure that hidden markers are not included
-        /// in the marker count that appears on a cluster marker
+        /// in the marker count that appears on a cluster marker.
         /// </summary>
         public bool? IgnoreHidden { get; set; }
 
@@ -82,9 +82,9 @@ namespace GoogleMapsComponents.Maps
         public int? ZIndex { get; set; }
 
         /// <summary>
-        /// Whether the position of a cluster marker should be
-        /// the average position of all markers in the cluster.If set to `false`, the
-        /// cluster marker is positioned at the location of the first marker added to the cluster.
+        /// Whether to zoom the map when a cluster marker is clicked. You may want to
+        /// set this to `false` if you have installed a handler for the `click` event
+        /// and it deals with zooming on its own.
         /// </summary>
         public bool? ZoomOnClick { get; set; }
     }

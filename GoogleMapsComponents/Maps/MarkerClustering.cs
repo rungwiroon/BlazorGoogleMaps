@@ -76,14 +76,29 @@ namespace GoogleMapsComponents.Maps
             await _jsObjectRef.InvokeAsync("setMap", map);
         }
 
+        /// <summary>
+        /// Removes all clusters and markers from the map and also removes all markers managed by the clusterer.
+        /// </summary>
         public virtual async Task ClearMarkers()
         {
             await _jsObjectRef.InvokeAsync("clearMarkers");
         }
 
+        /// <summary>
+        /// Fits the map to the bounds of the markers managed by the clusterer.
+        /// </summary>
+        /// <param name="padding"></param>
         public virtual async Task FitMapToMarkers(int padding)
         {
             await _jsObjectRef.InvokeAsync("fitMapToMarkers", padding);
+        }
+
+        /// <summary>
+        /// Recalculates and redraws all the marker clusters from scratch. Call this after changing any properties.
+        /// </summary>
+        public virtual async Task Repaint()
+        {
+            await _jsObjectRef.InvokeAsync("repaint");
         }
 
         public virtual async Task ClearListeners(string eventName)
