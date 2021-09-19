@@ -13,6 +13,7 @@
 <br />
 <button @onclick="StartDrawingPolygon">Start drawing polygon</button>
 <button @onclick="EndDrawingPolygon">End drawing polygon</button>
+<button @onclick="SetAndGetPathPolygon">Set and Get path polygon</button>
 <br />
 <button @onclick="DrawingRectangle">Drawing rectangle</button>
 <br />
@@ -86,10 +87,13 @@
         path.Clear();
     }
 
-    private void AddArrowsToPolyline() {
-        foreach (var polyline in polylines) {
-            polyline.SetOptions(new PolylineOptions {
-                Icons=new IconSequence[] {
+    private void AddArrowsToPolyline()
+    {
+        foreach (var polyline in polylines)
+        {
+            polyline.SetOptions(new PolylineOptions
+            {
+                Icons = new IconSequence[] {
                     new IconSequence { Icon=new Symbol { Path=SymbolPath.FORWARD_CLOSED_ARROW }, Offset="100%" },
                     new IconSequence { Icon=new Symbol { Path=SymbolPath.FORWARD_OPEN_ARROW }, Offset="80%" },
                     new IconSequence { Icon=new Symbol { Path=SymbolPath.FORWARD_OPEN_ARROW }, Offset="60%" },
@@ -100,10 +104,13 @@
         }
     }
 
-    private void RemoveArrowsFromPolyline() {
-        foreach (var polyline in polylines) {
-            polyline.SetOptions(new PolylineOptions {
-                Icons=new IconSequence[] {
+    private void RemoveArrowsFromPolyline()
+    {
+        foreach (var polyline in polylines)
+        {
+            polyline.SetOptions(new PolylineOptions
+            {
+                Icons = new IconSequence[] {
                 }
             });
         }
@@ -121,7 +128,7 @@
         path.Clear();
     }
 
-    private void EndDrawingPolygon()
+    private async Task EndDrawingPolygon()
     {
         polygons.Add(polygon);
 
@@ -197,4 +204,32 @@
         }
     }
 
+    private async Task SetAndGetPathPolygon()
+    {
+
+        var polygonForPath = await Polygon.CreateAsync(map1.JsRuntime, new PolygonOptions()
+        {
+            Draggable = true,
+            Editable = false,
+            Map = map1.InteropObject,
+            FillColor = "red",
+            ZIndex = 999
+        });
+
+        var path = new List<LatLngLiteral>()
+{
+            new LatLngLiteral(100.79645894165039,13.524851660334175 ),
+            new LatLngLiteral( 100.88469288940429,13.501818214607113 ),
+            new LatLngLiteral( 100.87301991577148,13.533864141748618 ),
+        };
+
+        polygons.Add(polygonForPath);
+        await polygonForPath.SetPath(path);
+
+        var polygonPath = await polygonForPath.GetPath();
+        foreach (var latLngLiteral in polygonPath)
+        {
+            Console.WriteLine(latLngLiteral);
+        }
+    }
 }
