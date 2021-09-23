@@ -129,5 +129,5 @@ services.AddServerSideBlazor().AddHubOptions(config => config.MaximumReceiveMess
 ```
 
 ## Samples
- Please check server side samples https://github.com/rungwiroon/BlazorGoogleMaps/tree/master/ServerSideDemo which is most to date
+ Please check server side samples https://github.com/rungwiroon/BlazorGoogleMaps/tree/master/ServerSideDemo which are most to date
 
