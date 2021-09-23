@@ -53,7 +53,7 @@
                     Lat = 45.518,
                     Lng = -122.672
                 },
-                MapTypeId = MapTypeId.Sattellite,
+                MapTypeId = MapTypeId.Satellite,
                 Heading = 90,
                 Tilt = 45
             };
@@ -110,9 +110,9 @@
 
         Console.WriteLine($"Map type is {mapTypeId}");
 
-        if (mapTypeId != MapTypeId.Sattellite)
+        if (mapTypeId != MapTypeId.Satellite)
         {
-            await map1.SetMapTypeId(MapTypeId.Sattellite);
+            await map1.SetMapTypeId(MapTypeId.Satellite);
         }
         else
         {

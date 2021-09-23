@@ -31,7 +31,7 @@ namespace GoogleMapsComponents.Maps
         /// This map type displays satellite images.
         /// </summary>
         [EnumMember(Value = "satellite")]
-        Sattellite,
+        Satellite,
 
         /// <summary>
         /// This map type displays maps with physical features such as terrain and vegetation.
