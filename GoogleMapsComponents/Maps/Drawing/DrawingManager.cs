@@ -1,7 +1,9 @@
 ﻿using Microsoft.JSInterop;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps.Drawing
@@ -62,6 +64,30 @@ namespace GoogleMapsComponents.Maps.Drawing
         public Map GetMap()
         {
             return _map;
+        }
+
+        /// <summary>
+        /// Returns a polygon object when a polygon is added to this drawing manager
+        /// </summary>
+        /// <param name="jSRuntime"></param>
+        /// <param name="handler"></param>
+        /// <returns></returns>
+        public async Task AddPolygonCompleteListener(IJSRuntime jSRuntime,  Action<Polygon> handler)
+        {
+            await _jsObjectRef.InvokeAsync("addListener", "polygoncomplete"); //add the listener that removes the polygons from the map. This could also be done on create and applied to polyline, circle, and other shape types
+            await AddListener<OverlayCompleteEvent>("overlaycomplete", async (arg) => //internally create an overlaycomplete listener
+            {
+                var result = JObject.Parse(arg.Overlay.ToString());
+                var LatLngList = JsonSerializer.Deserialize<IEnumerable<LatLngLiteral>>(result["latLngs"]["je"][0]["je"].ToString().Replace("l", "L")); //parse this literal to string and pull out the lat/lng pairs
+                var polygon = await Polygon.CreateAsync(jSRuntime, new PolygonOptions() //create a polygon object
+                {
+                    Draggable = true,
+                    Editable = true,
+                    Map = _map
+                });
+                await polygon.SetPath(LatLngList); //set the pairs on this polygon
+                handler.Invoke(polygon); //alert the handler that we hace a polygon
+            });
         }
 
         /// <summary>

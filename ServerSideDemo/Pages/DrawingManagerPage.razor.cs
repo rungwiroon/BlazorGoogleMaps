@@ -95,5 +95,13 @@ namespace ServerSideDemo.Pages
             await drawingManager.SetDrawingMode(null);
 
         }
+
+        private async Task AddPolygonListener()
+        {
+            await drawingManager.AddPolygonCompleteListener(map1.JsRuntime, (polygon) =>
+            {
+                Console.WriteLine(polygon.GetPath());
+            });
+        }
     }
 }

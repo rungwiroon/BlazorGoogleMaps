@@ -427,7 +427,11 @@ window.googleMapsObjectManager = {
 
             let jsonRest = JSON.stringify(cleanDirectionResult(result, dirRequestOptions));
             return jsonRest;
-        } else {
+        }
+        else if (args2[0] == "polygoncomplete") { //if the event is polygoncomplete, add the event to remove polygons from the map
+            this.addDrawingCompleteListener(obj, "polygon");
+        }
+        else {
             var result = null;
             try {
                 result = obj[functionToInvoke](...args2);
@@ -571,5 +575,11 @@ window.googleMapsObjectManager = {
         }
 
         window._blazorGoogleMapsObjects[guid] = markerCluster;
+    },
+
+    addDrawingCompleteListener(drawingManager, drawingType) {
+        google.maps.event.addListener(drawingManager, drawingType + 'complete', function (drawing) {
+            drawing.setMap(null); //remove the item from the map so we can manually add it again later
+        });
     }
 };
