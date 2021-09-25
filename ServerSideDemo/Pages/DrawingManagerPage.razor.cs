@@ -73,12 +73,20 @@ namespace ServerSideDemo.Pages
             drawingManager = await DrawingManager.CreateAsync(JsRuntime, managerOptions);
 
             //https://developers.google.com/maps/documentation/javascript/drawinglayer
-            await drawingManager.AddListener<OverlayCompleteEvent>("overlaycomplete", (arg) =>
+            await drawingManager.AddOverlayCompleteListener(async (overComplete) =>
             {
-                //Overlay object is JObject with all properties,
-                //so need to serialize, extract required info depending on your needs
-                var json = arg.Overlay.ToString();
-                Console.WriteLine(json);
+                if (overComplete.Type == OverlayType.Polygon)
+                {
+                    var poly = overComplete.Polygon;
+                    var polyPath = await poly.GetPath();
+                    await poly.SetOptions(new PolygonOptions()
+                    {
+                        FillColor = "blue",
+                        Editable = false,
+                        Draggable = false
+                    });
+                }
+
             });
 
 

@@ -109,6 +109,45 @@ namespace GoogleMapsComponents.Maps.Drawing
             return new MapEventListener(listenerRef);
         }
 
+        public async Task AddOverlayCompleteListener(Action<OverlayCompleteEvent> action)
+        {
+            void Act(OverlaycompleteArgs args)
+            {
+                var completeEvent = new OverlayCompleteEvent();
+                var reference = new JsObjectRef(_jsObjectRef.JSRuntime, args.uuid);
+                switch (args.type)
+                {
+                    case "polygon":
+                        completeEvent.Polygon = new Polygon(reference);
+                        completeEvent.Type = OverlayType.Polygon;
+                        break;
+                    case "marker":
+                        completeEvent.Marker = new Marker(reference);
+                        completeEvent.Type = OverlayType.Marker;
+                        break;
+                    case "polyline":
+                        completeEvent.Polyline = new Polyline(reference);
+                        completeEvent.Type = OverlayType.Polyline;
+                        break;
+                    case "rectangle":
+                        completeEvent.Rectangle = new Rectangle(reference);
+                        completeEvent.Type = OverlayType.Rectangle;
+                        break;
+                    case "circle":
+                        completeEvent.Circle = new Circle(reference);
+                        completeEvent.Type = OverlayType.Circle;
+                        break;
+                }
+
+                action.Invoke(completeEvent);
+            }
+
+            await _jsObjectRef.JSRuntime.MyInvokeAsync("googleMapsObjectManager.drawingManagerOverlaycomplete",
+                new object[] { this._jsObjectRef.Guid.ToString(), (Action<OverlaycompleteArgs>)Act });
+
+            return;
+        }
+
         public async Task<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
         {
             var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
@@ -116,5 +155,19 @@ namespace GoogleMapsComponents.Maps.Drawing
 
             return new MapEventListener(listenerRef);
         }
+
+        /// <summary>
+        /// Object is created in drawingManagerOverlaycomplete function in objectManager.js
+        /// </summary>
+        private class OverlaycompleteArgs
+        {
+            // ReSharper disable once InconsistentNaming
+            public Guid uuid { get; set; }
+            // ReSharper disable once InconsistentNaming
+            public string type { get; set; }
+        }
+
     }
+
+
 }

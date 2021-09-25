@@ -18,7 +18,7 @@ namespace GoogleMapsComponents.Maps
         /// Create a rectangle using the passed RectangleOptions, which specify the bounds and style.
         /// </summary>
         /// <param name="opts"></param>
-        public async static Task<Rectangle> CreateAsync(IJSRuntime jsRuntime, RectangleOptions opts = null)
+        public static async Task<Rectangle> CreateAsync(IJSRuntime jsRuntime, RectangleOptions opts = null)
         {
             var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Rectangle", opts);
 
@@ -31,7 +31,7 @@ namespace GoogleMapsComponents.Maps
         /// Create a rectangle using the passed RectangleOptions, which specify the bounds and style.
         /// </summary>
         /// <param name="opts"></param>
-        private Rectangle(JsObjectRef jsObjectRef, RectangleOptions opts = null)
+        internal Rectangle(JsObjectRef jsObjectRef, RectangleOptions opts = null)
         {
             _jsObjetRef = jsObjectRef;
             _map = opts?.Map;

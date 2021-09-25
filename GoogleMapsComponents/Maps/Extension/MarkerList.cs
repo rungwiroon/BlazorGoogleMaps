@@ -31,12 +31,13 @@ namespace GoogleMapsComponents.Maps.Extension
             JsObjectRef jsObjectRef = new JsObjectRef(jsRuntime, Guid.NewGuid());
 
             MarkerList obj;
-                Dictionary<string, JsObjectRef> jsObjectRefs = await JsObjectRef.CreateMultipleAsync(
-                    jsRuntime,
-                    "google.maps.Marker",
-                    opts.ToDictionary(e => e.Key, e => (object)e.Value));
-                Dictionary<string, Marker> objs = jsObjectRefs.ToDictionary(e => e.Key, e => new Marker(e.Value));
-                obj = new MarkerList(jsObjectRef, objs);
+            Dictionary<string, JsObjectRef> jsObjectRefs = await JsObjectRef.CreateMultipleAsync(
+                jsRuntime,
+                "google.maps.Marker",
+                opts.ToDictionary(e => e.Key, e => (object)e.Value));
+
+            Dictionary<string, Marker> objs = jsObjectRefs.ToDictionary(e => e.Key, e => new Marker(e.Value));
+            obj = new MarkerList(jsObjectRef, objs);
 
             return obj;
         }
@@ -53,25 +54,32 @@ namespace GoogleMapsComponents.Maps.Extension
         /// <returns>
         /// The managed list. Assign to the variable you used as parameter.
         /// </returns>
-        public static async Task<MarkerList> SyncAsync(MarkerList list,IJSRuntime jsRuntime, Dictionary<string, MarkerOptions> opts,Action<MouseEvent,string,Marker> clickCallback=null)
+        public static async Task<MarkerList> SyncAsync(MarkerList list, IJSRuntime jsRuntime, Dictionary<string, MarkerOptions> opts, Action<MouseEvent, string, Marker> clickCallback = null)
         {
-          if (opts.Count==0) {
-            if (list!=null) {
-              await list.SetMultipleAsync(opts);
-              list=null;
+            if (opts.Count == 0)
+            {
+                if (list != null)
+                {
+                    await list.SetMultipleAsync(opts);
+                    list = null;
+                }
             }
-          } else {
-            if (list==null) {
-              list = await MarkerList.CreateAsync(jsRuntime,new Dictionary<string, MarkerOptions>());
-              if (clickCallback!=null) {
-                list.EntityClicked+=(sender,e)=>{
-                  clickCallback(e.MouseEvent,e.Key,e.Entity);
-                };
-              }
+            else
+            {
+                if (list == null)
+                {
+                    list = await MarkerList.CreateAsync(jsRuntime, new Dictionary<string, MarkerOptions>());
+                    if (clickCallback != null)
+                    {
+                        list.EntityClicked += (sender, e) =>
+                        {
+                            clickCallback(e.MouseEvent, e.Key, e.Entity);
+                        };
+                    }
+                }
+                await list.SetMultipleAsync(opts);
             }
-              await list.SetMultipleAsync(opts);
-          }
-          return list;
+            return list;
         }
 
         private MarkerList(JsObjectRef jsObjectRef, Dictionary<string, Marker> markers)
@@ -86,7 +94,7 @@ namespace GoogleMapsComponents.Maps.Extension
         /// <returns></returns>
         public async Task SetMultipleAsync(Dictionary<string, MarkerOptions> opts)
         {
-          await base.SetMultipleAsync(opts, "google.maps.Marker");
+            await base.SetMultipleAsync(opts, "google.maps.Marker");
         }
 
         /// <summary>

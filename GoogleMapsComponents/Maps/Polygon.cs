@@ -8,7 +8,7 @@ namespace GoogleMapsComponents.Maps
 {
     public class Polygon : IDisposable
     {
-        private readonly JsObjectRef _jsObjectRef;
+        protected readonly JsObjectRef _jsObjectRef;
         private Map _map;
 
         /// <summary>
@@ -16,7 +16,7 @@ namespace GoogleMapsComponents.Maps
         /// A polygon may contain one or more paths, where each path consists of an array of LatLngs.
         /// </summary>
         /// <param name="opts"></param>
-        public async static Task<Polygon> CreateAsync(IJSRuntime jsRuntime, PolygonOptions opts = null)
+        public static async Task<Polygon> CreateAsync(IJSRuntime jsRuntime, PolygonOptions opts = null)
         {
             var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Polygon", opts);
 
@@ -30,7 +30,7 @@ namespace GoogleMapsComponents.Maps
         /// A polygon may contain one or more paths, where each path consists of an array of LatLngs.
         /// </summary>
         /// <param name="opts"></param>
-        private Polygon(JsObjectRef jsObjectRef, PolygonOptions opts = null)
+        internal Polygon(JsObjectRef jsObjectRef, PolygonOptions opts = null)
         {
             _jsObjectRef = jsObjectRef;
             _map = opts?.Map;

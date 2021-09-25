@@ -499,6 +499,19 @@ window.googleMapsObjectManager = {
         return uuid;
     },
 
+    drawingManagerOverlaycomplete: function (args) {
+        var uuid = args[0];
+        var act = args[1];
+
+        let drawingManager = window._blazorGoogleMapsObjects[uuid];
+        google.maps.event.addListener(drawingManager, "overlaycomplete", function (event) {
+            let overlayUuid = uuidv4();
+            window._blazorGoogleMapsObjects[overlayUuid] = event.overlay;
+            let returnObj = JSON.stringify([{ type: event.type, uuid: overlayUuid.toString() }]);
+            act.invokeMethodAsync("Invoke", returnObj, uuid);
+        });
+    },
+
     invokeMultipleWithReturnedObjectRef: function (args) {
 
         let guids = args[0];
