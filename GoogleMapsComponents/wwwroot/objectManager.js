@@ -96,7 +96,7 @@ function tryParseJson(item) {
                 case "google.maps.drawing.OverlayType.CIRCLE":
                     item2 = google.maps.drawing.OverlayType.CIRCLE;
                     break;
-                case "google.maps.drawing.OverlayType.MARKERL":
+                case "google.maps.drawing.OverlayType.MARKER":
                     item2 = google.maps.drawing.OverlayType.MARKER;
                     break;
                 case "google.maps.drawing.OverlayType.POLYGON":
@@ -163,7 +163,7 @@ function tryParseJson(item) {
                             case "google.maps.drawing.OverlayType.CIRCLE":
                                 propertyValue.drawingModes[drawingMode] = google.maps.drawing.OverlayType.CIRCLE;
                                 break;
-                            case "google.maps.drawing.OverlayType.MARKERL":
+                            case "google.maps.drawing.OverlayType.MARKER":
                                 propertyValue.drawingModes[drawingMode] = google.maps.drawing.OverlayType.MARKER;
                                 break;
                             case "google.maps.drawing.OverlayType.POLYGON":
