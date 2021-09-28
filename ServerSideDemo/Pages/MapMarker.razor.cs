@@ -168,12 +168,12 @@ namespace ServerSideDemo.Pages
 
             markers.Push(marker);
 
-			//return;
+            //return;
             await bounds.Extend(mapCenter);
 
             var icon = await marker.GetIcon();
 
-			Console.WriteLine($"Get icon result type is : {icon.Value?.GetType()}");
+            Console.WriteLine($"Get icon result type is : {icon.Value?.GetType()}");
 
             icon.Switch(
                 s => Console.WriteLine(s),
@@ -212,12 +212,12 @@ namespace ServerSideDemo.Pages
             var lastMarker = markers.Peek();
             var center = await map1.InteropObject.GetCenter();
             await lastMarker.SetPosition(center);
-			bounds=await LatLngBounds.CreateAsync(map1.JsRuntime);
-			foreach(var m in markers)
-				{
-				var pos = await m.GetPosition();
-				await bounds.Extend(pos);
-				}
+            bounds = await LatLngBounds.CreateAsync(map1.JsRuntime);
+            foreach (var m in markers)
+            {
+                var pos = await m.GetPosition();
+                await bounds.Extend(pos);
+            }
         }
 
 
