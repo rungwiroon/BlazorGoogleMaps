@@ -9,7 +9,11 @@
 <button @onclick="AddMarker">Add marker</button>
 <button @onclick="RemoveMarker">Remove marker</button>
 <button @onclick="Recenter">Re-center marker</button>
-<input type="text" value="@labelText" @onchange="UpdateLabelText" />
+@if(markers.Any())
+{
+<br/><text>Label: </text><input type="text" value="@labelText" @onchange="UpdateLabelText" />
+<br />
+}
 <button @onclick="ToggleLabelFontWeight">Toggle label font-weight</button>
 <button @onclick="InvokeClustering">Invoke map cluster</button>
 <button @onclick="@ClearClustering">Clear cluster</button>
@@ -53,6 +57,7 @@
                 Position = await map1.InteropObject.GetCenter(),
                 Map = map1.InteropObject,
                 Label = new MarkerLabel { Text = $"Test {markers.Count()}", FontWeight = "bold" },
+                Draggable=true,
                 Icon = new Icon()
                 {
                     Url = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
@@ -64,6 +69,7 @@
                 Position = await map1.InteropObject.GetCenter(),
                 Map = map1.InteropObject,
                 Label = $"Test {markers.Count()}",
+                Draggable=true,
                 Icon = new Icon()
                 {
                     Url = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
@@ -203,25 +209,21 @@
     private async Task<IEnumerable<Marker>> GetMarkers(IEnumerable<LatLngLiteral> coords, Map map)
     {
         var result = new List<Marker>(coords.Count());
-        var index = 1;
         foreach (var latLngLiteral in coords)
         {
             var marker = await Marker.CreateAsync(map1.JsRuntime, new MarkerOptions()
             {
                 Position = latLngLiteral,
                 Map = map,
-                Label = $"Test {index++}",
+                Label = $"Test {result.Count()+1}",
                 //Icon = new Icon()
                 //{
                 //    Url = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
                 //}
                 //Icon = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
             });
-
             result.Add(marker);
         }
-
-
         return result;
     }
 
