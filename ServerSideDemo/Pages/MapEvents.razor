@@ -26,8 +26,8 @@
 
     private bool DisablePoiInfoWindow { get; set; } = false;
 
-	private Stack<Marker> markers = new Stack<Marker>();
-	private string labelText = "";
+    private Stack<Marker> markers = new Stack<Marker>();
+    private string labelText = "";
 
     protected override void OnInitialized()
     {
@@ -263,76 +263,76 @@
 
         StateHasChanged();
     }
-	private async Task AddMarker()
-		{
-		var marker = await Marker.CreateAsync(map1.JsRuntime,
-			new MarkerOptions()
-				{
-				Position = await map1.InteropObject.GetCenter(),
-				Map = map1.InteropObject,
-				Label = new MarkerLabel { Text = $"Test {markers.Count()}", FontWeight = "bold" },
-				Draggable=true,
-				Icon = new Icon()
-					{
-					Url = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
-					}
-				//Icon = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
-				});
+    private async Task AddMarker()
+    {
+        var marker = await Marker.CreateAsync(map1.JsRuntime,
+            new MarkerOptions()
+            {
+                Position = await map1.InteropObject.GetCenter(),
+                Map = map1.InteropObject,
+                Label = new MarkerLabel { Text = $"Test {markers.Count()}", FontWeight = "bold" },
+                Draggable = true,
+                Icon = new Icon()
+                {
+                    Url = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
+                }
+            //Icon = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
+        });
 
-		//await marker.SetMap(map1);
+        //await marker.SetMap(map1);
 
-		//var map = await marker.GetMap();
+        //var map = await marker.GetMap();
 
-		var icon = await marker.GetIcon();
+        var icon = await marker.GetIcon();
 
-		Console.WriteLine($"Get icon result type is : {icon.Value.GetType()}");
+        Console.WriteLine($"Get icon result type is : {icon.Value.GetType()}");
 
-		icon.Switch(
-			s => Console.WriteLine(s),
-			i => Console.WriteLine(i.Url),
-			_ => { });
+        icon.Switch(
+            s => Console.WriteLine(s),
+            i => Console.WriteLine(i.Url),
+            _ => { });
 
-		//if (map == map1.InteropObject)
-		//{
-		//    Console.WriteLine("Yess");
-		//}
-		//else
-		//{
-		//    Console.WriteLine("Nooo");
-		//}
+        //if (map == map1.InteropObject)
+        //{
+        //    Console.WriteLine("Yess");
+        //}
+        //else
+        //{
+        //    Console.WriteLine("Nooo");
+        //}
 
-		markers.Push(marker);
-		labelText = await marker.GetLabelText();
+        markers.Push(marker);
+        labelText = await marker.GetLabelText();
 
-		await marker.AddListener<MouseEvent>("click", async e =>
-		{
-			string markerLabelText = await marker.GetLabelText();
-			_events.Add("click on " + markerLabelText);
-			StateHasChanged();
-			await e.Stop();
-		});
-		await marker.AddListener<MouseEvent>("dragend", async e => await OnMakerDragEnd(marker, e));
-		}
+        await marker.AddListener<MouseEvent>("click", async e =>
+        {
+            string markerLabelText = await marker.GetLabelText();
+            _events.Add("click on " + markerLabelText);
+            StateHasChanged();
+            await e.Stop();
+        });
+        await marker.AddListener<MouseEvent>("dragend", async e => await OnMakerDragEnd(marker, e));
+    }
 
-	private async Task OnMakerDragEnd(Marker M, MouseEvent e)
-		{
-		string markerLabelText = await M.GetLabelText();
-		_events.Insert(0, $"OnMakerDragEnd ({markerLabelText}): ({e.LatLng}).");
-		StateHasChanged();
-		await e.Stop();
-		}
+    private async Task OnMakerDragEnd(Marker M, MouseEvent e)
+    {
+        string markerLabelText = await M.GetLabelText();
+        _events.Insert(0, $"OnMakerDragEnd ({markerLabelText}): ({e.LatLng}).");
+        StateHasChanged();
+        await e.Stop();
+    }
 
-	private async Task RemoveMarker()
-		{
-		if(!markers.Any())
-			{
-			return;
-			}
+    private async Task RemoveMarker()
+    {
+        if (!markers.Any())
+        {
+            return;
+        }
 
-		var lastMarker = markers.Pop();
-		await lastMarker.SetMap(null);
-		labelText = markers.Any() ? await markers.Peek().GetLabelText() : "";
-		}
+        var lastMarker = markers.Pop();
+        await lastMarker.SetMap(null);
+        labelText = markers.Any() ? await markers.Peek().GetLabelText() : "";
+    }
 
 
 }
