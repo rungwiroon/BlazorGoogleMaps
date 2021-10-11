@@ -1,4 +1,5 @@
 ﻿using Microsoft.JSInterop;
+using OneOf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,8 @@ namespace GoogleMapsComponents.Maps
     {
         protected readonly JsObjectRef _jsObjectRef;
         private Map _map;
+        
+        public Guid Guid => _jsObjectRef.Guid;
 
         /// <summary>
         /// Create a polygon using the passed PolygonOptions, which specify the polygon's path, the stroke style for the polygon's edges, and the fill style for the polygon's interior regions. 
@@ -178,6 +181,26 @@ namespace GoogleMapsComponents.Maps
             return _jsObjectRef.InvokeAsync(
                 "setVisible",
                 visible);
+        }
+
+        public Task InvokeAsync(string functionName, params object[] args)
+        {
+            return _jsObjectRef.InvokeAsync(functionName, args);
+        }
+
+        public Task<T> InvokeAsync<T>(string functionName, params object[] args)
+        {
+            return _jsObjectRef.InvokeAsync<T>(functionName, args);
+        }
+
+        public Task<OneOf<T, U>> InvokeAsync<T, U>(string functionName, params object[] args)
+        {
+            return _jsObjectRef.InvokeAsync<T, U>(functionName, args);
+        }
+
+        public Task<OneOf<T, U, V>> InvokeAsync<T, U, V>(string functionName, params object[] args)
+        {
+            return _jsObjectRef.InvokeAsync<T, U, V>(functionName, args);
         }
 
         public async Task<MapEventListener> AddListener(string eventName, Action handler)

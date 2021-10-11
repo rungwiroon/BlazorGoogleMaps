@@ -25,3 +25,66 @@
         legend.appendChild(div);
     }
 }
+
+google.maps.Polyline.prototype.AddListeners = function()
+{
+    // getpath
+    console.log('Add Listeners Called.');
+    var poly = this;
+    var path = this.getPath();
+
+    // addlistener insert_at
+    event.initEvent('insert_at', true, true);
+    google.maps.event.addListener(path, 'insert_at', function(vertex) {
+        // event auf polyline auslösen
+        console.log('Vertex ' + vertex + ' inserted to path.');
+        google.maps.event.trigger(poly, 'insert_at', vertex);
+    });
+
+    // addlistener set_at
+    event.initEvent('set_at', true, true);
+    google.maps.event.addListener(path, 'set_at', function(vertex) {
+        // event auf polyline auslösen
+        console.log('Vertex ' + vertex + ' set on path.');
+        google.maps.event.trigger(poly, 'set_at', vertex);
+    });
+
+    // addlistener remove_at
+    event.initEvent('remove_at', true, true);
+    google.maps.event.addListener(path, 'remove_at', function(vertex) {
+        // event auf polyline auslösen
+        console.log('Vertex ' + vertex + ' removed from path.');
+        google.maps.event.trigger(poly, 'remove_at', vertex);
+    });
+}
+google.maps.Polygon.prototype.AddListeners = function()
+{
+    // getpath
+    console.log('Add Listeners Called.');
+    var poly = this;
+    var path = this.getPath();
+
+    // addlistener insert_at
+    event.initEvent('insert_at', true, true);
+    google.maps.event.addListener(path, 'insert_at', function(vertex) {
+        // event auf polyline auslösen
+        console.log('Vertex ' + vertex + ' inserted to path.');
+        google.maps.event.trigger(poly, 'insert_at', vertex);
+    });
+
+    // addlistener set_at
+    event.initEvent('set_at', true, true);
+    google.maps.event.addListener(path, 'set_at', function(vertex) {
+        // event auf polyline auslösen
+        console.log('Vertex ' + vertex + ' set on path.');
+        google.maps.event.trigger(poly, 'set_at', vertex);
+    });
+
+    // addlistener remove_at
+    event.initEvent('remove_at', true, true);
+    google.maps.event.addListener(path, 'remove_at', function(vertex) {
+        // event auf polyline auslösen
+        console.log('Vertex ' + vertex + ' removed from path.');
+        google.maps.event.trigger(poly, 'remove_at', vertex);
+    });
+}

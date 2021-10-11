@@ -1,7 +1,6 @@
 ﻿@page "/mapPolyline"
 @using GoogleMapsComponents
 @using GoogleMapsComponents.Maps
-@using System.Diagnostics
 
 <h1>Polylines</h1>
 
@@ -72,6 +71,22 @@
 
         path.Clear();
 
+        // Add Listener to Paths from Polyline
+        await polyline.InvokeAsync("AddListeners").ConfigureAwait(true);
+
+        await polyline.AddListener("insert_at", async () =>
+        {
+            path = (await polyline.GetPath().ConfigureAwait(true)).ToList();
+        });
+        await polyline.AddListener("set_at", async () =>
+        {
+            path = (await polyline.GetPath().ConfigureAwait(true)).ToList();
+        });
+        await polyline.AddListener("remove_at", async () =>
+        {
+            path = (await polyline.GetPath().ConfigureAwait(true)).ToList();
+        });
+
         await polyline.AddListener("click", () =>
         {
             _events.Insert(0, "click polyline");
@@ -125,6 +140,22 @@
             Map = map1.InteropObject
         });
 
+        // Add Listener to Paths from Polyline
+        await polygon.InvokeAsync("AddListeners").ConfigureAwait(true);
+
+        await polygon.AddListener("insert_at", async () =>
+        {
+            path = (await polygon.GetPath().ConfigureAwait(true)).ToList();
+        });
+        await polygon.AddListener("set_at", async () =>
+        {
+            path = (await polygon.GetPath().ConfigureAwait(true)).ToList();
+        });
+        await polygon.AddListener("remove_at", async () =>
+        {
+            path = (await polygon.GetPath().ConfigureAwait(true)).ToList();
+        });
+
         path.Clear();
     }
 
@@ -172,6 +203,9 @@
             //Debug.WriteLine($"Path length : {path.Count()}");
 
             await polyline.SetPath(path);
+
+            // Add Listener to Paths from Polyline
+            await polyline.InvokeAsync("AddListeners").ConfigureAwait(true);
         }
         else if (polygon != null)
         {
