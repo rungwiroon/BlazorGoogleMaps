@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ClientSideDemo.Shared;
 using GoogleMapsComponents;
 using GoogleMapsComponents.Maps;
 using GoogleMapsComponents.Maps.Coordinates;
 using GoogleMapsComponents.Maps.Extension;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using ServerSideDemo.Shared;
 
-namespace ServerSideDemo.Pages
+namespace ClientSideDemo.Pages
 {
     public partial class MapMarkerListPage
     {

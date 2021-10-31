@@ -1,0 +1,85 @@
+﻿@using GoogleMapsComponents
+@using GoogleMapsComponents.Maps
+@using GoogleMapsComponents.Maps.Coordinates
+
+@inherits GoogleMap;
+
+<div @ref="@Element" id="@Id" class="@CssClass" style="@StyleStr"></div>
+
+<style>
+    /* Optional: Makes the sample page fill the window. */
+    html,
+    body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    #container {
+        height: 100%;
+        display: flex;
+    }
+
+    #sidebar {
+        flex-basis: 15rem;
+        flex-grow: 1;
+        padding: 1rem;
+        max-width: 30rem;
+        height: 100%;
+        box-sizing: border-box;
+        overflow: auto;
+    }
+
+    #map {
+        flex-basis: 0;
+        flex-grow: 4;
+        height: 100%;
+    }
+
+    .mdc-select,
+    .mdc-select__anchor,
+    .mdc-select__menu {
+        width: 100%;
+    }
+
+    .marker {
+        color: white;
+        background-color: black;
+        border: solid 1px black;
+        font-weight: 900;
+        padding: 4px;
+        top: -8px;
+    }
+
+        .marker::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translate(-50%, 0%);
+            border: solid 8px transparent;
+            border-top-color: black;
+        }
+
+    .map-marker-label {
+        position: absolute;
+        color: blue;
+        font-size: 16px;
+        font-weight: bold;
+        background: blueviolet
+    }
+</style>
+
+@code {
+#nullable enable
+
+    private string StyleStr => $"height: {Height}; width:{Width}";
+
+    private ElementReference Element { get; set; }
+
+    protected override bool ShouldRender()
+    {
+        return false;
+    }
+
+}
