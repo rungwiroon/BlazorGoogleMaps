@@ -47,6 +47,19 @@ namespace GoogleMapsComponents.Maps
             await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("googleMapsObjectManager.addControls", this.Guid.ToString(), position, reference);
         }
 
+        public async Task AddImageLayer(ImageMapType reference)
+        {
+            await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("googleMapsObjectManager.addImageLayer", this.Guid.ToString(), reference.Guid.ToString());
+        }
+        public async Task RemoveImageLayer(ImageMapType reference)
+        {
+            await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("googleMapsObjectManager.removeImageLayer", this.Guid.ToString(), reference.Guid.ToString());
+        }
+        public async Task RemoveAllImageLayers()
+        {
+            await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("googleMapsObjectManager.removeAllImageLayers", this.Guid.ToString());
+        }
+
         public void Dispose()
         {
             JsObjectRefInstances.Remove(_jsObjectRef.Guid.ToString());

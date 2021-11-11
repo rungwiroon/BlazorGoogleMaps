@@ -84,10 +84,26 @@ function tryParseJson(item) {
     try {
         item2 = JSON.parse(item, dateObjectReviver);
     } catch (e) {
-        //Hm. Not sure why this one was here. 
-        //Everything looks like working without it
-        //return item.replace(/['"]+/g, '');
-        return item;
+        try {
+            // added to be able to include js functions in a json object (for ImageMapType).  JSON.parse(...) doesn't do that
+            // example json string:
+            // "{
+            //    'getTileUrl': (coord, zoom) => {
+            //                return '" + baseUrl + @"' + zoom + '/' + coord.x + '/' + coord.y;
+            //            },
+            //    'tileSize': new google.maps.Size(256, 256),
+            //    'maxZoom': 23,
+            //    'minZoom': 0,
+            //    'opacity': 0.5,
+            //    'name': 'myLayer'
+            // }"
+            item2 = eval("(" + item + ")");
+        } catch (e2) {
+            //Hm. Not sure why this one was here. 
+            //Everything looks like working without it
+            //return item.replace(/['"]+/g, '');
+            return item;
+        }
     }
 
     if (typeof item2 === "string" && item2 !== null) {
@@ -331,6 +347,29 @@ window.googleMapsObjectManager = {
         let position = getGooglePositionFromString(args[1].replace("\"", "").replace("\"", ""));
 
         map.controls[position].push(elem);
+    },
+    addImageLayer(args) {
+        let map = _blazorGoogleMapsObjects[args[0]];
+        let elem = _blazorGoogleMapsObjects[args[1]];
+
+        map.overlayMapTypes.push(elem);
+    },
+    removeImageLayer(args) {
+        let map = _blazorGoogleMapsObjects[args[0]];
+        let elem = _blazorGoogleMapsObjects[args[1]];
+
+        var arr = map.overlayMapTypes.getArray();
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i].name === elem.name) {
+                map.overlayMapTypes.removeAt(i);
+                return;
+            }
+        }
+    },
+    removeAllImageLayers(args) {
+        let map = _blazorGoogleMapsObjects[args[0]];
+
+        var arr = map.overlayMapTypes.clear();
     },
     disposeMapElements(mapGuid) {
         var keysToRemove = [];
@@ -586,3 +625,5 @@ window.googleMapsObjectManager = {
         window._blazorGoogleMapsObjects[guid] = markerCluster;
     }
 };
+
+//export { googleMapsObjectManager }
