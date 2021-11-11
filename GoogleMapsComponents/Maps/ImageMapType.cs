@@ -15,11 +15,12 @@ namespace GoogleMapsComponents.Maps
         public Guid Guid => _jsObjectRef.Guid;
         public string Name { get; private set; }
         GoogleMap map = null;
-        public async static Task<ImageMapType> CreateAsync(IJSRuntime jsRuntime, string baseUrl, int minZoom, int maxZoom, string name, float opacity)
+        public async static Task<ImageMapType> CreateAsync(IJSRuntime jsRuntime, string baseUrlFormat, int minZoom, int maxZoom, string name, float opacity)
         {
+            var realUrl = baseUrlFormat.Replace("{z}", "' + zoom + '").Replace("{x}", "' + coord.x + '").Replace("{y}", "' + coord.y + '");
             string initOpts = @"{
                 'getTileUrl': (coord, zoom) => {
-                            return '" + baseUrl + @"' + zoom + '/' + coord.x + '/' + coord.y;
+                            return '" + realUrl + @"'
                         },
                 'tileSize': new google.maps.Size(256, 256),
                 'maxZoom': " + maxZoom.ToString() + @",
@@ -27,6 +28,17 @@ namespace GoogleMapsComponents.Maps
                 'opacity': " + opacity.ToString() + @",
                 'name': '" + name + @"'
             }";
+
+            //string initOpts = @"{
+            //    'getTileUrl': (coord, zoom) => {
+            //                return '" + baseUrl + @"' + zoom + '/' + coord.x + '/' + coord.y;
+            //            },
+            //    'tileSize': new google.maps.Size(256, 256),
+            //    'maxZoom': " + maxZoom.ToString() + @",
+            //    'minZoom': " + minZoom.ToString() + @",
+            //    'opacity': " + opacity.ToString() + @",
+            //    'name': '" + name + @"'
+            //}";
 
             var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.ImageMapType", initOpts);
             var to = new ImageMapType(jsObjectRef) {
