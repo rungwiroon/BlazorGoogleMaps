@@ -1,4 +1,4 @@
-﻿@page "/mapImageOverlay"
+﻿@page "/map-image-overlay"
 @using GoogleMapsComponents
 @using GoogleMapsComponents.Maps
 @using System.Diagnostics
@@ -8,8 +8,9 @@
 <GoogleMap @ref="@map1" Id="map1" Options="@mapOptions" OnAfterInit="@OnAfterInitAsync">
 </GoogleMap>
 
-Overlay Opacity: <input type="range" min="0" max="1" step="0.1" @bind="LayerOpacity" />
-<br/>
+Overlay Opacity:
+<input type="range" min="0" max="1" step="0.1" @bind="LayerOpacity" />
+<br />
 <button @onclick="AddMarker">Add marker</button>&nbsp;
 <button @onclick="RemoveMarker">Remove marker</button>
 <br>
@@ -25,7 +26,9 @@ Overlay Opacity: <input type="range" min="0" max="1" step="0.1" @bind="LayerOpac
     private MapOptions mapOptions;
     ImageMapType overlayImage;
     float layerOpacity = 0.5f;
-    private float LayerOpacity { get => layerOpacity;
+    private float LayerOpacity
+    {
+        get => layerOpacity;
         set
         {
             overlayImage.SetOpacity(value);
@@ -43,15 +46,15 @@ Overlay Opacity: <input type="range" min="0" max="1" step="0.1" @bind="LayerOpac
     protected override void OnInitialized()
     {
         mapOptions = new MapOptions()
-        {
-            Zoom = 13,
-            Center = new LatLngLiteral()
             {
-                Lat = 13.505892,
-                Lng = 100.8162
-            },
-            MapTypeId = MapTypeId.Roadmap
-        };
+                Zoom = 13,
+                Center = new LatLngLiteral()
+                {
+                    Lat = 13.505892,
+                    Lng = 100.8162
+                },
+                MapTypeId = MapTypeId.Roadmap
+            };
     }
 
     private async Task OnAfterInitAsync()
@@ -281,17 +284,17 @@ Overlay Opacity: <input type="range" min="0" max="1" step="0.1" @bind="LayerOpac
     {
         var marker = await Marker.CreateAsync(map1.JsRuntime,
             new MarkerOptions()
-            {
-                Position = await map1.InteropObject.GetCenter(),
-                Map = map1.InteropObject,
-                Label = new MarkerLabel { Text = $"Test {markers.Count()}", FontWeight = "bold" },
-                Draggable = true,
-                Icon = new Icon()
                 {
-                    Url = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
-                }
-            //Icon = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
-        });
+                    Position = await map1.InteropObject.GetCenter(),
+                    Map = map1.InteropObject,
+                    Label = new MarkerLabel { Text = $"Test {markers.Count()}", FontWeight = "bold" },
+                    Draggable = true,
+                    Icon = new Icon()
+                    {
+                        Url = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
+                    }
+                //Icon = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
+            });
 
         //await marker.SetMap(map1);
 
