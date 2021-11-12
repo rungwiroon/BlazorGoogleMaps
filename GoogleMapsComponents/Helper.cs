@@ -17,12 +17,12 @@ namespace GoogleMapsComponents
 {
     internal static class Helper
     {
-        internal static Task MyInvokeAsync(
+        internal static async ValueTask MyInvokeAsync(
             this IJSRuntime jsRuntime,
             string identifier,
             params object[] args)
         {
-            return jsRuntime.MyInvokeAsync<object>(identifier, args);
+            await jsRuntime.MyInvokeAsync<object>(identifier, args);
         }
 
         internal static T? ToNullableEnum<T>(string str)
@@ -123,7 +123,7 @@ namespace GoogleMapsComponents
             return jsFriendlyArgs;
         }
 
-        internal static async Task<TRes> MyInvokeAsync<TRes>(
+        internal static async ValueTask<TRes> MyInvokeAsync<TRes>(
             this IJSRuntime jsRuntime,
             string identifier,
             params object[] args)
@@ -175,7 +175,7 @@ namespace GoogleMapsComponents
             }
         }
 
-        internal static async Task<object> MyAddListenerAsync(
+        internal static async ValueTask<object> MyAddListenerAsync(
             this IJSRuntime jsRuntime,
             string identifier,
             params object[] args)
@@ -186,7 +186,7 @@ namespace GoogleMapsComponents
             return await jsRuntime.InvokeAsync<object>(identifier, jsFriendlyArgs);
         }
 
-        private static async Task<object> InvokeAsync(
+        private static async ValueTask<object> InvokeAsync(
             this IJSRuntime jsRuntime,
             string identifier,
             params object[] args)
@@ -231,22 +231,19 @@ namespace GoogleMapsComponents
         /// <param name="identifier"></param>
         /// <param name="args"></param>
         /// <returns>Discriminated union of specified types</returns>
-        internal static async Task<OneOf<T, U>> MyInvokeAsync<T, U>(
+        internal static async ValueTask<OneOf<T, U>> MyInvokeAsync<T, U>(
             this IJSRuntime jsRuntime,
             string identifier,
             params object[] args)
         {
             var result = await jsRuntime.InvokeAsync(identifier, args);
 
-            switch (result)
+            return result switch
             {
-                case T t:
-                    return t;
-                case U u:
-                    return u;
-                default:
-                    return default;
-            }
+                T t => t,
+                U u => u,
+                _ => default,
+            };
         }
 
         /// <summary>
@@ -258,24 +255,20 @@ namespace GoogleMapsComponents
         /// <param name="identifier"></param>
         /// <param name="args"></param>
         /// <returns>Discriminated union of specified types</returns>
-        internal static async Task<OneOf<T, U, V>> MyInvokeAsync<T, U, V>(
+        internal static async ValueTask<OneOf<T, U, V>> MyInvokeAsync<T, U, V>(
             this IJSRuntime jsRuntime,
             string identifier,
             params object[] args)
         {
             var result = await jsRuntime.InvokeAsync(identifier, args);
 
-            switch (result)
+            return result switch
             {
-                case T t:
-                    return t;
-                case U u:
-                    return u;
-                case V v:
-                    return v;
-                default:
-                    return default;
-            }
+                T t => t,
+                U u => u,
+                V v => v,
+                _ => default,
+            };
         }
 
         internal static T ToEnum<T>(string str)

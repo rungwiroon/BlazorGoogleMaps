@@ -1,15 +1,15 @@
-﻿@using System
-@using Maps
-@using System.Threading.Tasks
+﻿@using GoogleMapsComponents
+@using GoogleMapsComponents.Maps
 @using Microsoft.AspNetCore.Components
+@using System
+@using System.Threading.Tasks
 
 @inherits MapComponent
-@implements System.IDisposable
+@implements System.IAsyncDisposable
 
 <div @ref="@Element" id="@Id" class="@CssClass" style="@StyleStr"></div>
 
 @code {
-    #nullable enable
 
     [Parameter]
     public string? Id { get; set; }
@@ -42,7 +42,6 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-
         await InitAsync(Element, Options);
 
         //Debug.WriteLine("Init finished");
@@ -54,6 +53,4 @@
     {
         return false;
     }
-
-
 }

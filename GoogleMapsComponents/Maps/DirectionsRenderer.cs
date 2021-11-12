@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace GoogleMapsComponents.Maps
 {
-    public class DirectionsRenderer : IDisposable
+    public class DirectionsRenderer : IAsyncDisposable
     {
         private readonly JsObjectRef _jsObjectRef;
 
@@ -24,9 +24,9 @@ namespace GoogleMapsComponents.Maps
             _jsObjectRef = jsObjectRef;
         }
 
-        public void Dispose()
+        public ValueTask DisposeAsync()
         {
-            _jsObjectRef?.Dispose();
+            return _jsObjectRef?.DisposeAsync() ?? ValueTask.CompletedTask;
         }
 
         /// <summary>
@@ -58,19 +58,19 @@ namespace GoogleMapsComponents.Maps
 
         }
 
-        public Task<Map> GetMap()
+        public ValueTask<Map> GetMap()
         {
             return _jsObjectRef.InvokeAsync<Map>(
                 "getMap");
         }
 
-        public Task<int> GetRouteIndex()
+        public ValueTask<int> GetRouteIndex()
         {
             return _jsObjectRef.InvokeAsync<int>(
                 "getRouteIndex");
         }
 
-        public async Task SetDirections(DirectionsResult directions)
+        public async ValueTask SetDirections(DirectionsResult directions)
         {
             await _jsObjectRef.InvokeAsync(
                 "setDirections",
@@ -82,7 +82,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="directionsRequestOptions">Lets you specify which route response paths to opt out from clearing.</param>
         /// <returns></returns>
-        public async Task<DirectionsResult> GetDirections(DirectionsRequestOptions directionsRequestOptions = null)
+        public async ValueTask<DirectionsResult> GetDirections(DirectionsRequestOptions directionsRequestOptions = null)
         {
             if (directionsRequestOptions == null)
             {
@@ -104,21 +104,21 @@ namespace GoogleMapsComponents.Maps
             }
         }
 
-        public async Task SetMap(Map map)
+        public async ValueTask SetMap(Map map)
         {
             await _jsObjectRef.InvokeAsync(
                    "setMap",
                    map);
         }
 
-        public async Task SetRouteIndex(int routeIndex)
+        public async ValueTask SetRouteIndex(int routeIndex)
         {
             await _jsObjectRef.InvokeAsync(
                 "setRouteIndex",
                 routeIndex);
         }
 
-        public async Task<MapEventListener> AddListener(string eventName, Action handler)
+        public async ValueTask<MapEventListener> AddListener(string eventName, Action handler)
         {
             var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
                 "addListener", eventName, handler);
@@ -126,7 +126,7 @@ namespace GoogleMapsComponents.Maps
             return new MapEventListener(listenerRef);
         }
 
-        public async Task<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
+        public async ValueTask<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
         {
             var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
                 "addListener", eventName, handler);

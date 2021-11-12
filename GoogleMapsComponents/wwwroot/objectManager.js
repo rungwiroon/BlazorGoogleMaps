@@ -36,17 +36,6 @@ function tryParseJson(item) {
 
             //console.log(args);
 
-            //let args2 = args.map(arg => {
-            //    if (typeof arg === "object" && "toJson" in arg) {
-            //        console.log("toJson");
-            //        return arg.toJson();
-            //    } else {
-            //        return arg;
-            //    }
-            //});
-
-            //console.log(args);
-
             var guid = googleMapsObjectManager.addObject(args[0]);
 
             //Strip circular dependencies, map object and functions
@@ -69,7 +58,6 @@ function tryParseJson(item) {
 
 
             //OLD code
-            //await item.invokeMethodAsync("Invoke", JSON.stringify(args), guid);
             await item.invokeMethodAsync("Invoke", JSON.stringify(args, getCircularReplacer()), guid);
 
             googleMapsObjectManager.disposeObject(guid);

@@ -29,7 +29,7 @@ namespace GoogleMapsComponents.Maps
     /// Each setter properties can be used as follow:
     /// With a Dictionary<string, {property type}> indicating for each Marker (related to that key) the corresponding related property value
     /// </summary>
-    public class InfoWindow : IDisposable, IJsObjectRef
+    public class InfoWindow : IAsyncDisposable, IJsObjectRef
     {
         private readonly JsObjectRef _jsObjectRef;
 
@@ -68,7 +68,7 @@ namespace GoogleMapsComponents.Maps
             EventListeners = new Dictionary<string, List<MapEventListener>>();
         }
 
-        public void Dispose()
+        public ValueTask DisposeAsync()
         {
             foreach (string key in EventListeners.Keys)
             {
@@ -85,28 +85,28 @@ namespace GoogleMapsComponents.Maps
             }
 
             EventListeners.Clear();
-            _jsObjectRef.Dispose();
+            return _jsObjectRef.DisposeAsync();
         }
 
         /// <summary>
         /// Closes this InfoWindow by removing it from the DOM structure.
         /// </summary>
-        public Task Close()
+        public ValueTask Close()
         {
             return _jsObjectRef.InvokeAsync("close");
         }
 
-        public Task<string> GetContent()
+        public ValueTask<string> GetContent()
         {
             return _jsObjectRef.InvokeAsync<string>("getContent");
         }
 
-        public Task<LatLngLiteral> GetPosition()
+        public ValueTask<LatLngLiteral> GetPosition()
         {
             return _jsObjectRef.InvokeAsync<LatLngLiteral>("getPosition");
         }
 
-        public Task<int> GetZIndex()
+        public ValueTask<int> GetZIndex()
         {
             return _jsObjectRef.InvokeAsync<int>("getZIndex");
         }
@@ -117,31 +117,31 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="map"></param>
         /// <param name="anchor"></param>
-        public Task Open(Map map, object anchor = null)
+        public ValueTask Open(Map map, object anchor = null)
         {
             return _jsObjectRef.InvokeAsync("open", map, anchor);
         }
 
-        public Task SetContent(string content)
+        public ValueTask SetContent(string content)
         {
             return _jsObjectRef.InvokeAsync("setContent", content);
         }
 
-        public Task SetPosition(LatLngLiteral position)
+        public ValueTask SetPosition(LatLngLiteral position)
         {
             return _jsObjectRef.InvokeAsync(
                 "setPosition",
                 position);
         }
 
-        public Task SetZIndex(int zIndex)
+        public ValueTask SetZIndex(int zIndex)
         {
             return _jsObjectRef.InvokeAsync(
                 "setZIndex",
                 zIndex);
         }
 
-        public async Task<MapEventListener> AddListener(string eventName, Action handler)
+        public async ValueTask<MapEventListener> AddListener(string eventName, Action handler)
         {
             JsObjectRef listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync("addListener", eventName, handler);
             MapEventListener eventListener = new MapEventListener(listenerRef);
@@ -155,7 +155,7 @@ namespace GoogleMapsComponents.Maps
             return eventListener;
         }
 
-        public async Task<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
+        public async ValueTask<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
         {
             JsObjectRef listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync("addListener", eventName, handler);
             MapEventListener eventListener = new MapEventListener(listenerRef);
@@ -169,7 +169,7 @@ namespace GoogleMapsComponents.Maps
             return eventListener;
         }
 
-        public async Task ClearListeners(string eventName)
+        public async ValueTask ClearListeners(string eventName)
         {
             if (EventListeners.ContainsKey(eventName))
             {

@@ -31,7 +31,7 @@ namespace GoogleMapsComponents.Maps
         /// Gets the LatLngBounds of this Circle.
         /// </summary>
         /// <returns></returns>
-        public Task<LatLngBoundsLiteral> GetBounds()
+        public ValueTask<LatLngBoundsLiteral> GetBounds()
         {
             return _jsObjectRef.InvokeAsync<LatLngBoundsLiteral>("getBounds");
         }
@@ -40,7 +40,7 @@ namespace GoogleMapsComponents.Maps
         /// Returns the center of this circle.
         /// </summary>
         /// <returns></returns>
-        public Task<LatLngLiteral> GetCenter()
+        public ValueTask<LatLngLiteral> GetCenter()
         {
             return _jsObjectRef.InvokeAsync<LatLngLiteral>("getCenter");
         }
@@ -49,7 +49,7 @@ namespace GoogleMapsComponents.Maps
         /// Returns whether this circle can be dragged by the user.
         /// </summary>
         /// <returns></returns>
-        public Task<bool> GetDraggable()
+        public ValueTask<bool> GetDraggable()
         {
             return _jsObjectRef.InvokeAsync<bool>("getDraggable");
         }
@@ -58,7 +58,7 @@ namespace GoogleMapsComponents.Maps
         /// Returns whether this circle can be edited by the user.
         /// </summary>
         /// <returns></returns>
-        public Task<bool> GetEditable()
+        public ValueTask<bool> GetEditable()
         {
             return _jsObjectRef.InvokeAsync<bool>("getEditable");
         }        
@@ -67,7 +67,7 @@ namespace GoogleMapsComponents.Maps
         /// Returns the radius of this circle (in meters).
         /// </summary>
         /// <returns></returns>
-        public Task<double> GetRadius()
+        public ValueTask<double> GetRadius()
         {
             return _jsObjectRef.InvokeAsync<double>("getRadius");
         }
@@ -76,7 +76,7 @@ namespace GoogleMapsComponents.Maps
         /// Returns whether this circle is visible on the map.
         /// </summary>
         /// <returns></returns>
-        public Task<bool> GetVisible()
+        public ValueTask<bool> GetVisible()
         {
             return _jsObjectRef.InvokeAsync<bool>("getVisible");
         }
@@ -85,7 +85,7 @@ namespace GoogleMapsComponents.Maps
         /// Sets the center of this circle.
         /// </summary>
         /// <param name="center"></param>
-        public Task SetCenter(LatLngLiteral center)
+        public ValueTask SetCenter(LatLngLiteral center)
         {
             return _jsObjectRef.InvokeAsync("setCenter", center);
         }
@@ -94,7 +94,7 @@ namespace GoogleMapsComponents.Maps
         /// If set to true, the user can drag this circle over the map.
         /// </summary>
         /// <param name="draggable"></param>
-        public Task SetDraggable(bool draggable)
+        public ValueTask SetDraggable(bool draggable)
         {
             return _jsObjectRef.InvokeAsync("setDraggable", draggable);
         }
@@ -103,12 +103,12 @@ namespace GoogleMapsComponents.Maps
         /// If set to true, the user can edit this circle by dragging the control points shown at the center and around the circumference of the circle.
         /// </summary>
         /// <param name="editable"></param>
-        public Task SetEditable(bool editable)
+        public ValueTask SetEditable(bool editable)
         {
             return _jsObjectRef.InvokeAsync("setEditable", editable);
         }        
 
-        public Task SetOptions(CircleOptions options)
+        public ValueTask SetOptions(CircleOptions options)
         {
             return _jsObjectRef.InvokeAsync("setOptions", options);
         }
@@ -117,7 +117,7 @@ namespace GoogleMapsComponents.Maps
         /// Sets the radius of this circle (in meters).
         /// </summary>
         /// <param name="radius"></param>
-        public Task SetRadius(double radius)
+        public ValueTask SetRadius(double radius)
         {
             return _jsObjectRef.InvokeAsync("setRadius", radius);
         }
@@ -126,7 +126,7 @@ namespace GoogleMapsComponents.Maps
         /// Sets the radius of this circle (in meters).
         /// </summary>
         /// <param name="radius"></param>
-        public Task SetRadius(decimal radius)
+        public ValueTask SetRadius(decimal radius)
         {
             return SetRadius(Convert.ToDouble(radius));
         }
@@ -135,7 +135,7 @@ namespace GoogleMapsComponents.Maps
         /// Hides this circle if set to false.
         /// </summary>
         /// <param name="visible"></param>
-        public Task SetVisible(bool visible)
+        public ValueTask SetVisible(bool visible)
         {
             return _jsObjectRef.InvokeAsync("setVisible", visible);
         }        

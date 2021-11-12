@@ -6,7 +6,7 @@ using Microsoft.JSInterop;
 
 namespace GoogleMapsComponents.Maps
 {
-    public class GroundOverlay : IDisposable, IJsObjectRef
+    public class GroundOverlay : IAsyncDisposable, IJsObjectRef
     {
         private readonly JsObjectRef _jsObjectRef;
 
@@ -74,9 +74,9 @@ namespace GoogleMapsComponents.Maps
             //_map = map;
         }
 
-        public void Dispose()
+        public ValueTask DisposeAsync()
         {
-            _jsObjectRef?.Dispose();
+            return _jsObjectRef?.DisposeAsync() ?? ValueTask.CompletedTask;
         }
     }
 }

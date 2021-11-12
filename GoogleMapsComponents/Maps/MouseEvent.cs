@@ -21,7 +21,7 @@ namespace GoogleMapsComponents.Maps
         /// <summary>
         /// Prevents this event from propagating further.
         /// </summary>
-        public Task Stop()
+        public ValueTask Stop()
         {
             return JsObjectRef.InvokeAsync("stop");
         }

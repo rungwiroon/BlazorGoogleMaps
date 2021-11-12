@@ -98,18 +98,20 @@ namespace GoogleMapsComponents.Maps.Extension
             await base.AddMultipleAsync(opts, "google.maps.Circle");
         }
 
-        public Task<Dictionary<string, LatLngBoundsLiteral>> GetBounds(List<string> filterKeys = null)
+        public async ValueTask<Dictionary<string, LatLngBoundsLiteral>> GetBounds(List<string> filterKeys = null)
         {
-            List<string> matchingKeys = ComputeMathingKeys(filterKeys);
+            var matchingKeys = ComputeMathingKeys(filterKeys);
 
             if (matchingKeys.Any())
             {
                 Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
                 Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
 
-                return _jsObjectRef.InvokeMultipleAsync<LatLngBoundsLiteral>(
+                var res = await _jsObjectRef.InvokeMultipleAsync<LatLngBoundsLiteral>(
                     "getBounds",
-                    dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
+                    dictArgs);
+
+                return res.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value);
             }
             else
             {
@@ -117,18 +119,20 @@ namespace GoogleMapsComponents.Maps.Extension
             }
         }
 
-        public Task<Dictionary<string, LatLngLiteral>> GetCenters(List<string> filterKeys = null)
+        public async ValueTask<Dictionary<string, LatLngLiteral>> GetCenters(List<string> filterKeys = null)
         {
-            List<string> matchingKeys = ComputeMathingKeys(filterKeys);
+            var matchingKeys = ComputeMathingKeys(filterKeys);
 
             if (matchingKeys.Any())
             {
                 Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
                 Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
 
-                return _jsObjectRef.InvokeMultipleAsync<LatLngLiteral>(
+                var res = await _jsObjectRef.InvokeMultipleAsync<LatLngLiteral>(
                     "getCenter",
-                    dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
+                    dictArgs);
+                
+                return res.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value);
             }
             else
             {
@@ -136,18 +140,20 @@ namespace GoogleMapsComponents.Maps.Extension
             }
         }
 
-        public Task<Dictionary<string, bool>> GetEditables(List<string> filterKeys = null)
+        public async ValueTask<Dictionary<string, bool>> GetEditables(List<string> filterKeys = null)
         {
-            List<string> matchingKeys = ComputeMathingKeys(filterKeys);
+            var matchingKeys = ComputeMathingKeys(filterKeys);
 
             if (matchingKeys.Any())
             {
                 Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
                 Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
 
-                return _jsObjectRef.InvokeMultipleAsync<bool>(
+                var res = await _jsObjectRef.InvokeMultipleAsync<bool>(
                     "getEditable",
-                    dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
+                    dictArgs);
+                
+                return res.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value);
             }
             else
             {
@@ -155,18 +161,20 @@ namespace GoogleMapsComponents.Maps.Extension
             }
         }
 
-        public Task<Dictionary<string, double>> GetRadiuses(List<string> filterKeys = null)
+        public async Task<Dictionary<string, double>> GetRadiuses(List<string> filterKeys = null)
         {
-            List<string> matchingKeys = ComputeMathingKeys(filterKeys);
+            var matchingKeys = ComputeMathingKeys(filterKeys);
 
             if (matchingKeys.Any())
             {
                 Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
                 Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
 
-                return _jsObjectRef.InvokeMultipleAsync<double>(
+                var res = await _jsObjectRef.InvokeMultipleAsync<double>(
                     "getRadius",
-                    dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
+                    dictArgs);
+               
+                return res.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value);
             }
             else
             {
@@ -174,26 +182,26 @@ namespace GoogleMapsComponents.Maps.Extension
             }
         }
 
-        public Task SetCenters(Dictionary<string, LatLngLiteral> centers)
+        public async ValueTask SetCenters(Dictionary<string, LatLngLiteral> centers)
         {
             Dictionary<Guid, object> dictArgs = centers.ToDictionary(e => Circles[e.Key].Guid, e => (object)e.Value);
-            return _jsObjectRef.InvokeMultipleAsync(
+            await _jsObjectRef.InvokeMultipleAsync(
                 "setCenter",
                 dictArgs);
         }
 
-        public Task SetEditables(Dictionary<string, bool> editables)
+        public async ValueTask SetEditables(Dictionary<string, bool> editables)
         {
             Dictionary<Guid, object> dictArgs = editables.ToDictionary(e => Circles[e.Key].Guid, e => (object)e.Value);
-            return _jsObjectRef.InvokeMultipleAsync(
+            await _jsObjectRef.InvokeMultipleAsync(
                 "setEditable",
                 dictArgs);
         }
 
-        public Task SetRadiuses(Dictionary<string, double> radiuses)
+        public async Task SetRadiuses(Dictionary<string, double> radiuses)
         {
             Dictionary<Guid, object> dictArgs = radiuses.ToDictionary(e => Circles[e.Key].Guid, e => (object)e.Value);
-            return _jsObjectRef.InvokeMultipleAsync(
+            await _jsObjectRef.InvokeMultipleAsync(
                 "setRadius",
                 dictArgs);
         }

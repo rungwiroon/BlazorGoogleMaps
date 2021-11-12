@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps.Extension
@@ -35,7 +34,7 @@ namespace GoogleMapsComponents.Maps.Extension
         /// </summary>
         /// <param name="opts"></param>
         /// <returns></returns>
-        public async Task SetMultipleAsync(Dictionary<string, TEntityOptionsBase> opts, string googleMapListableEntityTypeName)
+        public async ValueTask SetMultipleAsync(Dictionary<string, TEntityOptionsBase> opts, string googleMapListableEntityTypeName)
         {
             var nonVisibles = new Dictionary<string, bool>();
             var lToRemove = new List<string>();
@@ -169,8 +168,6 @@ namespace GoogleMapsComponents.Maps.Extension
                     }
                 }
             }
-
-
         }
 
         public virtual async Task RemoveMultipleAsync(List<Guid> guids)
@@ -194,101 +191,75 @@ namespace GoogleMapsComponents.Maps.Extension
             }
         }
 
-        //Find the eventual match between required keys (if any) and yet stored markers key (if any)
-        //If filterKeys is null or empty all keys are returned
-        //Otherwise only eventually yet stored marker keys that matches with filterKeys
-        protected virtual List<string> ComputeMathingKeys(List<string> filterKeys = null)
+        public async ValueTask<Dictionary<string, T>> InvokeMultipleAsync<T>(
+            string functionName,
+            IEnumerable<string> filterKeys)
         {
-            List<string> matchingKeys;
+            var matchingKeys = ComputeMathingKeys(filterKeys);
 
-            if ((filterKeys == null) || (!filterKeys.Any()))
+            if (matchingKeys.Any())
             {
-                matchingKeys = BaseListableEntities.Keys.ToList();
+                Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
+                Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
+
+                var res = await _jsObjectRef.InvokeMultipleAsync<T>(
+                    functionName,
+                    dictArgs);
+
+                return res.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value);
             }
             else
             {
-                matchingKeys = BaseListableEntities.Keys.Where(e => filterKeys.Contains(e)).ToList();
+                return ComputeEmptyResult<T>();
             }
+        }
 
-            return matchingKeys;
+        //Find the eventual match between required keys (if any) and yet stored markers key (if any)
+        //If filterKeys is null or empty all keys are returned
+        //Otherwise only eventually yet stored marker keys that matches with filterKeys
+        protected virtual IEnumerable<string> ComputeMathingKeys(IEnumerable<string> filterKeys)
+        {
+            if ((filterKeys == null) || (!filterKeys.Any()))
+            {
+                return BaseListableEntities.Keys.AsEnumerable();
+            }
+            else
+            {
+                return BaseListableEntities.Keys.Where(e => filterKeys.Contains(e));
+            }
         }
 
         //Creates mapping between matching keys and markers Guid
-        protected virtual Dictionary<Guid, string> ComputeInternalMapping(List<string> matchingKeys)
+        protected virtual Dictionary<Guid, string> ComputeInternalMapping(IEnumerable<string> matchingKeys)
         {
             return BaseListableEntities.Where(e => matchingKeys.Contains(e.Key)).ToDictionary(e => BaseListableEntities[e.Key].Guid, e => e.Key);
         }
 
         //Creates mapping between markers Guid and empty array of parameters (getter has no parameter)
-        protected virtual Dictionary<Guid, object> ComputeDictArgs(List<string> matchingKeys)
+        protected virtual Dictionary<Guid, object> ComputeDictArgs(IEnumerable<string> matchingKeys)
         {
-            return BaseListableEntities.Where(e => matchingKeys.Contains(e.Key)).ToDictionary(e => e.Value.Guid, e => (object)(new object[] { }));
+            return BaseListableEntities.Where(e => matchingKeys.Contains(e.Key)).ToDictionary(e => e.Value.Guid, e => (object)(Array.Empty<object>()));
         }
 
         //Create an empty result of the correct type in case of no matching keys
-        protected virtual Task<Dictionary<string, T>> ComputeEmptyResult<T>()
+        protected virtual Dictionary<string, T> ComputeEmptyResult<T>()
         {
-            return Task<Dictionary<string, T>>.Factory.StartNew(() => { return new Dictionary<string, T>(); });
+            return new Dictionary<string, T>();
         }
 
-        public virtual Task<Dictionary<string, Map>> GetMaps(List<string> filterKeys = null)
+        public virtual ValueTask<Dictionary<string, Map>> GetMaps(IEnumerable<string> filterKeys)
         {
-            List<string> matchingKeys = ComputeMathingKeys(filterKeys);
-
-            if (matchingKeys.Any())
-            {
-                Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
-                Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
-
-                return _jsObjectRef.InvokeMultipleAsync<Map>(
-                        "getMap",
-                        dictArgs)
-                    .ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
-            }
-            else
-            {
-                return ComputeEmptyResult<Map>();
-            }
+            return InvokeMultipleAsync<Map>("getMap", filterKeys);
         }
 
-        public virtual Task<Dictionary<string, bool>> GetDraggables(List<string> filterKeys = null)
+        public virtual ValueTask<Dictionary<string, bool>> GetDraggables(IEnumerable<string> filterKeys)
         {
-            List<string> matchingKeys = ComputeMathingKeys(filterKeys);
-
-            if (matchingKeys.Any())
-            {
-                Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
-                Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
-
-                return _jsObjectRef.InvokeMultipleAsync<bool>(
-                        "getDraggable",
-                        dictArgs)
-                    .ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
-            }
-            else
-            {
-                return ComputeEmptyResult<bool>();
-            }
+            return InvokeMultipleAsync<bool>("getDraggable", filterKeys);
         }
 
-        public virtual Task<Dictionary<string, bool>> GetVisibles(List<string> filterKeys = null)
+        public virtual ValueTask<Dictionary<string, bool>> GetVisibles(IEnumerable<string> filterKeys)
         {
-            List<string> matchingKeys = ComputeMathingKeys(filterKeys);
-
-            if (matchingKeys.Any())
-            {
-                Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
-                Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
-
-                return _jsObjectRef.InvokeMultipleAsync<bool>(
-                        "getVisible",
-                        dictArgs)
-                    .ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
-            }
-            else
-            {
-                return ComputeEmptyResult<bool>();
-            }
+            return InvokeMultipleAsync<bool>("getVisible", filterKeys);
         }
 
         /// <summary>
@@ -304,7 +275,7 @@ namespace GoogleMapsComponents.Maps.Extension
                 dictArgs);
         }
 
-        public virtual Task SetDraggables(Dictionary<string, bool> draggables)
+        public virtual ValueTask SetDraggables(Dictionary<string, bool> draggables)
         {
             Dictionary<Guid, object> dictArgs = draggables.ToDictionary(e => BaseListableEntities[e.Key].Guid, e => (object)e.Value);
             return _jsObjectRef.InvokeMultipleAsync(
@@ -312,7 +283,7 @@ namespace GoogleMapsComponents.Maps.Extension
                 dictArgs);
         }
 
-        public virtual Task SetOptions(Dictionary<string, TEntityOptionsBase> options)
+        public virtual ValueTask SetOptions(Dictionary<string, TEntityOptionsBase> options)
         {
             Dictionary<Guid, object> dictArgs = options.ToDictionary(e => BaseListableEntities[e.Key].Guid, e => (object)e.Value);
             return _jsObjectRef.InvokeMultipleAsync(
@@ -320,7 +291,7 @@ namespace GoogleMapsComponents.Maps.Extension
                 dictArgs);
         }
 
-        public virtual Task SetVisibles(Dictionary<string, bool> visibles)
+        public virtual ValueTask SetVisibles(Dictionary<string, bool> visibles)
         {
             Dictionary<Guid, object> dictArgs = visibles.ToDictionary(e => BaseListableEntities[e.Key].Guid, e => (object)e.Value);
             return _jsObjectRef.InvokeMultipleAsync(
@@ -328,7 +299,7 @@ namespace GoogleMapsComponents.Maps.Extension
                 dictArgs);
         }
 
-        public virtual async Task AddListeners<V>(IEnumerable<string> enitityKeys, string eventName, Action<V, string> handler)
+        public virtual async ValueTask AddListeners<V>(IEnumerable<string> enitityKeys, string eventName, Action<V, string> handler)
         {
             Dictionary<Guid, object> dictArgs = enitityKeys.ToDictionary(key => BaseListableEntities[key].Guid, key => (object)new Action<V>((e) =>
             {

@@ -4,12 +4,9 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
-#nullable enable
-
 namespace GoogleMapsComponents
 {
-    //[Obsolete] //<-- No Idea why this is here.
-    public class MapComponent : ComponentBase, IDisposable
+    public class MapComponent : ComponentBase, IAsyncDisposable
     {
         [Inject]
         public IJSRuntime JsRuntime { get; protected set; } = default!;
@@ -21,9 +18,9 @@ namespace GoogleMapsComponents
             InteropObject = await Map.CreateAsync(JsRuntime, element, options);
         }
 
-        public void Dispose()
+        public ValueTask DisposeAsync()
         {
-            InteropObject?.Dispose();
+            return InteropObject.DisposeAsync();
         }
     }
 }

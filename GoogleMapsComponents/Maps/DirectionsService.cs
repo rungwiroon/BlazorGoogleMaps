@@ -8,7 +8,7 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// A service for computing directions between two or more places.
     /// </summary>
-    public class DirectionsService : IDisposable
+    public class DirectionsService : IAsyncDisposable
     {
         private readonly JsObjectRef _jsObjectRef;
 
@@ -32,9 +32,9 @@ namespace GoogleMapsComponents.Maps
             _jsObjectRef = jsObjectRef;
         }
 
-        public void Dispose()
+        public ValueTask DisposeAsync()
         {
-            _jsObjectRef.Dispose();
+            return _jsObjectRef.DisposeAsync();
         }
 
         /// <summary>

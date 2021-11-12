@@ -26,25 +26,25 @@ namespace GoogleMapsComponents.Maps
             return Helper.ToNullableEnum<Animation>(animation?.ToString());
         }
 
-        public Task<bool> GetClickable()
+        public ValueTask<bool> GetClickable()
         {
             return _jsObjectRef.InvokeAsync<bool>(
                 "getClickable");
         }
 
-        public Task<string> GetCursor()
+        public ValueTask<string> GetCursor()
         {
             return _jsObjectRef.InvokeAsync<string>(
                 "getCursor");
         }
 
-        public Task<bool> GetDraggable()
+        public ValueTask<bool> GetDraggable()
         {
             return _jsObjectRef.InvokeAsync<bool>(
                 "getDraggable");
         }
 
-        public async Task<OneOf<string, Icon, Symbol>> GetIcon()
+        public async ValueTask<OneOf<string, Icon, Symbol>> GetIcon()
         {
             var result = await _jsObjectRef.InvokeAsync<string, Icon, Symbol>(
                 "getIcon");
@@ -52,18 +52,18 @@ namespace GoogleMapsComponents.Maps
             return result;
         }
 
-        public Task<OneOf<string, MarkerLabel>> GetLabel()
+        public ValueTask<OneOf<string, MarkerLabel>> GetLabel()
         {
             return _jsObjectRef.InvokeAsync<string, MarkerLabel>("getLabel");
         }
 
-        public async Task<string> GetLabelText()
+        public async ValueTask<string> GetLabelText()
         {
             OneOf<string, MarkerLabel> markerLabel = await GetLabel();
             return markerLabel.IsT0 ? markerLabel.AsT0 : markerLabel.AsT1.Text;
         }
 
-        public async Task<MarkerLabel> GetLabelMarkerLabel()
+        public async ValueTask<MarkerLabel> GetLabelMarkerLabel()
         {
             OneOf<string, MarkerLabel> markerLabel = await GetLabel();
             return markerLabel.IsT1 ?
@@ -71,31 +71,31 @@ namespace GoogleMapsComponents.Maps
                 new MarkerLabel { Text = markerLabel.AsT0 };
         }
 
-        public Task<LatLngLiteral> GetPosition()
+        public ValueTask<LatLngLiteral> GetPosition()
         {
             return _jsObjectRef.InvokeAsync<LatLngLiteral>(
                 "getPosition");
         }
 
-        public Task<MarkerShape> GetShape()
+        public ValueTask<MarkerShape> GetShape()
         {
             return _jsObjectRef.InvokeAsync<MarkerShape>(
                 "getShape");
         }
 
-        public Task<string> GetTitle()
+        public ValueTask<string> GetTitle()
         {
             return _jsObjectRef.InvokeAsync<string>(
                 "getTitle");
         }
 
-        public Task<bool> GetVisible()
+        public ValueTask<bool> GetVisible()
         {
             return _jsObjectRef.InvokeAsync<bool>(
                 "getVisible");
         }
 
-        public Task<int> GetZIndex()
+        public ValueTask<int> GetZIndex()
         {
             return _jsObjectRef.InvokeAsync<int>(
                 "getZIndex");
@@ -108,7 +108,7 @@ namespace GoogleMapsComponents.Maps
         /// Passing in null will cause any animation to stop.
         /// </summary>
         /// <param name="animation"></param>
-        public Task SetAnimation(Animation animation)
+        public ValueTask SetAnimation(Animation animation)
         {
             int animationCode = 0;
             if (animation == Animation.Bounce)
@@ -120,49 +120,49 @@ namespace GoogleMapsComponents.Maps
                 animationCode);
         }
 
-        public Task SetClickable(bool flag)
+        public ValueTask SetClickable(bool flag)
         {
             return _jsObjectRef.InvokeAsync(
                 "setClickable",
                 flag);
         }
 
-        public Task SetCursor(string cursor)
+        public ValueTask SetCursor(string cursor)
         {
             return _jsObjectRef.InvokeAsync(
                 "setCursor",
                 cursor);
         }
 
-        public Task SetDraggable(bool flag)
+        public ValueTask SetDraggable(bool flag)
         {
             return _jsObjectRef.InvokeAsync(
                 "setDraggable",
                 flag);
         }
 
-        public Task SetIcon(string icon)
+        public ValueTask SetIcon(string icon)
         {
             return _jsObjectRef.InvokeAsync(
                 "setIcon",
                 icon);
         }
 
-        public Task SetIcon(Icon icon)
+        public ValueTask SetIcon(Icon icon)
         {
             return _jsObjectRef.InvokeAsync(
                 "setIcon",
                 icon);
         }
 
-        public Task SetLabel(OneOf<string, MarkerLabel> label)
+        public ValueTask SetLabel(OneOf<string, MarkerLabel> label)
         {
             return _jsObjectRef.InvokeAsync(
                 "setLabel",
                 label);
         }
 
-        public async Task SetLabelText(string labelText)
+        public async ValueTask SetLabelText(string labelText)
         {
             OneOf<string, MarkerLabel> markerLabel = await GetLabel();
             if (markerLabel.IsT1)
@@ -175,49 +175,49 @@ namespace GoogleMapsComponents.Maps
                 await SetLabel(labelText);
         }
 
-        public Task SetOpacity(float opacity)
+        public ValueTask SetOpacity(float opacity)
         {
             return _jsObjectRef.InvokeAsync(
                 "setOpacity",
                 opacity);
         }
 
-        public Task SetOptions(MarkerOptions options)
+        public ValueTask SetOptions(MarkerOptions options)
         {
             return _jsObjectRef.InvokeAsync(
                 "setOptions",
                 options);
         }
 
-        public Task SetPosition(LatLngLiteral latLng)
+        public ValueTask SetPosition(LatLngLiteral latLng)
         {
             return _jsObjectRef.InvokeAsync(
                 "setPosition",
                 latLng);
         }
 
-        public Task SetShape(MarkerShape shape)
+        public ValueTask SetShape(MarkerShape shape)
         {
             return _jsObjectRef.InvokeAsync(
                 "setShape",
                 shape);
         }
 
-        public Task SetTitle(string title)
+        public ValueTask SetTitle(string title)
         {
             return _jsObjectRef.InvokeAsync(
                 "setTitle",
                 title);
         }
 
-        public Task SetVisible(bool visible)
+        public ValueTask SetVisible(bool visible)
         {
             return _jsObjectRef.InvokeAsync(
                 "setVisible",
                 visible);
         }
 
-        public Task SetZIndex(int zIndex)
+        public ValueTask SetZIndex(int zIndex)
         {
             return _jsObjectRef.InvokeAsync(
                 "setZIndex",

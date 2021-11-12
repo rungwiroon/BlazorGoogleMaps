@@ -7,7 +7,7 @@ using OneOf;
 
 namespace GoogleMapsComponents.Maps
 {
-    public class ListableEntityBase<TEntityOptions> : IDisposable, IJsObjectRef
+    public class ListableEntityBase<TEntityOptions> : IAsyncDisposable, IJsObjectRef
         where TEntityOptions : ListableEntityOptionsBase
     {
         protected readonly JsObjectRef _jsObjectRef;
@@ -22,7 +22,7 @@ namespace GoogleMapsComponents.Maps
             EventListeners = new Dictionary<string, List<MapEventListener>>();
         }
 
-        public void Dispose()
+        public ValueTask DisposeAsync()
         {
             foreach (string key in EventListeners.Keys)
             {
@@ -39,10 +39,10 @@ namespace GoogleMapsComponents.Maps
             }
 
             EventListeners.Clear();
-            _jsObjectRef.Dispose();
+            return _jsObjectRef.DisposeAsync();
         }
 
-        public virtual Task<Map> GetMap()
+        public virtual ValueTask<Map> GetMap()
         {
             return _jsObjectRef.InvokeAsync<Map>(
                 "getMap");
@@ -100,24 +100,9 @@ namespace GoogleMapsComponents.Maps
             }
         }
 
-        public Task InvokeAsync(string functionName, params object[] args)
+        public ValueTask InvokeAsync(string functionName, params object[] args)
         {
             return _jsObjectRef.InvokeAsync(functionName, args);
-        }
-
-        public Task<T> InvokeAsync<T>(string functionName, params object[] args)
-        {
-            return _jsObjectRef.InvokeAsync<T>(functionName, args);
-        }
-
-        public Task<OneOf<T, U>> InvokeAsync<T, U>(string functionName, params object[] args)
-        {
-            return _jsObjectRef.InvokeAsync<T, U>(functionName, args);
-        }
-
-        public Task<OneOf<T, U, V>> InvokeAsync<T, U, V>(string functionName, params object[] args)
-        {
-            return _jsObjectRef.InvokeAsync<T, U, V>(functionName, args);
         }
     }
 }

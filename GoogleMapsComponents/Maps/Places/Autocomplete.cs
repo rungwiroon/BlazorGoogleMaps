@@ -6,7 +6,7 @@ using Microsoft.JSInterop;
 
 namespace GoogleMapsComponents.Maps.Places
 {
-    public class Autocomplete : IDisposable
+    public class Autocomplete : IAsyncDisposable
     {
         private readonly JsObjectRef _jsObjectRef;
 
@@ -23,15 +23,15 @@ namespace GoogleMapsComponents.Maps.Places
             _jsObjectRef = jsObjectRef;
         }
 
-        public void Dispose()
+        public ValueTask DisposeAsync()
         {
-            _jsObjectRef?.Dispose();
+            return _jsObjectRef?.DisposeAsync() ?? ValueTask.CompletedTask;
         }
 
         /// <summary>
         /// Returns the bounds to which predictions are biased.
         /// </summary>
-        public Task<LatLngBoundsLiteral> GetBounds()
+        public ValueTask<LatLngBoundsLiteral> GetBounds()
         {
             return _jsObjectRef.InvokeAsync<LatLngBoundsLiteral>("getBounds");
         }
@@ -40,7 +40,7 @@ namespace GoogleMapsComponents.Maps.Places
         /// Returns the fields to be included for the Place in the details response when the details
         /// are successfully retrieved. For a list of fields see PlaceResult.
         /// </summary>
-        public Task<IEnumerable<string>> GetFields()
+        public ValueTask<IEnumerable<string>> GetFields()
         {
             return _jsObjectRef.InvokeAsync<IEnumerable<string>>("getFields");
         }
@@ -49,7 +49,7 @@ namespace GoogleMapsComponents.Maps.Places
         /// Returns the details of the Place selected by user if the details were successfully retrieved.
         /// Otherwise returns a stub Place object, with the name property set to the current value of the input field.
         /// </summary>
-        public Task<PlaceResult> GetPlace()
+        public ValueTask<PlaceResult> GetPlace()
         {
             return _jsObjectRef.InvokeAsync<PlaceResult>("getPlace");
         }
@@ -58,7 +58,7 @@ namespace GoogleMapsComponents.Maps.Places
         /// Sets the preferred area within which to return Place results. Results are biased towards,
         /// but not restricted to, this area.
         /// </summary>
-        public Task SetBounds(LatLngBoundsLiteral bounds)
+        public ValueTask SetBounds(LatLngBoundsLiteral bounds)
         {
             return _jsObjectRef.InvokeAsync("setBounds", bounds);
         }
@@ -67,7 +67,7 @@ namespace GoogleMapsComponents.Maps.Places
         /// Sets the component restrictions. Component restrictions are used to restrict predictions to only those
         /// within the parent component. For example, the country.
         /// </summary>
-        public Task SetComponentRestrictions(ComponentRestrictions restrictions)
+        public ValueTask SetComponentRestrictions(ComponentRestrictions restrictions)
         {
             return _jsObjectRef.InvokeAsync("setComponentRestrictions", restrictions);
         }
@@ -76,12 +76,12 @@ namespace GoogleMapsComponents.Maps.Places
         /// Sets the fields to be included for the Place in the details response when the details are successfully retrieved.
         /// For a list of fields see PlaceResult.
         /// </summary>
-        public Task SetFields(IEnumerable<string> fields)
+        public ValueTask SetFields(IEnumerable<string> fields)
         {
             return _jsObjectRef.InvokeAsync("setFields", fields);
         }
 
-        public Task SetOptions(AutocompleteOptions options)
+        public ValueTask SetOptions(AutocompleteOptions options)
         {
             return _jsObjectRef.InvokeAsync("setOptions", options);
         }
@@ -90,7 +90,7 @@ namespace GoogleMapsComponents.Maps.Places
         /// Sets the types of predictions to be returned. For a list of supported types, see the developer's guide.
         /// If no type is specified, all types will be returned. The setTypes method accepts a single element array.
         /// </summary>>
-        public Task SetTypes(IEnumerable<string> types)
+        public ValueTask SetTypes(IEnumerable<string> types)
         {
             return _jsObjectRef.InvokeAsync("setTypes", types);
         }

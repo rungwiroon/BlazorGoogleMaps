@@ -1,5 +1,4 @@
-﻿
-// ReSharper disable InconsistentNaming
+﻿// ReSharper disable InconsistentNaming
 
 using System.Runtime.Serialization;
 using Newtonsoft.Json;

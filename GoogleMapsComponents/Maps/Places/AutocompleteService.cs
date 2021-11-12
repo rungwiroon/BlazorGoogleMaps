@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
 
 namespace GoogleMapsComponents.Maps.Places
 {
-    public class AutocompleteService: IDisposable
+    public class AutocompleteService: IAsyncDisposable
     {
         private readonly JsObjectRef _jsObjectRef;
 
@@ -23,9 +21,9 @@ namespace GoogleMapsComponents.Maps.Places
             _jsObjectRef = jsObjectRef;
         }
 
-        public void Dispose()
+        public ValueTask DisposeAsync()
         {
-            _jsObjectRef.Dispose();
+            return _jsObjectRef.DisposeAsync();
         }
     }
 }

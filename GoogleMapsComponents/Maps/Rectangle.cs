@@ -9,7 +9,7 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// A rectangle overlay.
     /// </summary>
-    public class Rectangle : IDisposable
+    public class Rectangle : IAsyncDisposable
     {
         private readonly JsObjectRef _jsObjetRef;
         private Map _map;
@@ -37,16 +37,16 @@ namespace GoogleMapsComponents.Maps
             _map = opts?.Map;
         }
 
-        public void Dispose()
+        public ValueTask DisposeAsync()
         {
-            _jsObjetRef.Dispose();
+            return _jsObjetRef.DisposeAsync();
         }
 
         /// <summary>
         /// Returns the bounds of this rectangle.
         /// </summary>
         /// <returns></returns>
-        public Task<LatLngBoundsLiteral> GetBounds()
+        public ValueTask<LatLngBoundsLiteral> GetBounds()
         {
             return _jsObjetRef.InvokeAsync<LatLngBoundsLiteral>(
                 "getBounds");
@@ -56,7 +56,7 @@ namespace GoogleMapsComponents.Maps
         /// Returns whether this rectangle can be dragged by the user.
         /// </summary>
         /// <returns></returns>
-        public Task<bool> GetDraggable()
+        public ValueTask<bool> GetDraggable()
         {
             return _jsObjetRef.InvokeAsync<bool>(
                 "getDraggable");
@@ -66,7 +66,7 @@ namespace GoogleMapsComponents.Maps
         /// Returns whether this rectangle can be edited by the user.
         /// </summary>
         /// <returns></returns>
-        public Task<bool> GetEditable()
+        public ValueTask<bool> GetEditable()
         {
             return _jsObjetRef.InvokeAsync<bool>(
                 "getEditable");
@@ -85,7 +85,7 @@ namespace GoogleMapsComponents.Maps
         /// Returns whether this rectangle is visible on the map.
         /// </summary>
         /// <returns></returns>
-        public Task<bool> GetVisible()
+        public ValueTask<bool> GetVisible()
         {
             return _jsObjetRef.InvokeAsync<bool>(
                 "getVisible");
@@ -95,7 +95,7 @@ namespace GoogleMapsComponents.Maps
         /// Sets the bounds of this rectangle.
         /// </summary>
         /// <param name="bounds"></param>
-        public Task SetBounds(LatLngBoundsLiteral bounds)
+        public ValueTask SetBounds(LatLngBoundsLiteral bounds)
         {
             return _jsObjetRef.InvokeAsync(
                 "setBounds",
@@ -106,7 +106,7 @@ namespace GoogleMapsComponents.Maps
         /// If set to true, the user can drag this rectangle over the map.
         /// </summary>
         /// <param name="draggble"></param>
-        public Task SetDraggable(bool draggble)
+        public ValueTask SetDraggable(bool draggble)
         {
             return _jsObjetRef.InvokeAsync(
                 "setDraggable",
@@ -117,7 +117,7 @@ namespace GoogleMapsComponents.Maps
         /// If set to true, the user can edit this rectangle by dragging the control points shown at the corners and on each edge.
         /// </summary>
         /// <param name="editable"></param>
-        public Task SetEditable(bool editable)
+        public ValueTask SetEditable(bool editable)
         {
             return _jsObjetRef.InvokeAsync(
                 "setEditable",
@@ -128,7 +128,7 @@ namespace GoogleMapsComponents.Maps
         /// Renders the rectangle on the specified map. If map is set to null, the rectangle will be removed.
         /// </summary>
         /// <param name="map"></param>
-        public Task SetMap(Map map)
+        public ValueTask SetMap(Map map)
         {
             _map = map;
 
@@ -137,7 +137,7 @@ namespace GoogleMapsComponents.Maps
                 map);
         }
 
-        public Task SetOptions(RectangleOptions options)
+        public ValueTask SetOptions(RectangleOptions options)
         {
             return _jsObjetRef.InvokeAsync(
                 "setOptions",
@@ -148,7 +148,7 @@ namespace GoogleMapsComponents.Maps
         /// Hides this rectangle if set to false.
         /// </summary>
         /// <param name="visible"></param>
-        public Task SetVisible(bool visible)
+        public ValueTask SetVisible(bool visible)
         {
             return _jsObjetRef.InvokeAsync(
                 "setVisible",

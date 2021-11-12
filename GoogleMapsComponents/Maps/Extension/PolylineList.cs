@@ -84,7 +84,7 @@ namespace GoogleMapsComponents.Maps.Extension
         /// </summary>
         /// <param name="opts"></param>
         /// <returns></returns>
-        public async Task SetMultipleAsync(Dictionary<string, PolylineOptions> opts)
+        public async ValueTask SetMultipleAsync(Dictionary<string, PolylineOptions> opts)
         {
           await base.SetMultipleAsync(opts, "google.maps.Polyline");
         }
@@ -94,88 +94,32 @@ namespace GoogleMapsComponents.Maps.Extension
         /// </summary>
         /// <param name="opts"></param>
         /// <returns></returns>
-        public async Task AddMultipleAsync(Dictionary<string, PolylineOptions> opts)
+        public async ValueTask AddMultipleAsync(Dictionary<string, PolylineOptions> opts)
         {
             await base.AddMultipleAsync(opts, "google.maps.Polyline");
         }
 
-        public Task<Dictionary<string, LatLngBoundsLiteral>> GetBounds(List<string> filterKeys = null)
+        public ValueTask<Dictionary<string, LatLngBoundsLiteral>> GetBounds(IEnumerable<string> filterKeys)
         {
-            List<string> matchingKeys = ComputeMathingKeys(filterKeys);
-
-            if (matchingKeys.Any())
-            {
-                Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
-                Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
-
-                return _jsObjectRef.InvokeMultipleAsync<LatLngBoundsLiteral>(
-                    "getBounds",
-                    dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
-            }
-            else
-            {
-                return ComputeEmptyResult<LatLngBoundsLiteral>();
-            }
+            return InvokeMultipleAsync<LatLngBoundsLiteral>("getBounds", filterKeys);
         }
 
-        public Task<Dictionary<string, LatLngLiteral>> GetCenters(List<string> filterKeys = null)
+        public ValueTask<Dictionary<string, LatLngLiteral>> GetCenters(IEnumerable<string> filterKeys)
         {
-            List<string> matchingKeys = ComputeMathingKeys(filterKeys);
-
-            if (matchingKeys.Any())
-            {
-                Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
-                Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
-
-                return _jsObjectRef.InvokeMultipleAsync<LatLngLiteral>(
-                    "getCenter",
-                    dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
-            }
-            else
-            {
-                return ComputeEmptyResult<LatLngLiteral>();
-            }
+            return InvokeMultipleAsync<LatLngLiteral>("getCenter", filterKeys);
         }
 
-        public Task<Dictionary<string, bool>> GetEditables(List<string> filterKeys = null)
+        public ValueTask<Dictionary<string, bool>> GetEditables(IEnumerable<string> filterKeys)
         {
-            List<string> matchingKeys = ComputeMathingKeys(filterKeys);
-
-            if (matchingKeys.Any())
-            {
-                Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
-                Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
-
-                return _jsObjectRef.InvokeMultipleAsync<bool>(
-                    "getEditable",
-                    dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
-            }
-            else
-            {
-                return ComputeEmptyResult<bool>();
-            }
+            return InvokeMultipleAsync<bool>("getEditable", filterKeys);
         }
 
-        public Task<Dictionary<string, double>> GetRadiuses(List<string> filterKeys = null)
+        public ValueTask<Dictionary<string, double>> GetRadiuses(IEnumerable<string> filterKeys)
         {
-            List<string> matchingKeys = ComputeMathingKeys(filterKeys);
-
-            if (matchingKeys.Any())
-            {
-                Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
-                Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
-
-                return _jsObjectRef.InvokeMultipleAsync<double>(
-                    "getRadius",
-                    dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
-            }
-            else
-            {
-                return ComputeEmptyResult<double>();
-            }
+            return InvokeMultipleAsync<double>("getRadius", filterKeys);
         }
 
-        public Task SetCenters(Dictionary<string, LatLngLiteral> centers)
+        public ValueTask SetCenters(Dictionary<string, LatLngLiteral> centers)
         {
             Dictionary<Guid, object> dictArgs = centers.ToDictionary(e => Polylines[e.Key].Guid, e => (object)e.Value);
             return _jsObjectRef.InvokeMultipleAsync(
@@ -183,7 +127,7 @@ namespace GoogleMapsComponents.Maps.Extension
                 dictArgs);
         }
 
-        public Task SetEditables(Dictionary<string, bool> editables)
+        public ValueTask SetEditables(Dictionary<string, bool> editables)
         {
             Dictionary<Guid, object> dictArgs = editables.ToDictionary(e => Polylines[e.Key].Guid, e => (object)e.Value);
             return _jsObjectRef.InvokeMultipleAsync(
@@ -191,7 +135,7 @@ namespace GoogleMapsComponents.Maps.Extension
                 dictArgs);
         }
 
-        public Task SetRadiuses(Dictionary<string, double> radiuses)
+        public ValueTask SetRadiuses(Dictionary<string, double> radiuses)
         {
             Dictionary<Guid, object> dictArgs = radiuses.ToDictionary(e => Polylines[e.Key].Guid, e => (object)e.Value);
             return _jsObjectRef.InvokeMultipleAsync(

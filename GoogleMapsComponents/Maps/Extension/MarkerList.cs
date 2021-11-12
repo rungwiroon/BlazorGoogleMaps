@@ -107,18 +107,20 @@ namespace GoogleMapsComponents.Maps.Extension
             await base.AddMultipleAsync(opts, "google.maps.Marker");
         }
 
-        public Task<Dictionary<string, Animation>> GetAnimations(List<string> filterKeys = null)
+        public async ValueTask<Dictionary<string, Animation>> GetAnimations(List<string> filterKeys = null)
         {
-            List<string> matchingKeys = ComputeMathingKeys(filterKeys);
+            var matchingKeys = ComputeMathingKeys(filterKeys);
 
             if (matchingKeys.Any())
             {
                 Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
                 Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
 
-                return _jsObjectRef.InvokeMultipleAsync<string>(
+                var res = await _jsObjectRef.InvokeMultipleAsync<string>(
                     "getAnimation",
-                    dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => Helper.ToEnum<Animation>(r.Value)));
+                    dictArgs);
+                    
+                return res.ToDictionary(r => internalMapping[new Guid(r.Key)], r => Helper.ToEnum<Animation>(r.Value));
             }
             else
             {
@@ -126,18 +128,20 @@ namespace GoogleMapsComponents.Maps.Extension
             }
         }
 
-        public Task<Dictionary<string, bool>> GetClickables(List<string> filterKeys = null)
+        public async ValueTask<Dictionary<string, bool>> GetClickables(List<string> filterKeys = null)
         {
-            List<string> matchingKeys = ComputeMathingKeys(filterKeys);
+            var matchingKeys = ComputeMathingKeys(filterKeys);
 
             if (matchingKeys.Any())
             {
                 Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
                 Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
 
-                return _jsObjectRef.InvokeMultipleAsync<bool>(
+                var res = await _jsObjectRef.InvokeMultipleAsync<bool>(
                     "getClickable",
-                    dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
+                    dictArgs);
+                
+                return res.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value);
             }
             else
             {
@@ -145,137 +149,39 @@ namespace GoogleMapsComponents.Maps.Extension
             }
         }
 
-        public Task<Dictionary<string, string>> GetCursors(List<string> filterKeys = null)
+        public ValueTask<Dictionary<string, string>> GetCursors(IEnumerable<string> filterKeys)
         {
-            List<string> matchingKeys = ComputeMathingKeys(filterKeys);
-
-            if (matchingKeys.Any())
-            {
-                Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
-                Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
-
-                return _jsObjectRef.InvokeMultipleAsync<string>(
-                    "getCursor",
-                    dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
-            }
-            else
-            {
-                return ComputeEmptyResult<string>();
-            }
+            return InvokeMultipleAsync<string>("getCursor", filterKeys);
         }
 
-        public Task<Dictionary<string, OneOf<string, Icon, Symbol>>> GetIcons(List<string> filterKeys = null)
+        public ValueTask<Dictionary<string, OneOf<string, Icon, Symbol>>> GetIcons(IEnumerable<string> filterKeys)
         {
-            List<string> matchingKeys = ComputeMathingKeys(filterKeys);
-
-            if (matchingKeys.Any())
-            {
-                Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
-                Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
-
-                return _jsObjectRef.InvokeMultipleAsync<OneOf<string, Icon, Symbol>>(
-                    "getIcon",
-                    dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
-            }
-            else
-            {
-                return ComputeEmptyResult<OneOf<string, Icon, Symbol>>();
-            }
+            return InvokeMultipleAsync<OneOf<string, Icon, Symbol>>("getIcon", filterKeys);
         }
 
-        public Task<Dictionary<string, string>> GetLabels(List<string> filterKeys = null)
+        public ValueTask<Dictionary<string, string>> GetLabels(IEnumerable<string> filterKeys)
         {
-            List<string> matchingKeys = ComputeMathingKeys(filterKeys);
-
-            if (matchingKeys.Any())
-            {
-                Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
-                Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
-
-                return _jsObjectRef.InvokeMultipleAsync<string>(
-                    "getLabel",
-                    dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
-            }
-            else
-            {
-                return ComputeEmptyResult<string>();
-            }
+            return InvokeMultipleAsync<string>("getLabel", filterKeys);
         }
 
-        public Task<Dictionary<string, LatLngLiteral>> GetPositions(List<string> filterKeys = null)
+        public ValueTask<Dictionary<string, LatLngLiteral>> GetPositions(IEnumerable<string> filterKeys)
         {
-            List<string> matchingKeys = ComputeMathingKeys(filterKeys);
-
-            if (matchingKeys.Any())
-            {
-                Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
-                Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
-
-                return _jsObjectRef.InvokeMultipleAsync<LatLngLiteral>(
-                    "getPosition",
-                    dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
-            }
-            else
-            {
-                return ComputeEmptyResult<LatLngLiteral>();
-            }
+            return InvokeMultipleAsync<LatLngLiteral>("getPosition", filterKeys);
         }
 
-        public Task<Dictionary<string, MarkerShape>> GetShapes(List<string> filterKeys = null)
+        public ValueTask<Dictionary<string, MarkerShape>> GetShapes(IEnumerable<string> filterKeys)
         {
-            List<string> matchingKeys = ComputeMathingKeys(filterKeys);
-
-            if (matchingKeys.Any())
-            {
-                Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
-                Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
-
-                return _jsObjectRef.InvokeMultipleAsync<MarkerShape>(
-                    "getShape",
-                    dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
-            }
-            else
-            {
-                return ComputeEmptyResult<MarkerShape>();
-            }
+            return InvokeMultipleAsync<MarkerShape>("getShape", filterKeys);
         }
 
-        public Task<Dictionary<string, string>> GetTitles(List<string> filterKeys = null)
+        public ValueTask<Dictionary<string, string>> GetTitles(IEnumerable<string> filterKeys)
         {
-            List<string> matchingKeys = ComputeMathingKeys(filterKeys);
-
-            if (matchingKeys.Any())
-            {
-                Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
-                Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
-
-                return _jsObjectRef.InvokeMultipleAsync<string>(
-                    "getTitle",
-                    dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
-            }
-            else
-            {
-                return ComputeEmptyResult<string>();
-            }
+            return InvokeMultipleAsync<string>("getTitle", filterKeys);
         }
 
-        public Task<Dictionary<string, int>> GetZIndexes(List<string> filterKeys = null)
+        public ValueTask<Dictionary<string, int>> GetZIndexes(IEnumerable<string> filterKeys)
         {
-            List<string> matchingKeys = ComputeMathingKeys(filterKeys);
-
-            if (matchingKeys.Any())
-            {
-                Dictionary<Guid, string> internalMapping = ComputeInternalMapping(matchingKeys);
-                Dictionary<Guid, object> dictArgs = ComputeDictArgs(matchingKeys);
-
-                return _jsObjectRef.InvokeMultipleAsync<int>(
-                    "getZIndex",
-                    dictArgs).ContinueWith(e => e.Result.ToDictionary(r => internalMapping[new Guid(r.Key)], r => r.Value));
-            }
-            else
-            {
-                return ComputeEmptyResult<int>();
-            }
+            return InvokeMultipleAsync<int>("getZIndex", filterKeys);
         }
 
         /// <summary>
@@ -285,7 +191,7 @@ namespace GoogleMapsComponents.Maps.Extension
         /// Passing in null will cause any animation to stop.
         /// </summary>
         /// <param name="animation"></param>
-        public Task SetAnimations(Dictionary<string, Animation> animations)
+        public ValueTask SetAnimations(Dictionary<string, Animation> animations)
         {
             Dictionary<Guid, object> dictArgs = animations.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
             return _jsObjectRef.InvokeMultipleAsync(
@@ -293,7 +199,7 @@ namespace GoogleMapsComponents.Maps.Extension
                 dictArgs);
         }
 
-        public Task SetClickables(Dictionary<string, bool> flags)
+        public ValueTask SetClickables(Dictionary<string, bool> flags)
         {
             Dictionary<Guid, object> dictArgs = flags.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
             return _jsObjectRef.InvokeMultipleAsync(
@@ -301,7 +207,7 @@ namespace GoogleMapsComponents.Maps.Extension
                 dictArgs);
         }
 
-        public Task SetCursors(Dictionary<string, string> cursors)
+        public ValueTask SetCursors(Dictionary<string, string> cursors)
         {
             Dictionary<Guid, object> dictArgs = cursors.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
             return _jsObjectRef.InvokeMultipleAsync(
@@ -309,7 +215,7 @@ namespace GoogleMapsComponents.Maps.Extension
                 dictArgs);
         }
 
-        public Task SetIcons(Dictionary<string, string> icons)
+        public ValueTask SetIcons(Dictionary<string, string> icons)
         {
             Dictionary<Guid, object> dictArgs = icons.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
             return _jsObjectRef.InvokeMultipleAsync(
@@ -317,7 +223,7 @@ namespace GoogleMapsComponents.Maps.Extension
                 dictArgs);
         }
 
-        public Task SetIcons(Dictionary<string, Icon> icons)
+        public ValueTask SetIcons(Dictionary<string, Icon> icons)
         {
             Dictionary<Guid, object> dictArgs = icons.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
             return _jsObjectRef.InvokeMultipleAsync(
@@ -325,7 +231,7 @@ namespace GoogleMapsComponents.Maps.Extension
                 dictArgs);
         }
 
-        public Task SetLabels(Dictionary<string, Symbol> labels)
+        public ValueTask SetLabels(Dictionary<string, Symbol> labels)
         {
             Dictionary<Guid, object> dictArgs = labels.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
             return _jsObjectRef.InvokeMultipleAsync(
@@ -333,7 +239,7 @@ namespace GoogleMapsComponents.Maps.Extension
                 dictArgs);
         }
 
-        public Task SetOpacities(Dictionary<string, float> opacities)
+        public ValueTask SetOpacities(Dictionary<string, float> opacities)
         {
             Dictionary<Guid, object> dictArgs = opacities.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
             return _jsObjectRef.InvokeMultipleAsync(
@@ -341,7 +247,7 @@ namespace GoogleMapsComponents.Maps.Extension
                 dictArgs);
         }
 
-        public Task SetPositions(Dictionary<string, LatLngLiteral> latLngs)
+        public ValueTask SetPositions(Dictionary<string, LatLngLiteral> latLngs)
         {
             Dictionary<Guid, object> dictArgs = latLngs.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
             return _jsObjectRef.InvokeMultipleAsync(
@@ -349,7 +255,7 @@ namespace GoogleMapsComponents.Maps.Extension
                 dictArgs);
         }
 
-        public Task SetShapes(Dictionary<string, MarkerShape> shapes)
+        public ValueTask SetShapes(Dictionary<string, MarkerShape> shapes)
         {
             Dictionary<Guid, object> dictArgs = shapes.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
             return _jsObjectRef.InvokeMultipleAsync(
@@ -357,7 +263,7 @@ namespace GoogleMapsComponents.Maps.Extension
                 dictArgs);
         }
 
-        public Task SetTitles(Dictionary<string, string> titles)
+        public ValueTask SetTitles(Dictionary<string, string> titles)
         {
             Dictionary<Guid, object> dictArgs = titles.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
             return _jsObjectRef.InvokeMultipleAsync(
@@ -365,7 +271,7 @@ namespace GoogleMapsComponents.Maps.Extension
                 dictArgs);
         }
 
-        public Task SetZIndexes(Dictionary<string, int> zIndexes)
+        public ValueTask SetZIndexes(Dictionary<string, int> zIndexes)
         {
             Dictionary<Guid, object> dictArgs = zIndexes.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
             return _jsObjectRef.InvokeMultipleAsync(

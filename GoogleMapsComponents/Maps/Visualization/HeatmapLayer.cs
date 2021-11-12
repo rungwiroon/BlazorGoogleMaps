@@ -9,7 +9,7 @@ namespace GoogleMapsComponents.Maps.Visualization
     /// <summary>
     /// A layer that provides a client-side rendered heatmap, depicting the intensity of data at geographical points.
     /// </summary>
-    public class HeatmapLayer : IDisposable
+    public class HeatmapLayer : IAsyncDisposable
     {
         private Map _map;
 
@@ -40,16 +40,16 @@ namespace GoogleMapsComponents.Maps.Visualization
             _map = opts?.Map;
         }
 
-        public void Dispose()
+        public ValueTask DisposeAsync()
         {
-            _jsObjectRef.Dispose();
+            return _jsObjectRef.DisposeAsync();
         }
 
         /// <summary>
         /// Returns the data points currently displayed by this heatmap.
         /// </summary>
         /// <returns></returns>
-        public Task<IEnumerable<object>> GetData()
+        public ValueTask<IEnumerable<object>> GetData()
         {
             return _jsObjectRef.InvokeAsync<IEnumerable<object>>(
                 "getData");
@@ -64,7 +64,7 @@ namespace GoogleMapsComponents.Maps.Visualization
         /// Sets the data points to be displayed by this heatmap.
         /// </summary>
         /// <param name="data"></param>
-        public Task SetData(IEnumerable<LatLngLiteral> data)
+        public ValueTask SetData(IEnumerable<LatLngLiteral> data)
         {
             return _jsObjectRef.InvokeAsync(
                 "setData",
@@ -75,7 +75,7 @@ namespace GoogleMapsComponents.Maps.Visualization
         /// Sets the data points to be displayed by this heatmap.
         /// </summary>
         /// <param name="data"></param>
-        public Task SetData(IEnumerable<WeightedLocation> data)
+        public ValueTask SetData(IEnumerable<WeightedLocation> data)
         {
             return _jsObjectRef.InvokeAsync(
                 "setData",
@@ -86,7 +86,7 @@ namespace GoogleMapsComponents.Maps.Visualization
         /// Renders the heatmap on the specified map. If map is set to null, the heatmap will be removed.
         /// </summary>
         /// <param name="map"></param>
-        public Task SetMap(Map map)
+        public ValueTask SetMap(Map map)
         {
             _map = map;
 
@@ -95,7 +95,7 @@ namespace GoogleMapsComponents.Maps.Visualization
                 map);
         }
 
-        public Task SetOptions(HeatmapLayerOptions options)
+        public ValueTask SetOptions(HeatmapLayerOptions options)
         {
             return _jsObjectRef.InvokeAsync(
                 "setOptions",

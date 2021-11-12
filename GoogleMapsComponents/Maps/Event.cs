@@ -20,7 +20,7 @@ namespace GoogleMapsComponents.Maps
         /// Cross browser event handler registration. 
         /// This listener is removed by calling removeListener(handle) for the handle that is returned by this function.
         /// </summary>
-        public Task AddDomListener(object instance, string eventName, Action handler, bool? capture)
+        public ValueTask AddDomListener(object instance, string eventName, Action handler, bool? capture)
         {
             return _jsRuntime.MyInvokeAsync(
                 "google.maps.event.addDomListener", instance, eventName, handler, capture);
@@ -30,7 +30,7 @@ namespace GoogleMapsComponents.Maps
         /// Cross browser event handler registration. 
         /// This listener is removed by calling removeListener(handle) for the handle that is returned by this function.
         /// </summary>
-        public Task AddDomListener<T>(object instance, string eventName, Action<T> handler, bool? capture)
+        public ValueTask AddDomListener<T>(object instance, string eventName, Action<T> handler, bool? capture)
         {
             return _jsRuntime.MyInvokeAsync(
                 "google.maps.event.addDomListener", instance, eventName, handler, capture);

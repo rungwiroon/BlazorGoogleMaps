@@ -11,7 +11,7 @@ namespace GoogleMapsComponents.Maps.Drawing
     /// The DrawingManager's drawing mode defines the type of overlay that will be created by the user. 
     /// Adds a control to the map, allowing the user to switch drawing mode.
     /// </summary>
-    public class DrawingManager : IDisposable
+    public class DrawingManager : IAsyncDisposable
     {
         private readonly JsObjectRef _jsObjectRef;
         private Map _map;
@@ -39,9 +39,9 @@ namespace GoogleMapsComponents.Maps.Drawing
                 _map = opt.Map;
         }
 
-        public void Dispose()
+        public ValueTask DisposeAsync()
         {
-            _jsObjectRef.Dispose();
+            return _jsObjectRef.DisposeAsync();
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace GoogleMapsComponents.Maps.Drawing
         /// A drawing mode of null means that the user can interact with the map as normal, and clicks do not draw anything.
         /// </summary>
         /// <returns></returns>
-        public Task SetDrawingMode(OverlayType? drawingMode)
+        public ValueTask SetDrawingMode(OverlayType? drawingMode)
         {
             return _jsObjectRef.InvokeAsync(
                 "setDrawingMode",
@@ -81,7 +81,7 @@ namespace GoogleMapsComponents.Maps.Drawing
         /// Attaches the DrawingManager object to the specified Map.
         /// </summary>
         /// <param name="map"></param>
-        public async Task SetMap(Map map)
+        public async ValueTask SetMap(Map map)
         {
             await _jsObjectRef.InvokeAsync(
                    "googleMapDrawingManagerJsFunctions.setMap",
@@ -94,14 +94,14 @@ namespace GoogleMapsComponents.Maps.Drawing
         /// Sets the DrawingManager's options.
         /// </summary>
         /// <param name="options"></param>
-        public Task SetOptions(DrawingManagerOptions options)
+        public ValueTask SetOptions(DrawingManagerOptions options)
         {
             return _jsObjectRef.InvokeAsync(
                    "setOptions",
                    options);
         }
 
-        public async Task<MapEventListener> AddListener(string eventName, Action handler)
+        public async ValueTask<MapEventListener> AddListener(string eventName, Action handler)
         {
             var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
                 "addListener", eventName, handler);
@@ -109,7 +109,7 @@ namespace GoogleMapsComponents.Maps.Drawing
             return new MapEventListener(listenerRef);
         }
 
-        public async Task AddOverlayCompleteListener(Action<OverlayCompleteEvent> action)
+        public async ValueTask AddOverlayCompleteListener(Action<OverlayCompleteEvent> action)
         {
             void Act(OverlaycompleteArgs args)
             {
@@ -148,7 +148,7 @@ namespace GoogleMapsComponents.Maps.Drawing
             return;
         }
 
-        public async Task<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
+        public async ValueTask<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
         {
             var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
                 "addListener", eventName, handler);
@@ -166,8 +166,5 @@ namespace GoogleMapsComponents.Maps.Drawing
             // ReSharper disable once InconsistentNaming
             public string type { get; set; }
         }
-
     }
-
-
 }

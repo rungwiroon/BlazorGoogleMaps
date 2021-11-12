@@ -9,7 +9,7 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// A polyline is a linear overlay of connected line segments on the map.
     /// </summary>
-    public class Polyline : ListableEntityBase<PolylineOptions>, IDisposable
+    public class Polyline : ListableEntityBase<PolylineOptions>
     {
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace GoogleMapsComponents.Maps
         /// Returns whether this shape can be dragged by the user.
         /// </summary>
         /// <returns></returns>
-        public Task<bool> GetDraggable()
+        public ValueTask<bool> GetDraggable()
         {
             return _jsObjectRef.InvokeAsync<bool>(
                 "getDraggable");
@@ -54,7 +54,7 @@ namespace GoogleMapsComponents.Maps
         /// Returns whether this shape can be edited by the user.
         /// </summary>
         /// <returns></returns>
-        public Task<bool> GetEditable()
+        public ValueTask<bool> GetEditable()
         {
             return _jsObjectRef.InvokeAsync<bool>(
                 "getEditable");
@@ -64,7 +64,7 @@ namespace GoogleMapsComponents.Maps
         /// Retrieves the path.
         /// </summary>
         /// <returns></returns>
-        public Task<IEnumerable<LatLngLiteral>> GetPath()
+        public ValueTask<IEnumerable<LatLngLiteral>> GetPath()
         {
             return _jsObjectRef.InvokeAsync<IEnumerable<LatLngLiteral>>("getPath");
         }
@@ -73,7 +73,7 @@ namespace GoogleMapsComponents.Maps
         /// Returns whether this poly is visible on the map.
         /// </summary>
         /// <returns></returns>
-        public Task<bool> GetVisible()
+        public ValueTask<bool> GetVisible()
         {
             return _jsObjectRef.InvokeAsync<bool>(
                 "getVisible");
@@ -85,7 +85,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="draggable"></param>
         /// <returns></returns>
-        public Task SetDraggable(bool draggable)
+        public ValueTask SetDraggable(bool draggable)
         {
             return _jsObjectRef.InvokeAsync(
                 "setDraggable",
@@ -97,14 +97,14 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="editable"></param>
         /// <returns></returns>
-        public Task SetEditable(bool editable)
+        public ValueTask SetEditable(bool editable)
         {
             return _jsObjectRef.InvokeAsync(
                 "setEditable",
                 editable);
         }
 
-        public Task SetOptions(PolylineOptions options)
+        public ValueTask SetOptions(PolylineOptions options)
         {
             return _jsObjectRef.InvokeAsync(
                 "setOptions",
@@ -116,7 +116,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public Task SetPath(IEnumerable<LatLngLiteral> path)
+        public ValueTask SetPath(IEnumerable<LatLngLiteral> path)
         {
             return _jsObjectRef.InvokeAsync(
                 "setPath",
@@ -128,7 +128,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="visible"></param>
         /// <returns></returns>
-        public Task SetVisible(bool visible)
+        public ValueTask SetVisible(bool visible)
         {
             return _jsObjectRef.InvokeAsync(
                 "setVisible",
