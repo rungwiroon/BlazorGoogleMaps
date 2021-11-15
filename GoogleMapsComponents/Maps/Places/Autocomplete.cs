@@ -12,10 +12,12 @@ namespace GoogleMapsComponents.Maps.Places
 
         public async static Task<Autocomplete> CreateAsync(IJSRuntime jsRuntime, ElementReference inputField, AutocompleteOptions opts = null)
         {
-            var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.places.Autocomplete", inputField, opts);
-            var obj = new Autocomplete(jsObjectRef);
+            //var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.places.Autocomplete", inputField, opts);
+            //var obj = new Autocomplete(jsObjectRef);
 
-            return obj;
+            //return obj;
+
+            throw new NotImplementedException();
         }
 
         private Autocomplete(JsObjectRef jsObjectRef)
@@ -60,7 +62,7 @@ namespace GoogleMapsComponents.Maps.Places
         /// </summary>
         public ValueTask SetBounds(LatLngBoundsLiteral bounds)
         {
-            return _jsObjectRef.InvokeAsync("setBounds", bounds);
+            return _jsObjectRef.InvokeVoidAsync("setBounds", bounds);
         }
 
         /// <summary>
@@ -69,7 +71,7 @@ namespace GoogleMapsComponents.Maps.Places
         /// </summary>
         public ValueTask SetComponentRestrictions(ComponentRestrictions restrictions)
         {
-            return _jsObjectRef.InvokeAsync("setComponentRestrictions", restrictions);
+            return _jsObjectRef.InvokeVoidAsync("setComponentRestrictions", restrictions);
         }
 
         /// <summary>
@@ -78,12 +80,12 @@ namespace GoogleMapsComponents.Maps.Places
         /// </summary>
         public ValueTask SetFields(IEnumerable<string> fields)
         {
-            return _jsObjectRef.InvokeAsync("setFields", fields);
+            return _jsObjectRef.InvokeVoidAsync("setFields", fields);
         }
 
         public ValueTask SetOptions(AutocompleteOptions options)
         {
-            return _jsObjectRef.InvokeAsync("setOptions", options);
+            return _jsObjectRef.InvokeVoidAsync("setOptions", options);
         }
 
         /// <summary>
@@ -92,12 +94,12 @@ namespace GoogleMapsComponents.Maps.Places
         /// </summary>>
         public ValueTask SetTypes(IEnumerable<string> types)
         {
-            return _jsObjectRef.InvokeAsync("setTypes", types);
+            return _jsObjectRef.InvokeVoidAsync("setTypes", types);
         }
 
         public async Task<MapEventListener> AddListener(string eventName, Action handler)
         {
-            var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
+            var listenerRef = await _jsObjectRef.InvokeAsync<IJSObjectReference>(
                 "addListener", eventName, handler);
 
             return new MapEventListener(listenerRef);

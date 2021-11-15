@@ -23,11 +23,13 @@ namespace GoogleMapsComponents.Maps.Visualization
         /// <param name="opts"></param>
         public async static Task<HeatmapLayer> CreateAsync(IJSRuntime jsRuntime, HeatmapLayerOptions opts = null)
         {
-            var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.visualization.HeatmapLayer", opts);
+            //var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.visualization.HeatmapLayer", opts);
 
-            var obj = new HeatmapLayer(jsObjectRef, opts);
+            //var obj = new HeatmapLayer(jsObjectRef, opts);
 
-            return obj;
+            //return obj;
+
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -66,7 +68,7 @@ namespace GoogleMapsComponents.Maps.Visualization
         /// <param name="data"></param>
         public ValueTask SetData(IEnumerable<LatLngLiteral> data)
         {
-            return _jsObjectRef.InvokeAsync(
+            return _jsObjectRef.InvokeVoidAsync(
                 "setData",
                 data);
         }
@@ -77,7 +79,7 @@ namespace GoogleMapsComponents.Maps.Visualization
         /// <param name="data"></param>
         public ValueTask SetData(IEnumerable<WeightedLocation> data)
         {
-            return _jsObjectRef.InvokeAsync(
+            return _jsObjectRef.InvokeVoidAsync(
                 "setData",
                 data);
         }
@@ -90,14 +92,14 @@ namespace GoogleMapsComponents.Maps.Visualization
         {
             _map = map;
 
-            return _jsObjectRef.InvokeAsync(
+            return _jsObjectRef.InvokeVoidAsync(
                 "setMap",
                 map);
         }
 
         public ValueTask SetOptions(HeatmapLayerOptions options)
         {
-            return _jsObjectRef.InvokeAsync(
+            return _jsObjectRef.InvokeVoidAsync(
                 "setOptions",
                 options);
         }

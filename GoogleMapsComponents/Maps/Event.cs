@@ -1,39 +1,52 @@
 ﻿using Microsoft.JSInterop;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
 {
-    
     public class Event
     {
-        private readonly IJSRuntime _jsRuntime;
-
-        public Event(IJSRuntime jsRuntime)
+        /// <summary>
+        /// Cross browser event handler registration. 
+        /// This listener is removed by calling removeListener(handle) for the handle that is returned by this function.
+        /// </summary>
+        public static ValueTask AddDomListener(
+            IJSRuntime jsRuntime,
+            IJSObjectReference instance,
+            string eventName,
+            Action handler,
+            bool? capture)
         {
-            _jsRuntime = jsRuntime;
+            return jsRuntime.InvokeVoidAsync(
+                "google.maps.event.addDomListener",
+                instance, eventName, handler, capture);
         }
 
         /// <summary>
         /// Cross browser event handler registration. 
         /// This listener is removed by calling removeListener(handle) for the handle that is returned by this function.
         /// </summary>
-        public ValueTask AddDomListener(object instance, string eventName, Action handler, bool? capture)
+        public static ValueTask AddDomListener<T>(
+            IJSRuntime jsRuntime,
+            IJSObjectReference instance,
+            string eventName,
+            Action<T> handler,
+            bool? capture)
         {
-            return _jsRuntime.MyInvokeAsync(
+            return jsRuntime.InvokeVoidAsync(
                 "google.maps.event.addDomListener", instance, eventName, handler, capture);
         }
 
         /// <summary>
-        /// Cross browser event handler registration. 
-        /// This listener is removed by calling removeListener(handle) for the handle that is returned by this function.
+        /// Removes all listeners for the given event for the given instance.
         /// </summary>
-        public ValueTask AddDomListener<T>(object instance, string eventName, Action<T> handler, bool? capture)
+        public ValueTask ClearListeners(
+            IJSRuntime jsRuntime,
+            IJSObjectReference instance,
+            string eventName)
         {
-            return _jsRuntime.MyInvokeAsync(
-                "google.maps.event.addDomListener", instance, eventName, handler, capture);
+            return jsRuntime.InvokeVoidAsync(
+                "google.maps.event.clearListeners", instance, eventName);
         }
     }
 }

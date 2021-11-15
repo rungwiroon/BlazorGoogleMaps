@@ -7,14 +7,14 @@ using OneOf;
 
 namespace GoogleMapsComponents.Maps
 {
-    public class ListableEntityBase<TEntityOptions> : IAsyncDisposable, IJsObjectRef
+    public class ListableEntityBase<TEntityOptions>
         where TEntityOptions : ListableEntityOptionsBase
     {
         protected readonly JsObjectRef _jsObjectRef;
 
         public readonly Dictionary<string, List<MapEventListener>> EventListeners;
 
-        public Guid Guid => _jsObjectRef.Guid;
+        //public Guid Guid => _jsObjectRef.Guid;
         
         internal ListableEntityBase(JsObjectRef jsObjectRef)
         {
@@ -24,28 +24,32 @@ namespace GoogleMapsComponents.Maps
 
         public ValueTask DisposeAsync()
         {
-            foreach (string key in EventListeners.Keys)
-            {
-                //Probably superfluous...
-                if ((EventListeners.TryGetValue(key, out var eventsList) && eventsList != null))
-                {
-                    foreach (MapEventListener eventListener in eventsList)
-                    {
-                        eventListener.Dispose();
-                    }
+            //foreach (string key in EventListeners.Keys)
+            //{
+            //    //Probably superfluous...
+            //    if ((EventListeners.TryGetValue(key, out var eventsList) && eventsList != null))
+            //    {
+            //        //foreach (MapEventListener eventListener in eventsList)
+            //        //{
+            //        //    await eventListener.DisposeAsync();
+            //        //}
 
-                    eventsList.Clear();
-                }
-            }
+            //        eventsList.Clear();
+            //    }
+            //}
 
-            EventListeners.Clear();
-            return _jsObjectRef.DisposeAsync();
+            //EventListeners.Clear();
+            //return _jsObjectRef.DisposeAsync();
+
+            throw new NotImplementedException();
         }
 
         public virtual ValueTask<Map> GetMap()
         {
-            return _jsObjectRef.InvokeAsync<Map>(
-                "getMap");
+            //return _jsObjectRef.InvokeAsync<Map>(
+            //    "getMap");
+
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -55,54 +59,64 @@ namespace GoogleMapsComponents.Maps
         /// <param name="map"></param>
         public virtual async Task SetMap(Map map)
         {
-            await _jsObjectRef.InvokeAsync("setMap", map);
+            //await _jsObjectRef.InvokeAsync("setMap", map);
 
-            //_map = map;
+            ////_map = map;
+
+            throw new NotImplementedException();
         }
 
         public virtual async Task<MapEventListener> AddListener(string eventName, Action handler)
         {
-            JsObjectRef listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync("addListener", eventName, handler);
-            MapEventListener eventListener = new MapEventListener(listenerRef);
+            //JsObjectRef listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync("addListener", eventName, handler);
+            //MapEventListener eventListener = new MapEventListener(listenerRef);
 
-            if (!EventListeners.ContainsKey(eventName))
-            {
-                EventListeners.Add(eventName, new List<MapEventListener>());
-            }
-            EventListeners[eventName].Add(eventListener);
+            //if (!EventListeners.ContainsKey(eventName))
+            //{
+            //    EventListeners.Add(eventName, new List<MapEventListener>());
+            //}
+            //EventListeners[eventName].Add(eventListener);
 
-            return eventListener;
+            //return eventListener;
+
+            throw new NotImplementedException();
         }
 
         public virtual async Task<MapEventListener> AddListener<V>(string eventName, Action<V> handler)
         {
-            JsObjectRef listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync("addListener", eventName, handler);
-            MapEventListener eventListener = new MapEventListener(listenerRef);
+            //JsObjectRef listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync("addListener", eventName, handler);
+            //MapEventListener eventListener = new MapEventListener(listenerRef);
 
-            if (!EventListeners.ContainsKey(eventName))
-            {
-                EventListeners.Add(eventName, new List<MapEventListener>());
-            }
-            EventListeners[eventName].Add(eventListener);
+            //if (!EventListeners.ContainsKey(eventName))
+            //{
+            //    EventListeners.Add(eventName, new List<MapEventListener>());
+            //}
+            //EventListeners[eventName].Add(eventListener);
 
-            return eventListener;
+            //return eventListener;
+
+            throw new NotImplementedException();
         }
 
         public virtual async Task ClearListeners(string eventName)
         {
-            if (EventListeners.ContainsKey(eventName))
-            {
-                await _jsObjectRef.InvokeAsync("clearListeners", eventName);
+            //if (EventListeners.ContainsKey(eventName))
+            //{
+            //    await _jsObjectRef.InvokeAsync("clearListeners", eventName);
 
-                //IMHO is better preserving the knowledge that Marker had some EventListeners attached to "eventName" in the past
-                //so, instead to clear the list and remove the key from dictionary, I prefer to leave the key with an empty list
-                EventListeners[eventName].Clear();
-            }
+            //    //IMHO is better preserving the knowledge that Marker had some EventListeners attached to "eventName" in the past
+            //    //so, instead to clear the list and remove the key from dictionary, I prefer to leave the key with an empty list
+            //    EventListeners[eventName].Clear();
+            //}
+
+            throw new NotImplementedException();
         }
 
         public ValueTask InvokeAsync(string functionName, params object[] args)
         {
-            return _jsObjectRef.InvokeAsync(functionName, args);
+            //return _jsObjectRef.InvokeAsync(functionName, args);
+
+            throw new NotImplementedException();
         }
     }
 }

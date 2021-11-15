@@ -10,10 +10,12 @@ namespace GoogleMapsComponents.Maps.Places
 
         public async static Task<AutocompleteService> CreateAsync(IJSRuntime jsRuntime, MarkerOptions opts = null)
         {
-            var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.places.AutocompleteService", opts);
-            var obj = new AutocompleteService(jsObjectRef);
+            //var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.places.AutocompleteService", opts);
+            //var obj = new AutocompleteService(jsObjectRef);
 
-            return obj;
+            //return obj;
+
+            throw new NotImplementedException();
         }
 
         private AutocompleteService(JsObjectRef jsObjectRef)

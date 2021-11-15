@@ -3,55 +3,60 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using OneOf;
 using System;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-
-#nullable enable
 
 namespace GoogleMapsComponents.Maps
 {
     /// <summary>
     /// google.maps.Map class
     /// </summary>
-    //[JsonConverter(typeof(JsObjectRefConverter<Map>))]
-    public class Map : IAsyncDisposable, IJsObjectRef
+    [JsonConverter(typeof(JsObjectRefConverter))]
+    public class Map : MVCObject
     {
-        private readonly JsObjectRef _jsObjectRef;
+        public Task<MapData> Data
+        {
+            get
+            {
+                return InvokeAsync<IJSObjectReference>("data")
+                    .AsTask()
+                    .ContinueWith(dataObjectRef => new MapData(dataObjectRef.Result));
+            }
+        }
 
-        public Guid Guid => _jsObjectRef.Guid;
-
-        public MapData Data { get; private set; }
+        public Task<object> Controls
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
         public static async Task<Map> CreateAsync(
             IJSRuntime jsRuntime,
             ElementReference mapDiv,
             MapOptions? opts = null)
         {
-            var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Map", mapDiv, opts);
-            var dataObjectRef = await jsObjectRef.GetObjectReference("data");
-            var data = new MapData(dataObjectRef);
-            var map = new Map(jsObjectRef, data);
-
-            JsObjectRefInstances.Add(map);
+            var jsObjectRef = await jsRuntime.InvokeAsync<IJSObjectReference>(
+                "googleMapsObjectManager.createObject",
+                "google.maps.Map",
+                mapDiv,
+                opts);
+            
+            var map = new Map(jsObjectRef);
 
             return map;
         }
 
-        private Map(JsObjectRef jsObjectRef, MapData data)
+        internal Map(IJSObjectReference jsObjectRef)
+            : base(jsObjectRef)
         {
-            _jsObjectRef = jsObjectRef;
-            Data = data;
         }
 
-        public async Task AddControl(ControlPosition position, ElementReference reference)
+        public ValueTask AddControl(ControlPosition position, ElementReference reference)
         {
-            await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("googleMapsObjectManager.addControls", this.Guid.ToString(), position, reference);
-        }
-
-        public ValueTask DisposeAsync()
-        {
-            JsObjectRefInstances.Remove(_jsObjectRef.Guid.ToString());
-            _jsObjectRef.JSRuntime.InvokeAsync<object>("googleMapsObjectManager.disposeMapElements", Guid.ToString());
-            return _jsObjectRef.DisposeAsync();
+            //return _jsObjectRef.InvokeVoidAsync("googleMapsObjectManager.addControls", position, reference);
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -61,7 +66,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask FitBounds(LatLngBoundsLiteral bounds, OneOf<int, Padding>? padding = null)
         {
-            return _jsObjectRef.InvokeAsync("fitBounds", bounds, padding);
+            return InvokeVoidAsync("fitBounds", bounds, padding);
         }
 
         /// <summary>
@@ -74,7 +79,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask PanBy(int x, int y)
         {
-            return _jsObjectRef.InvokeAsync("panBy", x, y);
+            return InvokeVoidAsync("panBy", x, y);
         }
 
         /// <summary>
@@ -85,7 +90,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask PanTo(LatLngLiteral latLng)
         {
-            return _jsObjectRef.InvokeAsync("panTo", latLng);
+            return InvokeVoidAsync("panTo", latLng);
         }
 
         /// <summary>
@@ -96,7 +101,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask PanToBounds(LatLngBoundsLiteral latLngBounds)
         {
-            return _jsObjectRef.InvokeAsync("panToBounds", latLngBounds);
+            return InvokeVoidAsync("panToBounds", latLngBounds);
         }
 
         /// <summary>
@@ -107,7 +112,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<LatLngBoundsLiteral> GetBounds()
         {
-            return _jsObjectRef.InvokeAsync<LatLngBoundsLiteral>("getBounds");
+            return InvokeAsync<LatLngBoundsLiteral>("getBounds");
         }
 
         /// <summary>
@@ -117,12 +122,12 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<LatLngLiteral> GetCenter()
         {
-            return _jsObjectRef.InvokeAsync<LatLngLiteral>("getCenter");
+            return InvokeAsync<LatLngLiteral>("getCenter");
         }
 
         public ValueTask SetCenter(LatLngLiteral latLng)
         {
-            return _jsObjectRef.InvokeAsync("setCenter", latLng);
+            return InvokeVoidAsync("setCenter", latLng);
         }
 
         /// <summary>
@@ -132,7 +137,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<int> GetHeading()
         {
-            return _jsObjectRef.InvokeAsync<int>("getHeading");
+            return InvokeAsync<int>("getHeading");
         }
 
         /// <summary>
@@ -142,19 +147,19 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask SetHeading(int heading)
         {
-            return _jsObjectRef.InvokeAsync("setHeading", heading);
+            return InvokeVoidAsync("setHeading", heading);
         }
 
         public async ValueTask<MapTypeId> GetMapTypeId()
         {
-            var mapTypeIdStr = await _jsObjectRef.InvokeAsync<string>("getMapTypeId");
+            var mapTypeIdStr = await InvokeAsync<string>("getMapTypeId");
 
             return Helper.ToEnum<MapTypeId>(mapTypeIdStr);
         }
 
         public ValueTask SetMapTypeId(MapTypeId mapTypeId)
         {
-            return _jsObjectRef.InvokeAsync("setMapTypeId", mapTypeId);
+            return InvokeVoidAsync("setMapTypeId", mapTypeId);
         }
 
         /// <summary>
@@ -166,7 +171,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<int> GetTilt()
         {
-            return _jsObjectRef.InvokeAsync<int>("getTilt");
+            return InvokeAsync<int>("getTilt");
         }
 
         /// <summary>
@@ -181,38 +186,22 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask SetTilt(int tilt)
         {
-            return _jsObjectRef.InvokeAsync("setTilt", tilt);
+            return InvokeVoidAsync("setTilt", tilt);
         }
 
         public ValueTask<int> GetZoom()
         {
-            return _jsObjectRef.InvokeAsync<int>("getZoom");
+            return InvokeAsync<int>("getZoom");
         }
 
         public ValueTask SetZoom(int zoom)
         {
-            return _jsObjectRef.InvokeAsync("setZoom", zoom);
+            return InvokeVoidAsync("setZoom", zoom);
         }
 
         public ValueTask SetOptions(MapOptions mapOptions)
         {
-            return _jsObjectRef.InvokeAsync("setOptions", mapOptions);
-        }
-
-        public async ValueTask<MapEventListener> AddListener(string eventName, Action handler)
-        {
-            var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
-                "addListener", eventName, handler);
-
-            return new MapEventListener(listenerRef);
-        }
-
-        public async ValueTask<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
-        {
-            var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
-                "addListener", eventName, handler);
-
-            return new MapEventListener(listenerRef);
+            return InvokeVoidAsync("setOptions", mapOptions);
         }
     }
 }

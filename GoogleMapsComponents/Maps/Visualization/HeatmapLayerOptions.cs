@@ -31,7 +31,7 @@ namespace GoogleMapsComponents.Maps.Visualization
         /// <summary>
         /// The map on which to display the layer.
         /// </summary>
-        [JsonConverter(typeof(JsObjectRefConverter<Map>))]
+        //[JsonConverter(typeof(JsObjectRefConverter<Map>))]
         public Map Map { get; set; }
 
         /// <summary>

@@ -10,8 +10,5 @@ namespace GoogleMapsComponents.Maps
     /// </summary>
     public class PolyMouseEvent : MouseEvent
     {
-        public PolyMouseEvent() 
-        {
-        }
     }
 }

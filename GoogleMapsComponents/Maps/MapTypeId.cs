@@ -1,9 +1,8 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
@@ -11,7 +10,7 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// Identifiers for common MapTypes
     /// </summary>
-    [JsonConverter(typeof(StringEnumConverter))]
+    [JsonConverter(typeof(CustomJsonStringEnumConverter))]
     public enum MapTypeId
     {
         /// <summary>

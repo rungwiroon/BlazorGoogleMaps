@@ -1,7 +1,5 @@
 ﻿using Microsoft.JSInterop;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
@@ -9,10 +7,10 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// A rectangle overlay.
     /// </summary>
-    public class Rectangle : IAsyncDisposable
+    public class Rectangle : JsObjectRef
     {
-        private readonly JsObjectRef _jsObjetRef;
-        private Map _map;
+        //private readonly JsObjectRef _jsObjetRef;
+        //private Map _map;
 
         /// <summary>
         /// Create a rectangle using the passed RectangleOptions, which specify the bounds and style.
@@ -20,26 +18,22 @@ namespace GoogleMapsComponents.Maps
         /// <param name="opts"></param>
         public static async Task<Rectangle> CreateAsync(IJSRuntime jsRuntime, RectangleOptions opts = null)
         {
-            var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Rectangle", opts);
+            //var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Rectangle", opts);
 
-            var obj = new Rectangle(jsObjectRef, opts);
+            //var obj = new Rectangle(jsObjectRef, opts);
 
-            return obj;
+            //return obj;
+
+            throw new NotImplementedException();
         }
 
         /// <summary>
         /// Create a rectangle using the passed RectangleOptions, which specify the bounds and style.
         /// </summary>
         /// <param name="opts"></param>
-        internal Rectangle(JsObjectRef jsObjectRef, RectangleOptions opts = null)
+        internal Rectangle(IJSObjectReference jsObjectRef, RectangleOptions opts = null)
+            : base(jsObjectRef)
         {
-            _jsObjetRef = jsObjectRef;
-            _map = opts?.Map;
-        }
-
-        public ValueTask DisposeAsync()
-        {
-            return _jsObjetRef.DisposeAsync();
         }
 
         /// <summary>
@@ -48,7 +42,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<LatLngBoundsLiteral> GetBounds()
         {
-            return _jsObjetRef.InvokeAsync<LatLngBoundsLiteral>(
+            return InvokeAsync<LatLngBoundsLiteral>(
                 "getBounds");
         }
 
@@ -58,7 +52,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<bool> GetDraggable()
         {
-            return _jsObjetRef.InvokeAsync<bool>(
+            return InvokeAsync<bool>(
                 "getDraggable");
         }
 
@@ -68,7 +62,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<bool> GetEditable()
         {
-            return _jsObjetRef.InvokeAsync<bool>(
+            return InvokeAsync<bool>(
                 "getEditable");
         }
 
@@ -76,9 +70,9 @@ namespace GoogleMapsComponents.Maps
         /// Returns the map on which this rectangle is displayed.
         /// </summary>
         /// <returns></returns>
-        public Map GetMap()
+        public ValueTask<Map> GetMap()
         {
-            return _map;
+            return InvokeWithReturnedObjectRefAsync("getMap", objRef => new Map(objRef));
         }
 
         /// <summary>
@@ -87,7 +81,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<bool> GetVisible()
         {
-            return _jsObjetRef.InvokeAsync<bool>(
+            return InvokeAsync<bool>(
                 "getVisible");
         }
 
@@ -97,7 +91,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="bounds"></param>
         public ValueTask SetBounds(LatLngBoundsLiteral bounds)
         {
-            return _jsObjetRef.InvokeAsync(
+            return InvokeVoidAsync(
                 "setBounds",
                 bounds);
         }
@@ -108,7 +102,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="draggble"></param>
         public ValueTask SetDraggable(bool draggble)
         {
-            return _jsObjetRef.InvokeAsync(
+            return InvokeVoidAsync(
                 "setDraggable",
                 draggble);
         }
@@ -119,7 +113,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="editable"></param>
         public ValueTask SetEditable(bool editable)
         {
-            return _jsObjetRef.InvokeAsync(
+            return InvokeVoidAsync(
                 "setEditable",
                 editable);
         }
@@ -130,16 +124,14 @@ namespace GoogleMapsComponents.Maps
         /// <param name="map"></param>
         public ValueTask SetMap(Map map)
         {
-            _map = map;
-
-            return _jsObjetRef.InvokeAsync(
+            return InvokeVoidAsync(
                 "setMap",
                 map);
         }
 
         public ValueTask SetOptions(RectangleOptions options)
         {
-            return _jsObjetRef.InvokeAsync(
+            return InvokeVoidAsync(
                 "setOptions",
                 options);
         }
@@ -150,14 +142,14 @@ namespace GoogleMapsComponents.Maps
         /// <param name="visible"></param>
         public ValueTask SetVisible(bool visible)
         {
-            return _jsObjetRef.InvokeAsync(
+            return InvokeVoidAsync(
                 "setVisible",
                 visible);
         }
 
         public async Task<MapEventListener> AddListener(string eventName, Action handler)
         {
-            var listenerRef = await _jsObjetRef.InvokeWithReturnedObjectRefAsync(
+            var listenerRef = await InvokeAsync<IJSObjectReference>(
                 "addListener", eventName, handler);
 
             return new MapEventListener(listenerRef);
@@ -165,7 +157,7 @@ namespace GoogleMapsComponents.Maps
 
         public async Task<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
         {
-            var listenerRef = await _jsObjetRef.InvokeWithReturnedObjectRefAsync(
+            var listenerRef = await InvokeAsync<IJSObjectReference>(
                 "addListener", eventName, handler);
 
             return new MapEventListener(listenerRef);

@@ -1,32 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.JSInterop;
+﻿using Microsoft.JSInterop;
 using Newtonsoft.Json;
+using System;
+using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
 {
-    public class DirectionsRenderer : IAsyncDisposable
+    public class DirectionsRenderer : JsObjectRef
     {
-        private readonly JsObjectRef _jsObjectRef;
-
         public static async Task<DirectionsRenderer> CreateAsync(IJSRuntime jsRuntime, DirectionsRendererOptions opts = null)
         {
-            var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.DirectionsRenderer", opts);
-            var obj = new DirectionsRenderer(jsObjectRef);
+            //var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.DirectionsRenderer", opts);
+            //var obj = new DirectionsRenderer(jsObjectRef);
 
-            return obj;
+            //return obj;
+
+            throw new NotImplementedException();
         }
 
-        private DirectionsRenderer(JsObjectRef jsObjectRef)
+        private DirectionsRenderer(IJSObjectReference jsObjectRef)
+            : base(jsObjectRef)
         {
-            _jsObjectRef = jsObjectRef;
-        }
-
-        public ValueTask DisposeAsync()
-        {
-            return _jsObjectRef?.DisposeAsync() ?? ValueTask.CompletedTask;
         }
 
         /// <summary>
@@ -42,7 +35,7 @@ namespace GoogleMapsComponents.Maps
                 directionsRequestOptions = new DirectionsRequestOptions();
             }
 
-            var response = await _jsObjectRef.InvokeAsync<string>(
+            var response = await InvokeAsync<string>(
                 "googleMapDirectionServiceFunctions.route",
                 request, directionsRequestOptions);
             try
@@ -55,24 +48,23 @@ namespace GoogleMapsComponents.Maps
                 Console.WriteLine("Error parsing DirectionsResult Object. Message: " + e.Message);
                 return null;
             }
-
         }
 
         public ValueTask<Map> GetMap()
         {
-            return _jsObjectRef.InvokeAsync<Map>(
+            return InvokeAsync<Map>(
                 "getMap");
         }
 
         public ValueTask<int> GetRouteIndex()
         {
-            return _jsObjectRef.InvokeAsync<int>(
+            return InvokeAsync<int>(
                 "getRouteIndex");
         }
 
         public async ValueTask SetDirections(DirectionsResult directions)
         {
-            await _jsObjectRef.InvokeAsync(
+            await InvokeVoidAsync(
                 "setDirections",
                 directions);
         }
@@ -89,7 +81,7 @@ namespace GoogleMapsComponents.Maps
                 directionsRequestOptions = new DirectionsRequestOptions();
             }
 
-            var response = await _jsObjectRef.InvokeAsync<string>(
+            var response = await InvokeAsync<string>(
                 "getDirections",
                 directionsRequestOptions);
             try
@@ -106,21 +98,21 @@ namespace GoogleMapsComponents.Maps
 
         public async ValueTask SetMap(Map map)
         {
-            await _jsObjectRef.InvokeAsync(
+            await InvokeVoidAsync(
                    "setMap",
                    map);
         }
 
         public async ValueTask SetRouteIndex(int routeIndex)
         {
-            await _jsObjectRef.InvokeAsync(
+            await InvokeVoidAsync(
                 "setRouteIndex",
                 routeIndex);
         }
 
         public async ValueTask<MapEventListener> AddListener(string eventName, Action handler)
         {
-            var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
+            var listenerRef = await InvokeAsync<IJSObjectReference>(
                 "addListener", eventName, handler);
 
             return new MapEventListener(listenerRef);
@@ -128,7 +120,7 @@ namespace GoogleMapsComponents.Maps
 
         public async ValueTask<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
         {
-            var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
+            var listenerRef = await InvokeAsync<IJSObjectReference>(
                 "addListener", eventName, handler);
 
             return new MapEventListener(listenerRef);

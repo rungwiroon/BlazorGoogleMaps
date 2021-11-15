@@ -12,8 +12,6 @@ namespace ClientSideDemoNet5
             builder.RootComponents.Add<App>("app");
 
             await builder.Build().RunAsync();
-
         }
-
     }
 }

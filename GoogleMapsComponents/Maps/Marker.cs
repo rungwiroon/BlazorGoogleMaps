@@ -1,26 +1,30 @@
 ﻿using Microsoft.JSInterop;
 using OneOf;
+using System;
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
 {
-    public class Marker : ListableEntityBase<MarkerOptions>
+    public class Marker : MVCObject //ListableEntityBase<MarkerOptions>
     {
-        public static async Task<Marker> CreateAsync(IJSRuntime jsRuntime, MarkerOptions opts = null)
+        public static async Task<Marker> CreateAsync(IJSRuntime jsRuntime, MarkerOptions? opts = null)
         {
-            var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Marker", opts);
+            var jsObjectRef = await jsRuntime.InvokeAsync<IJSObjectReference>(
+                "googleMapsObjectManager.createObject",
+                "google.maps.Marker",
+                opts);
             var obj = new Marker(jsObjectRef);
             return obj;
         }
 
-        internal Marker(JsObjectRef jsObjectRef)
+        internal Marker(IJSObjectReference jsObjectRef)
             : base(jsObjectRef)
         {
         }
 
         public async Task<Animation?> GetAnimation()
         {
-            var animation = await _jsObjectRef.InvokeAsync<object>(
+            var animation = await InvokeAsync<object>(
                 "getAnimation");
 
             return Helper.ToNullableEnum<Animation>(animation?.ToString());
@@ -28,76 +32,70 @@ namespace GoogleMapsComponents.Maps
 
         public ValueTask<bool> GetClickable()
         {
-            return _jsObjectRef.InvokeAsync<bool>(
+            return InvokeAsync<bool>(
                 "getClickable");
         }
 
         public ValueTask<string> GetCursor()
         {
-            return _jsObjectRef.InvokeAsync<string>(
+            return InvokeAsync<string>(
                 "getCursor");
         }
 
         public ValueTask<bool> GetDraggable()
         {
-            return _jsObjectRef.InvokeAsync<bool>(
+            return InvokeAsync<bool>(
                 "getDraggable");
         }
 
-        public async ValueTask<OneOf<string, Icon, Symbol>> GetIcon()
+        public ValueTask<T> GetIcon<T>()
         {
-            var result = await _jsObjectRef.InvokeAsync<string, Icon, Symbol>(
+            if (typeof(T) != typeof(string)
+                && typeof(T) != typeof(Icon)
+                && typeof(T) != typeof(Symbol))
+                throw new InvalidCastException("Icon type must be string, Icon or Symbol.");
+
+            return InvokeAsync<T>(
                 "getIcon");
-
-            return result;
         }
 
-        public ValueTask<OneOf<string, MarkerLabel>> GetLabel()
+        public ValueTask<T> GetLabel<T>()
         {
-            return _jsObjectRef.InvokeAsync<string, MarkerLabel>("getLabel");
-        }
+            if (typeof(T) != typeof(string)
+                && typeof(T) != typeof(MarkerLabel))
+                throw new InvalidCastException("label type must be string, MarkerLabel.");
 
-        public async ValueTask<string> GetLabelText()
-        {
-            OneOf<string, MarkerLabel> markerLabel = await GetLabel();
-            return markerLabel.IsT0 ? markerLabel.AsT0 : markerLabel.AsT1.Text;
-        }
-
-        public async ValueTask<MarkerLabel> GetLabelMarkerLabel()
-        {
-            OneOf<string, MarkerLabel> markerLabel = await GetLabel();
-            return markerLabel.IsT1 ?
-                markerLabel.AsT1 :
-                new MarkerLabel { Text = markerLabel.AsT0 };
+            return InvokeAsync<T>(
+                "getLabel");
         }
 
         public ValueTask<LatLngLiteral> GetPosition()
         {
-            return _jsObjectRef.InvokeAsync<LatLngLiteral>(
+            return InvokeAsync<LatLngLiteral>(
                 "getPosition");
         }
 
         public ValueTask<MarkerShape> GetShape()
         {
-            return _jsObjectRef.InvokeAsync<MarkerShape>(
+            return InvokeAsync<MarkerShape>(
                 "getShape");
         }
 
         public ValueTask<string> GetTitle()
         {
-            return _jsObjectRef.InvokeAsync<string>(
+            return InvokeAsync<string>(
                 "getTitle");
         }
 
         public ValueTask<bool> GetVisible()
         {
-            return _jsObjectRef.InvokeAsync<bool>(
+            return InvokeAsync<bool>(
                 "getVisible");
         }
 
         public ValueTask<int> GetZIndex()
         {
-            return _jsObjectRef.InvokeAsync<int>(
+            return InvokeAsync<int>(
                 "getZIndex");
         }
 
@@ -115,113 +113,119 @@ namespace GoogleMapsComponents.Maps
             {
                 animationCode = 1;
             }
-            return _jsObjectRef.InvokeAsync(
+            return InvokeVoidAsync(
                 "setAnimation",
                 animationCode);
         }
 
         public ValueTask SetClickable(bool flag)
         {
-            return _jsObjectRef.InvokeAsync(
+            return InvokeVoidAsync(
                 "setClickable",
                 flag);
         }
 
         public ValueTask SetCursor(string cursor)
         {
-            return _jsObjectRef.InvokeAsync(
+            return InvokeVoidAsync(
                 "setCursor",
                 cursor);
         }
 
         public ValueTask SetDraggable(bool flag)
         {
-            return _jsObjectRef.InvokeAsync(
+            return InvokeVoidAsync(
                 "setDraggable",
                 flag);
         }
 
         public ValueTask SetIcon(string icon)
         {
-            return _jsObjectRef.InvokeAsync(
+            return InvokeVoidAsync(
                 "setIcon",
                 icon);
         }
 
         public ValueTask SetIcon(Icon icon)
         {
-            return _jsObjectRef.InvokeAsync(
+            return InvokeVoidAsync(
                 "setIcon",
                 icon);
         }
 
         public ValueTask SetLabel(OneOf<string, MarkerLabel> label)
         {
-            return _jsObjectRef.InvokeAsync(
+            return InvokeVoidAsync(
                 "setLabel",
                 label);
         }
 
-        public async ValueTask SetLabelText(string labelText)
-        {
-            OneOf<string, MarkerLabel> markerLabel = await GetLabel();
-            if (markerLabel.IsT1)
-            {
-                MarkerLabel label = markerLabel.AsT1;
-                label.Text = labelText;
-                await SetLabel(label);
-            }
-            else
-                await SetLabel(labelText);
-        }
-
         public ValueTask SetOpacity(float opacity)
         {
-            return _jsObjectRef.InvokeAsync(
+            return InvokeVoidAsync(
                 "setOpacity",
                 opacity);
         }
 
         public ValueTask SetOptions(MarkerOptions options)
         {
-            return _jsObjectRef.InvokeAsync(
+            return InvokeVoidAsync(
                 "setOptions",
                 options);
         }
 
         public ValueTask SetPosition(LatLngLiteral latLng)
         {
-            return _jsObjectRef.InvokeAsync(
+            return InvokeVoidAsync(
                 "setPosition",
                 latLng);
         }
 
         public ValueTask SetShape(MarkerShape shape)
         {
-            return _jsObjectRef.InvokeAsync(
+            return InvokeVoidAsync(
                 "setShape",
                 shape);
         }
 
         public ValueTask SetTitle(string title)
         {
-            return _jsObjectRef.InvokeAsync(
+            return InvokeVoidAsync(
                 "setTitle",
                 title);
         }
 
         public ValueTask SetVisible(bool visible)
         {
-            return _jsObjectRef.InvokeAsync(
+            return InvokeVoidAsync(
                 "setVisible",
                 visible);
         }
 
         public ValueTask SetZIndex(int zIndex)
         {
-            return _jsObjectRef.InvokeAsync(
+            return InvokeVoidAsync(
                 "setZIndex",
                 zIndex);
+        }
+
+        public ValueTask<Map> GetMap()
+        {
+            return InvokeWithReturnedObjectRefAsync<Map>(
+                "getMap",
+                objRef => new Map(objRef));
+        }
+
+        /// <summary>
+        /// Renders the mao entity on the specified map or panorama. 
+        /// If map is set to null, the map entity will be removed.
+        /// </summary>
+        /// <param name="map"></param>
+        public ValueTask SetMap(Map? map)
+        {
+            return InvokeVoidAsync(
+                "setMap",
+                map);
         }
     }
 }

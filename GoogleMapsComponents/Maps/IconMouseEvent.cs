@@ -12,11 +12,6 @@ namespace GoogleMapsComponents.Maps
     /// </summary>
     public class IconMouseEvent : MouseEvent
     {
-        public string PlaceId { get; set; }
-
-        public IconMouseEvent()
-        {
-
-        }
+        public string? PlaceId { get; set; }
     }
 }

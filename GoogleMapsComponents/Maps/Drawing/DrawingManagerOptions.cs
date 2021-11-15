@@ -37,7 +37,7 @@ namespace GoogleMapsComponents.Maps.Drawing
         /// <summary>
         /// The Map to which the DrawingManager is attached, which is the Map on which the overlays created will be placed.
         /// </summary>
-        [JsonConverter(typeof(JsObjectRefConverter<Map>))]
+        //[JsonConverter(typeof(JsObjectRefConverter<Map>))]
         public Map Map { get; set; }
 
         /// <summary>

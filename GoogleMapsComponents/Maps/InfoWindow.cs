@@ -1,7 +1,6 @@
 ﻿using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
@@ -29,13 +28,9 @@ namespace GoogleMapsComponents.Maps
     /// Each setter properties can be used as follow:
     /// With a Dictionary<string, {property type}> indicating for each Marker (related to that key) the corresponding related property value
     /// </summary>
-    public class InfoWindow : IAsyncDisposable, IJsObjectRef
+    public class InfoWindow : JsObjectRef
     {
-        private readonly JsObjectRef _jsObjectRef;
-
-        public readonly Dictionary<string, List<MapEventListener>> EventListeners;
-
-        public Guid Guid => _jsObjectRef.Guid;
+        public readonly Dictionary<string, List<MapEventListener>> EventListeners = new();
 
         /// <summary>
         /// Creates an info window with the given options. 
@@ -47,11 +42,13 @@ namespace GoogleMapsComponents.Maps
         /// <param name="opts"></param>
         public async static Task<InfoWindow> CreateAsync(IJSRuntime jsRuntime, InfoWindowOptions opts = null)
         {
-            var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.InfoWindow", opts);
+            //var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.InfoWindow", opts);
 
-            var obj = new InfoWindow(jsObjectRef, opts);
+            //var obj = new InfoWindow(jsObjectRef, opts);
 
-            return obj;
+            //return obj;
+
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -62,30 +59,16 @@ namespace GoogleMapsComponents.Maps
         /// The user can click the close button on the InfoWindow to remove it from the map, or the developer can call close() for the same effect.
         /// </summary>
         /// <param name="opts"></param>
-        private InfoWindow(JsObjectRef jsObjectRef, InfoWindowOptions opts)
+        private InfoWindow(IJSObjectReference jsObjectRef)
+            : base(jsObjectRef)
         {
-            _jsObjectRef = jsObjectRef;
-            EventListeners = new Dictionary<string, List<MapEventListener>>();
         }
 
-        public ValueTask DisposeAsync()
+        public async ValueTask DisposeAsync()
         {
-            foreach (string key in EventListeners.Keys)
-            {
-                //Probably superfluous...
-                if (EventListeners[key] != null)
-                {
-                    foreach (MapEventListener eventListener in EventListeners[key])
-                    {
-                        eventListener.Dispose();
-                    }
-
-                    EventListeners[key].Clear();
-                }
-            }
-
             EventListeners.Clear();
-            return _jsObjectRef.DisposeAsync();
+
+            await base.DisposeAsync();
         }
 
         /// <summary>
@@ -93,22 +76,22 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public ValueTask Close()
         {
-            return _jsObjectRef.InvokeAsync("close");
+            return this.InvokeVoidAsync("close");
         }
 
         public ValueTask<string> GetContent()
         {
-            return _jsObjectRef.InvokeAsync<string>("getContent");
+            return this.InvokeAsync<string>("getContent");
         }
 
         public ValueTask<LatLngLiteral> GetPosition()
         {
-            return _jsObjectRef.InvokeAsync<LatLngLiteral>("getPosition");
+            return this.InvokeAsync<LatLngLiteral>("getPosition");
         }
 
         public ValueTask<int> GetZIndex()
         {
-            return _jsObjectRef.InvokeAsync<int>("getZIndex");
+            return this.InvokeAsync<int>("getZIndex");
         }
 
 
@@ -119,32 +102,32 @@ namespace GoogleMapsComponents.Maps
         /// <param name="anchor"></param>
         public ValueTask Open(Map map, object anchor = null)
         {
-            return _jsObjectRef.InvokeAsync("open", map, anchor);
+            return this.InvokeVoidAsync("open", map, anchor);
         }
 
         public ValueTask SetContent(string content)
         {
-            return _jsObjectRef.InvokeAsync("setContent", content);
+            return this.InvokeVoidAsync("setContent", content);
         }
 
         public ValueTask SetPosition(LatLngLiteral position)
         {
-            return _jsObjectRef.InvokeAsync(
+            return this.InvokeVoidAsync(
                 "setPosition",
                 position);
         }
 
         public ValueTask SetZIndex(int zIndex)
         {
-            return _jsObjectRef.InvokeAsync(
+            return this.InvokeVoidAsync(
                 "setZIndex",
                 zIndex);
         }
 
         public async ValueTask<MapEventListener> AddListener(string eventName, Action handler)
         {
-            JsObjectRef listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync("addListener", eventName, handler);
-            MapEventListener eventListener = new MapEventListener(listenerRef);
+            var listenerRef = await this.InvokeAsync<IJSObjectReference>("addListener", eventName, handler);
+            var eventListener = new MapEventListener(listenerRef);
 
             if (!EventListeners.ContainsKey(eventName))
             {
@@ -157,8 +140,8 @@ namespace GoogleMapsComponents.Maps
 
         public async ValueTask<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
         {
-            JsObjectRef listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync("addListener", eventName, handler);
-            MapEventListener eventListener = new MapEventListener(listenerRef);
+            var listenerRef = await this.InvokeAsync<IJSObjectReference>("addListener", eventName, handler);
+            var eventListener = new MapEventListener(listenerRef);
 
             if (!EventListeners.ContainsKey(eventName))
             {
@@ -173,7 +156,7 @@ namespace GoogleMapsComponents.Maps
         {
             if (EventListeners.ContainsKey(eventName))
             {
-                await _jsObjectRef.InvokeAsync("clearListeners", eventName);
+                await this.InvokeVoidAsync("clearListeners", eventName);
 
                 //IMHO is better preserving the knowledge that Marker had some EventListeners attached to "eventName" in the past
                 //so, instead to clear the list and remove the key from dictionary, I prefer to leave the key with an empty list

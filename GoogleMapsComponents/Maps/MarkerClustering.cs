@@ -1,18 +1,17 @@
-﻿using System;
+﻿using Microsoft.JSInterop;
+using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using Microsoft.JSInterop;
 
 namespace GoogleMapsComponents.Maps
 {
     /// <summary>
     /// https://googlemaps.github.io/v3-utility-library/modules/_google_markerclustererplus.html
     /// </summary>
-    public class MarkerClustering : IJsObjectRef
+    public class MarkerClustering : JsObjectRef
     {
-        private readonly JsObjectRef _jsObjectRef;
-        public Guid Guid => _jsObjectRef.Guid;
+        //private readonly JsObjectRef _jsObjectRef;
+        //public Guid Guid => _jsObjectRef.Guid;
 
         public readonly Dictionary<string, List<MapEventListener>> EventListeners;
 
@@ -23,28 +22,31 @@ namespace GoogleMapsComponents.Maps
             MarkerClustererOptions options = null
            )
         {
-            if (options == null)
-            {
-                options = new MarkerClustererOptions();
-            }
+            //if (options == null)
+            //{
+            //    options = new MarkerClustererOptions();
+            //}
 
-            var guid = System.Guid.NewGuid();
-            var jsObjectRef = new JsObjectRef(jsRuntime, guid);
-            await jsRuntime.InvokeVoidAsync("googleMapsObjectManager.addClusteringMarkers", guid.ToString(), map.Guid.ToString(), markers, options);
-            var obj = new MarkerClustering(jsObjectRef);
-            return obj;
+            //var guid = System.Guid.NewGuid();
+            //var jsObjectRef = new JsObjectRef(jsRuntime, guid);
+            //await jsRuntime.InvokeVoidAsync("googleMapsObjectManager.addClusteringMarkers", guid.ToString(), map.Guid.ToString(), markers, options);
+            //var obj = new MarkerClustering(jsObjectRef);
+            //return obj;
+
+            throw new NotImplementedException();
         }
 
         internal MarkerClustering(JsObjectRef jsObjectRef)
+            : base(jsObjectRef)
         {
-            _jsObjectRef = jsObjectRef;
-            EventListeners = new Dictionary<string, List<MapEventListener>>();
+            //_jsObjectRef = jsObjectRef;
+            EventListeners = new();
         }
 
         public virtual async Task<MapEventListener> AddListener(string eventName, Action handler)
         {
-            JsObjectRef listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync("addListener", eventName, handler);
-            MapEventListener eventListener = new MapEventListener(listenerRef);
+            var listenerRef = await InvokeAsync<IJSObjectReference>("addListener", eventName, handler);
+            var eventListener = new MapEventListener(listenerRef);
 
             if (!EventListeners.ContainsKey(eventName))
             {
@@ -58,8 +60,8 @@ namespace GoogleMapsComponents.Maps
 
         public virtual async Task<MapEventListener> AddListener<V>(string eventName, Action<V> handler)
         {
-            JsObjectRef listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync("addListener", eventName, handler);
-            MapEventListener eventListener = new MapEventListener(listenerRef);
+            var listenerRef = await InvokeAsync<IJSObjectReference>("addListener", eventName, handler);
+            var eventListener = new MapEventListener(listenerRef);
 
             if (!EventListeners.ContainsKey(eventName))
             {
@@ -73,7 +75,7 @@ namespace GoogleMapsComponents.Maps
 
         public virtual async Task SetMap(Map map)
         {
-            await _jsObjectRef.InvokeAsync("setMap", map);
+            await InvokeVoidAsync("setMap", map);
         }
 
         /// <summary>
@@ -81,7 +83,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public virtual async Task ClearMarkers()
         {
-            await _jsObjectRef.InvokeAsync("clearMarkers");
+            await InvokeVoidAsync("clearMarkers");
         }
 
         /// <summary>
@@ -90,7 +92,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="padding"></param>
         public virtual async Task FitMapToMarkers(int padding)
         {
-            await _jsObjectRef.InvokeAsync("fitMapToMarkers", padding);
+            await InvokeVoidAsync("fitMapToMarkers", padding);
         }
 
         /// <summary>
@@ -98,14 +100,14 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public virtual async Task Repaint()
         {
-            await _jsObjectRef.InvokeAsync("repaint");
+            await InvokeVoidAsync("repaint");
         }
 
         public virtual async Task ClearListeners(string eventName)
         {
             if (EventListeners.ContainsKey(eventName))
             {
-                await _jsObjectRef.InvokeAsync("clearListeners", eventName);
+                await InvokeVoidAsync("clearListeners", eventName);
 
                 //IMHO is better preserving the knowledge that Marker had some EventListeners attached to "eventName" in the past
                 //so, instead to clear the list and remove the key from dictionary, I prefer to leave the key with an empty list

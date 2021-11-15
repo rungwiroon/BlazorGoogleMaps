@@ -9,19 +9,20 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// A polyline is a linear overlay of connected line segments on the map.
     /// </summary>
-    public class Polyline : ListableEntityBase<PolylineOptions>
+    public class Polyline : JsObjectRef//ListableEntityBase<PolylineOptions>
     {
-
         /// <summary>
         /// Create a polyline using the passed PolylineOptions, which specify both the path of the polyline and the stroke style to use when drawing the polyline.
         /// </summary>
         public async static Task<Polyline> CreateAsync(IJSRuntime jsRuntime, PolylineOptions opts = null)
         {
-            var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Polyline", opts);
+            //var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Polyline", opts);
 
-            var obj = new Polyline(jsObjectRef, opts);
+            //var obj = new Polyline(jsObjectRef, opts);
 
-            return obj;
+            //return obj;
+
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -46,7 +47,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<bool> GetDraggable()
         {
-            return _jsObjectRef.InvokeAsync<bool>(
+            return InvokeAsync<bool>(
                 "getDraggable");
         }
 
@@ -56,7 +57,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<bool> GetEditable()
         {
-            return _jsObjectRef.InvokeAsync<bool>(
+            return InvokeAsync<bool>(
                 "getEditable");
         }
 
@@ -66,7 +67,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<IEnumerable<LatLngLiteral>> GetPath()
         {
-            return _jsObjectRef.InvokeAsync<IEnumerable<LatLngLiteral>>("getPath");
+            return InvokeAsync<IEnumerable<LatLngLiteral>>("getPath");
         }
 
         /// <summary>
@@ -75,7 +76,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<bool> GetVisible()
         {
-            return _jsObjectRef.InvokeAsync<bool>(
+            return InvokeAsync<bool>(
                 "getVisible");
         }
 
@@ -87,7 +88,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask SetDraggable(bool draggable)
         {
-            return _jsObjectRef.InvokeAsync(
+            return InvokeVoidAsync(
                 "setDraggable",
                 draggable);
         }
@@ -99,14 +100,14 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask SetEditable(bool editable)
         {
-            return _jsObjectRef.InvokeAsync(
+            return InvokeVoidAsync(
                 "setEditable",
                 editable);
         }
 
         public ValueTask SetOptions(PolylineOptions options)
         {
-            return _jsObjectRef.InvokeAsync(
+            return InvokeVoidAsync(
                 "setOptions",
                 options);
         }
@@ -118,7 +119,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask SetPath(IEnumerable<LatLngLiteral> path)
         {
-            return _jsObjectRef.InvokeAsync(
+            return InvokeVoidAsync(
                 "setPath",
                 path);
         }
@@ -130,7 +131,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask SetVisible(bool visible)
         {
-            return _jsObjectRef.InvokeAsync(
+            return InvokeVoidAsync(
                 "setVisible",
                 visible);
         }

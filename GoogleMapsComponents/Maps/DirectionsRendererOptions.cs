@@ -34,7 +34,7 @@ namespace GoogleMapsComponents.Maps
         /// <summary>
         /// Map on which to display the directions.
         /// </summary>
-        [JsonConverter(typeof(JsObjectRefConverter<Map>))]
+        //[JsonConverter(typeof(JsObjectRefConverter<Map>))]
         public Map Map { get; set; }
 
         /// <summary>

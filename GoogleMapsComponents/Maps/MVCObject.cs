@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.JSInterop;
+using System;
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
@@ -9,16 +8,38 @@ namespace GoogleMapsComponents.Maps
     /// google.maps.MVCObject class
     /// Base class implementing KVO.
     /// </summary>
-    public class MVCObject
+    public class MVCObject : JsObjectRef
     {
-        public Task<MapEventListener> AddListener(string eventName, Action handler)
+        internal MVCObject(IJSObjectReference jsObjectRef) : base(jsObjectRef)
         {
-            throw new NotImplementedException();
         }
 
-        public Task<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
+        public async ValueTask<MapEventListener> AddListener(string eventName, Action handler)
         {
-            throw new NotImplementedException();
+            var listenerRef = await this.AddListenerAsync(eventName, handler);
+
+            return new MapEventListener(listenerRef);
+        }
+
+        //public async ValueTask<MapEventListener> AddListener(string eventName, Func<Task> handler)
+        //{
+        //    var listenerRef = await this.AddListenerAsync(eventName, handler);
+
+        //    return new MapEventListener(listenerRef);
+        //}
+
+        public async ValueTask<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
+        {
+            var listenerRef = await this.AddListenerAsync(eventName, handler);
+
+            return new MapEventListener(listenerRef);
+        }
+
+        public async ValueTask<MapEventListener> AddListener<T>(string eventName, Func<T, Task> handler)
+        {
+            var listenerRef = await this.AddListenerAsync(eventName, handler);
+
+            return new MapEventListener(listenerRef);
         }
     }
 }

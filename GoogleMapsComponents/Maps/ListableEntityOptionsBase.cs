@@ -22,7 +22,6 @@ namespace GoogleMapsComponents.Maps
         /// <summary>
         /// Map on which to display the Entity.
         /// </summary>
-        [JsonConverter(typeof(JsObjectRefConverter<Map>))]
         public Map Map { get; set; }
 
         /// <summary>

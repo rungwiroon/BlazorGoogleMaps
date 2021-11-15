@@ -36,10 +36,6 @@ namespace GoogleMapsComponents.Maps
             Lat = lat;
         }
 
-        public LatLngLiteral(decimal lng, decimal lat) : this(Convert.ToDouble(lng), Convert.ToDouble(lat))
-        {
-        }
-
         public override string ToString()
         {
             return $"{Lat}, {Lng}";

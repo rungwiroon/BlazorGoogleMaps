@@ -44,7 +44,6 @@ namespace GoogleMapsComponents.Maps.Data
         /// <summary>
         /// Map on which to display the features in the collection.
         /// </summary>
-        [JsonConverter(typeof(JsObjectRefConverter<Map>))]
         public Map Map { get; set; }
 
         /// <summary>

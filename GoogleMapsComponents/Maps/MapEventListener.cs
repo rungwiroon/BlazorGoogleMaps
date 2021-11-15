@@ -1,7 +1,5 @@
 ﻿using Microsoft.JSInterop;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
@@ -10,24 +8,16 @@ namespace GoogleMapsComponents.Maps
     /// google.maps.MapsEventListener interface
     /// An event listener, created by google.maps.event.addListener() and friends.
     /// </summary>
-    public class MapEventListener : IDisposable
+    public class MapEventListener : JsObjectRef
     {
-        private readonly JsObjectRef _jsObjectRef;
-
-        internal MapEventListener(JsObjectRef jsObjectRef)
+        internal MapEventListener(IJSObjectReference jsObjectRef)
+            : base(jsObjectRef)
         {
-            _jsObjectRef = jsObjectRef;
         }
 
-        public void Dispose()
+        public ValueTask RemoveAsync()
         {
-            _ = RemoveAsync();
-        }
-
-        public async Task RemoveAsync()
-        {
-            await _jsObjectRef.InvokeAsync<object>("remove");
-            await _jsObjectRef.DisposeAsync();
+            return InvokeVoidAsync("remove");
         }
     }
 }

@@ -17,11 +17,13 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public async static Task<LatLngBounds> CreateAsync(IJSRuntime jsRuntime)
         {
-            var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.LatLngBounds");
+            //var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.LatLngBounds");
 
-            var obj = new LatLngBounds(jsObjectRef);
+            //var obj = new LatLngBounds(jsObjectRef);
 
-            return obj;
+            //return obj;
+
+            throw new NotImplementedException();
         }
 
         private LatLngBounds(JsObjectRef jsObjectRef)
@@ -55,7 +57,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public ValueTask Extend(LatLngLiteral point)
         {
-            return _jsObjectRef.InvokeAsync("extend", point);
+            return _jsObjectRef.InvokeVoidAsync("extend", point);
         }
         
         /// <summary>
@@ -139,7 +141,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public ValueTask Union(LatLngBoundsLiteral other)
         {
-            return _jsObjectRef.InvokeAsync("union", other);
+            return _jsObjectRef.InvokeVoidAsync("union", other);
         }
     }
 }

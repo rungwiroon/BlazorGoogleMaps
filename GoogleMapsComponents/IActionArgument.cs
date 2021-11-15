@@ -4,8 +4,8 @@ using System.Text;
 
 namespace GoogleMapsComponents
 {
-    internal interface IActionArgument
-    {
-        JsObjectRef JsObjectRef { get; set; }
-    }
+    //internal interface IActionArgument
+    //{
+    //    JsObjectRef JsObjectRef { get; set; }
+    //}
 }

@@ -12,10 +12,10 @@ namespace GoogleMapsComponents.Maps
     /// Every Map has a Data object by default, so most of the time there is no need to construct one.
     /// The Data object is a collection of Features.
     /// </summary>
-    public class MapData : IEnumerable<Data.Feature>, IAsyncDisposable
+    public class MapData : JsObjectRef, IEnumerable<Data.Feature>
     {
-        private readonly JsObjectRef _jsObjectRef;
-        private Map _map;
+        //private readonly IJSObjectReference _jsObjectRef;
+        //private Map? _map;
 
         /// <summary>
         /// Creates an empty collection, with the given DataOptions.
@@ -23,24 +23,21 @@ namespace GoogleMapsComponents.Maps
         /// <param name="options"></param>
         public async static Task<MapData> CreateAsync(IJSRuntime jsRuntime, Data.DataOptions? opts = null)
         {
-            var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Data", opts);
+            //var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Data", opts);
 
-            var obj = new MapData(jsObjectRef);
+            //var obj = new MapData(jsObjectRef);
 
-            return obj;
+            //return obj;
+
+            throw new NotImplementedException();
         }
 
         /// <summary>
         /// Creates an empty collection, with the given DataOptions.
         /// </summary>
-        internal MapData(JsObjectRef jsObjectRef)
+        internal MapData(IJSObjectReference jsObjectRef)
+            : base(jsObjectRef)
         {
-            _jsObjectRef = jsObjectRef;
-        }
-
-        public async ValueTask DisposeAsync()
-        {
-            await _jsObjectRef.DisposeAsync();
         }
 
         public IEnumerator<Data.Feature> GetEnumerator()
@@ -60,9 +57,9 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="feature"></param>
         /// <returns></returns>
-        public async ValueTask<Data.Feature> Add(OneOf<Data.Feature, Data.FeatureOptions> feature)
+        public ValueTask<Data.Feature> Add(OneOf<Data.Feature, Data.FeatureOptions> feature)
         {
-            return await _jsObjectRef.InvokeAsync<Data.Feature>(
+            return InvokeAsync<Data.Feature>(
                 "add",
                 feature);
         }
@@ -84,9 +81,9 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="feature"></param>
         /// <returns></returns>
-        public async ValueTask<bool> Contains(Data.Feature feature)
+        public ValueTask<bool> Contains(Data.Feature feature)
         {
-            return await _jsObjectRef.InvokeAsync<bool>(
+            return InvokeAsync<bool>(
                 "contains",
                 feature);
         }
@@ -95,9 +92,9 @@ namespace GoogleMapsComponents.Maps
         /// Returns the position of the drawing controls on the map.
         /// </summary>
         /// <returns></returns>
-        public async ValueTask<ControlPosition> GetControlPosition()
+        public ValueTask<ControlPosition> GetControlPosition()
         {
-            return await _jsObjectRef.InvokeAsync<ControlPosition>(
+            return InvokeAsync<ControlPosition>(
                 "getControlPosition");
         }
 
@@ -107,9 +104,9 @@ namespace GoogleMapsComponents.Maps
         /// Possible drawing modes are "Point", "LineString" or "Polygon".
         /// </summary>
         /// <returns></returns>
-        public async ValueTask<IEnumerable<string>> GetControls()
+        public ValueTask<IEnumerable<string>> GetControls()
         {
-            return await _jsObjectRef.InvokeAsync<IEnumerable<string>>(
+            return InvokeAsync<IEnumerable<string>>(
                 "getControls");
         }
 
@@ -118,9 +115,9 @@ namespace GoogleMapsComponents.Maps
         /// A drawing mode of null means that the user can interact with the map as normal, and clicks do not draw anything. Possible drawing modes are null, "Point", "LineString" or "Polygon".
         /// </summary>
         /// <returns></returns>
-        public async ValueTask<string> GetDrawingMode()
+        public ValueTask<string> GetDrawingMode()
         {
-            return await _jsObjectRef.InvokeAsync<string>(
+            return InvokeAsync<string>(
                 "getDrawingMode");
         }
 
@@ -130,9 +127,9 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async ValueTask<Data.Feature> GetFeatureById(OneOf<int, string> id)
+        public ValueTask<Data.Feature> GetFeatureById(OneOf<int, string> id)
         {
-            return await _jsObjectRef.InvokeAsync<Data.Feature>(
+            return InvokeAsync<Data.Feature>(
                 "getFeatureById",
                 id.Value);
         }
@@ -141,9 +138,10 @@ namespace GoogleMapsComponents.Maps
         /// Returns the map on which the features are displayed.
         /// </summary>
         /// <returns></returns>
-        public Map GetMap()
+        public async ValueTask<Map?> GetMap()
         {
-            return _map;
+            var mapRef = await InvokeAsync<IJSObjectReference?>("getMap");
+            return mapRef == null ? null : new Map(mapRef);
         }
 
         /// <summary>
@@ -179,9 +177,9 @@ namespace GoogleMapsComponents.Maps
         /// <param name="feature"></param>
         /// <param name="style"></param>
         /// <returns></returns>
-        public async ValueTask OverrideSytle(Data.Feature feature, Data.StyleOptions style)
+        public ValueTask OverrideSytle(Data.Feature feature, Data.StyleOptions style)
         {
-            await _jsObjectRef.InvokeAsync(
+            return InvokeVoidAsync(
                 "overrideSytle",
                 feature,
                 style);
@@ -192,9 +190,9 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="feature"></param>
         /// <returns></returns>
-        public async ValueTask Remove(Data.Feature feature)
+        public ValueTask Remove(Data.Feature feature)
         {
-            await _jsObjectRef.InvokeAsync(
+            return InvokeVoidAsync(
                 "remove",
                 feature);
         }
@@ -205,9 +203,9 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="feature"></param>
         /// <returns></returns>
-        public async ValueTask RevertStyle(Data.Feature? feature = null)
+        public ValueTask RevertStyle(Data.Feature? feature = null)
         {
-            await _jsObjectRef.InvokeAsync(
+            return InvokeVoidAsync(
                 "revertStyle",
                 feature);
         }
@@ -217,9 +215,9 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="controlPosition"></param>
         /// <returns></returns>
-        public async ValueTask SetControlPosition(ControlPosition controlPosition)
+        public ValueTask SetControlPosition(ControlPosition controlPosition)
         {
-            await _jsObjectRef.InvokeAsync(
+            return InvokeVoidAsync(
                 "setControlPosition",
                 controlPosition);
         }
@@ -232,9 +230,9 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="controls"></param>
         /// <returns></returns>
-        public async ValueTask SetControls(IEnumerable<string> controls)
+        public ValueTask SetControls(IEnumerable<string> controls)
         {
-            await _jsObjectRef.InvokeAsync(
+            return InvokeVoidAsync(
                 "setControls",
                 controls);
         }
@@ -246,9 +244,9 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="drawingMode"></param>
         /// <returns></returns>
-        public async ValueTask SetDrawingMode(string drawingMode)
+        public ValueTask SetDrawingMode(string drawingMode)
         {
-            await _jsObjectRef.InvokeAsync(
+            return InvokeVoidAsync(
                 "setDrawingMode",
                 drawingMode);
         }
@@ -259,13 +257,11 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="map"></param>
         /// <returns></returns>
-        public async ValueTask SetMap(Map map)
+        public ValueTask SetMap(Map map)
         {
-            _map = map;
-
-            await _jsObjectRef.InvokeAsync(
+            return InvokeVoidAsync(
                 "setMap",
-                map);
+                map.Reference);
         }
 
         /// <summary>
@@ -292,18 +288,22 @@ namespace GoogleMapsComponents.Maps
 
         public async Task<MapEventListener> AddListener(string eventName, Action handler)
         {
-            var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
-                "addListener", eventName, handler);
+            //var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
+            //    "addListener", eventName, handler);
 
-            return new MapEventListener(listenerRef);
+            //return new MapEventListener(listenerRef);
+
+            throw new NotImplementedException();
         }
 
         public async Task<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
         {
-            var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
-                "addListener", eventName, handler);
+            //var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
+            //    "addListener", eventName, handler);
 
-            return new MapEventListener(listenerRef);
+            //return new MapEventListener(listenerRef);
+
+            throw new NotImplementedException();
         }
 
         

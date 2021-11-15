@@ -17,11 +17,13 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public async static Task<DirectionsService> CreateAsync(IJSRuntime jsRuntime)
         {
-            var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.DirectionsService");
+            //var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.DirectionsService");
 
-            var obj = new DirectionsService(jsObjectRef);
+            //var obj = new DirectionsService(jsObjectRef);
 
-            return obj;
+            //return obj;
+
+            throw new NotImplementedException();
         }
 
         /// <summary>

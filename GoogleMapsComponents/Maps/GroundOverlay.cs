@@ -1,37 +1,35 @@
-﻿using System;
+﻿using Microsoft.JSInterop;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.JSInterop;
 
 namespace GoogleMapsComponents.Maps
 {
-    public class GroundOverlay : IAsyncDisposable, IJsObjectRef
+    public class GroundOverlay : JsObjectRef
     {
-        private readonly JsObjectRef _jsObjectRef;
-
         public readonly Dictionary<string, List<MapEventListener>> EventListeners;
 
-        public Guid Guid => _jsObjectRef.Guid;
-
-        public async static Task<GroundOverlay> CreateAsync(IJSRuntime jsRuntime, string url, LatLngBoundsLiteral bounds, GroundOverlayOptions opts = null)
+        public async static Task<GroundOverlay> CreateAsync(
+            IJSRuntime jsRuntime, string url, LatLngBoundsLiteral bounds, GroundOverlayOptions opts = null)
         {
-            var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.GroundOverlay", url, bounds, opts);
-            var obj = new GroundOverlay(jsObjectRef);
+            //var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.GroundOverlay", url, bounds, opts);
+            //var obj = new GroundOverlay(jsObjectRef);
 
-            return obj;
+            //return obj;
+
+            throw new NotImplementedException();
         }
 
-        internal GroundOverlay(JsObjectRef jsObjectRef)
+        internal GroundOverlay(IJSObjectReference jsObjectRef)
+            : base(jsObjectRef)
         {
-            _jsObjectRef = jsObjectRef;
-            EventListeners = new Dictionary<string, List<MapEventListener>>();
+            EventListeners = new();
         }
 
         public async Task<MapEventListener> AddListener(string eventName, Action handler)
         {
-            JsObjectRef listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync("addListener", eventName, handler);
-            MapEventListener eventListener = new MapEventListener(listenerRef);
+            var listenerRef = await InvokeAsync<IJSObjectReference>("addListener", eventName, handler);
+            var eventListener = new MapEventListener(listenerRef);
 
             if (!EventListeners.ContainsKey(eventName))
             {
@@ -52,7 +50,7 @@ namespace GoogleMapsComponents.Maps
             if (opacity > 1) return;
             if (opacity < 0) return;
 
-            await _jsObjectRef.InvokeAsync("setOpacity", opacity);
+            await InvokeVoidAsync("setOpacity", opacity);
         }
 
         /// <summary>
@@ -67,16 +65,9 @@ namespace GoogleMapsComponents.Maps
 
         public async Task SetMap(Map map)
         {
-            await _jsObjectRef.InvokeAsync(
+            await InvokeVoidAsync(
                 "setMap",
                 map);
-
-            //_map = map;
-        }
-
-        public ValueTask DisposeAsync()
-        {
-            return _jsObjectRef?.DisposeAsync() ?? ValueTask.CompletedTask;
         }
     }
 }
