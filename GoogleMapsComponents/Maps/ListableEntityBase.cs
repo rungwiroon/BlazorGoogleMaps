@@ -49,7 +49,7 @@ namespace GoogleMapsComponents.Maps
         }
 
         /// <summary>
-        /// Renders the mao entity on the specified map or panorama. 
+        /// Renders the map entity on the specified map or panorama. 
         /// If map is set to null, the map entity will be removed.
         /// </summary>
         /// <param name="map"></param>
