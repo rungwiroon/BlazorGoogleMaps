@@ -13,18 +13,21 @@ namespace GoogleMapsComponents.Maps
         /// If true, instructs the Directions service to avoid ferries where possible. 
         /// Optional.
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public bool? AvoidFerries { get; set; }
 
         /// <summary>
         /// If true, instructs the Directions service to avoid highways where possible. 
         /// Optional.
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public bool? AvoidHighways { get; set; }
 
         /// <summary>
         /// If true, instructs the Directions service to avoid toll roads where possible. 
         /// Optional.
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public bool? AvoidTolls { get; set; }
 
         /// <summary>
@@ -38,12 +41,14 @@ namespace GoogleMapsComponents.Maps
         /// Settings that apply only to requests where travelMode is DRIVING. 
         /// This object will have no effect for other travel modes.
         /// </summary>
-        public DrivingOptions DrivingOptions { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public DrivingOptions? DrivingOptions { get; set; }
 
         /// <summary>
         /// If set to true, the DirectionsService will attempt to re-order the supplied intermediate waypoints to minimize overall cost of the route. 
         /// If waypoints are optimized, inspect DirectionsRoute.waypoint_order in the response to determine the new ordering.
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public bool? OptimizeWaypoints { get; set; }
 
         /// <summary>
@@ -58,19 +63,22 @@ namespace GoogleMapsComponents.Maps
         /// Whether or not route alternatives should be provided. 
         /// Optional.
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public bool? ProvideRouteAlternatives { get; set; }
 
         /// <summary>
         /// Region code used as a bias for geocoding requests. 
         /// Optional.
         /// </summary>
-        public string Region { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string? Region { get; set; }
 
         /// <summary>
         /// Settings that apply only to requests where travelMode is TRANSIT. 
         /// This object will have no effect for other travel modes.
         /// </summary>
-        public TransitOptions TransitOptions { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public TransitOptions? TransitOptions { get; set; }
 
         /// <summary>
         /// Type of routing requested. 
@@ -82,6 +90,7 @@ namespace GoogleMapsComponents.Maps
         /// Preferred unit system to use when displaying distance. 
         /// Defaults to the unit system used in the country of origin.
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public UnitSystem? UnitSystem { get; set; }
 
         /// <summary>
@@ -89,6 +98,7 @@ namespace GoogleMapsComponents.Maps
         /// See the developer's guide for the maximum number of waypoints allowed. 
         /// Waypoints are not supported for transit directions. Optional.
         /// </summary>
-        public IEnumerable<DirectionsWaypoint> Waypoints { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public IEnumerable<DirectionsWaypoint>? Waypoints { get; set; }
     }
 }

@@ -2,19 +2,26 @@
 using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
+using static GoogleMapsComponents.Helper;
 
 namespace GoogleMapsComponents.Maps
 {
-    public class DirectionsRenderer : JsObjectRef
+    public class DirectionsRenderer : MVCObject
     {
-        public static async Task<DirectionsRenderer> CreateAsync(IJSRuntime jsRuntime, DirectionsRendererOptions opts = null)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="directionsRequestOptions">Lets you specify which route response paths to opt out from clearing.</param>
+        /// <returns></returns>
+        public static async Task<DirectionsRenderer> CreateAsync(IJSRuntime jsRuntime, DirectionsRendererOptions? opts = null)
         {
-            //var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.DirectionsRenderer", opts);
-            //var obj = new DirectionsRenderer(jsObjectRef);
-
-            //return obj;
-
-            throw new NotImplementedException();
+            var jsObjectRef = await jsRuntime.InvokeAsync<IJSObjectReference>(
+                "googleMapsObjectManager.createObject",
+                "google.maps.DirectionsRenderer",
+                opts);
+            var obj = new DirectionsRenderer(jsObjectRef);
+            return obj;
         }
 
         private DirectionsRenderer(IJSObjectReference jsObjectRef)
@@ -28,32 +35,34 @@ namespace GoogleMapsComponents.Maps
         /// <param name="request"></param>
         /// <param name="directionsRequestOptions">Lets you specify which route response paths to opt out from clearing.</param>
         /// <returns></returns>
-        public async Task<DirectionsResult> Route(DirectionsRequest request, DirectionsRequestOptions directionsRequestOptions = null)
-        {
-            if (directionsRequestOptions == null)
-            {
-                directionsRequestOptions = new DirectionsRequestOptions();
-            }
+        //public async Task<DirectionsResult> Route(DirectionsRequest request, DirectionsRequestOptions directionsRequestOptions = null)
+        //{
+        //    if (directionsRequestOptions == null)
+        //    {
+        //        directionsRequestOptions = new DirectionsRequestOptions();
+        //    }
 
-            var response = await InvokeAsync<string>(
-                "googleMapDirectionServiceFunctions.route",
-                request, directionsRequestOptions);
-            try
-            {
-                var dirResult = JsonConvert.DeserializeObject<DirectionsResult>(response);
-                return dirResult;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Error parsing DirectionsResult Object. Message: " + e.Message);
-                return null;
-            }
-        }
+        //    var response = await InvokeAsync<string>(
+        //        "googleMapDirectionServiceFunctions.route",
+        //        request,
+        //        directionsRequestOptions);
+        //    try
+        //    {
+        //        var dirResult = JsonConvert.DeserializeObject<DirectionsResult>(response);
+        //        return dirResult;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Console.WriteLine("Error parsing DirectionsResult Object. Message: " + e.Message);
+        //        return null;
+        //    }
+        //}
 
-        public ValueTask<Map> GetMap()
+        public ValueTask<Map?> GetMap()
         {
-            return InvokeAsync<Map>(
-                "getMap");
+            return InvokeWithReturnedObjectRefAsync(
+                "getMap",
+                objRef => new Map(objRef));
         }
 
         public ValueTask<int> GetRouteIndex()
@@ -62,7 +71,7 @@ namespace GoogleMapsComponents.Maps
                 "getRouteIndex");
         }
 
-        public async ValueTask SetDirections(DirectionsResult directions)
+        public async ValueTask SetDirections(IJSObjectReference? directions)
         {
             await InvokeVoidAsync(
                 "setDirections",
@@ -74,33 +83,17 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="directionsRequestOptions">Lets you specify which route response paths to opt out from clearing.</param>
         /// <returns></returns>
-        public async ValueTask<DirectionsResult> GetDirections(DirectionsRequestOptions directionsRequestOptions = null)
+        public async ValueTask<DirectionsResult> GetDirections()
         {
-            if (directionsRequestOptions == null)
-            {
-                directionsRequestOptions = new DirectionsRequestOptions();
-            }
-
-            var response = await InvokeAsync<string>(
-                "getDirections",
-                directionsRequestOptions);
-            try
-            {
-                var dirResult = JsonConvert.DeserializeObject<DirectionsResult>(response);
-                return dirResult;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Error parsing DirectionsResult Object. Message: " + e.Message);
-                return null;
-            }
+            return await InvokeAsync<DirectionsResult>(
+                "getDirections");
         }
 
-        public async ValueTask SetMap(Map map)
+        public async ValueTask SetMap(Map? map)
         {
             await InvokeVoidAsync(
-                   "setMap",
-                   map);
+                "setMap",
+                MakeArgJsFriendly(map));
         }
 
         public async ValueTask SetRouteIndex(int routeIndex)
@@ -109,22 +102,5 @@ namespace GoogleMapsComponents.Maps
                 "setRouteIndex",
                 routeIndex);
         }
-
-        public async ValueTask<MapEventListener> AddListener(string eventName, Action handler)
-        {
-            var listenerRef = await InvokeAsync<IJSObjectReference>(
-                "addListener", eventName, handler);
-
-            return new MapEventListener(listenerRef);
-        }
-
-        public async ValueTask<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
-        {
-            var listenerRef = await InvokeAsync<IJSObjectReference>(
-                "addListener", eventName, handler);
-
-            return new MapEventListener(listenerRef);
-        }
-
     }
 }

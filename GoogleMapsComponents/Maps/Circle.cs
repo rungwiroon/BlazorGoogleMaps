@@ -7,7 +7,7 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// A circle on the Earth's surface; also known as a "spherical cap".
     /// </summary>
-    public class Circle : JsObjectRef
+    public class Circle : MVCObject
     {
         /// <summary>
         /// Create a circle using the passed CircleOptions, which specify the center, radius, and style.
@@ -15,14 +15,15 @@ namespace GoogleMapsComponents.Maps
         /// <param name="opts"></param>
         public async static Task<Circle> CreateAsync(IJSRuntime jsRuntime, CircleOptions opts = null)
         {
-            //var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Circle", opts);
-            //var obj = new Circle(jsObjectRef);
-            //return obj;
-
-            throw new NotImplementedException();
+            var jsObjectRef = await jsRuntime.InvokeAsync<IJSObjectReference>(
+                "googleMapsObjectManager.createObject",
+                "google.maps.Circle",
+                opts);
+            var obj = new Circle(jsObjectRef);
+            return obj;
         }
 
-        internal Circle(JsObjectRef jsObjectRef)
+        internal Circle(IJSObjectReference jsObjectRef)
             :base(jsObjectRef)
         {
         }        

@@ -1,8 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace GoogleMapsComponents.Maps
 {
@@ -38,14 +35,14 @@ namespace GoogleMapsComponents.Maps
         /// An array of LatLngs representing the entire course of this route. 
         /// The path is simplified in order to make it suitable in contexts where a small number of vertices is required (such as Static Maps API URLs).
         /// </summary>
-        [JsonProperty("overview_path")]
+        [JsonPropertyName("overview_path")]
         public IEnumerable<LatLngLiteral> OverviewPath { get; set; }
 
         /// <summary>
         /// An encoded polyline representation of the route in overview_path. 
         /// This polyline is an approximate (smoothed) path of the resulting directions.
         /// </summary>
-        [JsonProperty("overview_polyline")]
+        [JsonPropertyName("overview_polyline")]
         public string OverviewPolyline { get; set; }
 
         /// <summary>
@@ -65,6 +62,8 @@ namespace GoogleMapsComponents.Maps
         ///  then this field will be an Array containing the values [2, 0, 1]. Note that the numbering of waypoints is zero-based.
         ///  If any of the input waypoints has stopover set to false, this field will be empty, since route optimization is not available for such queries.
         /// </summary>
+
+        [JsonPropertyName("waypoint_order")]
         public List<int> WaypointOrder { get; set; }
     }
 }

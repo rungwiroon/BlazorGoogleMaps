@@ -1,5 +1,4 @@
 ﻿using Microsoft.JSInterop;
-using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
 
@@ -35,23 +34,22 @@ namespace GoogleMapsComponents.Maps
         /// <param name="request"></param>
         /// <param name="directionsRequestOptions">Lets you specify which route response paths to opt out from clearing.</param>
         /// <returns></returns>
-        public async Task<DirectionsResult> Route(DirectionsRequest request, DirectionsRequestOptions? directionsRequestOptions = null)
+        public ValueTask<ReferenceAndValue<DirectionsResult>> Route(DirectionsRequest request)
         {
-            var response = await InvokeAsync<string>(
-                "googleMapDirectionServiceFunctions.route",
-                request,
-                directionsRequestOptions);
+            return this.InvokeAsyncReturnedReferenceAndValue<DirectionsResult>(
+                "route",
+                request);
+        }
 
-            try
-            {
-                var dirResult = JsonConvert.DeserializeObject<DirectionsResult>(response);
-                return dirResult;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Error parsing DirectionsResult Object. Message: " + e.Message);
-                return null;
-            }
+        public ValueTask<T> Route<T>(DirectionsRequest request)
+        {
+            if (typeof(T) != typeof(DirectionsResult)
+                && typeof(T) != typeof(IJSObjectReference))
+                throw new InvalidCastException("label type must be string or MarkerLabel.");
+
+            return InvokeAsync<T>(
+                "route",
+                request);
         }
     }
 }

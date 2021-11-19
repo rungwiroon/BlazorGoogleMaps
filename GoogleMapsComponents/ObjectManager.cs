@@ -7,6 +7,12 @@ using System.Threading.Tasks;
 
 namespace GoogleMapsComponents
 {
+    public struct ReferenceAndValue<T>
+    {
+        public IJSObjectReference Reference { get; init; }
+        public T Value { get; init; }
+    }
+
     public class ObjectManager
     {
         private readonly IJSRuntime jsRuntime;

@@ -9,28 +9,20 @@ namespace GoogleMapsComponents.Maps
     /// </summary>
     public class Rectangle : MVCObject
     {
-        //private readonly JsObjectRef _jsObjetRef;
-        //private Map _map;
-
         /// <summary>
         /// Create a rectangle using the passed RectangleOptions, which specify the bounds and style.
         /// </summary>
         /// <param name="opts"></param>
-        public static async Task<Rectangle> CreateAsync(IJSRuntime jsRuntime, RectangleOptions opts = null)
+        public static async Task<Rectangle> CreateAsync(IJSRuntime jsRuntime, RectangleOptions? opts = null)
         {
-            //var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Rectangle", opts);
-
-            //var obj = new Rectangle(jsObjectRef, opts);
-
-            //return obj;
-
-            throw new NotImplementedException();
+            var jsObjectRef = await jsRuntime.InvokeAsync<IJSObjectReference>(
+                "googleMapsObjectManager.createObject",
+                "google.maps.Rectangle",
+                opts);
+            var obj = new Rectangle(jsObjectRef);
+            return obj;
         }
 
-        /// <summary>
-        /// Create a rectangle using the passed RectangleOptions, which specify the bounds and style.
-        /// </summary>
-        /// <param name="opts"></param>
         internal Rectangle(IJSObjectReference jsObjectRef)
             : base(jsObjectRef)
         {
@@ -70,7 +62,7 @@ namespace GoogleMapsComponents.Maps
         /// Returns the map on which this rectangle is displayed.
         /// </summary>
         /// <returns></returns>
-        public ValueTask<Map> GetMap()
+        public ValueTask<Map?> GetMap()
         {
             return InvokeWithReturnedObjectRefAsync(
                 "getMap",
@@ -124,7 +116,7 @@ namespace GoogleMapsComponents.Maps
         /// Renders the rectangle on the specified map. If map is set to null, the rectangle will be removed.
         /// </summary>
         /// <param name="map"></param>
-        public ValueTask SetMap(Map map)
+        public ValueTask SetMap(Map? map)
         {
             return InvokeVoidAsync(
                 "setMap",

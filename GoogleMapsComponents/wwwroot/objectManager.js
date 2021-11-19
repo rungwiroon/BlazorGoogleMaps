@@ -261,15 +261,11 @@ window.googleMapsObjectManager = {
         console.dir(obj);
     },
 
-    createObject: function (...args) {
-        //window._blazorGoogleMapsObjects = window._blazorGoogleMapsObjects || [];
-
+    createObject: function (functionName, ...args) {
         //console.log(args)
 
-        const functionName = args[0];
         const constructor = stringToFunction(functionName);
-        const constructorArguments = args.slice(1);
-        const obj = new constructor(...constructorArguments);
+        const obj = new constructor(...args);
 
         obj['extensionFunctions'] = {
             addListenerNoArgument: function (eventName, dotNetObjRef) {
@@ -313,6 +309,16 @@ window.googleMapsObjectManager = {
 
                 return mapEventListener;
             },
+
+            invokeAsyncReturnReferenceAndValue: function (functionName, args) {
+                return obj[functionName](...args)
+                    .then(r => {
+                        return { reference: DotNet.createJSObjectReference(r), value: r };
+                    })
+                    .catch((e) => {
+                        console.error(e);
+                    });
+            }
         };
 
         //console.dir(obj);

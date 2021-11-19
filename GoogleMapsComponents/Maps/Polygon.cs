@@ -58,7 +58,7 @@ namespace GoogleMapsComponents.Maps
         /// Returns the map on which this shape is attached.
         /// </summary>
         /// <returns></returns>
-        public async ValueTask<Map> GetMap()
+        public async ValueTask<Map?> GetMap()
         {
             var mapRef = await InvokeAsync<IJSObjectReference>(
                 "getMap");
@@ -122,11 +122,11 @@ namespace GoogleMapsComponents.Maps
         /// Renders this shape on the specified map. If map is set to null, the shape will be removed.
         /// </summary>
         /// <param name="map"></param>
-        public ValueTask SetMap(Map map)
+        public ValueTask SetMap(Map? map)
         {
             return InvokeVoidAsync(
                 "setMap",
-                map.Reference);
+                map?.Reference);
         }
 
         /// <summary>

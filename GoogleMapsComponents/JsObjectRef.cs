@@ -128,7 +128,7 @@ namespace GoogleMapsComponents
         //}
 
         public static async ValueTask<IJSObjectReference> AddListenerAsync<T>(
-            this JsObjectRef jsObjectRef,
+            this MVCObject jsObjectRef,
             string eventName,
             Action<T> handler)
         {
@@ -154,7 +154,7 @@ namespace GoogleMapsComponents
         }
 
         public static async ValueTask<IJSObjectReference> AddListenerAsync<T>(
-            this JsObjectRef jsObjectRef,
+            this MVCObject jsObjectRef,
             string eventName,
             Func<T, Task> handler)
         {
@@ -177,6 +177,19 @@ namespace GoogleMapsComponents
 
                 return null;
             }
+        }
+
+        public static async ValueTask<ReferenceAndValue<TValue>> InvokeAsyncReturnedReferenceAndValue<TValue>(
+            this JsObjectRef jsObjectRef,
+            string identifier,
+            params object?[]? args)
+        {
+            var returnedValue = await jsObjectRef.InvokeAsync<ReferenceAndValue<TValue>>(
+                "extensionFunctions.invokeAsyncReturnReferenceAndValue",
+                identifier,
+                args);
+
+            return returnedValue;
         }
     }
 }
