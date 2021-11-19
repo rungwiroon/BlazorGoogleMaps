@@ -37,6 +37,7 @@ namespace GoogleMapsComponents.Maps
         /// The text to be displayed in the label.
         /// </summary>
         public string Text { get; set; }
+
         /// <summary>
         /// The className property of the label's element (equivalent to the element's class attribute).
         /// Multiple space-separated CSS classes can be added. Default is no CSS class (an empty string).

@@ -14,7 +14,7 @@ namespace GoogleMapsComponents.Maps
         /// Content to display in the InfoWindow. This can be a plain-text string, or a string containing HTML. 
         /// The InfoWindow will be sized according to the content. To set an explicit size for the content, set content to be a HTML element with that size.
         /// </summary>
-        public string Content { get; set; }
+        public string? Content { get; set; }
 
         /// <summary>
         /// Disable auto-pan on open. By default, the info window will pan the map so that it is fully visible when it opens.
@@ -32,13 +32,13 @@ namespace GoogleMapsComponents.Maps
         /// The offset, in pixels, of the tip of the info window from the point on the map at whose geographical coordinates the info window is anchored. 
         /// If an InfoWindow is opened with an anchor, the pixelOffset will be calculated from the anchor's anchorPoint property.
         /// </summary>
-        public Size PixelOffset { get; set; }
+        public Size? PixelOffset { get; set; }
 
         /// <summary>
         /// The LatLng at which to display this InfoWindow. 
         /// If the InfoWindow is opened with an anchor, the anchor's position will be used instead.
         /// </summary>
-        public LatLngLiteral Position { get; set; }
+        public LatLngLiteral? Position { get; set; }
 
         /// <summary>
         /// All InfoWindows are displayed on the map in order of their zIndex, with higher values displaying in front of InfoWindows with lower values. 

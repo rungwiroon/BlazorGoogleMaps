@@ -9,7 +9,7 @@ namespace GoogleMapsComponents.Maps
         /// The offset from the marker's position to the tip of an InfoWindow that has been opened with the marker as anchor.
         /// </summary>
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public Point AnchorPoint { get; set; }
+        public Point? AnchorPoint { get; init; }
 
         /// <summary>
         /// Which animation to play when marker is added to a map.
@@ -62,21 +62,25 @@ namespace GoogleMapsComponents.Maps
         /// <summary>
         /// Marker position. Required.
         /// </summary>
-        public LatLngLiteral Position { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public LatLngLiteral? Position { get; set; }
 
         /// <summary>
         /// 2021-07 supported only in beta google maps version
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public CollisionBehavior? CollisionBehavior { get; set; }
 
         /// <summary>
         /// Image map region definition used for drag/click.
         /// </summary>
-        public MarkerShape Shape { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public MarkerShape? Shape { get; set; }
 
         /// <summary>
         /// Rollover text
         /// </summary>
-        public string Title { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string? Title { get; set; }
     }
 }

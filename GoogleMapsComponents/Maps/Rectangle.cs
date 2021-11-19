@@ -7,7 +7,7 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// A rectangle overlay.
     /// </summary>
-    public class Rectangle : JsObjectRef
+    public class Rectangle : MVCObject
     {
         //private readonly JsObjectRef _jsObjetRef;
         //private Map _map;
@@ -31,7 +31,7 @@ namespace GoogleMapsComponents.Maps
         /// Create a rectangle using the passed RectangleOptions, which specify the bounds and style.
         /// </summary>
         /// <param name="opts"></param>
-        internal Rectangle(IJSObjectReference jsObjectRef, RectangleOptions opts = null)
+        internal Rectangle(IJSObjectReference jsObjectRef)
             : base(jsObjectRef)
         {
         }
@@ -72,7 +72,9 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<Map> GetMap()
         {
-            return InvokeWithReturnedObjectRefAsync("getMap", objRef => new Map(objRef));
+            return InvokeWithReturnedObjectRefAsync(
+                "getMap",
+                objRef => new Map(objRef));
         }
 
         /// <summary>
@@ -145,22 +147,6 @@ namespace GoogleMapsComponents.Maps
             return InvokeVoidAsync(
                 "setVisible",
                 visible);
-        }
-
-        public async Task<MapEventListener> AddListener(string eventName, Action handler)
-        {
-            var listenerRef = await InvokeAsync<IJSObjectReference>(
-                "addListener", eventName, handler);
-
-            return new MapEventListener(listenerRef);
-        }
-
-        public async Task<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
-        {
-            var listenerRef = await InvokeAsync<IJSObjectReference>(
-                "addListener", eventName, handler);
-
-            return new MapEventListener(listenerRef);
         }
     }
 }

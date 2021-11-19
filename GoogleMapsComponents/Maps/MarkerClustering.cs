@@ -19,7 +19,7 @@ namespace GoogleMapsComponents.Maps
             IJSRuntime jsRuntime,
             Map map,
             IEnumerable<Marker> markers,
-            MarkerClustererOptions options = null
+            MarkerClustererOptions? options = null
            )
         {
             //if (options == null)

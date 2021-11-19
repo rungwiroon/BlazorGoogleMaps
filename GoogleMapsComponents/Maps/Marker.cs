@@ -1,10 +1,13 @@
 ﻿using Microsoft.JSInterop;
 using OneOf;
 using System;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using static GoogleMapsComponents.Helper;
 
 namespace GoogleMapsComponents.Maps
 {
+    [JsonConverter(typeof(JsObjectRefConverter))]
     public class Marker : MVCObject //ListableEntityBase<MarkerOptions>
     {
         public static async Task<Marker> CreateAsync(IJSRuntime jsRuntime, MarkerOptions? opts = null)
@@ -63,7 +66,7 @@ namespace GoogleMapsComponents.Maps
         {
             if (typeof(T) != typeof(string)
                 && typeof(T) != typeof(MarkerLabel))
-                throw new InvalidCastException("label type must be string, MarkerLabel.");
+                throw new InvalidCastException("label type must be string or MarkerLabel.");
 
             return InvokeAsync<T>(
                 "getLabel");
@@ -157,7 +160,7 @@ namespace GoogleMapsComponents.Maps
         {
             return InvokeVoidAsync(
                 "setLabel",
-                label);
+                MakeArgJsFriendly(label));
         }
 
         public ValueTask SetOpacity(float opacity)
@@ -209,9 +212,9 @@ namespace GoogleMapsComponents.Maps
                 zIndex);
         }
 
-        public ValueTask<Map> GetMap()
+        public ValueTask<Map?> GetMap()
         {
-            return InvokeWithReturnedObjectRefAsync<Map>(
+            return InvokeWithReturnedObjectRefAsync(
                 "getMap",
                 objRef => new Map(objRef));
         }

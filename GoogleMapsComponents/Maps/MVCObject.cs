@@ -21,13 +21,6 @@ namespace GoogleMapsComponents.Maps
             return new MapEventListener(listenerRef);
         }
 
-        //public async ValueTask<MapEventListener> AddListener(string eventName, Func<Task> handler)
-        //{
-        //    var listenerRef = await this.AddListenerAsync(eventName, handler);
-
-        //    return new MapEventListener(listenerRef);
-        //}
-
         public async ValueTask<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
         {
             var listenerRef = await this.AddListenerAsync(eventName, handler);

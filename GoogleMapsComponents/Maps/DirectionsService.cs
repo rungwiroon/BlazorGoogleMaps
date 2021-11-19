@@ -8,35 +8,25 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// A service for computing directions between two or more places.
     /// </summary>
-    public class DirectionsService : IAsyncDisposable
+    public class DirectionsService : JsObjectRef
     {
-        private readonly JsObjectRef _jsObjectRef;
-
         /// <summary>
         /// Creates a new instance of a DirectionsService that sends directions queries to Google servers.
         /// </summary>
         public async static Task<DirectionsService> CreateAsync(IJSRuntime jsRuntime)
         {
-            //var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.DirectionsService");
+            var jsObjectRef = await jsRuntime.InvokeAsync<IJSObjectReference>(
+                "googleMapsObjectManager.createObject",
+                "google.maps.DirectionsService");
 
-            //var obj = new DirectionsService(jsObjectRef);
+            var obj = new DirectionsService(jsObjectRef);
 
-            //return obj;
-
-            throw new NotImplementedException();
+            return obj;
         }
 
-        /// <summary>
-        /// Creates a new instance of a DirectionsService that sends directions queries to Google servers.
-        /// </summary>
-        private DirectionsService(JsObjectRef jsObjectRef)
+        internal DirectionsService(IJSObjectReference jsObjectRef)
+            : base(jsObjectRef)
         {
-            _jsObjectRef = jsObjectRef;
-        }
-
-        public ValueTask DisposeAsync()
-        {
-            return _jsObjectRef.DisposeAsync();
         }
 
         /// <summary>
@@ -45,16 +35,13 @@ namespace GoogleMapsComponents.Maps
         /// <param name="request"></param>
         /// <param name="directionsRequestOptions">Lets you specify which route response paths to opt out from clearing.</param>
         /// <returns></returns>
-        public async Task<DirectionsResult> Route(DirectionsRequest request, DirectionsRequestOptions directionsRequestOptions = null)
+        public async Task<DirectionsResult> Route(DirectionsRequest request, DirectionsRequestOptions? directionsRequestOptions = null)
         {
-            if (directionsRequestOptions == null)
-            {
-                directionsRequestOptions = new DirectionsRequestOptions();
-            }
-
-            var response = await _jsObjectRef.InvokeAsync<string>(
+            var response = await InvokeAsync<string>(
                 "googleMapDirectionServiceFunctions.route",
-                request, directionsRequestOptions);
+                request,
+                directionsRequestOptions);
+
             try
             {
                 var dirResult = JsonConvert.DeserializeObject<DirectionsResult>(response);
@@ -65,7 +52,6 @@ namespace GoogleMapsComponents.Maps
                 Console.WriteLine("Error parsing DirectionsResult Object. Message: " + e.Message);
                 return null;
             }
-
         }
     }
 }

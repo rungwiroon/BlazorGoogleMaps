@@ -247,7 +247,7 @@ namespace GoogleMapsComponents.Maps
         public ZoomControlOptions? ZoomControlOptions { get; set; }
 
         /// <summary>
-        /// Type:  string optional
+        /// Type: string optional
         /// The unique identifier that represents a single instance of a Google Map.
         /// You can create Map IDs and update a style associated with a
         /// Map ID at any time in the Google Cloud Console Maps Management

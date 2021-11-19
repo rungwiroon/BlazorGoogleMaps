@@ -1,7 +1,5 @@
 ﻿using Microsoft.JSInterop;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
@@ -9,35 +7,23 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// A polyline is a linear overlay of connected line segments on the map.
     /// </summary>
-    public class Polyline : JsObjectRef//ListableEntityBase<PolylineOptions>
+    public class Polyline : MVCObject //ListableEntityBase<PolylineOptions>
     {
         /// <summary>
         /// Create a polyline using the passed PolylineOptions, which specify both the path of the polyline and the stroke style to use when drawing the polyline.
         /// </summary>
-        public async static Task<Polyline> CreateAsync(IJSRuntime jsRuntime, PolylineOptions opts = null)
+        public async static Task<Polyline> CreateAsync(IJSRuntime jsRuntime, PolylineOptions? opts = null)
         {
-            //var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Polyline", opts);
+            var jsObjectRef = await jsRuntime.InvokeAsync<IJSObjectReference>(
+                "googleMapsObjectManager.createObject",
+                "google.maps.Polyline",
+                opts);
 
-            //var obj = new Polyline(jsObjectRef, opts);
-
-            //return obj;
-
-            throw new NotImplementedException();
+            return new Polyline(jsObjectRef);
         }
 
-        /// <summary>
-        /// Constructor for use in ListableEntityListBase. Must be the first constructor!
-        /// </summary>
-        internal Polyline(JsObjectRef jsObjectRef)
+        internal Polyline(IJSObjectReference jsObjectRef)
             :base(jsObjectRef)
-        {
-        }
-
-        /// <summary>
-        /// Create a polyline using the passed PolylineOptions, which specify both the path of the polyline and the stroke style to use when drawing the polyline.
-        /// </summary>
-        private Polyline(JsObjectRef jsObjectRef, PolylineOptions opts)
-            :this(jsObjectRef)
         {
         }
 
@@ -67,7 +53,8 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<IEnumerable<LatLngLiteral>> GetPath()
         {
-            return InvokeAsync<IEnumerable<LatLngLiteral>>("getPath");
+            return InvokeAsync<IEnumerable<LatLngLiteral>>(
+                "getPath");
         }
 
         /// <summary>
@@ -135,6 +122,5 @@ namespace GoogleMapsComponents.Maps
                 "setVisible",
                 visible);
         }
-
     }
 }

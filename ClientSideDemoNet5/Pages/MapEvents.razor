@@ -278,10 +278,9 @@
         		}
         	});
 
-        var icon = await marker.GetIcon<Icon>();
-
-        Console.WriteLine($"Get icon result type is : {icon.GetType()}");
-        Console.WriteLine(icon.Url);
+        //var icon = await marker.GetIcon<Icon>();
+        //Console.WriteLine($"Get icon result type is : {icon.GetType()}");
+        //Console.WriteLine(icon.Url);
 
         markers.Push(marker);
 
@@ -293,9 +292,9 @@
             var markerLabelText = (await marker.GetLabel<MarkerLabel>()).Text;
             _events.Insert(0, "click on " + markerLabelText);
             StateHasChanged();
-            e.Stop();
+            //e.Stop();
 
-            Console.WriteLine("End of marker click");
+            //Console.WriteLine("End of marker click");
         });
 
         await marker.AddListener<MouseEvent>("dragend", async e =>
@@ -307,9 +306,9 @@
         string markerLabelText = (await markers.Peek().GetLabel<MarkerLabel>()).Text;
         _events.Insert(0, $"OnMakerDragEnd ({markerLabelText}): ({e.LatLng}).");
         StateHasChanged();
-        e.Stop();
+        //e.Stop();
 
-        Console.WriteLine("End of marker drag end");
+        //Console.WriteLine("End of marker drag end");
     }
 
     private async Task RemoveMarker()

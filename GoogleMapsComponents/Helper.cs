@@ -1,24 +1,26 @@
-﻿using Microsoft.JSInterop;
-using OneOf;
+﻿using OneOf;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.Serialization;
-using System.Threading.Tasks;
 
 namespace GoogleMapsComponents
 {
     internal static class Helper
     {
         internal static T ToEnum<T>(string str)
+            where T : Enum
         {
             var enumType = typeof(T);
             foreach (var name in Enum.GetNames(enumType))
             {
-                var enumMemberAttribute = ((EnumMemberAttribute[])enumType.GetField(name)
-                    .GetCustomAttributes(typeof(EnumMemberAttribute), true)).Single();
+                var enumMemberAttribute = ((EnumMemberAttribute[])
+                    enumType
+                    !.GetField(name)
+                    !.GetCustomAttributes(typeof(EnumMemberAttribute), true)
+                    ).Single();
+
                 if (enumMemberAttribute.Value == str) return (T)Enum.Parse(enumType, name);
             }
 
@@ -26,7 +28,7 @@ namespace GoogleMapsComponents
         }
 
         internal static T? ToNullableEnum<T>(string? str)
-            where T : struct
+            where T : Enum
         {
             if (str == null || str == "null")
                 return default;
@@ -42,21 +44,21 @@ namespace GoogleMapsComponents
         }
 
         internal static T? ToNullableEnum<T>(int? value)
-            where T : struct
+            where T : Enum
         {
             if (value == null)
                 return default;
 
             var enumType = typeof(T);
 
-            return (T)Enum.Parse(enumType, value.ToString());
+            return (T)Enum.Parse(enumType, value!.ToString()!);
         }
 
         // this delegate is just, so you don't have to pass an object array. _(params)_
-        public delegate object ConstructorDelegate(params object[] args);
+        internal delegate object ConstructorDelegate(params object[] args);
 
         // https://stackoverflow.com/questions/840261/passing-arguments-to-c-sharp-generic-new-of-templated-type
-        public static ConstructorDelegate CreateConstructor(Type type, params Type[] parameters)
+        internal static ConstructorDelegate CreateConstructor(Type type, params Type[] parameters)
         {
             // Get the constructor info for these parameters
             var constructorInfo = type.GetConstructor(
@@ -97,29 +99,28 @@ namespace GoogleMapsComponents
 
             return arg switch
             {
-                JsInvokableAction _ => DotNetObjectReference.Create(arg),
                 JsObjectRef jsObjectRef => jsObjectRef.Reference,
                 _ => arg,
             };
         }
 
-        internal static IEnumerable<object?> MakeArgJsFriendly(IJSRuntime jsRuntime, IEnumerable<object> args)
-        {
-            var jsFriendlyArgs = args.Select(MakeArgJsFriendly);
+        //internal static IEnumerable<object?> MakeArgJsFriendly(IJSRuntime jsRuntime, IEnumerable<object> args)
+        //{
+        //    var jsFriendlyArgs = args.Select(MakeArgJsFriendly);
 
-            return jsFriendlyArgs;
-        }
+        //    return jsFriendlyArgs;
+        //}
 
-        internal static async ValueTask<object> MyAddListenerAsync(
-            this IJSRuntime jsRuntime,
-            string identifier,
-            params object[] args)
-        {
+        //internal static async ValueTask<object> MyAddListenerAsync(
+        //    this IJSRuntime jsRuntime,
+        //    string identifier,
+        //    params object[] args)
+        //{
 
-            var jsFriendlyArgs = MakeArgJsFriendly(jsRuntime, args);
+        //    var jsFriendlyArgs = MakeArgJsFriendly(jsRuntime, args);
 
-            return await jsRuntime.InvokeAsync<object>(identifier, jsFriendlyArgs);
-        }
+        //    return await jsRuntime.InvokeAsync<object>(identifier, jsFriendlyArgs);
+        //}
 
         //public static DotNetObjectReference<JsInvokableAction<T>> MakeArgJsFriendly<T>(Action<T> action)
         //{

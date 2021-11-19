@@ -86,44 +86,44 @@ namespace GoogleMapsComponents
         //    throw new NotImplementedException();
         //}
 
-        public ValueTask<IJSObjectReference> AddListenerAsync(
-            IJSObjectReference objRef,
-            string eventName,
-            Action handler)
-        {
-            return jsRuntime.InvokeAsync<IJSObjectReference>(
-                "googleMapsObjectManager.addListenerNoArgument",
-                objRef,
-                eventName,
-                Helper.MakeArgJsFriendly(handler));
-        }
+        //public ValueTask<IJSObjectReference> AddListenerAsync(
+        //    IJSObjectReference objRef,
+        //    string eventName,
+        //    Action handler)
+        //{
+        //    return jsRuntime.InvokeAsync<IJSObjectReference>(
+        //        "googleMapsObjectManager.addListenerNoArgument",
+        //        objRef,
+        //        eventName,
+        //        Helper.MakeArgJsFriendly(handler));
+        //}
 
-        public async ValueTask<IJSObjectReference> AddListenerAsync<T>(
-            IJSObjectReference objRef,
-            string eventName,
-            Action<T> handler)
-        {
-            var dotNetObjRef = DotNetObjectReference.Create(
-                new JsInvokableFunc<T, bool?>(wrapHandler));
+        //public async ValueTask<IJSObjectReference> AddListenerAsync<T>(
+        //    IJSObjectReference objRef,
+        //    string eventName,
+        //    Action<T> handler)
+        //{
+        //    var dotNetObjRef = DotNetObjectReference.Create(
+        //        new JsInvokableFunc<T, bool?>(wrapHandler));
 
-            return await jsRuntime.InvokeAsync<IJSObjectReference>(
-                "googleMapsObjectManager.addListenerWithArgument",
-                objRef,
-                eventName,
-                dotNetObjRef);
+        //    return await jsRuntime.InvokeAsync<IJSObjectReference>(
+        //        "googleMapsObjectManager.addListenerWithArgument",
+        //        objRef,
+        //        eventName,
+        //        dotNetObjRef);
 
-            bool? wrapHandler(T obj)
-            {
-                handler(obj);
+        //    bool? wrapHandler(T obj)
+        //    {
+        //        handler(obj);
 
-                if(obj is MouseEvent mouseEvent)
-                {
-                    return mouseEvent.StopStatus;
-                }
+        //        if(obj is MouseEvent mouseEvent)
+        //        {
+        //            return mouseEvent.StopStatus;
+        //        }
 
-                return null;
-            }
-        }
+        //        return null;
+        //    }
+        //}
 
         //public async ValueTask AddMultipleListenersAsync(
         //    string eventName,

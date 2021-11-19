@@ -5,27 +5,23 @@ using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
 {
-    public class Polygon : JsObjectRef
+    public class Polygon : MVCObject
     {
-        //protected readonly JsObjectRef _jsObjectRef;
-        //private Map _map;
-        
-        //public Guid Guid => _jsObjectRef.Guid;
-
         /// <summary>
         /// Create a polygon using the passed PolygonOptions, which specify the polygon's path, the stroke style for the polygon's edges, and the fill style for the polygon's interior regions. 
         /// A polygon may contain one or more paths, where each path consists of an array of LatLngs.
         /// </summary>
         /// <param name="opts"></param>
-        public static async Task<Polygon> CreateAsync(IJSRuntime jsRuntime, PolygonOptions opts = null)
+        public static async ValueTask<Polygon> CreateAsync(IJSRuntime jsRuntime, PolygonOptions? opts = null)
         {
-            //var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Polygon", opts);
+            var jsObjectRef = await jsRuntime.InvokeAsync<IJSObjectReference>(
+                "googleMapsObjectManager.createObject",
+                "google.maps.Polygon",
+                opts);
 
-            //var obj = new Polygon(jsObjectRef, opts);
+            var obj = new Polygon(jsObjectRef);
 
-            //return obj;
-
-            throw new NotImplementedException();
+            return obj;
         }
 
         /// <summary>
@@ -64,7 +60,8 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public async ValueTask<Map> GetMap()
         {
-            var mapRef = await InvokeAsync<IJSObjectReference>("getMap");
+            var mapRef = await InvokeAsync<IJSObjectReference>(
+                "getMap");
             return new Map(mapRef);
         }
 
@@ -129,7 +126,7 @@ namespace GoogleMapsComponents.Maps
         {
             return InvokeVoidAsync(
                 "setMap",
-                map);
+                map.Reference);
         }
 
         /// <summary>
@@ -174,27 +171,6 @@ namespace GoogleMapsComponents.Maps
             return InvokeVoidAsync(
                 "setVisible",
                 visible);
-        }
-
-        public ValueTask InvokeAsync(string functionName, params object[] args)
-        {
-            return InvokeVoidAsync(functionName, args);
-        }
-
-        public async ValueTask<MapEventListener> AddListener(string eventName, Action handler)
-        {
-            var listenerRef = await InvokeAsync<IJSObjectReference>(
-                "addListener", eventName, handler);
-
-            return new MapEventListener(listenerRef);
-        }
-
-        public async ValueTask<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
-        {
-            var listenerRef = await InvokeAsync<IJSObjectReference>(
-                "addListener", eventName, handler);
-
-            return new MapEventListener(listenerRef);
         }
     }
 }

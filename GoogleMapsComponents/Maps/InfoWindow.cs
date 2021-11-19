@@ -1,7 +1,8 @@
 ﻿using Microsoft.JSInterop;
-using System;
-using System.Collections.Generic;
+using OneOf;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using static GoogleMapsComponents.Helper;
 
 namespace GoogleMapsComponents.Maps
 {
@@ -28,10 +29,9 @@ namespace GoogleMapsComponents.Maps
     /// Each setter properties can be used as follow:
     /// With a Dictionary<string, {property type}> indicating for each Marker (related to that key) the corresponding related property value
     /// </summary>
-    public class InfoWindow : JsObjectRef
+    [JsonConverter(typeof(JsObjectRefConverter))]
+    public class InfoWindow : MVCObject
     {
-        public readonly Dictionary<string, List<MapEventListener>> EventListeners = new();
-
         /// <summary>
         /// Creates an info window with the given options. 
         /// An InfoWindow can be placed on a map at a particular position or above a marker, depending on what is specified in the options. 
@@ -40,35 +40,21 @@ namespace GoogleMapsComponents.Maps
         /// The user can click the close button on the InfoWindow to remove it from the map, or the developer can call close() for the same effect.
         /// </summary>
         /// <param name="opts"></param>
-        public async static Task<InfoWindow> CreateAsync(IJSRuntime jsRuntime, InfoWindowOptions opts = null)
+        public async static ValueTask<InfoWindow> CreateAsync(IJSRuntime jsRuntime, InfoWindowOptions? opts = null)
         {
-            //var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.InfoWindow", opts);
+            var jsObjectRef = await jsRuntime.InvokeAsync<IJSObjectReference>(
+                "googleMapsObjectManager.createObject",
+                "google.maps.InfoWindow",
+                opts);
 
-            //var obj = new InfoWindow(jsObjectRef, opts);
+            var obj = new InfoWindow(jsObjectRef);
 
-            //return obj;
-
-            throw new NotImplementedException();
+            return obj;
         }
 
-        /// <summary>
-        /// Creates an info window with the given options. 
-        /// An InfoWindow can be placed on a map at a particular position or above a marker, depending on what is specified in the options. 
-        /// Unless auto-pan is disabled, an InfoWindow will pan the map to make itself visible when it is opened. 
-        /// After constructing an InfoWindow, you must call open to display it on the map. 
-        /// The user can click the close button on the InfoWindow to remove it from the map, or the developer can call close() for the same effect.
-        /// </summary>
-        /// <param name="opts"></param>
-        private InfoWindow(IJSObjectReference jsObjectRef)
+        internal InfoWindow(IJSObjectReference jsObjectRef)
             : base(jsObjectRef)
         {
-        }
-
-        public async ValueTask DisposeAsync()
-        {
-            EventListeners.Clear();
-
-            await base.DisposeAsync();
         }
 
         /// <summary>
@@ -76,22 +62,26 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public ValueTask Close()
         {
-            return this.InvokeVoidAsync("close");
+            return InvokeVoidAsync(
+                "close");
         }
 
         public ValueTask<string> GetContent()
         {
-            return this.InvokeAsync<string>("getContent");
+            return InvokeAsync<string>(
+                "getContent");
         }
 
         public ValueTask<LatLngLiteral> GetPosition()
         {
-            return this.InvokeAsync<LatLngLiteral>("getPosition");
+            return InvokeAsync<LatLngLiteral>(
+                "getPosition");
         }
 
         public ValueTask<int> GetZIndex()
         {
-            return this.InvokeAsync<int>("getZIndex");
+            return InvokeAsync<int>(
+                "getZIndex");
         }
 
 
@@ -100,68 +90,35 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="map"></param>
         /// <param name="anchor"></param>
-        public ValueTask Open(Map map, object anchor = null)
+        public ValueTask Open(
+            OneOf<InfoWindowOpenOptions, Map, StreetViewPanoramaMap>? options,
+            MVCObject? anchor = null)
         {
-            return this.InvokeVoidAsync("open", map, anchor);
+            return InvokeVoidAsync(
+                "open",
+                MakeArgJsFriendly(options),
+                MakeArgJsFriendly(anchor));
         }
 
         public ValueTask SetContent(string content)
         {
-            return this.InvokeVoidAsync("setContent", content);
+            return InvokeVoidAsync(
+                "setContent",
+                content);
         }
 
         public ValueTask SetPosition(LatLngLiteral position)
         {
-            return this.InvokeVoidAsync(
+            return InvokeVoidAsync(
                 "setPosition",
                 position);
         }
 
         public ValueTask SetZIndex(int zIndex)
         {
-            return this.InvokeVoidAsync(
+            return InvokeVoidAsync(
                 "setZIndex",
                 zIndex);
-        }
-
-        public async ValueTask<MapEventListener> AddListener(string eventName, Action handler)
-        {
-            var listenerRef = await this.InvokeAsync<IJSObjectReference>("addListener", eventName, handler);
-            var eventListener = new MapEventListener(listenerRef);
-
-            if (!EventListeners.ContainsKey(eventName))
-            {
-                EventListeners.Add(eventName, new List<MapEventListener>());
-            }
-            EventListeners[eventName].Add(eventListener);
-
-            return eventListener;
-        }
-
-        public async ValueTask<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
-        {
-            var listenerRef = await this.InvokeAsync<IJSObjectReference>("addListener", eventName, handler);
-            var eventListener = new MapEventListener(listenerRef);
-
-            if (!EventListeners.ContainsKey(eventName))
-            {
-                EventListeners.Add(eventName, new List<MapEventListener>());
-            }
-            EventListeners[eventName].Add(eventListener);
-
-            return eventListener;
-        }
-
-        public async ValueTask ClearListeners(string eventName)
-        {
-            if (EventListeners.ContainsKey(eventName))
-            {
-                await this.InvokeVoidAsync("clearListeners", eventName);
-
-                //IMHO is better preserving the knowledge that Marker had some EventListeners attached to "eventName" in the past
-                //so, instead to clear the list and remove the key from dictionary, I prefer to leave the key with an empty list
-                EventListeners[eventName].Clear();
-            }
         }
     }
 }

@@ -84,14 +84,16 @@ namespace GoogleMapsComponents
             };
         }
 
-        public async ValueTask<TValue> InvokeWithReturnedObjectRefAsync<TValue>(
+        public async ValueTask<TValue?> InvokeWithReturnedObjectRefAsync<TValue>(
             string identifier,
             Func<IJSObjectReference, TValue> objectCreator,
             params object?[]? args)
         {
-            var returnedValue = await InvokeAsync<IJSObjectReference>(identifier, args);
+            var returnedValue = await InvokeAsync<IJSObjectReference?>(identifier, args);
 
-            return objectCreator(returnedValue);
+            return returnedValue != null
+                ? objectCreator(returnedValue)
+                : default;
         }
     }
 

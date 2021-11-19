@@ -1,8 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace GoogleMapsComponents.Maps
 {
@@ -44,12 +40,11 @@ namespace GoogleMapsComponents.Maps
         /// Note that the shape of a geodesic polygon may appear to change when dragged, as the dimensions are maintained relative to the surface of the earth. 
         /// Defaults to false.
         /// </summary>
-        public bool? Getodesic { get; set; }
+        public bool? Geodesic { get; set; }
 
         /// <summary>
         /// Map on which to display Polygon.
         /// </summary>
-        //[JsonConverter(typeof(JsObjectRefConverter<Map>))]
         public Map Map { get; set; }
 
         /// <summary>
