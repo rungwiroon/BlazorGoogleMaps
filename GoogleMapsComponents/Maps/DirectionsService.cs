@@ -1,9 +1,21 @@
 ﻿using Microsoft.JSInterop;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
 {
+    [Flags]
+    public enum StripOption
+    {
+        OverviewPath = 0x01,
+        OverviewPolyline = 0x02,
+        LegsSteps = 0x04,
+        LegsStepsLatLngs = 0x08,
+        LegsStepsPath = 0x10,
+    }
+
     /// <summary>
     /// A service for computing directions between two or more places.
     /// </summary>
@@ -34,11 +46,39 @@ namespace GoogleMapsComponents.Maps
         /// <param name="request"></param>
         /// <param name="directionsRequestOptions">Lets you specify which route response paths to opt out from clearing.</param>
         /// <returns></returns>
-        public ValueTask<ReferenceAndValue<DirectionsResult>> Route(DirectionsRequest request)
+        public ValueTask<ReferenceAndValue<DirectionsResult>> Route(
+            DirectionsRequest request,
+            StripOption? stripOption = 
+                StripOption.OverviewPath
+                | StripOption.OverviewPolyline
+                | StripOption.LegsStepsLatLngs
+                | StripOption.LegsStepsPath)
         {
             return this.InvokeAsyncReturnedReferenceAndValue<DirectionsResult>(
                 "route",
+                mapStripOptionToPropertyPath(stripOption).ToArray(),
                 request);
+
+            static IEnumerable<string> mapStripOptionToPropertyPath(StripOption? stripOption)
+            {
+                if (stripOption == null)
+                    yield break;
+
+                if((stripOption & StripOption.OverviewPath) > 0)
+                    yield return "[routes].overview_path";
+
+                if((stripOption & StripOption.OverviewPolyline) > 0)
+                    yield return "[routes].overview_polyline";
+
+                if ((stripOption & StripOption.LegsSteps) > 0)
+                    yield return "[routes].[legs].steps";
+
+                if ((stripOption & StripOption.LegsStepsLatLngs) > 0)
+                    yield return "[routes].[legs].[steps].lat_lngs";
+
+                if ((stripOption & StripOption.LegsStepsPath) > 0)
+                    yield return "[routes].[legs].[steps].path";
+            }
         }
 
         public ValueTask<T> Route<T>(DirectionsRequest request)

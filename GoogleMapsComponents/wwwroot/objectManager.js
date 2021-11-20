@@ -311,9 +311,48 @@ window.googleMapsObjectManager = {
             },
 
             invokeAsyncReturnReferenceAndValue: function (functionName, args) {
-                return obj[functionName](...args)
+                const stripProperties = args[0];
+
+                return obj[functionName](...(args.slice(1)))
                     .then(r => {
-                        return { reference: DotNet.createJSObjectReference(r), value: r };
+                        var cloned = JSON.parse(JSON.stringify(r));
+
+                        stripProperties.forEach(sp => {
+                            const isArrayProperty = (propName) => propName.startsWith("[") && propName.endsWith("]");
+
+                            const removePropertyRecursively = (obj, pList) => {
+
+                                if (obj === undefined)
+                                    return;
+
+                                const currentPropertyName = pList[0];
+
+                                if (pList.length > 1) {
+                                    if (isArrayProperty(currentPropertyName)) {
+                                        var arr = obj[currentPropertyName.slice(1, -1)];
+                                        if (arr === undefined)
+                                            return;
+
+                                        arr.forEach(i => removePropertyRecursively(
+                                                i,
+                                                pList.slice(1)));
+                                    } else {
+                                        removePropertyRecursively(
+                                            obj[currentPropertyName],
+                                            pList.slice(1));
+                                    }
+                                } else {;
+                                    delete obj[currentPropertyName];
+                                }
+                            }
+
+                            const propList = sp.split(".");
+                            removePropertyRecursively(cloned, propList);
+                        })
+
+                        console.dir(cloned);
+
+                        return { reference: DotNet.createJSObjectReference(r), value: cloned };
                     })
                     .catch((e) => {
                         console.error(e);
