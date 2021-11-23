@@ -14,13 +14,11 @@ namespace GoogleMapsComponents.Maps
     [JsonConverter(typeof(JsObjectRefConverter))]
     public class Map : MVCObject
     {
-        public Task<MapData> Data
+        public MapData Data
         {
             get
             {
-                return InvokeAsync<IJSObjectReference>("data")
-                    .AsTask()
-                    .ContinueWith(dataObjectRef => new MapData(dataObjectRef.Result));
+                return new MapData(new JSObjPropRefWrapper("data", refWrapper));
             }
         }
 
@@ -38,7 +36,7 @@ namespace GoogleMapsComponents.Maps
             MapOptions? opts = null)
         {
             var jsObjectRef = await jsRuntime.InvokeAsync<IJSObjectReference>(
-                "googleMapsObjectManager.createObject",
+                "googleMapsObjectManager.createMVCObject",
                 "google.maps.Map",
                 mapDiv,
                 opts);
@@ -66,7 +64,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask FitBounds(LatLngBoundsLiteral bounds, OneOf<int, Padding>? padding = null)
         {
-            return InvokeVoidAsync("fitBounds", bounds, padding);
+            return this.InvokeVoidAsync("fitBounds", bounds, padding);
         }
 
         /// <summary>
@@ -79,7 +77,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask PanBy(int x, int y)
         {
-            return InvokeVoidAsync("panBy", x, y);
+            return this.InvokeVoidAsync("panBy", x, y);
         }
 
         /// <summary>
@@ -90,7 +88,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask PanTo(LatLngLiteral latLng)
         {
-            return InvokeVoidAsync("panTo", latLng);
+            return this.InvokeVoidAsync("panTo", latLng);
         }
 
         /// <summary>
@@ -101,7 +99,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask PanToBounds(LatLngBoundsLiteral latLngBounds)
         {
-            return InvokeVoidAsync("panToBounds", latLngBounds);
+            return this.InvokeVoidAsync("panToBounds", latLngBounds);
         }
 
         /// <summary>
@@ -127,7 +125,7 @@ namespace GoogleMapsComponents.Maps
 
         public ValueTask SetCenter(LatLngLiteral latLng)
         {
-            return InvokeVoidAsync("setCenter", latLng);
+            return this.InvokeVoidAsync("setCenter", latLng);
         }
 
         /// <summary>
@@ -147,7 +145,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask SetHeading(int heading)
         {
-            return InvokeVoidAsync("setHeading", heading);
+            return this.InvokeVoidAsync("setHeading", heading);
         }
 
         public async ValueTask<MapTypeId> GetMapTypeId()
@@ -159,7 +157,7 @@ namespace GoogleMapsComponents.Maps
 
         public ValueTask SetMapTypeId(MapTypeId mapTypeId)
         {
-            return InvokeVoidAsync("setMapTypeId", mapTypeId);
+            return this.InvokeVoidAsync("setMapTypeId", mapTypeId);
         }
 
         /// <summary>
@@ -186,22 +184,22 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask SetTilt(int tilt)
         {
-            return InvokeVoidAsync("setTilt", tilt);
+            return this.InvokeVoidAsync("setTilt", tilt);
         }
 
         public ValueTask<int> GetZoom()
         {
-            return InvokeAsync<int>("getZoom");
+            return this.InvokeAsync<int>("getZoom");
         }
 
         public ValueTask SetZoom(int zoom)
         {
-            return InvokeVoidAsync("setZoom", zoom);
+            return this.InvokeVoidAsync("setZoom", zoom);
         }
 
         public ValueTask SetOptions(MapOptions mapOptions)
         {
-            return InvokeVoidAsync("setOptions", mapOptions);
+            return this.InvokeVoidAsync("setOptions", mapOptions);
         }
     }
 }

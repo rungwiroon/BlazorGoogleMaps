@@ -43,7 +43,7 @@ namespace GoogleMapsComponents.Maps
         public async static ValueTask<InfoWindow> CreateAsync(IJSRuntime jsRuntime, InfoWindowOptions? opts = null)
         {
             var jsObjectRef = await jsRuntime.InvokeAsync<IJSObjectReference>(
-                "googleMapsObjectManager.createObject",
+                "googleMapsObjectManager.createMVCObject",
                 "google.maps.InfoWindow",
                 opts);
 
@@ -62,7 +62,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public ValueTask Close()
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "close");
         }
 
@@ -94,7 +94,7 @@ namespace GoogleMapsComponents.Maps
             OneOf<InfoWindowOpenOptions, Map, StreetViewPanoramaMap>? options,
             MVCObject? anchor = null)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "open",
                 MakeArgJsFriendly(options),
                 MakeArgJsFriendly(anchor));
@@ -102,21 +102,21 @@ namespace GoogleMapsComponents.Maps
 
         public ValueTask SetContent(string content)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setContent",
                 content);
         }
 
         public ValueTask SetPosition(LatLngLiteral position)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setPosition",
                 position);
         }
 
         public ValueTask SetZIndex(int zIndex)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setZIndex",
                 zIndex);
         }

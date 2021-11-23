@@ -47,7 +47,7 @@
 
     private async Task OnAfterMapInit()
     {
-        await map1.InteropObject.AddListener<MouseEvent>("click", async (e) => await OnClick(e));
+        await map1.InteropObject.AddListenerAsync<MouseEvent>("click", async (e) => await OnClick(e));
     }
 
     private async Task StartDrawingPolyline()

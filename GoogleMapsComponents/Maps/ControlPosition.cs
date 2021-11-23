@@ -1,10 +1,5 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Threading.Tasks;
+﻿using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace GoogleMapsComponents.Maps
 {
@@ -13,7 +8,7 @@ namespace GoogleMapsComponents.Maps
     /// Controls are positioned relative to other controls in the same layout position. 
     /// Controls that are added first are positioned closer to the edge of the map. 
     /// </summary>
-    [JsonConverter(typeof(StringEnumConverter))]
+    [JsonConverter(typeof(CustomJsonStringEnumConverter))]
     public enum ControlPosition
     {
         /// <summary>

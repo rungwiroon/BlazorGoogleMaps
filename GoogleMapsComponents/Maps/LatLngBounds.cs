@@ -8,10 +8,8 @@ namespace GoogleMapsComponents.Maps
     /// A LatLngBounds instance represents a rectangle in geographical coordinates,
     /// including one that crosses the 180 degrees longitudinal meridian.
     /// </summary>
-    public class LatLngBounds : IAsyncDisposable
+    public class LatLngBounds : Object
     {
-        private readonly JsObjectRef _jsObjectRef;
-
         /// <summary>
         /// Constructs a new empty bounds
         /// </summary>
@@ -26,14 +24,9 @@ namespace GoogleMapsComponents.Maps
             throw new NotImplementedException();
         }
 
-        private LatLngBounds(JsObjectRef jsObjectRef)
+        internal LatLngBounds(IJSObjectReference jsObjectRef)
+            : base(jsObjectRef)
         {
-            _jsObjectRef = jsObjectRef;
-        }
-
-        public ValueTask DisposeAsync()
-        {
-            return _jsObjectRef.DisposeAsync();
         }
 
         /// <summary>
@@ -41,7 +34,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public ValueTask<bool> Contains(LatLngLiteral other)
         {
-            return _jsObjectRef.InvokeAsync<bool>("contains", other);
+            return InvokeAsync<bool>("contains", other);
         }
 
         /// <summary>
@@ -49,7 +42,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public ValueTask<bool> Equals(LatLngBoundsLiteral other)
         {
-            return _jsObjectRef.InvokeAsync<bool>("equals", other);
+            return InvokeAsync<bool>("equals", other);
         }
 
         /// <summary>
@@ -57,7 +50,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public ValueTask Extend(LatLngLiteral point)
         {
-            return _jsObjectRef.InvokeVoidAsync("extend", point);
+            return this.InvokeVoidAsync("extend", point);
         }
         
         /// <summary>
@@ -65,7 +58,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public ValueTask<LatLngLiteral> GetCenter()
         {
-            return _jsObjectRef.InvokeAsync<LatLngLiteral>("getCenter");
+            return InvokeAsync<LatLngLiteral>("getCenter");
         }
 
         /// <summary>
@@ -73,7 +66,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public ValueTask<LatLngLiteral> GetNorthEast()
         {
-            return _jsObjectRef.InvokeAsync<LatLngLiteral>("getNorthEast");
+            return InvokeAsync<LatLngLiteral>("getNorthEast");
         }
 
         /// <summary>
@@ -81,7 +74,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public ValueTask<LatLngLiteral> GetSouthWest()
         {
-            return _jsObjectRef.InvokeAsync<LatLngLiteral>("getSouthWest");
+            return InvokeAsync<LatLngLiteral>("getSouthWest");
         }
         
         /// <summary>
@@ -89,7 +82,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public ValueTask<bool> Intersects(LatLngBoundsLiteral other)
         {
-            return _jsObjectRef.InvokeAsync<bool>("intersects", other);
+            return InvokeAsync<bool>("intersects", other);
         }
 
         /// <summary>
@@ -97,7 +90,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public ValueTask<bool> IsEmpty()
         {
-            return _jsObjectRef.InvokeAsync<bool>("isEmpty");
+            return InvokeAsync<bool>("isEmpty");
         }
 
         /// <summary>
@@ -105,7 +98,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public ValueTask<LatLngBoundsLiteral> ToJson()
         {
-            return _jsObjectRef.InvokeAsync<LatLngBoundsLiteral>("toJSON");
+            return InvokeAsync<LatLngBoundsLiteral>("toJSON");
         }
 
         /// <summary>
@@ -113,7 +106,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public ValueTask<LatLngLiteral> ToSpan()
         {
-            return _jsObjectRef.InvokeAsync<LatLngLiteral>("toSpan");
+            return InvokeAsync<LatLngLiteral>("toSpan");
         }
 
         /// <summary>
@@ -123,7 +116,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public ValueTask<string> ToUrlValue(double precision)
         {
-            return _jsObjectRef.InvokeAsync<string>("toUrlValue", precision);
+            return InvokeAsync<string>("toUrlValue", precision);
         }
 
         /// <summary>
@@ -141,7 +134,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public ValueTask Union(LatLngBoundsLiteral other)
         {
-            return _jsObjectRef.InvokeVoidAsync("union", other);
+            return this.InvokeVoidAsync("union", other);
         }
     }
 }

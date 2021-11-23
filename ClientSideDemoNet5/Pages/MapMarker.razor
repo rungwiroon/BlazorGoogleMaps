@@ -68,7 +68,7 @@
         markers.Push(marker);
         labelText = (await marker.GetLabel<MarkerLabel>()).Text;
 
-        await marker.AddListener<MouseEvent>("click", async e =>
+        await marker.AddListenerAsync<MouseEvent>("click", async e =>
         {
             string markerLabelText = (await marker.GetLabel<MarkerLabel>()).Text;
             _events.Add("click on " + markerLabelText);

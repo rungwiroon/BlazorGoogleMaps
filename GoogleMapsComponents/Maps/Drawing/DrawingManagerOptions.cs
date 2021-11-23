@@ -1,10 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace GoogleMapsComponents.Maps.Drawing
+﻿namespace GoogleMapsComponents.Maps.Drawing
 {
     /// <summary>
     /// Options for the drawing manager.

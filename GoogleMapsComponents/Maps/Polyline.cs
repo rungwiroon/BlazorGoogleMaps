@@ -15,7 +15,7 @@ namespace GoogleMapsComponents.Maps
         public async static Task<Polyline> CreateAsync(IJSRuntime jsRuntime, PolylineOptions? opts = null)
         {
             var jsObjectRef = await jsRuntime.InvokeAsync<IJSObjectReference>(
-                "googleMapsObjectManager.createObject",
+                "googleMapsObjectManager.createMVCObject",
                 "google.maps.Polyline",
                 opts);
 
@@ -75,7 +75,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask SetDraggable(bool draggable)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setDraggable",
                 draggable);
         }
@@ -87,14 +87,14 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask SetEditable(bool editable)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setEditable",
                 editable);
         }
 
         public ValueTask SetOptions(PolylineOptions options)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setOptions",
                 options);
         }
@@ -106,7 +106,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask SetPath(IEnumerable<LatLngLiteral> path)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setPath",
                 path);
         }
@@ -118,7 +118,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask SetVisible(bool visible)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setVisible",
                 visible);
         }

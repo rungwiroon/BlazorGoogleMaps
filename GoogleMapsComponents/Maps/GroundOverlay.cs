@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
 {
-    public class GroundOverlay : JsObjectRef
+    public class GroundOverlay : MVCObject
     {
         public readonly Dictionary<string, List<MapEventListener>> EventListeners;
 
@@ -26,20 +26,6 @@ namespace GoogleMapsComponents.Maps
             EventListeners = new();
         }
 
-        public async Task<MapEventListener> AddListener(string eventName, Action handler)
-        {
-            var listenerRef = await InvokeAsync<IJSObjectReference>("addListener", eventName, handler);
-            var eventListener = new MapEventListener(listenerRef);
-
-            if (!EventListeners.ContainsKey(eventName))
-            {
-                EventListeners.Add(eventName, new List<MapEventListener>());
-            }
-            EventListeners[eventName].Add(eventListener);
-
-            return eventListener;
-        }
-
         /// <summary>
         /// The opacity of the overlay, expressed as a number between 0 and 1. Optional. Defaults to 1.
         /// </summary>
@@ -50,7 +36,7 @@ namespace GoogleMapsComponents.Maps
             if (opacity > 1) return;
             if (opacity < 0) return;
 
-            await InvokeVoidAsync("setOpacity", opacity);
+            await this.InvokeVoidAsync("setOpacity", opacity);
         }
 
         /// <summary>
@@ -65,9 +51,9 @@ namespace GoogleMapsComponents.Maps
 
         public async Task SetMap(Map map)
         {
-            await InvokeVoidAsync(
+            await this.InvokeVoidAsync(
                 "setMap",
-                map);
+                map.Reference);
         }
     }
 }

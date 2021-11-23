@@ -8,16 +8,20 @@ namespace GoogleMapsComponents.Maps
     /// google.maps.MapsEventListener interface
     /// An event listener, created by google.maps.event.addListener() and friends.
     /// </summary>
-    public class MapEventListener : JsObjectRef
+    public class MapEventListener : Object
     {
-        internal MapEventListener(IJSObjectReference jsObjectRef)
+        private readonly IDisposable callbackObjRef;
+
+        internal MapEventListener(IJSObjectReference jsObjectRef, IDisposable callbackObjRef)
             : base(jsObjectRef)
         {
+            this.callbackObjRef = callbackObjRef;
         }
 
-        public ValueTask RemoveAsync()
+        public async ValueTask RemoveAsync()
         {
-            return InvokeVoidAsync("remove");
+            await this.InvokeVoidAsync("remove");
+            callbackObjRef.Dispose();
         }
     }
 }

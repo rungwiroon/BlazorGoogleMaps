@@ -11,9 +11,15 @@ namespace GoogleMapsComponents
     {
         public IJSObjectReference Reference { get; init; }
         public T Value { get; init; }
+
+        public void Deconstruct(out IJSObjectReference reference, out T value)
+        {
+            reference = Reference;
+            value = Value;
+        }
     }
 
-    public class ObjectManager
+    public struct ObjectManager
     {
         private readonly IJSRuntime jsRuntime;
 
@@ -22,15 +28,17 @@ namespace GoogleMapsComponents
             this.jsRuntime = jsRuntime;
         }
 
-        public ValueTask<IJSObjectReference> CreateAsync(
-            string constructorFunctionName,
-            params object?[] args)
-        {
-            return jsRuntime.InvokeAsync<IJSObjectReference>(
-                "googleMapsObjectManager.createObject",
-                constructorFunctionName,
-                args);
-        }
+        //public ValueTask<IJSObjectReference> CreateAsync(
+        //    string constructorFunctionName,
+        //    params object?[] args)
+        //{
+        //    return jsRuntime.InvokeAsync<IJSObjectReference>(
+        //        "googleMapsObjectManager.createObject",
+        //        Enumerable.Empty<object?>()
+        //            .Append(constructorFunctionName)
+        //            .Concat(args)
+        //            .ToArray());
+        //}
 
         //public async ValueTask<Dictionary<string, JsObjectRef>> CreateMultipleAsync(
         //    string constructorFunctionName,
@@ -92,45 +100,6 @@ namespace GoogleMapsComponents
         //    throw new NotImplementedException();
         //}
 
-        //public ValueTask<IJSObjectReference> AddListenerAsync(
-        //    IJSObjectReference objRef,
-        //    string eventName,
-        //    Action handler)
-        //{
-        //    return jsRuntime.InvokeAsync<IJSObjectReference>(
-        //        "googleMapsObjectManager.addListenerNoArgument",
-        //        objRef,
-        //        eventName,
-        //        Helper.MakeArgJsFriendly(handler));
-        //}
-
-        //public async ValueTask<IJSObjectReference> AddListenerAsync<T>(
-        //    IJSObjectReference objRef,
-        //    string eventName,
-        //    Action<T> handler)
-        //{
-        //    var dotNetObjRef = DotNetObjectReference.Create(
-        //        new JsInvokableFunc<T, bool?>(wrapHandler));
-
-        //    return await jsRuntime.InvokeAsync<IJSObjectReference>(
-        //        "googleMapsObjectManager.addListenerWithArgument",
-        //        objRef,
-        //        eventName,
-        //        dotNetObjRef);
-
-        //    bool? wrapHandler(T obj)
-        //    {
-        //        handler(obj);
-
-        //        if(obj is MouseEvent mouseEvent)
-        //        {
-        //            return mouseEvent.StopStatus;
-        //        }
-
-        //        return null;
-        //    }
-        //}
-
         //public async ValueTask AddMultipleListenersAsync(
         //    string eventName,
         //    Dictionary<IJSObjectReference, object> dictArgs)
@@ -154,14 +123,19 @@ namespace GoogleMapsComponents
         //            .Concat(dictArgs.Values).ToArray()
         //    );
         //}
-
-        //public ValueTask<T> ReadObjectPropertyValue<T>(
-        //    string propertyName, IJSObjectReference objRef)
-        //{
-        //    return jsRuntime.InvokeAsync<T>(
-        //        "googleMapsObjectManager.readObjectPropertyValue",
-        //        objRef,
-        //        propertyName);
-        //}
     }
+
+#if DEBUG
+    public static class IJSRuntimeExtensions
+    {
+        public static ValueTask ConsoleLogAsync(
+            this IJSRuntime jsRuntime,
+            params object?[] args)
+        {
+            return jsRuntime.InvokeVoidAsync(
+                "console.log",
+                args);
+        }
+    }
+#endif
 }

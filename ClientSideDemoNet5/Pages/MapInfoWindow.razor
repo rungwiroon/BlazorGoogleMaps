@@ -52,7 +52,7 @@
 
         var infoWindowContent = $"Test {markerCount}";
 
-        await marker.AddListener("click", async () =>
+        await marker.AddListenerAsync("click", async () =>
         {
             await infoWindow.SetContent(infoWindowContent);
             await infoWindow.SetPosition(position);

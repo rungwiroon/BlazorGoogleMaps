@@ -6,10 +6,8 @@ using Microsoft.JSInterop;
 
 namespace GoogleMapsComponents.Maps.Places
 {
-    public class Autocomplete : IAsyncDisposable
+    public class Autocomplete : MVCObject
     {
-        private readonly JsObjectRef _jsObjectRef;
-
         public async static Task<Autocomplete> CreateAsync(IJSRuntime jsRuntime, ElementReference inputField, AutocompleteOptions opts = null)
         {
             //var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.places.Autocomplete", inputField, opts);
@@ -20,14 +18,9 @@ namespace GoogleMapsComponents.Maps.Places
             throw new NotImplementedException();
         }
 
-        private Autocomplete(JsObjectRef jsObjectRef)
+        internal Autocomplete(IJSObjectReference jsObjectRef)
+            : base(jsObjectRef)
         {
-            _jsObjectRef = jsObjectRef;
-        }
-
-        public ValueTask DisposeAsync()
-        {
-            return _jsObjectRef?.DisposeAsync() ?? ValueTask.CompletedTask;
         }
 
         /// <summary>
@@ -35,16 +28,16 @@ namespace GoogleMapsComponents.Maps.Places
         /// </summary>
         public ValueTask<LatLngBoundsLiteral> GetBounds()
         {
-            return _jsObjectRef.InvokeAsync<LatLngBoundsLiteral>("getBounds");
+            return InvokeAsync<LatLngBoundsLiteral>("getBounds");
         }
 
         /// <summary>
         /// Returns the fields to be included for the Place in the details response when the details
         /// are successfully retrieved. For a list of fields see PlaceResult.
         /// </summary>
-        public ValueTask<IEnumerable<string>> GetFields()
+        public ValueTask<string[]> GetFields()
         {
-            return _jsObjectRef.InvokeAsync<IEnumerable<string>>("getFields");
+            return InvokeAsync<string[]>("getFields");
         }
 
         /// <summary>
@@ -53,7 +46,7 @@ namespace GoogleMapsComponents.Maps.Places
         /// </summary>
         public ValueTask<PlaceResult> GetPlace()
         {
-            return _jsObjectRef.InvokeAsync<PlaceResult>("getPlace");
+            return InvokeAsync<PlaceResult>("getPlace");
         }
 
         /// <summary>
@@ -62,7 +55,7 @@ namespace GoogleMapsComponents.Maps.Places
         /// </summary>
         public ValueTask SetBounds(LatLngBoundsLiteral bounds)
         {
-            return _jsObjectRef.InvokeVoidAsync("setBounds", bounds);
+            return this.InvokeVoidAsync("setBounds", bounds);
         }
 
         /// <summary>
@@ -71,7 +64,7 @@ namespace GoogleMapsComponents.Maps.Places
         /// </summary>
         public ValueTask SetComponentRestrictions(ComponentRestrictions restrictions)
         {
-            return _jsObjectRef.InvokeVoidAsync("setComponentRestrictions", restrictions);
+            return this.InvokeVoidAsync("setComponentRestrictions", restrictions);
         }
 
         /// <summary>
@@ -80,12 +73,12 @@ namespace GoogleMapsComponents.Maps.Places
         /// </summary>
         public ValueTask SetFields(IEnumerable<string> fields)
         {
-            return _jsObjectRef.InvokeVoidAsync("setFields", fields);
+            return this.InvokeVoidAsync("setFields", fields);
         }
 
         public ValueTask SetOptions(AutocompleteOptions options)
         {
-            return _jsObjectRef.InvokeVoidAsync("setOptions", options);
+            return this.InvokeVoidAsync("setOptions", options);
         }
 
         /// <summary>
@@ -94,15 +87,7 @@ namespace GoogleMapsComponents.Maps.Places
         /// </summary>>
         public ValueTask SetTypes(IEnumerable<string> types)
         {
-            return _jsObjectRef.InvokeVoidAsync("setTypes", types);
-        }
-
-        public async Task<MapEventListener> AddListener(string eventName, Action handler)
-        {
-            var listenerRef = await _jsObjectRef.InvokeAsync<IJSObjectReference>(
-                "addListener", eventName, handler);
-
-            return new MapEventListener(listenerRef);
+            return this.InvokeVoidAsync("setTypes", types);
         }
     }
 }

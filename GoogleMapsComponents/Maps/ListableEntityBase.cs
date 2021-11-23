@@ -10,13 +10,13 @@ namespace GoogleMapsComponents.Maps
     public class ListableEntityBase<TEntityOptions>
         where TEntityOptions : ListableEntityOptionsBase
     {
-        protected readonly JsObjectRef _jsObjectRef;
+        internal readonly JSObjRefWrapper _jsObjectRef;
 
         public readonly Dictionary<string, List<MapEventListener>> EventListeners;
 
         //public Guid Guid => _jsObjectRef.Guid;
         
-        internal ListableEntityBase(JsObjectRef jsObjectRef)
+        internal ListableEntityBase(JSObjRefWrapper jsObjectRef)
         {
             _jsObjectRef = jsObjectRef;
             EventListeners = new Dictionary<string, List<MapEventListener>>();

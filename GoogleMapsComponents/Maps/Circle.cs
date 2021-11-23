@@ -16,7 +16,7 @@ namespace GoogleMapsComponents.Maps
         public async static Task<Circle> CreateAsync(IJSRuntime jsRuntime, CircleOptions opts = null)
         {
             var jsObjectRef = await jsRuntime.InvokeAsync<IJSObjectReference>(
-                "googleMapsObjectManager.createObject",
+                "googleMapsObjectManager.createMVCObject",
                 "google.maps.Circle",
                 opts);
             var obj = new Circle(jsObjectRef);
@@ -88,7 +88,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="center"></param>
         public ValueTask SetCenter(LatLngLiteral center)
         {
-            return InvokeVoidAsync("setCenter", center);
+            return this.InvokeVoidAsync("setCenter", center);
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="draggable"></param>
         public ValueTask SetDraggable(bool draggable)
         {
-            return InvokeVoidAsync("setDraggable", draggable);
+            return this.InvokeVoidAsync("setDraggable", draggable);
         }
 
         /// <summary>
@@ -106,12 +106,12 @@ namespace GoogleMapsComponents.Maps
         /// <param name="editable"></param>
         public ValueTask SetEditable(bool editable)
         {
-            return InvokeVoidAsync("setEditable", editable);
+            return this.InvokeVoidAsync("setEditable", editable);
         }        
 
         public ValueTask SetOptions(CircleOptions options)
         {
-            return InvokeVoidAsync("setOptions", options);
+            return this.InvokeVoidAsync("setOptions", options);
         }
 
         /// <summary>
@@ -120,7 +120,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="radius"></param>
         public ValueTask SetRadius(double radius)
         {
-            return InvokeVoidAsync("setRadius", radius);
+            return this.InvokeVoidAsync("setRadius", radius);
         }
 
         /// <summary>
@@ -129,7 +129,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="visible"></param>
         public ValueTask SetVisible(bool visible)
         {
-            return InvokeVoidAsync("setVisible", visible);
+            return this.InvokeVoidAsync("setVisible", visible);
         }        
     }
 }

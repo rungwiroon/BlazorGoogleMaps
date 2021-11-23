@@ -8,7 +8,7 @@ namespace GoogleMapsComponents
     {
         public override bool CanConvert(Type typeToConvert)
         {
-            return typeToConvert.IsAssignableTo(typeof(JsObjectRef));
+            return typeToConvert.IsAssignableTo(typeof(Maps.Object));
         }
 
         public override JsonConverter? CreateConverter(Type typeToConvert, JsonSerializerOptions options)
@@ -25,7 +25,7 @@ namespace GoogleMapsComponents
 
             public override void Write(Utf8JsonWriter writer, object jsObjectRefValue, JsonSerializerOptions options)
             {
-                var reference = (jsObjectRefValue as JsObjectRef)?.Reference;
+                var reference = (jsObjectRefValue as Maps.Object)?.Reference;
 
                 JsonSerializer.Serialize(writer, reference, options);
             }

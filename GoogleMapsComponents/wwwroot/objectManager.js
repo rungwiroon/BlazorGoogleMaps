@@ -1,19 +1,4 @@
-﻿function stringToFunction(str) {
-    let arr = str.split(".");
-
-    let fn = window || this;
-    for (let i = 0, len = arr.length; i < len; i++) {
-        fn = fn[arr[i]];
-    }
-
-    if (typeof fn !== "function") {
-        throw new Error("function not found");
-    }
-
-    return fn;
-}
-
-//function uuidv4() {
+﻿//function uuidv4() {
 //    return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
 //        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
 //    );
@@ -147,33 +132,6 @@
 //                    propertyValue.position = getGooglePositionFromString(propertyValue.position);
 //                }
 
-//                if (propertyValue !== null
-//                    && typeof propertyValue === "object"
-//                    && "drawingModes" in propertyValue
-//                    && propertyValue.drawingModes !== undefined) {
-//                    for (var drawingMode in propertyValue.drawingModes) {
-//                        let drawingModeValue = propertyValue.drawingModes[drawingMode];
-//                        switch (drawingModeValue) {
-//                            case "google.maps.drawing.OverlayType.CIRCLE":
-//                                propertyValue.drawingModes[drawingMode] = google.maps.drawing.OverlayType.CIRCLE;
-//                                break;
-//                            case "google.maps.drawing.OverlayType.MARKER":
-//                                propertyValue.drawingModes[drawingMode] = google.maps.drawing.OverlayType.MARKER;
-//                                break;
-//                            case "google.maps.drawing.OverlayType.POLYGON":
-//                                propertyValue.drawingModes[drawingMode] = google.maps.drawing.OverlayType.POLYGON;
-//                                break;
-//                            case "google.maps.drawing.OverlayType.POLYLINE":
-//                                propertyValue.drawingModes[drawingMode] = google.maps.drawing.OverlayType.POLYLINE;
-//                                break;
-//                            case "google.maps.drawing.OverlayType.RECTANGLE":
-//                                propertyValue.drawingModes[drawingMode] = google.maps.drawing.OverlayType.RECTANGLE;
-//                                break;
-//                            default:
-//                        }
-//                    }
-//                }
-
 //                if (typeof propertyValue === "object"
 //                    && propertyValue !== null
 //                    && "guidString" in propertyValue) {
@@ -256,12 +214,112 @@
 //    }
 //}
 
+function stringToFunction(str) {
+    let arr = str.split(".");
+
+    let fn = window || this;
+    for (let i = 0, len = arr.length; i < len; i++) {
+        fn = fn[arr[i]];
+    }
+
+    if (typeof fn !== "function") {
+        throw new Error("function not found");
+    }
+
+    return fn;
+}
+
+const removePropertyRecursively = (obj, pList) => {
+    if (obj === undefined)
+        return;
+
+    const currentPropertyName = pList[0];
+    const isArrayProperty = (propName) => propName.startsWith("[") && propName.endsWith("]");
+
+    if (pList.length > 1) {
+        if (isArrayProperty(currentPropertyName)) {
+            var arr = obj[currentPropertyName.slice(1, -1)];
+            if (arr === undefined)
+                return;
+
+            arr.forEach(i => removePropertyRecursively(
+                i,
+                pList.slice(1)));
+        } else {
+            removePropertyRecursively(
+                obj[currentPropertyName],
+                pList.slice(1));
+        }
+    } else {
+        delete obj[currentPropertyName];
+    }
+}
+
+const removePropertiesFromClonedObject = (ignoredProperties, objToClone) => {
+    const cloned = JSON.parse(JSON.stringify(obj));
+
+    ignoredProperties.forEach(sp => {
+        const propList = sp.split(".");
+        removePropertyRecursively(cloned, propList);
+    });
+
+    return cloned;
+}
+
 window.googleMapsObjectManager = {
     dir: function (obj) {
         console.dir(obj);
     },
 
     createObject: function (functionName, ...args) {
+        //console.log(args)
+
+        const constructor = stringToFunction(functionName);
+        const obj = new constructor(...args);
+
+        obj['extensionFunctions'] = {
+            invokeAsyncReturnReferenceAndValue: function (functionName, stripProperties, ...args) {
+                return obj[functionName](...args)
+                    .then(res => {
+                        const value = stripProperties
+                            ? removePropertiesFromClonedObject(stripProperties, res)
+                            : res
+
+                        //console.dir(value);
+
+                        return { reference: DotNet.createJSObjectReference(res), value: value };
+                    })
+                    .catch((e) => {
+                        console.error(e);
+                    });
+            },
+
+            invokeAsyncReturnFilteredValue: function (functionName, stripProperties, ...args) {
+                return obj[functionName](...args)
+                    .then(res => {
+                        const value = stripProperties
+                            ? removePropertiesFromClonedObject(stripProperties, res)
+                            : res
+
+                        //console.dir(value);
+
+                        return value;
+                    })
+                    .catch((e) => {
+                        console.error(e);
+                    });
+            },
+
+            readObjectPropertyValue: function (propertyName) {
+                return obj[propertyName];
+            },
+        };
+
+        //console.dir(obj);
+        return obj;
+    },
+
+    createMVCObject: function (functionName, ...args) {
         //console.log(args)
 
         const constructor = stringToFunction(functionName);
@@ -310,54 +368,37 @@ window.googleMapsObjectManager = {
                 return mapEventListener;
             },
 
-            invokeAsyncReturnReferenceAndValue: function (functionName, args) {
-                const stripProperties = args[0];
+            invokeAsyncReturnReferenceAndValue: function (functionName, stripProperties, ...args) {
+                return obj[functionName](...args)
+                    .then(res => {
+                        const value = stripProperties
+                            ? removePropertiesFromClonedObject(stripProperties, res)
+                            : res
 
-                return obj[functionName](...(args.slice(1)))
-                    .then(r => {
-                        var cloned = JSON.parse(JSON.stringify(r));
+                        //console.dir(value);
 
-                        stripProperties.forEach(sp => {
-                            const isArrayProperty = (propName) => propName.startsWith("[") && propName.endsWith("]");
-
-                            const removePropertyRecursively = (obj, pList) => {
-
-                                if (obj === undefined)
-                                    return;
-
-                                const currentPropertyName = pList[0];
-
-                                if (pList.length > 1) {
-                                    if (isArrayProperty(currentPropertyName)) {
-                                        var arr = obj[currentPropertyName.slice(1, -1)];
-                                        if (arr === undefined)
-                                            return;
-
-                                        arr.forEach(i => removePropertyRecursively(
-                                                i,
-                                                pList.slice(1)));
-                                    } else {
-                                        removePropertyRecursively(
-                                            obj[currentPropertyName],
-                                            pList.slice(1));
-                                    }
-                                } else {;
-                                    delete obj[currentPropertyName];
-                                }
-                            }
-
-                            const propList = sp.split(".");
-                            removePropertyRecursively(cloned, propList);
-                        })
-
-                        console.dir(cloned);
-
-                        return { reference: DotNet.createJSObjectReference(r), value: cloned };
+                        return { reference: DotNet.createJSObjectReference(res), value: value };
                     })
                     .catch((e) => {
                         console.error(e);
                     });
-            }
+            },
+
+            invokeAsyncReturnFilteredValue: function (functionName, stripProperties, ...args) {
+                return obj[functionName](...args)
+                    .then(res => {
+                        const value = stripProperties
+                            ? removePropertiesFromClonedObject(stripProperties, res)
+                            : res
+
+                        //console.dir(value);
+
+                        return value;
+                    })
+                    .catch((e) => {
+                        console.error(e);
+                    });
+            },
         };
 
         //console.dir(obj);

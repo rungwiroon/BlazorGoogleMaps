@@ -1,10 +1,5 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Threading.Tasks;
+﻿using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace GoogleMapsComponents.Maps
 {
@@ -12,7 +7,7 @@ namespace GoogleMapsComponents.Maps
     /// The status returned by the DirectionsService on the completion of a call to route(). 
     /// Specify these by value, or by using the constant's name. For example, 'OK' or google.maps.DirectionsStatus.OK.
     /// </summary>
-    [JsonConverter(typeof(StringEnumConverter))]
+    [JsonConverter(typeof(CustomJsonStringEnumConverter))]
     public enum DirectionsStatus
     {
         /// <summary>

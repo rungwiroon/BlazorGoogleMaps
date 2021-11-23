@@ -1,12 +1,9 @@
-﻿// ReSharper disable InconsistentNaming
-
-using System.Runtime.Serialization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+﻿using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace GoogleMapsComponents.Maps
 {
-    [JsonConverter(typeof(StringEnumConverter))]
+    [JsonConverter(typeof(CustomJsonStringEnumConverter))]
     public enum CollisionBehavior
     {
         [EnumMember(Value = "google.maps.CollisionBehavior.REQUIRED")]

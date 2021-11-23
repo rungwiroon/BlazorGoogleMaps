@@ -69,10 +69,6 @@
         //Calculate Route
         var directionsResult = await dirService.Route(dr);
 
-        await map1.JsRuntime.InvokeVoidAsync(
-            "googleMapsObjectManager.dir",
-            directionsResult);
-
         await dirRend.SetDirections(directionsResult.Reference);
 
         foreach (var route in directionsResult.Value.Routes.SelectMany(x => x.Legs))

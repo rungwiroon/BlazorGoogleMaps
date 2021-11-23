@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
+using GoogleMapsComponents.Maps.Data;
 using Microsoft.JSInterop;
 using OneOf;
 
@@ -12,24 +14,22 @@ namespace GoogleMapsComponents.Maps
     /// Every Map has a Data object by default, so most of the time there is no need to construct one.
     /// The Data object is a collection of Features.
     /// </summary>
-    public class MapData : JsObjectRef, IEnumerable<Data.Feature>
+    public class MapData : MVCObject
     {
-        //private readonly IJSObjectReference _jsObjectRef;
-        //private Map? _map;
-
         /// <summary>
         /// Creates an empty collection, with the given DataOptions.
         /// </summary>
         /// <param name="options"></param>
-        public async static Task<MapData> CreateAsync(IJSRuntime jsRuntime, Data.DataOptions? opts = null)
+        public async static Task<MapData> CreateAsync(IJSRuntime jsRuntime, DataOptions? opts = null)
         {
-            //var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Data", opts);
+            var jsObjectRef = await jsRuntime.InvokeAsync<IJSObjectReference>(
+                "googleMapsObjectManager.createMVCObject",
+                "google.maps.Data",
+                opts);
 
-            //var obj = new MapData(jsObjectRef);
+            var obj = new MapData(jsObjectRef);
 
-            //return obj;
-
-            throw new NotImplementedException();
+            return obj;
         }
 
         /// <summary>
@@ -40,14 +40,9 @@ namespace GoogleMapsComponents.Maps
         {
         }
 
-        public IEnumerator<Data.Feature> GetEnumerator()
+        internal MapData(IJSObjRefWrapper jsObjectRef)
+            : base(jsObjectRef)
         {
-            throw new NotImplementedException();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
         }
 
         /// <summary>
@@ -57,9 +52,9 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="feature"></param>
         /// <returns></returns>
-        public ValueTask<Data.Feature> Add(OneOf<Data.Feature, Data.FeatureOptions> feature)
+        public ValueTask<Feature> Add(OneOf<Feature, FeatureOptions> feature)
         {
-            return InvokeAsync<Data.Feature>(
+            return InvokeAsync<Feature>(
                 "add",
                 feature);
         }
@@ -71,7 +66,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="geoJson"></param>
         /// <param name="options"></param>
         /// <returns></returns>
-        public async ValueTask<IEnumerable<Data.Feature>> AddGeoJson(object geoJson, Maps.Data.GeoJsonOptions options = null)
+        public async ValueTask<IEnumerable<Feature>> AddGeoJson(object geoJson, GeoJsonOptions? options = null)
         {
             throw new NotImplementedException();
         }
@@ -81,11 +76,24 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="feature"></param>
         /// <returns></returns>
-        public ValueTask<bool> Contains(Data.Feature feature)
+        public ValueTask<bool> Contains(Feature feature)
         {
             return InvokeAsync<bool>(
                 "contains",
                 feature);
+        }
+
+        // Repeatedly invokes the given function, passing a feature in the collection to the function on each invocation.
+        // The order of iteration through the features is undefined.
+        public async ValueTask ForEach(Func<Feature, Task> callback)
+        {
+            using var callbackObjectRef = DotNetObjectReference.Create(
+                new JSInvokableAsyncAction<Feature>(callback));
+
+            await this.InvokeVoidAsync(
+                "extensionFunctions.invokeWithCallback",
+                "forEach",
+                callbackObjectRef);
         }
 
         /// <summary>
@@ -129,7 +137,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<Data.Feature> GetFeatureById(OneOf<int, string> id)
         {
-            return InvokeAsync<Data.Feature>(
+            return InvokeAsync<Feature>(
                 "getFeatureById",
                 id.Value);
         }
@@ -165,9 +173,11 @@ namespace GoogleMapsComponents.Maps
         /// <param name="url"></param>
         /// <param name="otpions"></param>
         /// <returns></returns>
-        public Task<Data.Feature> LoadGeoJson(string url, Data.GeoJsonOptions otpions = null)
+        public ValueTask LoadGeoJson(string url)
         {
-            throw new NotImplementedException();
+            return this.InvokeVoidAsync(
+                "loadGeoJson",
+                url);
         }
 
         /// <summary>
@@ -179,7 +189,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask OverrideSytle(Data.Feature feature, Data.StyleOptions style)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "overrideSytle",
                 feature,
                 style);
@@ -190,9 +200,9 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="feature"></param>
         /// <returns></returns>
-        public ValueTask Remove(Data.Feature feature)
+        public ValueTask Remove(Feature feature)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "remove",
                 feature);
         }
@@ -203,9 +213,9 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="feature"></param>
         /// <returns></returns>
-        public ValueTask RevertStyle(Data.Feature? feature = null)
+        public ValueTask RevertStyle(Feature? feature = null)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "revertStyle",
                 feature);
         }
@@ -217,7 +227,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask SetControlPosition(ControlPosition controlPosition)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setControlPosition",
                 controlPosition);
         }
@@ -232,7 +242,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask SetControls(IEnumerable<string> controls)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setControls",
                 controls);
         }
@@ -246,7 +256,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask SetDrawingMode(string drawingMode)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setDrawingMode",
                 drawingMode);
         }
@@ -259,7 +269,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask SetMap(Map map)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setMap",
                 map.Reference);
         }
@@ -281,31 +291,9 @@ namespace GoogleMapsComponents.Maps
         /// Exports the features in the collection to a GeoJSON object.
         /// </summary>
         /// <returns></returns>
-        public async ValueTask<object> ToGeoJson()
+        public async ValueTask<JsonDocument> ToGeoJson()
         {
             throw new NotImplementedException();
         }
-
-        public async Task<MapEventListener> AddListener(string eventName, Action handler)
-        {
-            //var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
-            //    "addListener", eventName, handler);
-
-            //return new MapEventListener(listenerRef);
-
-            throw new NotImplementedException();
-        }
-
-        public async Task<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
-        {
-            //var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
-            //    "addListener", eventName, handler);
-
-            //return new MapEventListener(listenerRef);
-
-            throw new NotImplementedException();
-        }
-
-        
     }
 }

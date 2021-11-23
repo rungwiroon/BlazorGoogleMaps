@@ -58,36 +58,36 @@ namespace GoogleMapsComponents
         internal delegate object ConstructorDelegate(params object[] args);
 
         // https://stackoverflow.com/questions/840261/passing-arguments-to-c-sharp-generic-new-of-templated-type
-        internal static ConstructorDelegate CreateConstructor(Type type, params Type[] parameters)
-        {
-            // Get the constructor info for these parameters
-            var constructorInfo = type.GetConstructor(
-                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
-                parameters);
+        //internal static ConstructorDelegate CreateConstructor(Type type, params Type[] parameters)
+        //{
+        //    // Get the constructor info for these parameters
+        //    var constructorInfo = type.GetConstructor(
+        //        BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
+        //        parameters);
 
-            if (constructorInfo == null)
-                throw new Exception("Constructor with given signatures not found");
+        //    if (constructorInfo == null)
+        //        throw new Exception("Constructor with given signatures not found");
 
-            // define a object[] parameter
-            var paramExpr = Expression.Parameter(typeof(Object[]));
+        //    // define a object[] parameter
+        //    var paramExpr = Expression.Parameter(typeof(Object[]));
 
-            // To feed the constructor with the right parameters, we need to generate an array 
-            // of parameters that will be read from the initialize object array argument.
-            var constructorParameters = parameters.Select((paramType, index) =>
-                // convert the object[index] to the right constructor parameter type.
-                Expression.Convert(
-                    // read a value from the object[index]
-                    Expression.ArrayAccess(
-                        paramExpr,
-                        Expression.Constant(index)),
-                    paramType)).ToArray();
+        //    // To feed the constructor with the right parameters, we need to generate an array 
+        //    // of parameters that will be read from the initialize object array argument.
+        //    var constructorParameters = parameters.Select((paramType, index) =>
+        //        // convert the object[index] to the right constructor parameter type.
+        //        Expression.Convert(
+        //            // read a value from the object[index]
+        //            Expression.ArrayAccess(
+        //                paramExpr,
+        //                Expression.Constant(index)),
+        //            paramType)).ToArray();
 
-            // just call the constructor.
-            var body = Expression.New(constructorInfo, constructorParameters);
+        //    // just call the constructor.
+        //    var body = Expression.New(constructorInfo, constructorParameters);
 
-            var constructor = Expression.Lambda<ConstructorDelegate>(body, paramExpr);
-            return constructor.Compile();
-        }
+        //    var constructor = Expression.Lambda<ConstructorDelegate>(body, paramExpr);
+        //    return constructor.Compile();
+        //}
 
         internal static object? MakeArgJsFriendly(object? arg)
         {
@@ -99,7 +99,7 @@ namespace GoogleMapsComponents
 
             return arg switch
             {
-                JsObjectRef jsObjectRef => jsObjectRef.Reference,
+                Maps.Object jsObjectRef => jsObjectRef.Reference,
                 _ => arg,
             };
         }

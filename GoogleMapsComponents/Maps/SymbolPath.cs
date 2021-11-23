@@ -1,16 +1,11 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
 namespace GoogleMapsComponents.Maps
 {
     /// <summary>
     /// Built-in symbol paths.
     /// </summary>
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum SymbolPath
     {
         /// <summary>

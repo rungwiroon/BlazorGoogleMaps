@@ -331,3 +331,4 @@ ASALocalRun/
 GoogleMapsComponents/.vscode/*
 .gitignore
 .vscode
+/.ionide

@@ -19,7 +19,7 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// A service for computing directions between two or more places.
     /// </summary>
-    public class DirectionsService : JsObjectRef
+    public class DirectionsService : Object
     {
         /// <summary>
         /// Creates a new instance of a DirectionsService that sends directions queries to Google servers.
@@ -40,6 +40,27 @@ namespace GoogleMapsComponents.Maps
         {
         }
 
+        private static IEnumerable<string> MapStripOptionToPropertyPath(StripOption? stripOption)
+        {
+            if (stripOption == null)
+                yield break;
+
+            if ((stripOption & StripOption.OverviewPath) > 0)
+                yield return "[routes].overview_path";
+
+            if ((stripOption & StripOption.OverviewPolyline) > 0)
+                yield return "[routes].overview_polyline";
+
+            if ((stripOption & StripOption.LegsSteps) > 0)
+                yield return "[routes].[legs].steps";
+
+            if ((stripOption & StripOption.LegsStepsLatLngs) > 0)
+                yield return "[routes].[legs].[steps].lat_lngs";
+
+            if ((stripOption & StripOption.LegsStepsPath) > 0)
+                yield return "[routes].[legs].[steps].path";
+        }
+
         /// <summary>
         /// Issue a directions search request.
         /// </summary>
@@ -56,40 +77,26 @@ namespace GoogleMapsComponents.Maps
         {
             return this.InvokeAsyncReturnedReferenceAndValue<DirectionsResult>(
                 "route",
-                mapStripOptionToPropertyPath(stripOption).ToArray(),
+                MapStripOptionToPropertyPath(stripOption).ToArray(),
                 request);
-
-            static IEnumerable<string> mapStripOptionToPropertyPath(StripOption? stripOption)
-            {
-                if (stripOption == null)
-                    yield break;
-
-                if((stripOption & StripOption.OverviewPath) > 0)
-                    yield return "[routes].overview_path";
-
-                if((stripOption & StripOption.OverviewPolyline) > 0)
-                    yield return "[routes].overview_polyline";
-
-                if ((stripOption & StripOption.LegsSteps) > 0)
-                    yield return "[routes].[legs].steps";
-
-                if ((stripOption & StripOption.LegsStepsLatLngs) > 0)
-                    yield return "[routes].[legs].[steps].lat_lngs";
-
-                if ((stripOption & StripOption.LegsStepsPath) > 0)
-                    yield return "[routes].[legs].[steps].path";
-            }
         }
 
-        public ValueTask<T> Route<T>(DirectionsRequest request)
+        public ValueTask<T> Route<T>(
+            DirectionsRequest request,
+            StripOption? stripOption =
+                StripOption.OverviewPath
+                | StripOption.OverviewPolyline
+                | StripOption.LegsStepsLatLngs
+                | StripOption.LegsStepsPath)
         {
             if (typeof(T) != typeof(DirectionsResult)
                 && typeof(T) != typeof(IJSObjectReference))
-                throw new InvalidCastException("label type must be string or MarkerLabel.");
+                throw new InvalidCastException("Request response type must be DirectionsResult or IJSObjectReference.");
 
-            return InvokeAsync<T>(
-                "route",
-                request);
+            if(typeof(T).IsAssignableTo(typeof(DirectionsRequest)))
+                return InvokeAsync<T>("route", request);
+            else
+                return InvokeAsync<T>("route", request);
         }
     }
 }

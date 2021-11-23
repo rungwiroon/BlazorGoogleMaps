@@ -15,7 +15,7 @@ namespace GoogleMapsComponents.Maps
         public static async ValueTask<Polygon> CreateAsync(IJSRuntime jsRuntime, PolygonOptions? opts = null)
         {
             var jsObjectRef = await jsRuntime.InvokeAsync<IJSObjectReference>(
-                "googleMapsObjectManager.createObject",
+                "googleMapsObjectManager.createMVCObject",
                 "google.maps.Polygon",
                 opts);
 
@@ -102,7 +102,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="draggble"></param>
         public ValueTask SetDraggble(bool draggble)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setDraggble",
                 draggble);
         }
@@ -113,7 +113,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="editable"></param>
         public ValueTask SetEditable(bool editable)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setEditable",
                 editable);
         }
@@ -124,7 +124,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="map"></param>
         public ValueTask SetMap(Map? map)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setMap",
                 map?.Reference);
         }
@@ -135,7 +135,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="options"></param>
         public ValueTask SetOptions(PolygonOptions options)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setOptions",
                 options);
         }
@@ -146,7 +146,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="path"></param>
         public ValueTask SetPath(IEnumerable<LatLngLiteral> path)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setPath",
                 path);
         }
@@ -157,7 +157,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="paths"></param>
         public ValueTask SetPaths(IEnumerable<IEnumerable<LatLngLiteral>> paths)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setPaths",
                 paths);
         }
@@ -168,7 +168,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="visible"></param>
         public ValueTask SetVisible(bool visible)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setVisible",
                 visible);
         }

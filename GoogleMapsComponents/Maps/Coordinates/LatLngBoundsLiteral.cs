@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GoogleMapsComponents.Maps
+﻿namespace GoogleMapsComponents.Maps
 {
     /// <summary>
     /// Object literals are accepted in place of LatLngBounds objects throughout the API.
@@ -11,7 +9,8 @@ namespace GoogleMapsComponents.Maps
         /// <summary>
         /// Default constructor. Set East, North, South and West explicitely because here they are initialized to zero.
         /// </summary>
-        public LatLngBoundsLiteral() {
+        public LatLngBoundsLiteral()
+        {
         }
         
         /// <summary>
@@ -19,14 +18,15 @@ namespace GoogleMapsComponents.Maps
         /// If the second point is null, the bounds are set to the first point.
         /// The points may be positioned arbitrarily.
         /// </summary>
-        public LatLngBoundsLiteral(LatLngLiteral latLng1,LatLngLiteral latLng2=null) {
-            East=latLng1.Lng;
-            West=latLng1.Lng;
-            South=latLng1.Lat;
-            North=latLng1.Lat;
-            if (latLng2!=null) {
-              Extend(latLng2);
-            }
+        public LatLngBoundsLiteral(LatLngLiteral latLng1, LatLngLiteral? latLng2 = null)
+        {
+            East = latLng1.Lng;
+            West = latLng1.Lng;
+            South = latLng1.Lat;
+            North = latLng1.Lat;
+
+            if (latLng2 != null)
+              Extend(latLng2.Value);
         }
         
         /// <summary>
@@ -34,12 +34,11 @@ namespace GoogleMapsComponents.Maps
         /// Using this method you can initialize a LatLngBoundsLiteral reference with null and call 
         /// subsequently this method to extend the boundaries by given points.
         /// </summary>
-        public static void CreateOrExtend(ref LatLngBoundsLiteral latLngBoundsLiteral,LatLngLiteral latLng) {
-            if (latLngBoundsLiteral == null) {
+        public static void CreateOrExtend(ref LatLngBoundsLiteral latLngBoundsLiteral, LatLngLiteral latLng) {
+            if (latLngBoundsLiteral == null)
                 latLngBoundsLiteral = new LatLngBoundsLiteral(latLng);
-            } else {
+            else
                 latLngBoundsLiteral.Extend(latLng);
-            }
         }
         
         /// <summary>
@@ -76,40 +75,34 @@ namespace GoogleMapsComponents.Maps
         /// <summary>
         /// Extend these boundaries by a given coordinate point.
         /// </summary>
-        public void Extend(double lng, double lat) {
-            if (lng < West) {
-              West = lng;
-            }
-            if (lng > East) {
-              East = lng;
-            }
-            if (lat < South) {
-              South = lat;
-            }
-            if (lat > North) {
-              North = lat;
-            }
-        }
-
-        /// <summary>
-        /// Extend these boundaries by a given coordinate point.
-        /// </summary>
-        public void Extend(decimal lng, decimal lat)
+        public void Extend(double lng, double lat)
         {
-            Extend(Convert.ToDouble(lng), Convert.ToDouble(lat));
+            if (lng < West)
+              West = lng;
+
+            if (lng > East)
+              East = lng;
+
+            if (lat < South)
+              South = lat;
+
+            if (lat > North)
+              North = lat;
         }
 
         /// <summary>
         /// Extend these boundaries by a given coordinate point.
         /// </summary>
-        public void Extend(LatLngLiteral latLng) {
+        public void Extend(LatLngLiteral latLng)
+        {
             Extend(latLng.Lng,latLng.Lat);
         }
         
         /// <summary>
         /// Is the area zero?
         /// </summary>
-        public bool IsEmpty() {
+        public bool IsEmpty()
+        {
             return (West == East || South == North);
         }
         

@@ -9,7 +9,7 @@ namespace GoogleMapsComponents.Maps.Drawing
     /// The DrawingManager's drawing mode defines the type of overlay that will be created by the user. 
     /// Adds a control to the map, allowing the user to switch drawing mode.
     /// </summary>
-    public class DrawingManager : JsObjectRef
+    public class DrawingManager : MVCObject
     {
         //private Map _map;
 
@@ -33,10 +33,6 @@ namespace GoogleMapsComponents.Maps.Drawing
         private DrawingManager(IJSObjectReference jsObjectRef)
             : base(jsObjectRef)
         {
-            //_jsObjectRef = jsObjectRef;
-
-            //if (opt?.Map != null)
-            //    _map = opt.Map;
         }
 
         /// <summary>
@@ -95,14 +91,6 @@ namespace GoogleMapsComponents.Maps.Drawing
                    options);
         }
 
-        public async ValueTask<MapEventListener> AddListener(string eventName, Action handler)
-        {
-            var listenerRef = await this.InvokeAsync<IJSObjectReference>(
-                "addListener", eventName, handler);
-
-            return new MapEventListener(listenerRef);
-        }
-
         public async ValueTask AddOverlayCompleteListener(Action<OverlayCompleteEvent> action)
         {
             //void Act(OverlaycompleteArgs args)
@@ -140,14 +128,6 @@ namespace GoogleMapsComponents.Maps.Drawing
             //    new object[] { this._jsObjectRef.Guid.ToString(), (Action<OverlaycompleteArgs>)Act });
 
             //return;
-        }
-
-        public async ValueTask<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
-        {
-            var listenerRef = await this.InvokeAsync<IJSObjectReference>(
-                "addListener", eventName, handler);
-
-            return new MapEventListener(listenerRef);
         }
 
         /// <summary>

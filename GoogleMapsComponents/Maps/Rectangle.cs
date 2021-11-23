@@ -16,7 +16,7 @@ namespace GoogleMapsComponents.Maps
         public static async Task<Rectangle> CreateAsync(IJSRuntime jsRuntime, RectangleOptions? opts = null)
         {
             var jsObjectRef = await jsRuntime.InvokeAsync<IJSObjectReference>(
-                "googleMapsObjectManager.createObject",
+                "googleMapsObjectManager.createMVCObject",
                 "google.maps.Rectangle",
                 opts);
             var obj = new Rectangle(jsObjectRef);
@@ -64,7 +64,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<Map?> GetMap()
         {
-            return InvokeWithReturnedObjectRefAsync(
+            return this.InvokeWithReturnedObjectRefAsync(
                 "getMap",
                 objRef => new Map(objRef));
         }
@@ -85,7 +85,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="bounds"></param>
         public ValueTask SetBounds(LatLngBoundsLiteral bounds)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setBounds",
                 bounds);
         }
@@ -96,7 +96,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="draggble"></param>
         public ValueTask SetDraggable(bool draggble)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setDraggable",
                 draggble);
         }
@@ -107,7 +107,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="editable"></param>
         public ValueTask SetEditable(bool editable)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setEditable",
                 editable);
         }
@@ -118,14 +118,14 @@ namespace GoogleMapsComponents.Maps
         /// <param name="map"></param>
         public ValueTask SetMap(Map? map)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setMap",
                 map);
         }
 
         public ValueTask SetOptions(RectangleOptions options)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setOptions",
                 options);
         }
@@ -136,7 +136,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="visible"></param>
         public ValueTask SetVisible(bool visible)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setVisible",
                 visible);
         }

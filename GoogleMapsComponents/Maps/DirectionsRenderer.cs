@@ -1,6 +1,4 @@
 ﻿using Microsoft.JSInterop;
-using Newtonsoft.Json;
-using System;
 using System.Threading.Tasks;
 using static GoogleMapsComponents.Helper;
 
@@ -17,10 +15,12 @@ namespace GoogleMapsComponents.Maps
         public static async Task<DirectionsRenderer> CreateAsync(IJSRuntime jsRuntime, DirectionsRendererOptions? opts = null)
         {
             var jsObjectRef = await jsRuntime.InvokeAsync<IJSObjectReference>(
-                "googleMapsObjectManager.createObject",
+                "googleMapsObjectManager.createMVCObject",
                 "google.maps.DirectionsRenderer",
                 opts);
+
             var obj = new DirectionsRenderer(jsObjectRef);
+            
             return obj;
         }
 
@@ -29,38 +29,9 @@ namespace GoogleMapsComponents.Maps
         {
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="request"></param>
-        /// <param name="directionsRequestOptions">Lets you specify which route response paths to opt out from clearing.</param>
-        /// <returns></returns>
-        //public async Task<DirectionsResult> Route(DirectionsRequest request, DirectionsRequestOptions directionsRequestOptions = null)
-        //{
-        //    if (directionsRequestOptions == null)
-        //    {
-        //        directionsRequestOptions = new DirectionsRequestOptions();
-        //    }
-
-        //    var response = await InvokeAsync<string>(
-        //        "googleMapDirectionServiceFunctions.route",
-        //        request,
-        //        directionsRequestOptions);
-        //    try
-        //    {
-        //        var dirResult = JsonConvert.DeserializeObject<DirectionsResult>(response);
-        //        return dirResult;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Console.WriteLine("Error parsing DirectionsResult Object. Message: " + e.Message);
-        //        return null;
-        //    }
-        //}
-
         public ValueTask<Map?> GetMap()
         {
-            return InvokeWithReturnedObjectRefAsync(
+            return this.InvokeWithReturnedObjectRefAsync(
                 "getMap",
                 objRef => new Map(objRef));
         }
@@ -71,9 +42,9 @@ namespace GoogleMapsComponents.Maps
                 "getRouteIndex");
         }
 
-        public async ValueTask SetDirections(IJSObjectReference? directions)
+        public ValueTask SetDirections(IJSObjectReference? directions)
         {
-            await InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setDirections",
                 directions);
         }
@@ -83,22 +54,22 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="directionsRequestOptions">Lets you specify which route response paths to opt out from clearing.</param>
         /// <returns></returns>
-        public async ValueTask<DirectionsResult> GetDirections()
+        public ValueTask<DirectionsResult> GetDirections()
         {
-            return await InvokeAsync<DirectionsResult>(
+            return InvokeAsync<DirectionsResult>(
                 "getDirections");
         }
 
-        public async ValueTask SetMap(Map? map)
+        public ValueTask SetMap(Map? map)
         {
-            await InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setMap",
                 MakeArgJsFriendly(map));
         }
 
-        public async ValueTask SetRouteIndex(int routeIndex)
+        public ValueTask SetRouteIndex(int routeIndex)
         {
-            await InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setRouteIndex",
                 routeIndex);
         }

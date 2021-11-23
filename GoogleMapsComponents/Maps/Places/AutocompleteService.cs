@@ -6,7 +6,7 @@ namespace GoogleMapsComponents.Maps.Places
 {
     public class AutocompleteService: IAsyncDisposable
     {
-        private readonly JsObjectRef _jsObjectRef;
+        private readonly JSObjRefWrapper _jsObjectRef;
 
         public async static Task<AutocompleteService> CreateAsync(IJSRuntime jsRuntime, MarkerOptions opts = null)
         {
@@ -18,7 +18,7 @@ namespace GoogleMapsComponents.Maps.Places
             throw new NotImplementedException();
         }
 
-        private AutocompleteService(JsObjectRef jsObjectRef)
+        private AutocompleteService(JSObjRefWrapper jsObjectRef)
         {
             _jsObjectRef = jsObjectRef;
         }

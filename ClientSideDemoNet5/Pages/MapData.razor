@@ -1,0 +1,37 @@
+﻿@page "/mapData"
+@using GoogleMapsComponents
+@using GoogleMapsComponents.Maps
+
+@inject IJSRuntime JS
+
+<h1>Map data</h1>
+
+<GoogleMap @ref="@map1" Id="map1" Options="@mapOptions" OnAfterInit="@(OnAfterInitAsync)"></GoogleMap>
+
+@code {
+    private GoogleMap map1 = default!;
+    private MapOptions mapOptions = default!;
+
+    protected override void OnInitialized()
+    {
+        mapOptions = new MapOptions()
+        {
+            Zoom = 4,
+            Center = new LatLngLiteral()
+            {
+                Lat = -28,
+                Lng = 137
+            },
+            MapTypeId = MapTypeId.Roadmap
+        };
+    }
+
+    private async Task OnAfterInitAsync()
+    {
+        var data = map1.InteropObject.Data;
+
+        await data.LoadGeoJson(
+            "https://storage.googleapis.com/mapsdevsite/json/google.json"
+        );
+    }
+}

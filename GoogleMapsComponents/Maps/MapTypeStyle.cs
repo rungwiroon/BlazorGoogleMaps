@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using System.Text.Json;
 
 namespace GoogleMapsComponents.Maps
 {
@@ -238,10 +234,10 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public GoogleMapStyleBuilder AddStyle(string json)
         {
-            var dirResult = JsonConvert.DeserializeObject<dynamic>(json);
+            var dirResult = JsonSerializer.Deserialize<dynamic>(json);
             foreach (var styleItem in dirResult)
             {
-                MapTypeStyle s = new MapTypeStyle();
+                var s = new MapTypeStyle();
                 s.elementType = styleItem.elementType;
                 s.featureType = styleItem.featureType;
                 if (IsPropertyExist(styleItem, "stylers"))

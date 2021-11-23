@@ -13,7 +13,7 @@ namespace GoogleMapsComponents.Maps
         public static async Task<Marker> CreateAsync(IJSRuntime jsRuntime, MarkerOptions? opts = null)
         {
             var jsObjectRef = await jsRuntime.InvokeAsync<IJSObjectReference>(
-                "googleMapsObjectManager.createObject",
+                "googleMapsObjectManager.createMVCObject",
                 "google.maps.Marker",
                 opts);
             var obj = new Marker(jsObjectRef);
@@ -116,105 +116,105 @@ namespace GoogleMapsComponents.Maps
             {
                 animationCode = 1;
             }
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setAnimation",
                 animationCode);
         }
 
         public ValueTask SetClickable(bool flag)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setClickable",
                 flag);
         }
 
         public ValueTask SetCursor(string cursor)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setCursor",
                 cursor);
         }
 
         public ValueTask SetDraggable(bool flag)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setDraggable",
                 flag);
         }
 
         public ValueTask SetIcon(string icon)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setIcon",
                 icon);
         }
 
         public ValueTask SetIcon(Icon icon)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setIcon",
                 icon);
         }
 
         public ValueTask SetLabel(OneOf<string, MarkerLabel> label)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setLabel",
                 MakeArgJsFriendly(label));
         }
 
         public ValueTask SetOpacity(float opacity)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setOpacity",
                 opacity);
         }
 
         public ValueTask SetOptions(MarkerOptions options)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setOptions",
                 options);
         }
 
         public ValueTask SetPosition(LatLngLiteral latLng)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setPosition",
                 latLng);
         }
 
         public ValueTask SetShape(MarkerShape shape)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setShape",
                 shape);
         }
 
         public ValueTask SetTitle(string title)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setTitle",
                 title);
         }
 
         public ValueTask SetVisible(bool visible)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setVisible",
                 visible);
         }
 
         public ValueTask SetZIndex(int zIndex)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setZIndex",
                 zIndex);
         }
 
         public ValueTask<Map?> GetMap()
         {
-            return InvokeWithReturnedObjectRefAsync(
+            return this.InvokeWithReturnedObjectRefAsync(
                 "getMap",
                 objRef => new Map(objRef));
         }
@@ -226,9 +226,9 @@ namespace GoogleMapsComponents.Maps
         /// <param name="map"></param>
         public ValueTask SetMap(Map? map)
         {
-            return InvokeVoidAsync(
+            return this.InvokeVoidAsync(
                 "setMap",
-                map);
+                map?.Reference);
         }
     }
 }

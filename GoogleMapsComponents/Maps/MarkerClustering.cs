@@ -8,11 +8,8 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// https://googlemaps.github.io/v3-utility-library/modules/_google_markerclustererplus.html
     /// </summary>
-    public class MarkerClustering : JsObjectRef
+    public class MarkerClustering : MVCObject
     {
-        //private readonly JsObjectRef _jsObjectRef;
-        //public Guid Guid => _jsObjectRef.Guid;
-
         public readonly Dictionary<string, List<MapEventListener>> EventListeners;
 
         public static async Task<MarkerClustering> CreateAsync(
@@ -36,46 +33,16 @@ namespace GoogleMapsComponents.Maps
             throw new NotImplementedException();
         }
 
-        internal MarkerClustering(JsObjectRef jsObjectRef)
+        internal MarkerClustering(IJSObjectReference jsObjectRef)
             : base(jsObjectRef)
         {
             //_jsObjectRef = jsObjectRef;
             EventListeners = new();
         }
 
-        public virtual async Task<MapEventListener> AddListener(string eventName, Action handler)
-        {
-            var listenerRef = await InvokeAsync<IJSObjectReference>("addListener", eventName, handler);
-            var eventListener = new MapEventListener(listenerRef);
-
-            if (!EventListeners.ContainsKey(eventName))
-            {
-                EventListeners.Add(eventName, new List<MapEventListener>());
-            }
-
-            EventListeners[eventName].Add(eventListener);
-
-            return eventListener;
-        }
-
-        public virtual async Task<MapEventListener> AddListener<V>(string eventName, Action<V> handler)
-        {
-            var listenerRef = await InvokeAsync<IJSObjectReference>("addListener", eventName, handler);
-            var eventListener = new MapEventListener(listenerRef);
-
-            if (!EventListeners.ContainsKey(eventName))
-            {
-                EventListeners.Add(eventName, new List<MapEventListener>());
-            }
-
-            EventListeners[eventName].Add(eventListener);
-
-            return eventListener;
-        }
-
         public virtual async Task SetMap(Map map)
         {
-            await InvokeVoidAsync("setMap", map);
+            await this.InvokeVoidAsync("setMap", map);
         }
 
         /// <summary>
@@ -83,7 +50,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public virtual async Task ClearMarkers()
         {
-            await InvokeVoidAsync("clearMarkers");
+            await this.InvokeVoidAsync("clearMarkers");
         }
 
         /// <summary>
@@ -92,7 +59,7 @@ namespace GoogleMapsComponents.Maps
         /// <param name="padding"></param>
         public virtual async Task FitMapToMarkers(int padding)
         {
-            await InvokeVoidAsync("fitMapToMarkers", padding);
+            await this.InvokeVoidAsync("fitMapToMarkers", padding);
         }
 
         /// <summary>
@@ -100,14 +67,14 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public virtual async Task Repaint()
         {
-            await InvokeVoidAsync("repaint");
+            await this.InvokeVoidAsync("repaint");
         }
 
         public virtual async Task ClearListeners(string eventName)
         {
             if (EventListeners.ContainsKey(eventName))
             {
-                await InvokeVoidAsync("clearListeners", eventName);
+                await this.InvokeVoidAsync("clearListeners", eventName);
 
                 //IMHO is better preserving the knowledge that Marker had some EventListeners attached to "eventName" in the past
                 //so, instead to clear the list and remove the key from dictionary, I prefer to leave the key with an empty list
