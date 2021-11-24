@@ -256,7 +256,7 @@ const removePropertyRecursively = (obj, pList) => {
 }
 
 const removePropertiesFromClonedObject = (ignoredProperties, objToClone) => {
-    const cloned = JSON.parse(JSON.stringify(obj));
+    const cloned = JSON.parse(JSON.stringify(objToClone));
 
     ignoredProperties.forEach(sp => {
         const propList = sp.split(".");
@@ -308,10 +308,6 @@ window.googleMapsObjectManager = {
                     .catch((e) => {
                         console.error(e);
                     });
-            },
-
-            readObjectPropertyValue: function (propertyName) {
-                return obj[propertyName];
             },
         };
 

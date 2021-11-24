@@ -52,11 +52,30 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="feature"></param>
         /// <returns></returns>
-        public ValueTask<Feature> Add(OneOf<Feature, FeatureOptions> feature)
+        public async ValueTask<Feature> Add(OneOf<Feature, FeatureOptions> feature)
         {
-            return InvokeAsync<Feature>(
+            var objRef = await InvokeAsync<IJSObjectReference>(
                 "add",
                 feature);
+
+            return new Feature(objRef);
+        }
+
+        /// <summary>
+        /// Adds a feature to the collection, and returns the added feature.
+        /// If the feature has an ID, it will replace any existing feature in the collection with the same ID.If no feature is given, a new feature will be created with null geometry and no properties.If FeatureOptions are given, a new feature will be created with the specified properties.
+        /// Note that the IDs 1234 and '1234' are equivalent. Adding a feature with ID 1234 will replace a feature with ID '1234', and vice versa.
+        /// </summary>
+        /// <param name="feature"></param>
+        /// <returns></returns>
+        public async ValueTask<Feature> AddGeometry<T>(FeatureOptions<T> featureOptions)
+            where T : Geometry
+        {
+            var objRef = await InvokeAsync<IJSObjectReference>(
+                "add",
+                featureOptions);
+
+            return new Feature(objRef);
         }
 
         /// <summary>

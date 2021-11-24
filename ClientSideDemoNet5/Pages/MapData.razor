@@ -1,37 +1,93 @@
 ﻿@page "/mapData"
 @using GoogleMapsComponents
 @using GoogleMapsComponents.Maps
+@using Data = GoogleMapsComponents.Maps.Data
 
 @inject IJSRuntime JS
 
 <h1>Map data</h1>
 
-<GoogleMap @ref="@map1" Id="map1" Options="@mapOptions" OnAfterInit="@(OnAfterInitAsync)"></GoogleMap>
+<h2>Simple</h2>
+<GoogleMap @ref="@map1" Id="map1" Options="@mapOptions1" OnAfterInit="@(OnAfterInit1Async)"></GoogleMap>
+
+<h2>Polygon</h2>
+<GoogleMap @ref="@map2" Id="map1" Options="@mapOptions2" OnAfterInit="@(OnAfterInit2Async)"></GoogleMap>
 
 @code {
     private GoogleMap map1 = default!;
-    private MapOptions mapOptions = default!;
-
-    protected override void OnInitialized()
+    private MapOptions mapOptions1 = new()
     {
-        mapOptions = new MapOptions()
+        Zoom = 4,
+        Center = new LatLngLiteral()
         {
-            Zoom = 4,
-            Center = new LatLngLiteral()
-            {
-                Lat = -28,
-                Lng = 137
-            },
-            MapTypeId = MapTypeId.Roadmap
-        };
-    }
+            Lat = -28,
+            Lng = 137
+        },
+        MapTypeId = MapTypeId.Roadmap
+    };
 
-    private async Task OnAfterInitAsync()
+    private GoogleMap map2 = default!;
+    private MapOptions mapOptions2 = new()
+    {
+        Zoom = 6,
+        Center = new LatLngLiteral()
+        {
+            Lat = -33.872,
+            Lng = 151.252
+        },
+        MapTypeId = MapTypeId.Roadmap
+    };
+
+    private async Task OnAfterInit1Async()
     {
         var data = map1.InteropObject.Data;
 
         await data.LoadGeoJson(
             "https://storage.googleapis.com/mapsdevsite/json/google.json"
         );
+    }
+
+    private async Task OnAfterInit2Async()
+    {
+        var data = map2.InteropObject.Data;
+
+        // Define the LatLng coordinates for the outer path.
+        var outerCoords = new LatLngLiteral[]
+        {
+            new(lat: -32.364, lng: 153.207),
+            new(lat: -35.364, lng: 153.207),
+            new(lat: -35.364, lng: 158.207),
+            new(lat: -32.364, lng: 158.207), // north east
+        };
+
+        // Define the LatLng coordinates for an inner path.
+        var innerCoords1 = new LatLngLiteral[]
+        {
+            new(lat: -33.364, lng: 154.207),
+            new(lat: -34.364, lng: 154.207),
+            new(lat: -34.364, lng: 155.207),
+            new(lat: -33.364, lng: 155.207),
+        };
+
+        // Define the LatLng coordinates for another inner path.
+        var innerCoords2 = new LatLngLiteral[]
+        {
+            new(lat: -33.364, lng: 156.207),
+            new(lat: -34.364, lng: 156.207),
+            new(lat: -34.364, lng: 157.207),
+            new(lat: -33.364, lng: 157.207),  
+        };
+
+        var featureOptions = new Data.FeatureOptions<Data.Polygon>()
+        {
+            Geometry = await Data.Polygon.CreateAsync(JS, new LatLngLiteral[][]
+            {
+                outerCoords,
+                innerCoords1,
+                innerCoords2,
+            })
+        };
+
+        await data.AddGeometry(featureOptions);
     }
 }

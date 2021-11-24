@@ -1,5 +1,6 @@
 ﻿using Microsoft.JSInterop;
 using System;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
@@ -7,6 +8,7 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// A rectangle overlay.
     /// </summary>
+    [JsonConverter(typeof(JSObjectRefConverter))]
     public class Rectangle : MVCObject
     {
         /// <summary>

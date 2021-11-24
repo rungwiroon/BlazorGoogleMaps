@@ -1,25 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Microsoft.JSInterop;
 
 namespace GoogleMapsComponents.Maps.Data
 {
     /// <summary>
     /// A MultiLineString geometry contains a number of LineString s.
     /// </summary>
+    [JsonConverter(typeof(JSObjectRefConverter))]
     public class MultiPoint : Geometry
     {
-        private readonly IEnumerable<LatLngLiteral> _elements;
-
-        public MultiPoint(IEnumerable<LatLngLiteral> elements)
-        {
-            _elements = elements;
-        }
-
-        public override IEnumerator<LatLngLiteral> GetEnumerator()
-        {
-            return _elements.GetEnumerator();
+        internal MultiPoint(IJSObjectReference jsObjectRef)
+            : base(jsObjectRef)
+        {           
         }
 
         /// <summary>
@@ -29,7 +25,7 @@ namespace GoogleMapsComponents.Maps.Data
         /// <returns></returns>
         public List<LatLngLiteral> GetArray()
         {
-            return _elements.ToList();
+            throw new NotImplementedException();
         }
     }
 }

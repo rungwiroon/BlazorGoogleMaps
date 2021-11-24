@@ -13,7 +13,7 @@ namespace GoogleMapsComponents
         ValueTask<TValue> InvokeAsync<TValue>(string identifier, params object?[]? args);
     }
 
-    internal struct JSObjRefWrapper : IJSObjRefWrapper
+    internal readonly struct JSObjRefWrapper : IJSObjRefWrapper
     {
         private readonly IJSObjectReference jsObjectRef;
 
@@ -41,7 +41,7 @@ namespace GoogleMapsComponents
         }
     }
 
-    internal struct JSObjPropRefWrapper : IJSObjRefWrapper
+    internal readonly struct JSObjPropRefWrapper : IJSObjRefWrapper
     {
         private readonly IJSObjRefWrapper jsObjectRef;
         private readonly string propertyName;

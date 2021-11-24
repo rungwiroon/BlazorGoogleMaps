@@ -4,7 +4,7 @@
     /// Object literals are accepted in place of LatLng objects, as a convenience, in many places. 
     /// These are converted to LatLng objects when the Maps API encounters them.
     /// </summary>
-    public struct LatLngLiteral
+    public record struct LatLngLiteral
     {
         /// <summary>
         /// Latitude in degrees. Values will be clamped to the range [-90, 90]. 
@@ -20,21 +20,15 @@
         /// </summary>
         public double Lng { get; init; }
 
-        public LatLngLiteral(double lng, double lat)
+        public LatLngLiteral(double lat, double lng)
         {
-            Lng = lng;
             Lat = lat;
+            Lng = lng;
         }
 
         public override string ToString()
         {
             return $"{Lat}, {Lng}";
-        }
-
-        public void Deconstruct(out double lat, out double lng)
-        {
-            lat = Lat;
-            lng = Lng;
         }
     }
 }

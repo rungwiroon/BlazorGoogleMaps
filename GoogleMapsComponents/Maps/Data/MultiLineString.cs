@@ -1,30 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Microsoft.JSInterop;
 
 namespace GoogleMapsComponents.Maps.Data
 {
+    [JsonConverter(typeof(JSObjectRefConverter))]
     public class MultiLineString : Geometry
     {
-        private readonly IEnumerable<LineString> _elements;
-
-        public MultiLineString(IEnumerable<LineString> elements)
-        {
-            _elements = elements;
-        }
-
-        public MultiLineString(IEnumerable<IEnumerable<LatLngLiteral>> elements)
-        {
-            _elements = elements
-                .Select(e => new LineString(e));
-        }
-
-        public override IEnumerator<LatLngLiteral> GetEnumerator()
-        {
-            return _elements
-                .SelectMany(e => e)
-                .GetEnumerator();
+        internal MultiLineString(IJSObjectReference jsObjectRef)
+            : base(jsObjectRef)
+        {           
         }
     }
 }

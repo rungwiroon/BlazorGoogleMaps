@@ -1,8 +1,8 @@
-﻿using OneOf;
+﻿using Microsoft.JSInterop;
+using OneOf;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps.Data
@@ -10,18 +10,30 @@ namespace GoogleMapsComponents.Maps.Data
     /// <summary>
     /// A feature has a geometry, an id, and a set of properties
     /// </summary>
-    public class Feature : IEnumerable<string>
+    [JsonConverter(typeof(JSObjectRefConverter))]
+    public class Feature : Object
     {
         /// <summary>
         /// Constructs a Feature with the given options.
         /// </summary>
         /// <param name="options"></param>
-        public Feature(FeatureOptions options = null)
+        public static async ValueTask<Feature> CreateAsync(
+            IJSRuntime jsRuntime, FeatureOptions? options = null)
         {
-            throw new NotImplementedException();
+            var jsObjectRef = await jsRuntime.InvokeAsync<IJSObjectReference>(
+                "googleMapsObjectManager.createObject",
+                "google.maps.Data.Feature",
+                options);
+
+            var obj = new Feature(jsObjectRef);
+
+            return obj;
         }
 
-        public IEnumerable<KeyValuePair<string, object>> Properties { get; private set; }
+        public Feature(IJSObjectReference jsObjectRef)
+            : base(jsObjectRef)
+        {
+        }
 
         /// <summary>
         /// Repeatedly invokes the given function, passing a property value and name on each invocation. 
@@ -95,11 +107,6 @@ namespace GoogleMapsComponents.Maps.Data
         /// </summary>
         /// <returns></returns>
         public Task<object> ToGeoJson()
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
         {
             throw new NotImplementedException();
         }

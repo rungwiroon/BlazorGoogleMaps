@@ -11,7 +11,7 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// google.maps.Map class
     /// </summary>
-    [JsonConverter(typeof(JsObjectRefConverter))]
+    [JsonConverter(typeof(JSObjectRefConverter))]
     public class Map : MVCObject
     {
         public MapData Data
@@ -22,9 +22,35 @@ namespace GoogleMapsComponents.Maps
             }
         }
 
-        public Task<object> Controls
+        public MVCArray<ElementReference>[] Controls
         {
             get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public MapTypeRegistry MapTypes
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public MVCArray<MapType> OverlayMapTypes
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+
+            set
             {
                 throw new NotImplementedException();
             }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
 {
-    internal class MVCArray : MVCObject
+    public class MVCArray<T> : MVCObject
     {
         internal MVCArray(IJSObjectReference jsObjectRef) : base(jsObjectRef)
         {

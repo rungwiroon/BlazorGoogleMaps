@@ -29,7 +29,7 @@ namespace GoogleMapsComponents.Maps
     /// Each setter properties can be used as follow:
     /// With a Dictionary<string, {property type}> indicating for each Marker (related to that key) the corresponding related property value
     /// </summary>
-    [JsonConverter(typeof(JsObjectRefConverter))]
+    [JsonConverter(typeof(JSObjectRefConverter))]
     public class InfoWindow : MVCObject
     {
         /// <summary>

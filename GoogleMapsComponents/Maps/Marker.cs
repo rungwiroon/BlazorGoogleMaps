@@ -7,7 +7,7 @@ using static GoogleMapsComponents.Helper;
 
 namespace GoogleMapsComponents.Maps
 {
-    [JsonConverter(typeof(JsObjectRefConverter))]
+    [JsonConverter(typeof(JSObjectRefConverter))]
     public class Marker : MVCObject //ListableEntityBase<MarkerOptions>
     {
         public static async Task<Marker> CreateAsync(IJSRuntime jsRuntime, MarkerOptions? opts = null)

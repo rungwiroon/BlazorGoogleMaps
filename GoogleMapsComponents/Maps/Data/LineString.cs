@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Microsoft.JSInterop;
 
 namespace GoogleMapsComponents.Maps.Data
 {
@@ -10,23 +12,17 @@ namespace GoogleMapsComponents.Maps.Data
     /// There is no need to make the first LatLng equal to the last LatLng. 
     /// The LinearRing is closed implicitly.
     /// </summary>
+    [JsonConverter(typeof(JSObjectRefConverter))]
     public class LineString : Geometry
     {
-        private readonly IEnumerable<LatLngLiteral> _elements;
-
-        public LineString(IEnumerable<LatLngLiteral> elements)
-        {
-            _elements = elements;
-        }
-
-        public override IEnumerator<LatLngLiteral> GetEnumerator()
-        {
-            return _elements.GetEnumerator();
+        internal LineString(IJSObjectReference jsObjectRef)
+            : base(jsObjectRef)
+        {           
         }
 
         public List<LatLngLiteral> GetArray()
         {
-            return _elements.ToList();
+            throw new NotImplementedException();
         }
     }
 }

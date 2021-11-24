@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.JSInterop;
 
 namespace GoogleMapsComponents.Maps.Data
 {
@@ -10,16 +11,9 @@ namespace GoogleMapsComponents.Maps.Data
     /// </summary>
     public class Point : Geometry
     {
-        private readonly LatLngLiteral _latLng;
-
-        public Point(LatLngLiteral latLng)
-        {
-            _latLng = latLng;
-        }
-
-        public override IEnumerator<LatLngLiteral> GetEnumerator()
-        {
-            yield return _latLng;
+        internal Point(IJSObjectReference jsObjectRef)
+            : base(jsObjectRef)
+        {           
         }
 
         /// <summary>
@@ -28,7 +22,7 @@ namespace GoogleMapsComponents.Maps.Data
         /// <returns></returns>
         public LatLngLiteral Get()
         {
-            return _latLng;
+            throw new NotImplementedException();
         }
     }
 }

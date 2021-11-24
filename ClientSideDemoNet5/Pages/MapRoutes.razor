@@ -2,7 +2,7 @@
 @using GoogleMapsComponents
 @using GoogleMapsComponents.Maps
 
-<h1>Google Map routes</h1>
+<h1>Map routes</h1>
 
 <GoogleMap @ref="@map1" Id="map1" Options="@mapOptions" OnAfterInit="@(async () => await OnAfterInitAsync())"></GoogleMap>
 <button @onclick="@(_ => AddDirections())">Add Direction</button>

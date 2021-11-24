@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace GoogleMapsComponents
 {
-    internal sealed class JsObjectRefConverter : JsonConverterFactory
+    internal sealed class JSObjectRefConverter : JsonConverterFactory
     {
         public override bool CanConvert(Type typeToConvert)
         {

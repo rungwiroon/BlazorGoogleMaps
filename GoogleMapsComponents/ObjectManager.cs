@@ -19,7 +19,7 @@ namespace GoogleMapsComponents
         }
     }
 
-    public struct ObjectManager
+    public readonly struct ObjectManager
     {
         private readonly IJSRuntime jsRuntime;
 

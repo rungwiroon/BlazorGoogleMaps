@@ -1,10 +1,11 @@
 ﻿using Microsoft.JSInterop;
-using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
 {
+    [JsonConverter(typeof(JSObjectRefConverter))]
     public class Polygon : MVCObject
     {
         /// <summary>
@@ -24,11 +25,6 @@ namespace GoogleMapsComponents.Maps
             return obj;
         }
 
-        /// <summary>
-        /// Create a polygon using the passed PolygonOptions, which specify the polygon's path, the stroke style for the polygon's edges, and the fill style for the polygon's interior regions. 
-        /// A polygon may contain one or more paths, where each path consists of an array of LatLngs.
-        /// </summary>
-        /// <param name="opts"></param>
         internal Polygon(IJSObjectReference jsObjectRef)
             : base(jsObjectRef)
         {

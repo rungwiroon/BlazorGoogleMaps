@@ -1,5 +1,6 @@
 ﻿using Microsoft.JSInterop;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
@@ -7,6 +8,7 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// A polyline is a linear overlay of connected line segments on the map.
     /// </summary>
+    [JsonConverter(typeof(JSObjectRefConverter))]
     public class Polyline : MVCObject //ListableEntityBase<PolylineOptions>
     {
         /// <summary>

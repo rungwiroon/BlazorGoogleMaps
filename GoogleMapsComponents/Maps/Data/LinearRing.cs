@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.JSInterop;
 using System.Collections.Generic;
-using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps.Data
@@ -9,18 +9,25 @@ namespace GoogleMapsComponents.Maps.Data
     /// A LinearRing geometry contains a number of LatLngs, representing a closed LineString. 
     /// There is no need to make the first LatLng equal to the last LatLng. The LinearRing is closed implicitly.
     /// </summary>
+    [JsonConverter(typeof(JSObjectRefConverter))]
     public class LinearRing : Geometry
     {
-        private IEnumerable<LatLngLiteral> _elements;
-
-        public LinearRing(IEnumerable<LatLngLiteral> elements)
+        public static async ValueTask<LinearRing> CreateAsync(
+            IJSRuntime jsRuntime, IEnumerable<LatLngLiteral> elements)
         {
-            _elements = elements;
+            var jsObjectRef = await jsRuntime.InvokeAsync<IJSObjectReference>(
+                "googleMapsObjectManager.createObject",
+                "google.maps.Data.LinearRing",
+                elements);
+
+            var obj = new LinearRing(jsObjectRef);
+
+            return obj;
         }
 
-        public override IEnumerator<LatLngLiteral> GetEnumerator()
+        internal LinearRing(IJSObjectReference jsObjectRef)
+            : base(jsObjectRef)
         {
-            return _elements.GetEnumerator();
         }
     }
 }
