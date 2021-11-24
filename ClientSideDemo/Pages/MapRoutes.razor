@@ -2,9 +2,9 @@
 @using GoogleMapsComponents
 @using GoogleMapsComponents.Maps
 
-<h1>Google Map</h1>
+<h1>Map routes</h1>
 
-<GoogleMap @ref="@map1" Id="map1" Options="@mapOptions" Height="350" OnAfterInit="@(async () => await OnAfterInitAsync())"></GoogleMap>
+<GoogleMap @ref="@map1" Id="map1" Options="@mapOptions" OnAfterInit="@(async () => await OnAfterInitAsync())"></GoogleMap>
 <button @onclick="@(_ => AddDirections())">Add Direction</button>
 <button @onclick="@( _distanceTotalString => RemoveRoute())">Remove route</button>
 
@@ -14,11 +14,12 @@
 </p>
 
 @code {
-    private GoogleMap map1;
-    private MapOptions mapOptions;
-    private DirectionsRenderer dirRend;
-    private string _durationTotalString;
-    private string _distanceTotalString;
+    private GoogleMap map1 = default!;
+    private MapOptions mapOptions = default!;
+    private DirectionsService dirService = default!;
+    private DirectionsRenderer dirRend = default!;
+    private string? _durationTotalString = default;
+    private string? _distanceTotalString = default;
 
     protected override void OnInitialized()
     {
@@ -34,19 +35,22 @@
         };
     }
 
-    private async Task RemoveRoute()
-    {
-        await dirRend.SetDirections(null);
-        await dirRend.SetMap(null);
-    }
-
     private async Task OnAfterInitAsync()
     {
-        //Create instance of DirectionRenderer
-        dirRend = await DirectionsRenderer.CreateAsync(map1.JsRuntime, new DirectionsRendererOptions()
-        {
-            Map = map1.InteropObject
-        });
+        dirService = await DirectionsService.CreateAsync(
+            map1.JsRuntime);
+
+        dirRend = await DirectionsRenderer.CreateAsync(
+            map1.JsRuntime,
+            new DirectionsRendererOptions()
+            {
+                Map = map1.InteropObject
+            });
+    }
+
+    private async Task RemoveRoute()
+    {
+        await dirRend.SetMap(null);
     }
 
     private async Task AddDirections()
@@ -63,11 +67,14 @@
         dr.TravelMode = TravelMode.Driving;
 
         //Calculate Route
-        var directionsResult = await dirRend.Route(dr);
-        foreach (var route in directionsResult.Routes.SelectMany(x => x.Legs))
+        var directionsResult = await dirService.Route(dr);
+
+        await dirRend.SetDirections(directionsResult.Reference);
+
+        foreach (var route in directionsResult.Value.Routes.SelectMany(x => x.Legs))
         {
-            _durationTotalString += route.Duration.Text;
-            _distanceTotalString += route.Distance.Text;
+            _durationTotalString += route?.Duration?.Text + ", ";
+            _distanceTotalString += route?.Distance?.Text + ", ";
         }
     }
 }

@@ -1,17 +1,17 @@
-using Microsoft.AspNetCore.Components.Builder;
-using Microsoft.Extensions.DependencyInjection;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 namespace ClientSideDemo
 {
-    public class Startup
-    {
-        public void ConfigureServices(IServiceCollection services)
-        {
-        }
+    public class Startup {
 
-        public void Configure(IComponentsApplicationBuilder app)
-        {
-            app.AddComponent<App>("app");
+        private static async Task Main(string[] args) {
+
+            var builder = WebAssemblyHostBuilder.CreateDefault(args);
+            
+            builder.RootComponents.Add<App>("app");
+
+            await builder.Build().RunAsync();
         }
     }
 }

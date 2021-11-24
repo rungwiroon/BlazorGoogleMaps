@@ -1,27 +1,32 @@
 ﻿@page "/mapEvents"
 @using GoogleMapsComponents
 @using GoogleMapsComponents.Maps
-@using System.Diagnostics
 
 <h1>Map Events</h1>
 
-<GoogleMap  @ref="@map1" Id="map1" Options="@mapOptions" OnAfterInit="@(async () => await OnAfterInitAsync())">
+<GoogleMap @ref="@map1" Id="map1" Options="@mapOptions" OnAfterInit="@(async () => await OnAfterInitAsync())">
 </GoogleMap>
 
+<button @onclick="AddMarker">Add marker</button>&nbsp;
+<button @onclick="RemoveMarker">Remove marker</button>
+<br>
 <input type="checkbox" bind="@DisablePoiInfoWindow" />Disable POI's popup info window
 <br>
 
-<MapEventList  @ref="@eventList" Events="@_events"></MapEventList>
+<MapEventList @ref="@eventList" Events="@_events"></MapEventList>
 
 @code {
-    private GoogleMap map1;
-    private MapEventList eventList;
+    private GoogleMap map1 = default!;
+    private MapEventList eventList = default!;
 
-    private MapOptions mapOptions;
+    private MapOptions mapOptions = default!;
 
     private List<String> _events = new List<String>();
 
-    private bool DisablePoiInfoWindow { get; set; } = false;
+    private bool DisablePoiInfoWindow { get; set; } = true;
+
+    private Stack<Marker> markers = new Stack<Marker>();
+    private string labelText = "";
 
     protected override void OnInitialized()
     {
@@ -39,43 +44,43 @@
 
     private async Task OnAfterInitAsync()
     {
-        //Debug.WriteLine("Start OnAfterRenderAsync");
+        //Console.WriteLine("Start OnAfterRenderAsync");
 
-        await map1.InteropObject.AddListener("bounds_changed", OnBoundsChanged);
+        await map1.InteropObject.AddListenerAsync("bounds_changed", OnBoundsChanged);
 
-        await map1.InteropObject.AddListener("center_changed", OnCenterChanged);
+        await map1.InteropObject.AddListenerAsync("center_changed", OnCenterChanged);
 
-        await map1.InteropObject.AddListener<MouseEvent>("click", async (e) => await OnClick(e));
+        await map1.InteropObject.AddListenerAsync<MouseEvent>("click", OnClick);
 
-        await map1.InteropObject.AddListener("dblclick", OnDoubleClick);
+        await map1.InteropObject.AddListenerAsync("dblclick", OnDoubleClick);
 
-        await map1.InteropObject.AddListener("drag", OnDrag);
+        await map1.InteropObject.AddListenerAsync("drag", OnDrag);
 
-        await map1.InteropObject.AddListener("dragend", OnDragEnd);
+        await map1.InteropObject.AddListenerAsync("dragend", OnDragEnd);
 
-        await map1.InteropObject.AddListener("dragstart", OnDragStart);
+        await map1.InteropObject.AddListenerAsync("dragstart", OnDragStart);
 
-        await map1.InteropObject.AddListener("heading_changed", OnHeadingChanged);
+        await map1.InteropObject.AddListenerAsync("heading_changed", OnHeadingChanged);
 
-        await map1.InteropObject.AddListener("idle", OnIdle);
+        await map1.InteropObject.AddListenerAsync("idle", OnIdle);
 
-        await map1.InteropObject.AddListener("maptypeid_changed", OnMapTypeIdChanged);
+        await map1.InteropObject.AddListenerAsync("maptypeid_changed", OnMapTypeIdChanged);
 
-        await map1.InteropObject.AddListener<MouseEvent>("mousemove", OnMouseMove);
+        await map1.InteropObject.AddListenerAsync<MouseEvent>("mousemove", OnMouseMove);
 
-        await map1.InteropObject.AddListener("mouseout", OnMouseOut);
+        await map1.InteropObject.AddListenerAsync("mouseout", OnMouseOut);
 
-        await map1.InteropObject.AddListener("mouseover", OnMouseOver);
+        await map1.InteropObject.AddListenerAsync("mouseover", OnMouseOver);
 
-        await map1.InteropObject.AddListener("projection_changed", OnProjectionChanged);
+        await map1.InteropObject.AddListenerAsync("projection_changed", OnProjectionChanged);
 
-        await map1.InteropObject.AddListener("rightclick", OnRightClick);
+        await map1.InteropObject.AddListenerAsync("rightclick", OnRightClick);
 
-        await map1.InteropObject.AddListener("tilesloaded", OnTilesLoaded);
+        await map1.InteropObject.AddListenerAsync("tilesloaded", OnTilesLoaded);
 
-        await map1.InteropObject.AddListener("tilt_changed", OnTiltChanged);
+        await map1.InteropObject.AddListenerAsync("tilt_changed", OnTiltChanged);
 
-        await map1.InteropObject.AddListener("zoom_changed", OnZoomChanged);
+        await map1.InteropObject.AddListenerAsync("zoom_changed", OnZoomChanged);
     }
 
     private void OnBoundsChanged()
@@ -98,9 +103,9 @@
         StateHasChanged();
     }
 
-    private async Task OnClick(MouseEvent e)
+    private void OnClick(MouseEvent e)
     {
-        //Console.WriteLine("Click.");
+        //Console.WriteLine("Begin OnClick");
 
         _events.Insert(0, $"Click {e.LatLng}.");
         _events = _events.Take(100).ToList();
@@ -109,8 +114,10 @@
 
         if (DisablePoiInfoWindow)
         {
-            await e.Stop();
+            e.Stop();
         }
+
+        //Console.WriteLine("End OnClick");
     }
 
     private void OnDoubleClick()
@@ -254,5 +261,65 @@
         _events.Insert(0, "OnZoomChanged.");
 
         StateHasChanged();
+    }
+
+    private async Task AddMarker()
+    {
+        var marker = await Marker.CreateAsync(map1.JsRuntime,
+            new MarkerOptions()
+        	{
+        		Position = await map1.InteropObject.GetCenter(),
+        		Map = map1.InteropObject,
+        		Label = new MarkerLabel { Text = $"Test {markers.Count()}", FontWeight = "bold" },
+        		Draggable = true,
+        		Icon = new Icon()
+        		{
+        		    Url = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
+        		}
+        	});
+
+        //var icon = await marker.GetIcon<Icon>();
+        //Console.WriteLine($"Get icon result type is : {icon.GetType()}");
+        //Console.WriteLine(icon.Url);
+
+        markers.Push(marker);
+
+        var markerLabel = await marker.GetLabel<MarkerLabel>();
+        labelText = markerLabel.Text;
+
+        await marker.AddListenerAsync<MouseEvent>("click", async e =>
+        {
+            var markerLabelText = (await marker.GetLabel<MarkerLabel>()).Text;
+            _events.Insert(0, "click on " + markerLabelText);
+            StateHasChanged();
+            //e.Stop();
+
+            //Console.WriteLine("End of marker click");
+        });
+
+        await marker.AddListenerAsync<MouseEvent>("dragend", async e =>
+            await OnMakerDragEnd(marker, e));
+    }
+
+    private async Task OnMakerDragEnd(Marker marker, MouseEvent e)
+    {
+        string markerLabelText = (await markers.Peek().GetLabel<MarkerLabel>()).Text;
+        _events.Insert(0, $"OnMakerDragEnd ({markerLabelText}): ({e.LatLng}).");
+        StateHasChanged();
+        //e.Stop();
+
+        //Console.WriteLine("End of marker drag end");
+    }
+
+    private async Task RemoveMarker()
+    {
+        if(!markers.Any())
+        {
+        	return;
+        }
+
+        var lastMarker = markers.Pop();
+        await lastMarker.SetMap(null);
+        labelText = markers.Any() ? (await markers.Peek().GetLabel<MarkerLabel>()).Text : "";
     }
 }

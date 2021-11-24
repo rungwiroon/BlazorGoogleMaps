@@ -1,7 +1,6 @@
 ﻿@page "/maps"
 
 @using GoogleMapsComponents.Maps
-@using System.Diagnostics
 
 @inject IJSRuntime JsRuntime
 
@@ -20,7 +19,7 @@
 <div @ref="@map2ElementRef" id="map2" style="height: 450px"></div>
 
 @functions {
-    private Map map1, map2;
+    private Map map1 = default!, map2 = default!;
 
     private ElementReference map1ElementRef, map2ElementRef;
 
