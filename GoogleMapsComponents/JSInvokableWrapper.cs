@@ -32,41 +32,19 @@ namespace GoogleMapsComponents
         }
     }
 
-    public class JSInvokableAsyncAction<TParam>
+    public class JSInvokableAction<TParam1>
     {
-        private readonly Func<TParam, Task> _delegate;
+        private readonly Action<TParam1> _delegate;
 
-        public JSInvokableAsyncAction(Func<TParam, Task> @delegate)
+        public JSInvokableAction(Action<TParam1> @delegate)
         {
             _delegate = @delegate;
         }
 
         [JSInvokable]
-        public Task Invoke1(TParam arg1)
-        {
-            return _delegate(arg1);
-        }
-
-        [JSInvokable]
-        public void Invoke2(TParam arg1)
+        public void Invoke1(TParam1 arg1)
         {
             _delegate(arg1);
-        }
-    }
-
-    public class JSInvokableAction<TParam1, TParam2>
-    {
-        private readonly Action<TParam1, TParam2> _delegate;
-
-        public JSInvokableAction(Action<TParam1, TParam2> @delegate)
-        {
-            _delegate = @delegate;
-        }
-
-        [JSInvokable]
-        public void Invoke2(TParam1 arg1, TParam2 arg2)
-        {
-            _delegate(arg1, arg2);
         }
     }
 
@@ -95,6 +73,28 @@ namespace GoogleMapsComponents
         public Task Invoke2()
         {
             return _delegate();
+        }
+    }
+
+    public class JSInvokableAsyncAction<TParam>
+    {
+        private readonly Func<TParam, Task> _delegate;
+
+        public JSInvokableAsyncAction(Func<TParam, Task> @delegate)
+        {
+            _delegate = @delegate;
+        }
+
+        [JSInvokable]
+        public Task Invoke1(TParam arg1)
+        {
+            return _delegate(arg1);
+        }
+
+        [JSInvokable]
+        public void Invoke2(TParam arg1)
+        {
+            _delegate(arg1);
         }
     }
 

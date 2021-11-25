@@ -1,5 +1,4 @@
 ﻿using Microsoft.JSInterop;
-using System;
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
@@ -13,15 +12,17 @@ namespace GoogleMapsComponents.Maps
         /// <summary>
         /// Constructs a new empty bounds
         /// </summary>
-        public async static Task<LatLngBounds> CreateAsync(IJSRuntime jsRuntime)
+        public async static ValueTask<LatLngBounds> CreateAsync(
+            IJSRuntime jsRuntime, LatLngLiteral? sw, LatLngLiteral? ne)
         {
-            //var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.LatLngBounds");
+            var jsObjectRef = await jsRuntime.InvokeAsync<IJSObjectReference>(
+                "googleMapsObjectManager.createObject",
+                "google.maps.LatLngBounds",
+                new LatLngLiteral?[] { sw, ne });
 
-            //var obj = new LatLngBounds(jsObjectRef);
+            var obj = new LatLngBounds(jsObjectRef);
 
-            //return obj;
-
-            throw new NotImplementedException();
+            return obj;
         }
 
         internal LatLngBounds(IJSObjectReference jsObjectRef)
@@ -34,7 +35,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public ValueTask<bool> Contains(LatLngLiteral other)
         {
-            return InvokeAsync<bool>("contains", other);
+            return this.InvokeAsync<bool>("contains", other);
         }
 
         /// <summary>
@@ -42,7 +43,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public ValueTask<bool> Equals(LatLngBoundsLiteral other)
         {
-            return InvokeAsync<bool>("equals", other);
+            return this.InvokeAsync<bool>("equals", other);
         }
 
         /// <summary>
@@ -58,7 +59,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public ValueTask<LatLngLiteral> GetCenter()
         {
-            return InvokeAsync<LatLngLiteral>("getCenter");
+            return this.InvokeAsync<LatLngLiteral>("getCenter");
         }
 
         /// <summary>
@@ -66,7 +67,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public ValueTask<LatLngLiteral> GetNorthEast()
         {
-            return InvokeAsync<LatLngLiteral>("getNorthEast");
+            return this.InvokeAsync<LatLngLiteral>("getNorthEast");
         }
 
         /// <summary>
@@ -74,7 +75,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public ValueTask<LatLngLiteral> GetSouthWest()
         {
-            return InvokeAsync<LatLngLiteral>("getSouthWest");
+            return this.InvokeAsync<LatLngLiteral>("getSouthWest");
         }
         
         /// <summary>
@@ -82,7 +83,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public ValueTask<bool> Intersects(LatLngBoundsLiteral other)
         {
-            return InvokeAsync<bool>("intersects", other);
+            return this.InvokeAsync<bool>("intersects", other);
         }
 
         /// <summary>
@@ -90,7 +91,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public ValueTask<bool> IsEmpty()
         {
-            return InvokeAsync<bool>("isEmpty");
+            return this.InvokeAsync<bool>("isEmpty");
         }
 
         /// <summary>
@@ -98,7 +99,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public ValueTask<LatLngBoundsLiteral> ToJson()
         {
-            return InvokeAsync<LatLngBoundsLiteral>("toJSON");
+            return this.InvokeAsync<LatLngBoundsLiteral>("toJSON");
         }
 
         /// <summary>
@@ -106,7 +107,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public ValueTask<LatLngLiteral> ToSpan()
         {
-            return InvokeAsync<LatLngLiteral>("toSpan");
+            return this.InvokeAsync<LatLngLiteral>("toSpan");
         }
 
         /// <summary>
@@ -116,17 +117,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public ValueTask<string> ToUrlValue(double precision)
         {
-            return InvokeAsync<string>("toUrlValue", precision);
-        }
-
-        /// <summary>
-        /// Returns a string of the form "lat_lo,lng_lo,lat_hi,lng_hi" for this bounds,
-        /// where "lo" corresponds to the southwest corner of the bounding box, while "hi"
-        /// corresponds to the northeast corner of that box.
-        /// </summary>
-        public ValueTask<string> ToUrlValue(decimal precision)
-        {
-            return ToUrlValue(Convert.ToDouble(precision));
+            return this.InvokeAsync<string>("toUrlValue", precision);
         }
 
         /// <summary>

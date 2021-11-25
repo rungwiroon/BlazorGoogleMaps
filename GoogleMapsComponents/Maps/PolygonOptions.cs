@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace GoogleMapsComponents.Maps
 {
@@ -10,28 +11,33 @@ namespace GoogleMapsComponents.Maps
         /// <summary>
         /// Indicates whether this Polygon handles mouse events. Defaults to true.
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public bool? Clickable { get; set; }
 
         /// <summary>
         /// If set to true, the user can drag this shape over the map. 
         /// The geodesic property defines the mode of dragging. Defaults to false.
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public bool? Draggable { get; set; }
 
         /// <summary>
         /// If set to true, the user can edit this shape by dragging the control points shown at the vertices and on each segment. 
         /// Defaults to false.
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public bool? Editable { get; set; }
 
         /// <summary>
         /// The fill color. All CSS3 colors are supported except for extended named colors.
         /// </summary>
-        public string FillColor { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string? FillColor { get; set; }
 
         /// <summary>
         /// The fill opacity between 0.0 and 1.0
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public float? FillOpacity { get; set; }
 
         /// <summary>
@@ -40,12 +46,14 @@ namespace GoogleMapsComponents.Maps
         /// Note that the shape of a geodesic polygon may appear to change when dragged, as the dimensions are maintained relative to the surface of the earth. 
         /// Defaults to false.
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public bool? Geodesic { get; set; }
 
         /// <summary>
         /// Map on which to display Polygon.
         /// </summary>
-        public Map Map { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public Map? Map { get; set; }
 
         /// <summary>
         /// The ordered sequence of coordinates that designates a closed loop. 
@@ -56,12 +64,14 @@ namespace GoogleMapsComponents.Maps
         /// Any simple arrays are converted into MVCArrays. 
         /// Inserting or removing LatLngs from the MVCArray will automatically update the polygon on the map.
         /// </summary>
-        public IEnumerable<IEnumerable<LatLngLiteral>> Paths { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public IEnumerable<IEnumerable<LatLngLiteral>>? Paths { get; set; }
 
         /// <summary>
         /// The stroke color. All CSS3 colors are supported except for extended named colors.
         /// </summary>
-        public string StrokeColor { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string? StrokeColor { get; set; }
 
         /// <summary>
         /// The stroke opacity between 0.0 and 1.0
@@ -71,21 +81,25 @@ namespace GoogleMapsComponents.Maps
         /// <summary>
         /// The stroke position. Defaults to CENTER. This property is not supported on Internet Explorer 8 and earlier.
         /// </summary>
-        public StrokePosition StrokePosition { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public StrokePosition? StrokePosition { get; set; }
 
         /// <summary>
         /// The stroke width in pixels.
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public int? StrokeWeight { get; set; }
 
         /// <summary>
         /// Whether this polygon is visible on the map. Defaults to true.
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public bool? Visible { get; set; }
 
         /// <summary>
         /// The zIndex compared to other polys.
         /// </summary>
-        public int ZIndex { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public int? ZIndex { get; set; }
     }
 }

@@ -38,7 +38,7 @@ namespace GoogleMapsComponents.Maps
 
         public ValueTask<int> GetRouteIndex()
         {
-            return InvokeAsync<int>(
+            return this.InvokeAsync<int>(
                 "getRouteIndex");
         }
 
@@ -56,7 +56,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<DirectionsResult> GetDirections()
         {
-            return InvokeAsync<DirectionsResult>(
+            return this.InvokeAsync<DirectionsResult>(
                 "getDirections");
         }
 

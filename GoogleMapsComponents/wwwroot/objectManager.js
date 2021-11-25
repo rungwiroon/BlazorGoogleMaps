@@ -182,38 +182,6 @@
 //    return tmpdirobj;
 //}
 
-//function getGooglePositionFromString(positionString) {
-//    //https://developers.google.com/maps/documentation/javascript/reference/control#ControlPosition
-//    switch (positionString) {
-//        case "BOTTOM_CENTER":
-//            return google.maps.ControlPosition.BOTTOM_CENTER;
-//        case "BOTTOM_LEFT":
-//            return google.maps.ControlPosition.BOTTOM_LEFT;
-//        case "BOTTOM_RIGHT":
-//            return google.maps.ControlPosition.BOTTOM_RIGHT;
-//        case "LEFT_BOTTOM":
-//            return google.maps.ControlPosition.LEFT_BOTTOM;
-//        case "LEFT_CENTER":
-//            return google.maps.ControlPosition.LEFT_CENTER;
-//        case "LEFT_CENTER":
-//            return google.maps.ControlPosition.LEFT_CENTER;
-//        case "RIGHT_BOTTOM":
-//            return google.maps.ControlPosition.RIGHT_BOTTOM;
-//        case "RIGHT_CENTER":
-//            return google.maps.ControlPosition.RIGHT_CENTER;
-//        case "RIGHT_TOP":
-//            return google.maps.ControlPosition.RIGHT_TOP;
-//        case "TOP_CENTER":
-//            return google.maps.ControlPosition.TOP_CENTER;
-//        case "TOP_LEFT":
-//            return google.maps.ControlPosition.TOP_LEFT;
-//        case "TOP_RIGHT":
-//            return google.maps.ControlPosition.TOP_RIGHT;
-//        default:
-//            return google.maps.ControlPosition.BOTTOM_CENTER;
-//    }
-//}
-
 function stringToFunction(str) {
     let arr = str.split(".");
 
@@ -228,6 +196,22 @@ function stringToFunction(str) {
 
     return fn;
 }
+
+const createCircularReplacer = () => {
+    const seen = new WeakSet();
+    return (key, value) => {
+        if (key == "map") return undefined;
+        if (typeof (value) == 'function') return undefined;
+
+        if (typeof value === "object" && value !== null) {
+            if (seen.has(value)) {
+                return;
+            }
+            seen.add(value);
+        }
+        return value;
+    };
+};
 
 const removePropertyRecursively = (obj, pList) => {
     if (obj === undefined)
@@ -267,10 +251,6 @@ const removePropertiesFromClonedObject = (ignoredProperties, objToClone) => {
 }
 
 window.googleMapsObjectManager = {
-    dir: function (obj) {
-        console.dir(obj);
-    },
-
     createObject: function (functionName, ...args) {
         //console.log(args)
 
@@ -317,6 +297,7 @@ window.googleMapsObjectManager = {
 
     createMVCObject: function (functionName, ...args) {
         //console.log(args)
+        //console.log('create MVC object', google.maps.ControlPosition);
 
         const constructor = stringToFunction(functionName);
         const obj = new constructor(...args);
@@ -358,6 +339,44 @@ window.googleMapsObjectManager = {
 
                                 //console.log("End event listener");
                             });
+                    }
+                );
+
+                return mapEventListener;
+            },
+
+            addListenerWithArgument2: function (eventName, referenceProperties, dotNetObjRef) {
+                const mapEventListener = obj.addListener(
+                    eventName,
+                    (eventData) => {
+                        referenceProperties.forEach(propName => {
+                            eventData[`${propName}Reference`] = DotNet
+                                .createJSObjectReference(eventData[propName])
+                            eventData[propName] = undefined;
+                        })
+
+                        console.log("addListenerWithArgument2", eventData);
+
+                        dotNetObjRef.invokeMethod(`Invoke1`, eventData);
+                    }
+                );
+
+                return mapEventListener;
+            },
+
+            addAsyncListenerWithArgument2: function (eventName, referenceProperties, dotNetObjRef) {
+                const mapEventListener = obj.addListener(
+                    eventName,
+                    (eventData) => {
+                        referenceProperties.forEach(propName => {
+                            eventData[`${propName}Reference`] = DotNet
+                                .createJSObjectReference(eventData[propName])
+                            eventData[propName] = undefined;
+                        })
+
+                        //console.log("addAsyncListenerWithArgument2", eventData);
+
+                        return dotNetObjRef.invokeMethodAsync(`Invoke1`, eventData)
                     }
                 );
 
@@ -425,7 +444,7 @@ window.googleMapsObjectManager = {
     //    //for (var i = 0; i < args2.length; i++) {
     //    //    let args3 = [];
     //    //    args3.push(args2[i]);
-            
+
 
     //    //    if ("set" in obj) {
     //    //        obj.set("guidString", guids[i]);

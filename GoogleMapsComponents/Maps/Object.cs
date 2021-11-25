@@ -29,22 +29,27 @@ namespace GoogleMapsComponents.Maps
         {
             await refWrapper.DisposeAsync();
         }
-
-        internal ValueTask<TValue> InvokeAsync<TValue>(
-            string identifier, params object?[]? args)
-        {
-            return refWrapper.InvokeAsync<TValue>(identifier, args);
-        }
-
-        internal ValueTask<TValue> InvokeAsync<TValue>(
-            string identifier, CancellationToken cancellationToken, params object?[]? args)
-        {
-            return refWrapper.InvokeAsync<TValue>(identifier, cancellationToken, args);
-        }
     }
 
-    internal static class ObjectExtension
+    internal static class JSInvokeExtension
     {
+        public static ValueTask<TValue> InvokeAsync<TValue>(
+            this Object obj,
+            string identifier,
+            params object?[]? args)
+        {
+            return obj.refWrapper.InvokeAsync<TValue>(identifier, args);
+        }
+
+        public static ValueTask<TValue> InvokeAsync<TValue>(
+            this Object obj,
+            string identifier, 
+            CancellationToken cancellationToken,
+            params object?[]? args)
+        {
+            return obj.refWrapper.InvokeAsync<TValue>(identifier, cancellationToken, args);
+        }
+
         public static async ValueTask InvokeVoidAsync(
              this Object obj,
              string identifier,

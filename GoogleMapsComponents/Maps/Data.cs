@@ -54,7 +54,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public async ValueTask<Feature> Add(OneOf<Feature, FeatureOptions> feature)
         {
-            var objRef = await InvokeAsync<IJSObjectReference>(
+            var objRef = await this.InvokeAsync<IJSObjectReference>(
                 "add",
                 feature);
 
@@ -71,7 +71,7 @@ namespace GoogleMapsComponents.Maps
         public async ValueTask<Feature> AddGeometry<T>(FeatureOptions<T> featureOptions)
             where T : Geometry
         {
-            var objRef = await InvokeAsync<IJSObjectReference>(
+            var objRef = await this.InvokeAsync<IJSObjectReference>(
                 "add",
                 featureOptions);
 
@@ -97,7 +97,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<bool> Contains(Feature feature)
         {
-            return InvokeAsync<bool>(
+            return this.InvokeAsync<bool>(
                 "contains",
                 feature);
         }
@@ -121,7 +121,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<ControlPosition> GetControlPosition()
         {
-            return InvokeAsync<ControlPosition>(
+            return this.InvokeAsync<ControlPosition>(
                 "getControlPosition");
         }
 
@@ -133,7 +133,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<IEnumerable<string>> GetControls()
         {
-            return InvokeAsync<IEnumerable<string>>(
+            return this.InvokeAsync<IEnumerable<string>>(
                 "getControls");
         }
 
@@ -144,7 +144,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<string> GetDrawingMode()
         {
-            return InvokeAsync<string>(
+            return this.InvokeAsync<string>(
                 "getDrawingMode");
         }
 
@@ -156,7 +156,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<Data.Feature> GetFeatureById(OneOf<int, string> id)
         {
-            return InvokeAsync<Feature>(
+            return this.InvokeAsync<Feature>(
                 "getFeatureById",
                 id.Value);
         }
@@ -167,7 +167,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public async ValueTask<Map?> GetMap()
         {
-            var mapRef = await InvokeAsync<IJSObjectReference?>("getMap");
+            var mapRef = await this.InvokeAsync<IJSObjectReference?>("getMap");
             return mapRef == null ? null : new Map(mapRef);
         }
 

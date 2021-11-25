@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace GoogleMapsComponents.Maps.Drawing
 {
@@ -15,12 +12,12 @@ namespace GoogleMapsComponents.Maps.Drawing
         /// The hand icon (which corresponds to the null drawing mode) is always available and is not to be specified in this array. 
         /// Defaults to ['marker', 'polyline', 'rectangle', 'circle', 'polygon'].
         /// </summary>
-        public IEnumerable<OverlayType> DrawingModes { get; set; }
+        public IEnumerable<OverlayType>? DrawingModes { get; set; }
 
         /// <summary>
         /// Position id. Used to specify the position of the control on the map. 
         /// The default position is TOP_LEFT.
         /// </summary>
-        public ControlPosition Position { get; set; }
+        public ControlPosition? Position { get; set; }
     }
 }

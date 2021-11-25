@@ -35,7 +35,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<bool> GetDraggable()
         {
-            return InvokeAsync<bool>(
+            return this.InvokeAsync<bool>(
                 "getDraggable");
         }
 
@@ -45,7 +45,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<bool> GetEditable()
         {
-            return InvokeAsync<bool>(
+            return this.InvokeAsync<bool>(
                 "getEditable");
         }
 
@@ -55,7 +55,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<IEnumerable<LatLngLiteral>> GetPath()
         {
-            return InvokeAsync<IEnumerable<LatLngLiteral>>(
+            return this.InvokeAsync<IEnumerable<LatLngLiteral>>(
                 "getPath");
         }
 
@@ -65,7 +65,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<bool> GetVisible()
         {
-            return InvokeAsync<bool>(
+            return this.InvokeAsync<bool>(
                 "getVisible");
         }
 

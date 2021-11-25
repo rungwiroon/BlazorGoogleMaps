@@ -94,9 +94,15 @@ namespace GoogleMapsComponents.Maps
                 throw new InvalidCastException("Request response type must be DirectionsResult or IJSObjectReference.");
 
             if(typeof(T).IsAssignableTo(typeof(DirectionsRequest)))
-                return InvokeAsync<T>("route", request);
+                return this.InvokeAsync<T>(
+                    "route",
+                    MapStripOptionToPropertyPath(stripOption).ToArray(),
+                    request);
             else
-                return InvokeAsync<T>("route", request);
+                return this.InvokeAsync<T>(
+                    "route",
+                    MapStripOptionToPropertyPath(stripOption).ToArray(),
+                    request);
         }
     }
 }

@@ -68,19 +68,19 @@ namespace GoogleMapsComponents.Maps
 
         public ValueTask<string> GetContent()
         {
-            return InvokeAsync<string>(
+            return this.InvokeAsync<string>(
                 "getContent");
         }
 
         public ValueTask<LatLngLiteral> GetPosition()
         {
-            return InvokeAsync<LatLngLiteral>(
+            return this.InvokeAsync<LatLngLiteral>(
                 "getPosition");
         }
 
         public ValueTask<int> GetZIndex()
         {
-            return InvokeAsync<int>(
+            return this.InvokeAsync<int>(
                 "getZIndex");
         }
 

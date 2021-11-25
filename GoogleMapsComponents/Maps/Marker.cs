@@ -27,7 +27,7 @@ namespace GoogleMapsComponents.Maps
 
         public async Task<Animation?> GetAnimation()
         {
-            var animation = await InvokeAsync<object>(
+            var animation = await this.InvokeAsync<object>(
                 "getAnimation");
 
             return Helper.ToNullableEnum<Animation>(animation?.ToString());
@@ -35,19 +35,19 @@ namespace GoogleMapsComponents.Maps
 
         public ValueTask<bool> GetClickable()
         {
-            return InvokeAsync<bool>(
+            return this.InvokeAsync<bool>(
                 "getClickable");
         }
 
         public ValueTask<string> GetCursor()
         {
-            return InvokeAsync<string>(
+            return this.InvokeAsync<string>(
                 "getCursor");
         }
 
         public ValueTask<bool> GetDraggable()
         {
-            return InvokeAsync<bool>(
+            return this.InvokeAsync<bool>(
                 "getDraggable");
         }
 
@@ -58,7 +58,7 @@ namespace GoogleMapsComponents.Maps
                 && typeof(T) != typeof(Symbol))
                 throw new InvalidCastException("Icon type must be string, Icon or Symbol.");
 
-            return InvokeAsync<T>(
+            return this.InvokeAsync<T>(
                 "getIcon");
         }
 
@@ -68,37 +68,37 @@ namespace GoogleMapsComponents.Maps
                 && typeof(T) != typeof(MarkerLabel))
                 throw new InvalidCastException("label type must be string or MarkerLabel.");
 
-            return InvokeAsync<T>(
+            return this.InvokeAsync<T>(
                 "getLabel");
         }
 
         public ValueTask<LatLngLiteral> GetPosition()
         {
-            return InvokeAsync<LatLngLiteral>(
+            return this.InvokeAsync<LatLngLiteral>(
                 "getPosition");
         }
 
         public ValueTask<MarkerShape> GetShape()
         {
-            return InvokeAsync<MarkerShape>(
+            return this.InvokeAsync<MarkerShape>(
                 "getShape");
         }
 
         public ValueTask<string> GetTitle()
         {
-            return InvokeAsync<string>(
+            return this.InvokeAsync<string>(
                 "getTitle");
         }
 
         public ValueTask<bool> GetVisible()
         {
-            return InvokeAsync<bool>(
+            return this.InvokeAsync<bool>(
                 "getVisible");
         }
 
         public ValueTask<int> GetZIndex()
         {
-            return InvokeAsync<int>(
+            return this.InvokeAsync<int>(
                 "getZIndex");
         }
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.JSInterop;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
@@ -29,7 +30,7 @@ namespace GoogleMapsComponents.Maps
             var dotNetObjRef = DotNetObjectReference.Create(
                 new JSInvokableAction(handler));
 
-            var listenerRef = await InvokeAsync<IJSObjectReference>(
+            var listenerRef = await this.InvokeAsync<IJSObjectReference>(
                 "extensionFunctions.addListenerNoArgument",
                 eventName,
                 dotNetObjRef);
@@ -48,7 +49,7 @@ namespace GoogleMapsComponents.Maps
             var dotNetObjRef = DotNetObjectReference.Create(
                 new JSInvokableAsyncAction(handler));
 
-            var listenerRef = await InvokeAsync<IJSObjectReference>(
+            var listenerRef = await this.InvokeAsync<IJSObjectReference>(
                 "extensionFunctions.addAsyncListenerNoArgument",
                 eventName,
                 dotNetObjRef);
@@ -60,14 +61,14 @@ namespace GoogleMapsComponents.Maps
         /// Adds the given listener function to the given event name.
         /// Returns an identifier for this listener that can be used with google.maps.event.removeListener.
         /// </summary>
-        public async ValueTask<MapEventListener> AddListenerAsync<T>(
+        public virtual async ValueTask<MapEventListener> AddListenerAsync<T>(
             string eventName,
             Action<T> handler)
         {
             var dotNetObjRef = DotNetObjectReference.Create(
                 new JSInvokableFunc<T, bool?>(wrapHandler));
 
-            var listenerRef = await InvokeAsync<IJSObjectReference>(
+            var listenerRef = await this.InvokeAsync<IJSObjectReference>(
                 "extensionFunctions.addListenerWithArgument",
                 eventName,
                 dotNetObjRef);
@@ -91,14 +92,14 @@ namespace GoogleMapsComponents.Maps
         /// Adds the given listener function to the given event name.
         /// Returns an identifier for this listener that can be used with google.maps.event.removeListener.
         /// </summary>
-        public async ValueTask<MapEventListener> AddListenerAsync<T>(
+        public virtual async ValueTask<MapEventListener> AddListenerAsync<T>(
             string eventName,
             Func<T, Task> handler)
         {
             var dotNetObjRef = DotNetObjectReference.Create(
                 new JSInvokableAsyncFunc<T, bool?>(wrapHandler));
 
-            var listenerRef = await InvokeAsync<IJSObjectReference>(
+            var listenerRef = await this.InvokeAsync<IJSObjectReference>(
                 "extensionFunctions.addAsyncListenerWithArgument",
                 eventName,
                 dotNetObjRef);
@@ -116,6 +117,69 @@ namespace GoogleMapsComponents.Maps
 
                 return null;
             }
+        }
+    }
+
+    internal static class ListenerExtension
+    {
+        public static async ValueTask<MapEventListener> AddListenerAsync<T>(
+            this MVCObject mvcObject,
+            string eventName,
+            DotNetObjectReference<T> dotNetObjRef)
+            where T : class
+        {
+            var listenerRef = await mvcObject.InvokeAsync<IJSObjectReference>(
+                "extensionFunctions.addListenerWithArgument",
+                eventName,
+                dotNetObjRef);
+
+            return new MapEventListener(listenerRef, dotNetObjRef);
+        }
+
+        public static async ValueTask<MapEventListener> AddListenerAsync<T>(
+            this MVCObject mvcObject,
+            string eventName,
+            IEnumerable<string> referenceProperties,
+            DotNetObjectReference<T> dotNetObjRef)
+            where T : class
+        {
+            var listenerRef = await mvcObject.InvokeAsync<IJSObjectReference>(
+                "extensionFunctions.addListenerWithArgument2",
+                eventName,
+                referenceProperties,
+                dotNetObjRef);
+
+            return new MapEventListener(listenerRef, dotNetObjRef);
+        }
+
+        public static async ValueTask<MapEventListener> AddAsyncListenerAsync<T>(
+            this MVCObject mvcObject,
+            string eventName,
+            DotNetObjectReference<T> dotNetObjRef)
+            where T : class
+        {
+            var listenerRef = await mvcObject.InvokeAsync<IJSObjectReference>(
+                "extensionFunctions.addAsyncListenerWithArgument",
+                eventName,
+                dotNetObjRef);
+
+            return new MapEventListener(listenerRef, dotNetObjRef);
+        }
+
+        public static async ValueTask<MapEventListener> AddAsyncListenerAsync<T>(
+            this MVCObject mvcObject,
+            string eventName,
+            IEnumerable<string> referenceProperties,
+            DotNetObjectReference<T> dotNetObjRef)
+            where T : class
+        {
+            var listenerRef = await mvcObject.InvokeAsync<IJSObjectReference>(
+                "extensionFunctions.addAsyncListenerWithArgument2",
+                eventName,
+                referenceProperties,
+                dotNetObjRef);
+
+            return new MapEventListener(listenerRef, dotNetObjRef);
         }
     }
 }

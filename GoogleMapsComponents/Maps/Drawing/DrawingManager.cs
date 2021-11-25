@@ -1,5 +1,6 @@
 ﻿using Microsoft.JSInterop;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps.Drawing
@@ -11,26 +12,23 @@ namespace GoogleMapsComponents.Maps.Drawing
     /// </summary>
     public class DrawingManager : MVCObject
     {
-        //private Map _map;
-
         /// <summary>
         /// Creates a DrawingManager that allows users to draw overlays on the map, and switch between the type of overlay to be drawn with a drawing control.
         /// </summary>
-        public async static Task<DrawingManager> CreateAsync(IJSRuntime jsRuntime, DrawingManagerOptions opts = null)
+        public async static Task<DrawingManager> CreateAsync(
+            IJSRuntime jsRuntime, DrawingManagerOptions? opts = null)
         {
-            //var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.drawing.DrawingManager", opts);
+            var jsObjectRef = await jsRuntime.InvokeAsync<IJSObjectReference>(
+                "googleMapsObjectManager.createMVCObject",
+                "google.maps.drawing.DrawingManager",
+                opts);
 
-            //var obj = new DrawingManager(jsObjectRef, opts);
+            var obj = new DrawingManager(jsObjectRef);
 
-            //return obj;
-
-            throw new NotImplementedException();
+            return obj;
         }
 
-        /// <summary>
-        /// Creates a DrawingManager that allows users to draw overlays on the map, and switch between the type of overlay to be drawn with a drawing control.
-        /// </summary>
-        private DrawingManager(IJSObjectReference jsObjectRef)
+        internal DrawingManager(IJSObjectReference jsObjectRef)
             : base(jsObjectRef)
         {
         }
@@ -41,8 +39,7 @@ namespace GoogleMapsComponents.Maps.Drawing
         /// <returns></returns>
         public async Task<OverlayType> GetDrawingMode()
         {
-            var result = await InvokeAsync<string>("getDrawingMode");
-
+            var result = await this.InvokeAsync<string>("getDrawingMode");
             return Helper.ToEnum<OverlayType>(result);
         }
 
@@ -52,7 +49,7 @@ namespace GoogleMapsComponents.Maps.Drawing
         /// <returns></returns>
         public async ValueTask<Map> GetMap()
         {
-            var mapRef = await InvokeAsync<IJSObjectReference>("getMap");
+            var mapRef = await this.InvokeAsync<IJSObjectReference>("getMap");
             return new Map(mapRef);
         }
 
@@ -76,8 +73,8 @@ namespace GoogleMapsComponents.Maps.Drawing
         public ValueTask SetMap(Map map)
         {
             return this.InvokeVoidAsync(
-                   "setMap",
-                   map.Reference);
+                "setMap",
+                map.Reference);
         }
 
         /// <summary>
@@ -87,58 +84,90 @@ namespace GoogleMapsComponents.Maps.Drawing
         public ValueTask SetOptions(DrawingManagerOptions options)
         {
             return this.InvokeVoidAsync(
-                   "setOptions",
-                   options);
+                "setOptions",
+                options);
         }
 
-        public async ValueTask AddOverlayCompleteListener(Action<OverlayCompleteEvent> action)
+        static T CreateGeometry<T>(
+            string eventName, IJSObjectReference objRef)
         {
-            //void Act(OverlaycompleteArgs args)
-            //{
-            //    var completeEvent = new OverlayCompleteEvent();
-            //    var reference = new JsObjectRef(_jsObjectRef.JSRuntime, args.uuid);
-            //    switch (args.type)
-            //    {
-            //        case "polygon":
-            //            completeEvent.Polygon = new Polygon(reference);
-            //            completeEvent.Type = OverlayType.Polygon;
-            //            break;
-            //        case "marker":
-            //            completeEvent.Marker = new Marker(reference);
-            //            completeEvent.Type = OverlayType.Marker;
-            //            break;
-            //        case "polyline":
-            //            completeEvent.Polyline = new Polyline(reference);
-            //            completeEvent.Type = OverlayType.Polyline;
-            //            break;
-            //        case "rectangle":
-            //            completeEvent.Rectangle = new Rectangle(reference);
-            //            completeEvent.Type = OverlayType.Rectangle;
-            //            break;
-            //        case "circle":
-            //            completeEvent.Circle = new Circle(reference);
-            //            completeEvent.Type = OverlayType.Circle;
-            //            break;
-            //    }
+            object obj = eventName switch
+            {
+                "circlecomplete" => new Circle(objRef),
+                "markercomplete" => new Marker(objRef),
+                "polygoncomplete" => new Polygon(objRef),
+                "polylinecomplete" => new Polyline(objRef),
+                "rectanglecomplete" => new Rectangle(objRef),
+                _ => throw new NotImplementedException(),
+            };
 
-            //    action.Invoke(completeEvent);
-            //}
-
-            //await _jsObjectRef.JSRuntime.MyInvokeAsync("googleMapsObjectManager.drawingManagerOverlaycomplete",
-            //    new object[] { this._jsObjectRef.Guid.ToString(), (Action<OverlaycompleteArgs>)Act });
-
-            //return;
+            return (T)obj;
         }
 
         /// <summary>
-        /// Object is created in drawingManagerOverlaycomplete function in objectManager.js
+        /// Adds the given listener function to the given event name.
+        /// Returns an identifier for this listener that can be used with google.maps.event.removeListener.
         /// </summary>
-        private class OverlaycompleteArgs
+        public override ValueTask<MapEventListener> AddListenerAsync<T>(
+            string eventName,
+            Action<T> handler)
         {
-            // ReSharper disable once InconsistentNaming
-            public Guid uuid { get; set; }
-            // ReSharper disable once InconsistentNaming
-            public string type { get; set; }
+            var listener = eventName switch
+            {
+                "overlaycomplete" =>
+                    this.AddListenerAsync(
+                        eventName,
+                        new string[] { "overlay" },
+                        DotNetObjectReference.Create(
+                            new JSInvokableAction<T>(handler))),
+                _ =>
+                    this.AddListenerAsync(
+                        eventName,
+                        DotNetObjectReference.Create(
+                            new JSInvokableAction<IJSObjectReference>(WrapHandler))),
+            };
+
+            return listener;
+
+            void WrapHandler(IJSObjectReference objRef)
+            {
+                var obj = CreateGeometry<T>(eventName, objRef);
+
+                handler(obj);
+            }
+        }
+
+        /// <summary>
+        /// Adds the given listener function to the given event name.
+        /// Returns an identifier for this listener that can be used with google.maps.event.removeListener.
+        /// </summary>
+        public override ValueTask<MapEventListener> AddListenerAsync<T>(
+            string eventName,
+            Func<T, Task> handler)
+        {
+            var listener = eventName switch
+            {
+                "overlaycomplete" =>
+                    this.AddAsyncListenerAsync(
+                        eventName,
+                        new string[] { "overlay" },
+                        DotNetObjectReference.Create(
+                            new JSInvokableAsyncAction<T>(handler))),
+                _ =>
+                    this.AddAsyncListenerAsync(
+                        eventName,
+                        DotNetObjectReference.Create(
+                            new JSInvokableAsyncAction<IJSObjectReference>(WrapHandler))),
+            };
+
+            return listener;
+
+            async Task WrapHandler(IJSObjectReference objRef)
+            {
+                var obj = CreateGeometry<T>(eventName, objRef);
+
+                await handler(obj);
+            }
         }
     }
 }

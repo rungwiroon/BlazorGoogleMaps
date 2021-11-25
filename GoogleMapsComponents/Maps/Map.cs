@@ -136,7 +136,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<LatLngBoundsLiteral> GetBounds()
         {
-            return InvokeAsync<LatLngBoundsLiteral>("getBounds");
+            return this.InvokeAsync<LatLngBoundsLiteral>("getBounds");
         }
 
         /// <summary>
@@ -146,7 +146,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<LatLngLiteral> GetCenter()
         {
-            return InvokeAsync<LatLngLiteral>("getCenter");
+            return this.InvokeAsync<LatLngLiteral>("getCenter");
         }
 
         public ValueTask SetCenter(LatLngLiteral latLng)
@@ -161,7 +161,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<int> GetHeading()
         {
-            return InvokeAsync<int>("getHeading");
+            return this.InvokeAsync<int>("getHeading");
         }
 
         /// <summary>
@@ -176,7 +176,7 @@ namespace GoogleMapsComponents.Maps
 
         public async ValueTask<MapTypeId> GetMapTypeId()
         {
-            var mapTypeIdStr = await InvokeAsync<string>("getMapTypeId");
+            var mapTypeIdStr = await this.InvokeAsync<string>("getMapTypeId");
 
             return Helper.ToEnum<MapTypeId>(mapTypeIdStr);
         }
@@ -195,7 +195,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<int> GetTilt()
         {
-            return InvokeAsync<int>("getTilt");
+            return this.InvokeAsync<int>("getTilt");
         }
 
         /// <summary>

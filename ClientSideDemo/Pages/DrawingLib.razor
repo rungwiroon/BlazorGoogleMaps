@@ -1,0 +1,100 @@
+﻿@page "/mapDrawing"
+@using GoogleMapsComponents
+@using GoogleMapsComponents.Maps
+@using GoogleMapsComponents.Maps.Drawing
+
+@inject IJSRuntime JS
+
+<h1>Drawing Lib</h1>
+<GoogleMap @ref="@map1" Id="map1" Options="@mapOptions1" OnAfterInit="@(OnAfterInit1Async)"></GoogleMap>
+
+@*<h2>xxx</h2>
+<GoogleMap @ref="@map2" Id="map1" Options="@mapOptions2" OnAfterInit="@(OnAfterInit2Async)"></GoogleMap>*@
+
+@code {
+    private DrawingManager drawingManager = default!;
+    private DrawingManagerOptions managerOptions = default!;
+    private GoogleMap map1 = default!;
+
+    private PolygonOptions polygonOptions = new PolygonOptions()
+    {
+        StrokeWeight = 1,
+        FillOpacity = 0.45f,
+        Draggable = true,
+        Editable = true,
+        FillColor = "#FF0000",
+        StrokeColor = "#FF0000",
+    };
+
+    private MapOptions mapOptions1 = new MapOptions()
+    {
+        Zoom = 16,
+        Center = new LatLngLiteral()
+        {
+            Lat = -31.74230723298461,
+            Lng = -60.494505564961386
+        },
+        MapTypeId = MapTypeId.Roadmap,
+        ZoomControl = true,
+        DisableDefaultUI = true
+    };
+
+    private async Task OnAfterInit1Async()
+    {
+        var overlayTypes = new List<OverlayType>();
+        overlayTypes.Add(OverlayType.Polygon);
+        overlayTypes.Add(OverlayType.Polyline);
+        overlayTypes.Add(OverlayType.Marker);
+
+        var drawingControlOptions = new DrawingControlOptions()
+        {
+            Position = ControlPosition.TopCenter,
+            DrawingModes = overlayTypes
+        };
+
+        managerOptions = new DrawingManagerOptions()
+        {
+            Map = map1.InteropObject,
+            PolygonOptions = polygonOptions,
+            DrawingControl = true,
+            DrawingControlOptions = drawingControlOptions
+        };
+
+        await JS.ConsoleLogAsync(managerOptions);
+
+        drawingManager = await DrawingManager.CreateAsync(JS, managerOptions);
+
+        // https://developers.google.com/maps/documentation/javascript/drawinglayer
+        await drawingManager.AddListenerAsync<OverlayCompleteEvent>(
+            "overlaycomplete",
+            async (@event) =>
+            {
+                Console.WriteLine(@event.Type);
+
+                if (@event.Type == OverlayType.Polygon)
+                {
+                    var poly = @event.Overlay.AsT1;
+
+                    Console.WriteLine(poly);
+
+                    //var polyPath = await poly.GetPath();
+                    await poly.SetOptions(new PolygonOptions()
+                    {
+                        FillColor = "blue",
+                        Editable = false,
+                        Draggable = false
+                    });
+                }
+            });
+    }
+
+    private async Task ChangeDrawingModeToLine()
+    {
+        await drawingManager.SetDrawingMode(OverlayType.Polyline);
+    }
+
+    private async Task StopDrawingMode()
+    {
+        await drawingManager.SetDrawingMode(null);
+    }
+}

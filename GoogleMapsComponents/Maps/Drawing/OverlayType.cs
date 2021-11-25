@@ -12,31 +12,31 @@ namespace GoogleMapsComponents.Maps.Drawing
         /// <summary>
         /// Specifies that the DrawingManager creates circles, and that the overlay given in the overlaycomplete event is a circle.
         /// </summary>
-        [EnumMember(Value = "google.maps.drawing.OverlayType.CIRCLE")]
+        [EnumMember(Value = "circle")]
         Circle,
 
         /// <summary>
         /// Specifies that the DrawingManager creates markers, and that the overlay given in the overlaycomplete event is a marker.
         /// </summary>
-        [EnumMember(Value = "google.maps.drawing.OverlayType.MARKER")]
+        [EnumMember(Value = "marker")]
         Marker,
 
         /// <summary>
         /// Specifies that the DrawingManager creates polygons, and that the overlay given in the overlaycomplete event is a polygon.
         /// </summary>
-        [EnumMember(Value = "google.maps.drawing.OverlayType.POLYGON")]
+        [EnumMember(Value = "polygon")]
         Polygon,
 
         /// <summary>
         /// Specifies that the DrawingManager creates polylines, and that the overlay given in the overlaycomplete event is a polyline.
         /// </summary>
-        [EnumMember(Value = "google.maps.drawing.OverlayType.POLYLINE")]
+        [EnumMember(Value = "polyline")]
         Polyline,
 
         /// <summary>
         /// Specifies that the DrawingManager creates rectangles, and that the overlay given in the overlaycomplete event is a rectangle.
         /// </summary>
-        [EnumMember(Value = "google.maps.drawing.OverlayType.RECTANGLE")]
+        [EnumMember(Value = "rectangle")]
         Rectangle
     }
 }

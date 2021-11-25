@@ -36,7 +36,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<LatLngBoundsLiteral> GetBounds()
         {
-            return InvokeAsync<LatLngBoundsLiteral>("getBounds");
+            return this.InvokeAsync<LatLngBoundsLiteral>("getBounds");
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<LatLngLiteral> GetCenter()
         {
-            return InvokeAsync<LatLngLiteral>("getCenter");
+            return this.InvokeAsync<LatLngLiteral>("getCenter");
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<bool> GetDraggable()
         {
-            return InvokeAsync<bool>("getDraggable");
+            return this.InvokeAsync<bool>("getDraggable");
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<bool> GetEditable()
         {
-            return InvokeAsync<bool>("getEditable");
+            return this.InvokeAsync<bool>("getEditable");
         }        
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<double> GetRadius()
         {
-            return InvokeAsync<double>("getRadius");
+            return this.InvokeAsync<double>("getRadius");
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public ValueTask<bool> GetVisible()
         {
-            return InvokeAsync<bool>("getVisible");
+            return this.InvokeAsync<bool>("getVisible");
         }
 
         /// <summary>

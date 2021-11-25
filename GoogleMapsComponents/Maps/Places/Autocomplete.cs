@@ -28,7 +28,7 @@ namespace GoogleMapsComponents.Maps.Places
         /// </summary>
         public ValueTask<LatLngBoundsLiteral> GetBounds()
         {
-            return InvokeAsync<LatLngBoundsLiteral>("getBounds");
+            return this.InvokeAsync<LatLngBoundsLiteral>("getBounds");
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace GoogleMapsComponents.Maps.Places
         /// </summary>
         public ValueTask<string[]> GetFields()
         {
-            return InvokeAsync<string[]>("getFields");
+            return this.InvokeAsync<string[]>("getFields");
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace GoogleMapsComponents.Maps.Places
         /// </summary>
         public ValueTask<PlaceResult> GetPlace()
         {
-            return InvokeAsync<PlaceResult>("getPlace");
+            return this.InvokeAsync<PlaceResult>("getPlace");
         }
 
         /// <summary>
