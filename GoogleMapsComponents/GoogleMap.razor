@@ -2,17 +2,25 @@
 @using Maps
 @using System.Threading.Tasks
 @using Microsoft.AspNetCore.Components
+@using Microsoft.JSInterop
 
 @inherits MapComponent
-@implements System.IDisposable
+@implements IDisposable
+@inject IJSRuntime JSRuntime
 
 <div @ref="@Element" id="@Id" class="@CssClass" style="@StyleStr"></div>
 
 @code {
     #nullable enable
+    // Load the module and keep a reference to it
+    // You need to use .AsTask() to convert the ValueTask to Task as it may be awaited multiple times
+    //private List<IJSObjectReference> moduleImports = new List<IJSObjectReference>();
 
     [Parameter]
     public string? Id { get; set; }
+
+    [Parameter]
+    public string ApiKey { get; set; } = string.Empty;
 
     [Parameter]
     public MapOptions? Options { get; set; }
@@ -42,6 +50,15 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if (firstRender)
+        {
+            //var tasks = new List<Task<IJSObjectReference>>();
+            //tasks.Add(JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BlazorGoogleMaps/js/objectManager.js").AsTask());
+            //if(!string.IsNullOrWhiteSpace(ApiKey))
+            //    tasks.Add(JSRuntime.InvokeAsync<IJSObjectReference>("import", $"https://maps.googleapis.com/maps/api/js?key={ApiKey}&v=3").AsTask());
+
+            //moduleImports.AddRange(await Task.WhenAll(tasks.ToArray()));
+        }
 
         await InitAsync(Element, Options);
 
@@ -55,5 +72,12 @@
         return false;
     }
 
-
+    void IDisposable.Dispose()
+    {
+        //if(moduleImports != null && moduleImports.Count > 0)
+        //{
+        //    foreach (var mi in moduleImports)
+        //        await mi.DisposeAsync();
+        //}
+    }
 }
