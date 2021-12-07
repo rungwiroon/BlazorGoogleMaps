@@ -1,0 +1,53 @@
+﻿@page "/projection"
+@using GoogleMapsComponents
+@using GoogleMapsComponents.Maps
+@using System.Diagnostics
+
+<h3>MapProjectionPage</h3>
+
+<GoogleMap @ref="@map1" Id="map1" Options="@mapOptions" OnAfterInit="@OnAfterInitAsync">
+</GoogleMap>
+<button @onclick="GetProjection">Get projection</button>&nbsp;
+
+<MapEventList @ref="@eventList" Events="@_events"></MapEventList>
+@code {
+    private GoogleMap map1;
+    private MapEventList eventList;
+    private MapOptions mapOptions;
+    private Stack<Marker> markers = new Stack<Marker>();
+    private List<String> _events = new List<String>();
+
+    protected override void OnInitialized()
+    {
+        mapOptions = new MapOptions()
+            {
+                Zoom = 13,
+                Center = new LatLngLiteral()
+                {
+                    Lat = 13.505892,
+                    Lng = 100.8162
+                },
+                MapTypeId = MapTypeId.Roadmap
+            };
+    }
+
+    private async Task OnAfterInitAsync()
+    {
+
+    }
+
+    private async Task GetProjection()
+    {
+        var center = await map1.InteropObject.GetCenter();
+        using var projection = await map1.InteropObject.GetProjection();
+        var point = await projection.FromLatLngToPoint(center);
+        if (point != null)
+        {
+            var msg = $"x: {point.X} y: {point.Y}";
+            _events.Add(msg);
+            var ltg = await projection.FromPointToLatLng(point);
+            msg = $"Lng: {ltg.Lng} Lat: {ltg.Lat}";
+            _events.Add(msg);
+        }
+    }
+}

@@ -466,6 +466,27 @@ window.googleMapsObjectManager = {
 
             let jsonRest = JSON.stringify(cleanDirectionResult(result, dirRequestOptions));
             return jsonRest;
+        }
+        else if (functionToInvoke == "getProjection") {
+
+            try {
+                var projection = obj[functionToInvoke](...args2);
+                _blazorGoogleMapsObjects[args[2]] = projection;
+            } catch (e) {
+                console.log(e);
+            }
+        }
+        else if (functionToInvoke == "fromLatLngToPoint") {
+
+            try {
+                //It expects lat() and lng() functions
+                var lit = new google.maps.LatLng(args2[0].lat, args2[0].lng);
+                var point = obj[functionToInvoke](lit);
+                return point;
+            } catch (e) {
+                console.log(e);
+            }
+
         } else {
             var result = null;
             try {

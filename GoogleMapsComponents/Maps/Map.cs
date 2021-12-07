@@ -102,6 +102,22 @@ namespace GoogleMapsComponents.Maps
         }
 
         /// <summary>
+        /// Returns the current Projection.
+        /// If the map is not yet initialized then the result is undefined.
+        /// Listen to the projection_changed event and check its value to ensure it is not undefined.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<Projection> GetProjection()
+        {
+            var id = Guid.NewGuid();
+            await _jsObjectRef.InvokeAsync("getProjection", id.ToString());
+            //projection is returned and created on js
+            var projection = new Projection(_jsObjectRef.JSRuntime, id);
+
+            return projection;
+        }
+
+        /// <summary>
         /// Pans the map by the minimum amount necessary to contain the given LatLngBounds.
         /// It makes no guarantee where on the map the bounds will be, except that the map will be panned to show as much of the bounds as possible inside {currentMapSizeInPx} - {padding}.
         /// </summary>
