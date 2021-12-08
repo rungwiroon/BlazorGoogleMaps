@@ -36,6 +36,50 @@
 
     }
 
+    private async Task<LatLngLiteral> RelativePoint2LatLng(Projection projection, Point point)
+
+    {
+
+        var bounds = await map1.InteropObject.GetBounds();
+
+        var zoom = await map1.InteropObject.GetZoom();
+
+        var topRight = await projection.FromLatLngToPoint(new LatLngLiteral(bounds.East, bounds.North));
+
+        var bottomLeft = await projection.FromLatLngToPoint(new LatLngLiteral(bounds.West, bounds.South));
+
+        var scale = Math.Pow(2, zoom);
+
+        var worldPoint = new Point { X = point.X / scale + bottomLeft.X, Y = point.Y / scale + topRight.Y };
+
+        var latLng = await projection.FromPointToLatLng(worldPoint);
+
+        return latLng;
+
+    }
+
+    private async Task<Point> LatLng2RelativePoint(Projection projection, LatLngLiteral latLng)
+
+    {
+
+        var bounds = await map1.InteropObject.GetBounds();
+
+        var zoom = await map1.InteropObject.GetZoom();
+
+        var topRight = await projection.FromLatLngToPoint(new LatLngLiteral(bounds.East, bounds.North));
+
+        var bottomLeft = await projection.FromLatLngToPoint(new LatLngLiteral(bounds.West, bounds.South));
+
+        var scale = Math.Pow(2, zoom);
+
+        var worldPoint = await projection.FromLatLngToPoint(latLng);
+
+        var point = new Point { X = (worldPoint.X - bottomLeft.X) * scale, Y = (worldPoint.Y - topRight.Y) * scale };
+
+        return point;
+
+    }
+
     private async Task GetProjection()
     {
         var center = await map1.InteropObject.GetCenter();
