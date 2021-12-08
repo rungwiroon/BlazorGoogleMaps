@@ -213,12 +213,12 @@ namespace GoogleMapsComponents.Maps
             return _jsObjectRef.InvokeAsync("setTilt", tilt);
         }
 
-        public Task<int> GetZoom()
+        public Task<double> GetZoom()
         {
-            return _jsObjectRef.InvokeAsync<int>("getZoom");
+            return _jsObjectRef.InvokeAsync<double>("getZoom");
         }
 
-        public Task SetZoom(int zoom)
+        public Task SetZoom(double zoom)
         {
             return _jsObjectRef.InvokeAsync("setZoom", zoom);
         }
