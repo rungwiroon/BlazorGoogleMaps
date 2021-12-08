@@ -11,7 +11,7 @@ How to get key follow https://developers.google.com/maps/documentation/javascrip
 ```
 Add path to project javascript functions file in wwwroot/index.html in Client side or _Host.cshtml in Server Side.
 ```
-<script src="_content/BlazorGoogleMaps/objectManager.js"></script>
+<script src="_content/BlazorGoogleMaps/js/objectManager.js"></script>
 ```
 If you want to use marker clustering in a Server Side project then add the following script to _Host.cshtml.
 ```
