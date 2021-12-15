@@ -51,7 +51,13 @@ namespace ServerSideDemo.Pages
                 },
             };
 
-            await heatMap.SetData(heatPoints);
+            var hwp = new List<WeightedLocation>();
+            hwp.Add(new WeightedLocation { Location = new LatLngLiteral { Lat = 13.505892, Lng = 100.8142 }, Weight = 3 });
+            hwp.Add(new WeightedLocation { Location = new LatLngLiteral { Lat = 13.506892, Lng = 100.8132 }, Weight = 5 });
+
+            await heatMap.SetData(hwp);
+
+            //await heatMap.SetData(heatPoints);
         }
     }
 }

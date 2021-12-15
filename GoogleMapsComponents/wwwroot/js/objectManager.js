@@ -446,7 +446,15 @@ window.googleMapsObjectManager = {
         else if (functionToInvoke == "setData") {
             var pointArray = new google.maps.MVCArray();
             for (i = 0; i < args2[0].length; i++) {
-                pointArray.push(new google.maps.LatLng(args2[0][i].lat, args2[0][i].lng))
+                var cord = args2[0][i];
+
+                if (cord.hasOwnProperty("weight")) {
+                    var cordLocation = new google.maps.LatLng(cord.location.lat, cord.location.lng);
+                    var location = { location: cordLocation, weight: cord.weight };
+                    pointArray.push(location);
+                } else {
+                    pointArray.push(new google.maps.LatLng(cord.lat, cord.lng));
+                }
             }
 
             try {
