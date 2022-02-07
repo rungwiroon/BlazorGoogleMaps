@@ -28,7 +28,7 @@ namespace GoogleMapsComponents.Maps
         /// Constructor for use in ListableEntityListBase. Must be the first constructor!
         /// </summary>
         internal Polyline(JsObjectRef jsObjectRef)
-            :base(jsObjectRef)
+            : base(jsObjectRef)
         {
         }
 
@@ -36,7 +36,7 @@ namespace GoogleMapsComponents.Maps
         /// Create a polyline using the passed PolylineOptions, which specify both the path of the polyline and the stroke style to use when drawing the polyline.
         /// </summary>
         private Polyline(JsObjectRef jsObjectRef, PolylineOptions opts)
-            :this(jsObjectRef)
+            : this(jsObjectRef)
         {
         }
 
@@ -67,6 +67,19 @@ namespace GoogleMapsComponents.Maps
         public Task<IEnumerable<LatLngLiteral>> GetPath()
         {
             return _jsObjectRef.InvokeAsync<IEnumerable<LatLngLiteral>>("getPath");
+        }
+
+        /// <summary>
+        /// Creates paths lime MVCArray where elements could be appended
+        /// </summary>
+        /// <returns></returns>
+        public async Task<PolylinePath> CreatePath()
+        {
+            var id = Guid.NewGuid();
+            await _jsObjectRef.InvokeAsync("createPath", id.ToString());
+            var path = new PolylinePath(new JsObjectRef(_jsObjectRef.JSRuntime, id));
+
+            return path;
         }
 
         /// <summary>

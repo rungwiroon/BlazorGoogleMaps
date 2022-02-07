@@ -409,6 +409,21 @@ window.googleMapsObjectManager = {
         let obj = window._blazorGoogleMapsObjects[args[0]];
         let functionToInvoke = args[1];
 
+        //We make check if element is LatLng and cast it.
+        //It could be bug here.
+        if (Array.isArray(args2) && args2.length > 0) {
+            var cloneArgs = args2;
+            args2 = new Array();
+            for (let i = 0, len = cloneArgs.length; i < len; i++) {
+                var element = cloneArgs[i];
+                if (element.hasOwnProperty("lat") && element.hasOwnProperty("lng")) {
+                    args2.push(new google.maps.LatLng(element.lat, element.lng));
+                } else {
+                    args2.push(element);
+                }
+            }
+        }
+
         //If function is route, then handle callback in promise.
         if (functionToInvoke == "googleMapDirectionServiceFunctions.route") {
             let dirRequest = args2[0];
@@ -479,6 +494,15 @@ window.googleMapsObjectManager = {
 
             try {
                 var projection = obj[functionToInvoke](...args2);
+                _blazorGoogleMapsObjects[args[2]] = projection;
+            } catch (e) {
+                console.log(e);
+            }
+        }
+        else if (functionToInvoke == "createPath") {
+
+            try {
+                var projection = _blazorGoogleMapsObjects[args[0]].getPath();
                 _blazorGoogleMapsObjects[args[2]] = projection;
             } catch (e) {
                 console.log(e);
