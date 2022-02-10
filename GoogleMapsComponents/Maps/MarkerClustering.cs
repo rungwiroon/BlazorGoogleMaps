@@ -7,7 +7,7 @@ using Microsoft.JSInterop;
 namespace GoogleMapsComponents.Maps
 {
     /// <summary>
-    /// https://googlemaps.github.io/v3-utility-library/modules/_google_markerclustererplus.html
+    /// https://github.com/googlemaps/js-markerclusterer
     /// </summary>
     public class MarkerClustering : IJsObjectRef
     {
@@ -82,6 +82,7 @@ namespace GoogleMapsComponents.Maps
         public virtual async Task ClearMarkers()
         {
             await _jsObjectRef.InvokeAsync("clearMarkers");
+            await _jsObjectRef.InvokeAsync("render");
         }
 
         /// <summary>
@@ -98,7 +99,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public virtual async Task Repaint()
         {
-            await _jsObjectRef.InvokeAsync("repaint");
+            await _jsObjectRef.InvokeAsync("redraw");
         }
 
         public virtual async Task ClearListeners(string eventName)

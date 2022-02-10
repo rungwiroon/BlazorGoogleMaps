@@ -45,5 +45,14 @@ namespace GoogleMapsComponents.Maps
         /// The URL of the image or sprite sheet.
         /// </summary>
         public string Url { get; set; }
+
+        public string FillColor { get; set; }
+
+        public int Rotation { get; set; }
+        public string Path { get; set; }
+        public double FillOpacity { get; set; }
+        public int StrokeWeight { get; set; }
+        public string StrokeColor { get; set; }
+        public double Scale { get; set; }
     }
 }
