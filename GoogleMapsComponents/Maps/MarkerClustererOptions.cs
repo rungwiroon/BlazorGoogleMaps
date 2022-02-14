@@ -72,6 +72,17 @@ namespace GoogleMapsComponents.Maps
         public int? MinimumClusterSize { get; set; }
 
         /// <summary>
+        /// An array of  <see cref="MarkerClusterIconStyle"/> elements defining the styles
+        /// of the cluster markers to be used.The element to be used to style a given cluster marker
+        /// is determined by the function defined by the `calculator` property.
+        /// 
+        /// The default is an array of <see cref="MarkerClusterIconStyle"/>
+        /// elements whose properties are derived
+        /// from the values for `ImagePath`, `ImageExtension`, and `ImageSizes`.
+        /// </summary>
+        public List<MarkerClusterIconStyle>? Styles { get; set; }
+
+        /// <summary>
         /// The tooltip to display when the mouse moves over a cluster marker.
         /// </summary>
         public string? Title { get; set; }

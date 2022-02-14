@@ -13,6 +13,7 @@
 <button @onclick="@Recenter">Re-center marker</button>
 <button @onclick="@FitBounds">Fit to markers</button>
 <button @onclick="@InvokeClustering">Invoke map cluster</button>
+<button @onclick="@InvokeStyledIconsClustering">Invoke styled map cluster</button>
 <button @onclick="@ClearClustering">ClearClustering</button>
 <button @onclick="@GetAnimation">GetAnimation </button>
 <button @onclick="@SetAnimation">SetAnimation </button>
@@ -80,5 +81,50 @@
         font-size: 16px;
         font-weight: bold;
         background: blueviolet
+    }
+
+    .custom-clustericon {
+        background: var(--cluster-color);
+        color: #000;
+        border-radius: 100%;
+        font-weight: bold;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        opacity: 0.9
+    }
+
+        .custom-clustericon::before,
+        .custom-clustericon::after {
+            content: "";
+            display: block;            
+            position: absolute;            
+            transform: translate(-50%, -50%);
+            top: 50%;
+            left: 50%;
+            background: var(--cluster-color);
+            opacity: 0.3;
+            border-radius: 100%;
+        }
+
+        .custom-clustericon::before {
+            width: 125%;
+            height: 125%;
+        } 
+        .custom-clustericon::after {
+            width: 150%;
+            height: 150%;
+        }               
+
+    .custom-clustericon-1 {
+        --cluster-color: #98F6D5;
+    }
+
+    .custom-clustericon-2 {
+        --cluster-color: #000000;
+    }
+
+    .custom-clustericon-3 {
+        --cluster-color: #98B2F6;
     }
 </style>
