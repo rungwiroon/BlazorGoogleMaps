@@ -1,5 +1,11 @@
 ﻿namespace GoogleMapsComponents.Maps
 {
+    /// <summary>
+    /// This class represents the object for values in the `styles` array passed
+    /// to the <see cref="MarkerClustering"/>
+    /// constructor.The element in this array that is used to
+    /// style the cluster icon is determined by calling the `calculator` function.
+    /// </summary>
     public class MarkerClusterIconStyle
     {
         /// <summary>
