@@ -55,11 +55,53 @@ namespace ServerSideDemo.Pages
 
         private async Task ClearClustering()
         {
-            await _markerClustering.ClearMarkers();
+            if (_markerClustering != null)
+                await _markerClustering.ClearMarkers();
         }
+
         private async Task InvokeClustering()
         {
-            var coordinates = new List<LatLngLiteral>()
+            await ClearClustering();
+            var coordinates = GetClusterCoordinates();
+
+            var markers = await GetMarkers(coordinates, map1.InteropObject);
+
+            _markerClustering = await MarkerClustering.CreateAsync(map1.JsRuntime, map1.InteropObject, markers);
+
+            await _markerClustering.FitMapToMarkers(1);
+            //initMap
+            //await JsObjectRef.InvokeAsync<object>("initMap", map1.InteropObject.Guid.ToString(), markers);
+        }
+
+        private async Task InvokeStyledIconsClustering()
+        {
+            await ClearClustering();
+            var coordinates = GetClusterCoordinates();
+
+            var markers = await GetMarkers(coordinates, map1.InteropObject);
+
+            _markerClustering = await MarkerClustering.CreateAsync(map1.JsRuntime, map1.InteropObject, markers, new()
+            {
+                ClusterClass = "custom-clustericon",
+                AverageCenter = true,
+                Styles = new()
+                {
+                    new MarkerClusterIconStyle { Height = 40, Width = 40, ClassName = "custom-clustericon-1", },
+                    new MarkerClusterIconStyle { Height = 40, Width = 40, ClassName = "custom-clustericon-2", TextColor = "White" },
+                    new MarkerClusterIconStyle { Height = 50, Width = 50, ClassName = "custom-clustericon-3" }
+                },
+                ZoomOnClick = true,
+
+            });
+
+            await _markerClustering.FitMapToMarkers(1);
+            //initMap
+            //await JsObjectRef.InvokeAsync<object>("initMap", map1.InteropObject.Guid.ToString(), markers);
+        }
+
+        private static List<LatLngLiteral> GetClusterCoordinates()
+        {
+            return new List<LatLngLiteral>()
             {
                 new LatLngLiteral(147.154312, -31.56391),
                 new LatLngLiteral(150.363181, -33.718234),
@@ -85,13 +127,6 @@ namespace ServerSideDemo.Pages
                 new LatLngLiteral(147.438, -42.735258),
                 new LatLngLiteral(170.463352, -43.999792),
             };
-
-            var markers = await GetMarkers(coordinates, map1.InteropObject);
-
-            _markerClustering = await MarkerClustering.CreateAsync(map1.JsRuntime, map1.InteropObject, markers);
-            await _markerClustering.FitMapToMarkers(1);
-            //initMap
-            //await JsObjectRef.InvokeAsync<object>("initMap", map1.InteropObject.Guid.ToString(), markers);
         }
 
         private async Task<IEnumerable<Marker>> GetMarkers(IEnumerable<LatLngLiteral> coords, Map map)
