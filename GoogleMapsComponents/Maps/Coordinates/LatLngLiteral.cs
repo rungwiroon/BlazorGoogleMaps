@@ -30,6 +30,7 @@ namespace GoogleMapsComponents.Maps
         {
         }
 
+        [Obsolete("Order will be changed in next major release.")]
         public LatLngLiteral(double lng, double lat)
         {
             Lng = lng;

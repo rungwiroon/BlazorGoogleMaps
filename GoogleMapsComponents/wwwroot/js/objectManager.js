@@ -416,7 +416,7 @@ window.googleMapsObjectManager = {
             args2 = new Array();
             for (let i = 0, len = cloneArgs.length; i < len; i++) {
                 var element = cloneArgs[i];
-                if (element.hasOwnProperty("lat") && element.hasOwnProperty("lng")) {
+                if (element != null && element !== undefined && element.hasOwnProperty("lat") && element.hasOwnProperty("lng")) {
                     args2.push(new google.maps.LatLng(element.lat, element.lng));
                 } else {
                     args2.push(element);
