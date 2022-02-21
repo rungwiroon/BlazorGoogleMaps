@@ -1,0 +1,59 @@
+﻿@page "/map-control-events"
+@using GoogleMapsComponents
+@using GoogleMapsComponents.Maps
+
+<h1>Map Events</h1>
+
+<GoogleMap @ref="@_map" Id="map1" Options="@mapOptions">
+</GoogleMap>
+<br />
+<button @onclick="AddEvent">AddEvent</button>&nbsp;
+<button @onclick="RemoveEvent">RemoveEvent</button>
+<br>
+<MapEventList @ref="@eventList" Events="@_events"></MapEventList>
+
+@code {
+    private GoogleMap _map;
+    private MapEventList eventList;
+    private MapOptions mapOptions;
+    private readonly List<String> _events = new List<String>();
+    private MapEventListener? _mapClickEvent;
+
+    protected override void OnInitialized()
+    {
+        mapOptions = new MapOptions()
+            {
+                Zoom = 13,
+                Center = new LatLngLiteral()
+                {
+                    Lat = 13.505892,
+                    Lng = 100.8162
+                },
+                MapTypeId = MapTypeId.Roadmap
+            };
+    }
+
+    private async Task AddEvent()
+    {
+        if (_mapClickEvent != null) return;
+
+        _mapClickEvent = await _map.InteropObject.AddListener<MouseEvent>("click", MapClicked);
+    }
+
+    private Task RemoveEvent()
+    {
+        if (_mapClickEvent != null)
+        {
+            _mapClickEvent.Dispose();
+        }
+
+        _mapClickEvent = null;
+        return Task.CompletedTask;
+    }
+
+    private void MapClicked(MouseEvent clickMouseEvent)
+    {
+        _events.Add($"{clickMouseEvent.LatLng.Lat}-{clickMouseEvent.LatLng.Lng}");
+        StateHasChanged();
+    }
+}

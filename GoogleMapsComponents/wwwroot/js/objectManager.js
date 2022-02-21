@@ -579,14 +579,13 @@ window.googleMapsObjectManager = {
         return results;
     },
 
-    invokeWithReturnedObjectRef: function (args) {
+    invokeWithReturnedObjectRef: async function (args) {
         let result = googleMapsObjectManager.invoke(args);
         let uuid = uuidv4();
 
         //console.log("invokeWithReturnedObjectRef " + uuid);
-
-        //Removed since here exists only events and whats point of having event in this array????
-        //window._blazorGoogleMapsObjects[uuid] = result;
+        //This is needed to be able to remove events from map
+        window._blazorGoogleMapsObjects[uuid] = await result;
 
         return uuid;
     },
