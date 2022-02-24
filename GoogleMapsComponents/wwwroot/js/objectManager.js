@@ -511,9 +511,7 @@ window.googleMapsObjectManager = {
         else if (functionToInvoke == "fromLatLngToPoint") {
 
             try {
-                //It expects lat() and lng() functions
-                var lit = new google.maps.LatLng(args2[0].lat, args2[0].lng);
-                var point = obj[functionToInvoke](lit);
+                var point = obj[functionToInvoke](args2[0]);
                 return point;
             } catch (e) {
                 console.log(e);
