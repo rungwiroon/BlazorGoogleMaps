@@ -317,9 +317,7 @@ window.googleMapsObjectManager = {
         let guids = JSON.parse(args[0]);
 
         for (var i = 0; i < args2.length; i++) {
-            let args3 = [];
-            args3.push(args2[i]);
-            let obj = new constructor(...args3);
+            let obj = new constructor(args2[i]);
 
             if ("set" in obj) {
                 obj.set("guidString", guids[i]);
@@ -523,6 +521,7 @@ window.googleMapsObjectManager = {
                 result = obj[functionToInvoke](...args2);
             } catch (e) {
                 console.log(e);
+                console.log("\nfunctionToInvoke: " + functionToInvoke + "\nargs: " + args2 + "\n");
             }
 
             if (result !== null
