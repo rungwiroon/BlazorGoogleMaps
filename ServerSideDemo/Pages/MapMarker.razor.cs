@@ -68,7 +68,7 @@ namespace ServerSideDemo.Pages
             var markers = await GetMarkers(coordinates, map1.InteropObject);
 
             _markerClustering = await MarkerClustering.CreateAsync(map1.JsRuntime, map1.InteropObject, markers);
-            
+
             LatLngBoundsLiteral boundsLiteral = new LatLngBoundsLiteral(new LatLngLiteral() { Lat = coordinates.First().Lat, Lng = coordinates.First().Lng });
             foreach (var literal in coordinates)
                 LatLngBoundsLiteral.CreateOrExtend(ref boundsLiteral, literal);
