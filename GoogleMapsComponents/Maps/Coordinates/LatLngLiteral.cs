@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Diagnostics;
 using Newtonsoft.Json;
 
 namespace GoogleMapsComponents.Maps
@@ -8,6 +8,7 @@ namespace GoogleMapsComponents.Maps
     /// Object literals are accepted in place of LatLng objects, as a convenience, in many places. 
     /// These are converted to LatLng objects when the Maps API encounters them.
     /// </summary>
+    [DebuggerDisplay("{Lat}, {Lng}")]
     public class LatLngLiteral
     {
         /// <summary>
@@ -30,20 +31,14 @@ namespace GoogleMapsComponents.Maps
         {
         }
 
-        [Obsolete("Order will be changed in next major release.")]
-        public LatLngLiteral(double lng, double lat)
+        public LatLngLiteral(double lat, double lng)
         {
-            Lng = lng;
             Lat = lat;
+            Lng = lng;
         }
 
         public LatLngLiteral(decimal lng, decimal lat) : this(Convert.ToDouble(lng), Convert.ToDouble(lat))
         {
-        }
-
-        public override string ToString()
-        {
-            return $"{Lat}, {Lng}";
         }
     }
 }
