@@ -289,6 +289,14 @@ namespace GoogleMapsComponents
             return new JsObjectRef(_jsRuntime, new Guid(guid));
         }
 
+        public Task<T> GetMappedValue<T>(string propertyName, params string[] mappedNames)
+        {
+            return _jsRuntime.MyInvokeAsync<T>(
+                "googleMapsObjectManager.readObjectPropertyValueAndMapToArray",
+                 _guid.ToString(),
+                 propertyName, mappedNames);
+        }
+
         public override bool Equals(object obj)
         {
             if (obj is JsObjectRef other)

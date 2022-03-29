@@ -659,6 +659,16 @@ window.googleMapsObjectManager = {
         return uuid;
     },
 
+    readObjectPropertyValueAndMapToArray: function (args) {
+        let obj = window._blazorGoogleMapsObjects[args[0]];
+        let result = obj[args[1]];
+        let props = tryParseJson(args[2]);
+        for (var i = 0; i < props.length; i++) {
+            result = result.map((x) => x[props[i]]);
+        }
+        return result;
+    },
+
     addClusteringMarkers(guid, mapGuid, markers, options) {
         const map = window._blazorGoogleMapsObjects[mapGuid];
 
