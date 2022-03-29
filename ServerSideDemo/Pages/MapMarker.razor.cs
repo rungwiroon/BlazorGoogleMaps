@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using GoogleMapsComponents;
 using GoogleMapsComponents.Maps;
 using GoogleMapsComponents.Maps.Coordinates;
+using GoogleMapsComponents.Maps.Extension;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using ServerSideDemo.Shared;
@@ -67,10 +68,59 @@ namespace ServerSideDemo.Pages
             var markers = await GetMarkers(coordinates, map1.InteropObject);
 
             _markerClustering = await MarkerClustering.CreateAsync(map1.JsRuntime, map1.InteropObject, markers);
+            
+            LatLngBoundsLiteral boundsLiteral = new LatLngBoundsLiteral(new LatLngLiteral() { Lat = coordinates.First().Lat, Lng = coordinates.First().Lng });
+            foreach (var literal in coordinates)
+                LatLngBoundsLiteral.CreateOrExtend(ref boundsLiteral, literal);
+            await map1.InteropObject.FitBounds(boundsLiteral, OneOf.OneOf<int, GoogleMapsComponents.Maps.Coordinates.Padding>.FromT0(1));
 
-            await _markerClustering.FitMapToMarkers(1);
-            //initMap
-            //await JsObjectRef.InvokeAsync<object>("initMap", map1.InteropObject.Guid.ToString(), markers);
+
+            if (_IdleListenerForMarkerListeners == null)
+                _IdleListenerForMarkerListeners = await map1.InteropObject.AddListener("idle", async () => { await SetMarkerListeners(); });
+        }
+
+        private MapEventListener? _IdleListenerForMarkerListeners;
+        private List<string>? _listeningLoneMarkerKeys;
+        private async Task SetMarkerListeners()
+        {
+            if (_listeningLoneMarkerKeys == null)
+                _listeningLoneMarkerKeys = new List<string>();
+
+            //use GetMappedValue<T> to map and extract the array of guid keys of unclustered markers
+            GoogleMapsComponents.JsObjectRef jsRef = new GoogleMapsComponents.JsObjectRef(JsObjectRef, _markerClustering.Guid);
+            var guidStrings = (await jsRef.GetMappedValue<List<string>>("clusters", "marker", "guidString"))
+                .Where((x) => { return x != null; });
+
+            if (!guidStrings.Any())
+                return;
+
+            // Among markers not in clusters, find those which don't yet have a listener
+            MarkerList deafLoneMarkersList = await MarkerList.CreateAsync(JsObjectRef, new Dictionary<string, MarkerOptions>());
+            foreach (var key in guidStrings)
+            {
+                var markr = markers.First(x => key == x.Guid.ToString());
+                if (_listeningLoneMarkerKeys.Contains(key))
+                    continue;
+                deafLoneMarkersList.BaseListableEntities.Add(key, markr);
+                _listeningLoneMarkerKeys.Add(key);
+            }
+
+            if (!deafLoneMarkersList.BaseListableEntities.Any())
+                return;
+
+            await deafLoneMarkersList.AddListeners<MouseEvent>(deafLoneMarkersList.Markers.Keys.ToList(), "click", async (o, e) =>
+            {
+                //await JsObjectRef.InvokeVoidAsync("loneMarkerClickEvent", e);
+            });
+
+            // if all points set, clean up idle listener.
+            if (_listeningLoneMarkerKeys.Count == markers.Count)
+            {
+                _listeningLoneMarkerKeys = null;
+                await _IdleListenerForMarkerListeners.RemoveAsync();
+                _IdleListenerForMarkerListeners.Dispose();
+                _IdleListenerForMarkerListeners = null;
+            }
         }
 
         private async Task InvokeStyledIconsClustering()
