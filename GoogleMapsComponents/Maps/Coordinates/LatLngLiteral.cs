@@ -37,7 +37,7 @@ namespace GoogleMapsComponents.Maps
             Lng = lng;
         }
 
-        public LatLngLiteral(decimal lng, decimal lat) : this(Convert.ToDouble(lng), Convert.ToDouble(lat))
+        public LatLngLiteral(decimal lat, decimal lng) : this(Convert.ToDouble(lat), Convert.ToDouble(lng))
         {
         }
     }
