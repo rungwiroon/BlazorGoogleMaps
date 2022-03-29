@@ -56,29 +56,29 @@ namespace ServerSideDemo.Pages
         {
             var coordinates = new List<LatLngLiteral>()
             {
-                new LatLngLiteral(147.154312, -31.56391),
-                new LatLngLiteral(150.363181, -33.718234),
-                new LatLngLiteral(150.371124, -33.727111),
-                new LatLngLiteral(151.209834, -33.848588),
-                new LatLngLiteral(151.216968, -33.851702),
-                new LatLngLiteral(150.863657, -34.671264),
-                new LatLngLiteral(148.662905, -35.304724),
-                new LatLngLiteral(175.699196, -36.817685),
-                new LatLngLiteral(175.790222, -36.828611),
-                new LatLngLiteral(145.116667, -37.75),
-                new LatLngLiteral(145.128708, -37.759859),
-                new LatLngLiteral(145.133858, -37.765015),
-                new LatLngLiteral(145.143299, -37.770104),
-                new LatLngLiteral(145.145187, -37.7737),
-                new LatLngLiteral(145.137978, -37.774785),
-                new LatLngLiteral(144.968119, -37.819616),
-                new LatLngLiteral(144.695692, -38.330766),
-                new LatLngLiteral(175.053218, -39.927193),
-                new LatLngLiteral(174.865694, -41.330162),
-                new LatLngLiteral(147.439506, -42.734358),
-                new LatLngLiteral(147.501315, -42.734358),
-                new LatLngLiteral(147.438, -42.735258),
-                new LatLngLiteral(170.463352, -43.999792),
+                new LatLngLiteral(){ Lng = 147.154312, Lat = -31.56391 },
+                new LatLngLiteral(){ Lng = 150.363181, Lat = -33.718234 },
+                new LatLngLiteral(){ Lng = 150.371124, Lat = -33.727111 },
+                new LatLngLiteral(){ Lng = 151.209834, Lat = -33.848588 },
+                new LatLngLiteral(){ Lng = 151.216968, Lat = -33.851702 },
+                new LatLngLiteral(){ Lng = 150.863657, Lat = -34.671264 },
+                new LatLngLiteral(){ Lng = 148.662905, Lat = -35.304724 },
+                new LatLngLiteral(){ Lng = 175.699196, Lat = -36.817685 },
+                new LatLngLiteral(){ Lng = 175.790222, Lat = -36.828611 },
+                new LatLngLiteral(){ Lng = 145.116667, Lat = -37.75 },
+                new LatLngLiteral(){ Lng = 145.128708, Lat = -37.759859 },
+                new LatLngLiteral(){ Lng = 145.133858, Lat = -37.765015 },
+                new LatLngLiteral(){ Lng = 145.143299, Lat = -37.770104 },
+                new LatLngLiteral(){ Lng = 145.145187, Lat = -37.7737 },
+                new LatLngLiteral(){ Lng = 145.137978, Lat = -37.774785 },
+                new LatLngLiteral(){ Lng = 144.968119, Lat = -37.819616 },
+                new LatLngLiteral(){ Lng = 144.695692, Lat = -38.330766 },
+                new LatLngLiteral(){ Lng = 175.053218, Lat = -39.927193 },
+                new LatLngLiteral(){ Lng = 174.865694, Lat = -41.330162 },
+                new LatLngLiteral(){ Lng = 147.439506, Lat = -42.734358 },
+                new LatLngLiteral(){ Lng = 147.501315, Lat = -42.734358 },
+                new LatLngLiteral(){ Lng = 147.438, Lat = -42.735258 },
+                new LatLngLiteral(){ Lng = 170.463352, Lat = -43.999792 },
             };
 
             var markers = await GetMarkers(coordinates, map1.InteropObject);
@@ -118,19 +118,19 @@ namespace ServerSideDemo.Pages
         {
             var coordinates = new List<LatLngLiteral>()
             {
-                new LatLngLiteral(145.128708, -37.759859),
-                new LatLngLiteral(145.133858, -37.765015),
-                new LatLngLiteral(145.143299, -37.770104),
-                new LatLngLiteral(145.145187, -37.7737),
-                new LatLngLiteral(145.137978, -37.774785),
-                new LatLngLiteral(144.968119, -37.819616),
-                new LatLngLiteral(144.695692, -38.330766),
-                new LatLngLiteral(175.053218, -39.927193),
-                new LatLngLiteral(174.865694, -41.330162),
-                new LatLngLiteral(147.439506, -42.734358),
-                new LatLngLiteral(147.501315, -42.734358),
-                new LatLngLiteral(147.438, -42.735258),
-                new LatLngLiteral(170.463352, -43.999792),
+                new LatLngLiteral(){ Lng = 145.128708, Lat = -37.759859 },
+                new LatLngLiteral(){ Lng = 145.133858, Lat = -37.765015 },
+                new LatLngLiteral(){ Lng = 145.143299, Lat = -37.770104 },
+                new LatLngLiteral(){ Lng = 145.145187, Lat = -37.7737 },
+                new LatLngLiteral(){ Lng = 145.137978, Lat = -37.774785 },
+                new LatLngLiteral(){ Lng = 144.968119, Lat = -37.819616 },
+                new LatLngLiteral(){ Lng = 144.695692, Lat = -38.330766 },
+                new LatLngLiteral(){ Lng = 175.053218, Lat = -39.927193 },
+                new LatLngLiteral(){ Lng = 174.865694, Lat = -41.330162 },
+                new LatLngLiteral(){ Lng = 147.439506, Lat = -42.734358 },
+                new LatLngLiteral(){ Lng = 147.501315, Lat = -42.734358 },
+                new LatLngLiteral(){ Lng = 147.438, Lat = -42.735258 },
+                new LatLngLiteral(){ Lng = 170.463352, Lat = -43.999792 },
             };
             await AddMarkersGroup(coordinates);
         }
@@ -139,23 +139,23 @@ namespace ServerSideDemo.Pages
         {
             var coordinates = new List<LatLngLiteral>()
             {
-                new LatLngLiteral(147.154312, -31.56391),
-                new LatLngLiteral(150.363181, -33.718234),
-                new LatLngLiteral(150.371124, -33.727111),
-                new LatLngLiteral(151.209834, -33.848588),
-                new LatLngLiteral(151.216968, -33.851702),
-                new LatLngLiteral(150.863657, -34.671264),
-                new LatLngLiteral(148.662905, -35.304724),
-                new LatLngLiteral(175.699196, -36.817685),
-                new LatLngLiteral(175.790222, -36.828611),
-                new LatLngLiteral(145.116667, -37.75),
+                new LatLngLiteral(){ Lng = 147.154312, Lat = -31.56391 },
+                new LatLngLiteral(){ Lng = 150.363181, Lat = -33.718234 },
+                new LatLngLiteral(){ Lng = 150.371124, Lat = -33.727111 },
+                new LatLngLiteral(){ Lng = 151.209834, Lat = -33.848588 },
+                new LatLngLiteral(){ Lng = 151.216968, Lat = -33.851702 },
+                new LatLngLiteral(){ Lng = 150.863657, Lat = -34.671264 },
+                new LatLngLiteral(){ Lng = 148.662905, Lat = -35.304724 },
+                new LatLngLiteral(){ Lng = 175.699196, Lat = -36.817685 },
+                new LatLngLiteral(){ Lng = 175.790222, Lat = -36.828611 },
+                new LatLngLiteral(){ Lng = 145.116667, Lat = -37.75 },
             };
 
 
             for (int index = 0; index < 200; index++)
             {
                 var dif = (index * 0.001);
-                coordinates.Add(new LatLngLiteral(145.116667 + dif, -37.75 + dif));
+                coordinates.Add(new LatLngLiteral() { Lng = 145.116667 + dif, Lat = -37.75 + dif });
             }
 
             await AddMarkersGroup(coordinates);
@@ -171,7 +171,7 @@ namespace ServerSideDemo.Pages
                     map1.JsRuntime,
                     coordinates.ToDictionary(s => Guid.NewGuid().ToString(), y => new MarkerOptions()
                     {
-                        Position = new LatLngLiteral(y.Lng, y.Lat),
+                        Position = new LatLngLiteral() { Lng = y.Lng, Lat = y.Lat },
                         Map = map1.InteropObject,
                         //Icon = new Icon() { Url = s.MarkerIconPath, ScaledSize = iconSize, Anchor = iconAnchor },
                         Clickable = true,
@@ -184,7 +184,7 @@ namespace ServerSideDemo.Pages
             {
                 var cordDic = coordinates.ToDictionary(s => Guid.NewGuid().ToString(), y => new MarkerOptions()
                 {
-                    Position = new LatLngLiteral(y.Lng, y.Lat),
+                    Position = new LatLngLiteral() { Lng = y.Lng, Lat = y.Lat },
                     Map = map1.InteropObject,
                     //Icon = new Icon() { Url = s.MarkerIconPath, ScaledSize = iconSize, Anchor = iconAnchor },
                     Clickable = true,

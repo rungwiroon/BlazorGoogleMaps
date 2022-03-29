@@ -15,11 +15,11 @@ Add path to project javascript functions file in wwwroot/index.html in Client si
 ```
 If you want to use marker clustering in a Server Side project then add the following script to _Host.cshtml.
 ```
-<script src="https://unpkg.com/@googlemaps/markerclustererplus/dist/index.min.js"></script>
+<script src="https://unpkg.com/@@googlemaps/markerclusterer/dist/index.min.js"></script>
 ```
 If you want to use marker clustering in a Client Side project then add the following script to wwwroot/index.html.
 ```
-<script src="https://unpkg.com/@googlemaps/markerclustererplus/dist/index.min.js"></script>
+<script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
 ```
 
 2. Use component in client and server side same

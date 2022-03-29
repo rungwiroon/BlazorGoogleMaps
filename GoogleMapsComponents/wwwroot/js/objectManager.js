@@ -317,9 +317,7 @@ window.googleMapsObjectManager = {
         let guids = JSON.parse(args[0]);
 
         for (var i = 0; i < args2.length; i++) {
-            let args3 = [];
-            args3.push(args2[i]);
-            let obj = new constructor(...args3);
+            let obj = new constructor(args2[i]);
 
             if ("set" in obj) {
                 obj.set("guidString", guids[i]);
@@ -523,6 +521,7 @@ window.googleMapsObjectManager = {
                 result = obj[functionToInvoke](...args2);
             } catch (e) {
                 console.log(e);
+                console.log("\nfunctionToInvoke: " + functionToInvoke + "\nargs: " + args2 + "\n");
             }
 
             if (result !== null
@@ -659,6 +658,16 @@ window.googleMapsObjectManager = {
         return uuid;
     },
 
+    readObjectPropertyValueAndMapToArray: function (args) {
+        let obj = window._blazorGoogleMapsObjects[args[0]];
+        let result = obj[args[1]];
+        let props = tryParseJson(args[2]);
+        for (var i = 0; i < props.length; i++) {
+            result = result.map((x) => x[props[i]]);
+        }
+        return result;
+    },
+
     addClusteringMarkers(guid, mapGuid, markers, options) {
         const map = window._blazorGoogleMapsObjects[mapGuid];
 
@@ -666,9 +675,28 @@ window.googleMapsObjectManager = {
             return window._blazorGoogleMapsObjects[marker.guid];
         });
 
-        const markerCluster = new MarkerClusterer(map, originalMarkers, options);
+        const markerClustererOptions = { map: map, markers: originalMarkers };
+        if (!options.ZoomOnClick) {
+            markerClustererOptions.onClusterClick = () => { };
+        }
 
-        if ("set" in markerCluster) {
+        const markerCluster = new markerClusterer.MarkerClusterer(markerClustererOptions);
+
+/*        const newMarkers = trees.map(({ geometry }, i) => new google.maps.Marker({
+			position: {
+				lat: geometry.coordinates[1],
+				lng: geometry.coordinates[0],
+			},
+			label: labels[i % labels.length],
+			map,
+        }));
+		const markerCluster = new markerClusterer.MarkerClusterer({
+			map: map,
+            markers: newMarkers
+		});
+*/
+
+		if ("set" in markerCluster) {
             markerCluster.set("guidString", guid);
         }
 

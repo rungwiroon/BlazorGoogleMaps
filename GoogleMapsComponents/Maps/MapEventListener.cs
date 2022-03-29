@@ -10,7 +10,7 @@ namespace GoogleMapsComponents.Maps
     /// google.maps.MapsEventListener interface
     /// An event listener, created by google.maps.event.addListener() and friends.
     /// </summary>
-    public class MapEventListener : IDisposable
+    public class MapEventListener : IJsObjectRef, IDisposable
     {
         private readonly JsObjectRef _jsObjectRef;
 
@@ -19,6 +19,11 @@ namespace GoogleMapsComponents.Maps
             _jsObjectRef = jsObjectRef;
         }
 
+        /// <summary>
+        /// Guid of the underlying jsObjectRef
+        /// </summary>
+        public Guid Guid => _jsObjectRef.Guid;
+
         public void Dispose()
         {
             _ = RemoveAsync();
@@ -26,7 +31,7 @@ namespace GoogleMapsComponents.Maps
 
         public async Task RemoveAsync()
         {
-            await _jsObjectRef.InvokeAsync<object>("remove");
+            await _jsObjectRef.InvokeAsync("google.maps.event.removeListener", _jsObjectRef);
             await _jsObjectRef.DisposeAsync();
         }
     }

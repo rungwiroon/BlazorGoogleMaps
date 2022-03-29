@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using GoogleMapsComponents;
 using GoogleMapsComponents.Maps;
 using GoogleMapsComponents.Maps.Coordinates;
+using GoogleMapsComponents.Maps.Extension;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using ServerSideDemo.Shared;
@@ -67,10 +68,59 @@ namespace ServerSideDemo.Pages
             var markers = await GetMarkers(coordinates, map1.InteropObject);
 
             _markerClustering = await MarkerClustering.CreateAsync(map1.JsRuntime, map1.InteropObject, markers);
+            
+            LatLngBoundsLiteral boundsLiteral = new LatLngBoundsLiteral(new LatLngLiteral() { Lat = coordinates.First().Lat, Lng = coordinates.First().Lng });
+            foreach (var literal in coordinates)
+                LatLngBoundsLiteral.CreateOrExtend(ref boundsLiteral, literal);
+            await map1.InteropObject.FitBounds(boundsLiteral, OneOf.OneOf<int, GoogleMapsComponents.Maps.Coordinates.Padding>.FromT0(1));
 
-            await _markerClustering.FitMapToMarkers(1);
-            //initMap
-            //await JsObjectRef.InvokeAsync<object>("initMap", map1.InteropObject.Guid.ToString(), markers);
+
+            if (_IdleListenerForMarkerListeners == null)
+                _IdleListenerForMarkerListeners = await map1.InteropObject.AddListener("idle", async () => { await SetMarkerListeners(); });
+        }
+
+        private MapEventListener? _IdleListenerForMarkerListeners;
+        private List<string>? _listeningLoneMarkerKeys;
+        private async Task SetMarkerListeners()
+        {
+            if (_listeningLoneMarkerKeys == null)
+                _listeningLoneMarkerKeys = new List<string>();
+
+            //use GetMappedValue<T> to map and extract the array of guid keys of unclustered markers
+            GoogleMapsComponents.JsObjectRef jsRef = new GoogleMapsComponents.JsObjectRef(JsObjectRef, _markerClustering.Guid);
+            var guidStrings = (await jsRef.GetMappedValue<List<string>>("clusters", "marker", "guidString"))
+                .Where((x) => { return x != null; });
+
+            if (!guidStrings.Any())
+                return;
+
+            // Among markers not in clusters, find those which don't yet have a listener
+            MarkerList deafLoneMarkersList = await MarkerList.CreateAsync(JsObjectRef, new Dictionary<string, MarkerOptions>());
+            foreach (var key in guidStrings)
+            {
+                var markr = markers.First(x => key == x.Guid.ToString());
+                if (_listeningLoneMarkerKeys.Contains(key))
+                    continue;
+                deafLoneMarkersList.BaseListableEntities.Add(key, markr);
+                _listeningLoneMarkerKeys.Add(key);
+            }
+
+            if (!deafLoneMarkersList.BaseListableEntities.Any())
+                return;
+
+            await deafLoneMarkersList.AddListeners<MouseEvent>(deafLoneMarkersList.Markers.Keys.ToList(), "click", async (o, e) =>
+            {
+                //await JsObjectRef.InvokeVoidAsync("loneMarkerClickEvent", e);
+            });
+
+            // if all points set, clean up idle listener.
+            if (_listeningLoneMarkerKeys.Count == markers.Count)
+            {
+                _listeningLoneMarkerKeys = null;
+                await _IdleListenerForMarkerListeners.RemoveAsync();
+                _IdleListenerForMarkerListeners.Dispose();
+                _IdleListenerForMarkerListeners = null;
+            }
         }
 
         private async Task InvokeStyledIconsClustering()
@@ -103,29 +153,29 @@ namespace ServerSideDemo.Pages
         {
             return new List<LatLngLiteral>()
             {
-                new LatLngLiteral(147.154312, -31.56391),
-                new LatLngLiteral(150.363181, -33.718234),
-                new LatLngLiteral(150.371124, -33.727111),
-                new LatLngLiteral(151.209834, -33.848588),
-                new LatLngLiteral(151.216968, -33.851702),
-                new LatLngLiteral(150.863657, -34.671264),
-                new LatLngLiteral(148.662905, -35.304724),
-                new LatLngLiteral(175.699196, -36.817685),
-                new LatLngLiteral(175.790222, -36.828611),
-                new LatLngLiteral(145.116667, -37.75),
-                new LatLngLiteral(145.128708, -37.759859),
-                new LatLngLiteral(145.133858, -37.765015),
-                new LatLngLiteral(145.143299, -37.770104),
-                new LatLngLiteral(145.145187, -37.7737),
-                new LatLngLiteral(145.137978, -37.774785),
-                new LatLngLiteral(144.968119, -37.819616),
-                new LatLngLiteral(144.695692, -38.330766),
-                new LatLngLiteral(175.053218, -39.927193),
-                new LatLngLiteral(174.865694, -41.330162),
-                new LatLngLiteral(147.439506, -42.734358),
-                new LatLngLiteral(147.501315, -42.734358),
-                new LatLngLiteral(147.438, -42.735258),
-                new LatLngLiteral(170.463352, -43.999792),
+                new LatLngLiteral() { Lng = 147.154312, Lat = -31.56391},
+                new LatLngLiteral() { Lng = 150.363181, Lat = -33.718234},
+                new LatLngLiteral() { Lng = 150.371124, Lat = -33.727111},
+                new LatLngLiteral() { Lng = 151.209834, Lat = -33.848588},
+                new LatLngLiteral() { Lng = 151.216968, Lat = -33.851702},
+                new LatLngLiteral() { Lng = 150.863657, Lat = -34.671264},
+                new LatLngLiteral() { Lng = 148.662905, Lat = -35.304724},
+                new LatLngLiteral() { Lng = 175.699196, Lat = -36.817685},
+                new LatLngLiteral() { Lng = 175.790222, Lat = -36.828611},
+                new LatLngLiteral() { Lng = 145.116667, Lat = -37.75},
+                new LatLngLiteral() { Lng = 145.128708, Lat = -37.759859},
+                new LatLngLiteral() { Lng = 145.133858, Lat = -37.765015},
+                new LatLngLiteral() { Lng = 145.143299, Lat = -37.770104},
+                new LatLngLiteral() { Lng = 145.145187, Lat = -37.7737},
+                new LatLngLiteral() { Lng = 145.137978, Lat = -37.774785},
+                new LatLngLiteral() { Lng = 144.968119, Lat = -37.819616},
+                new LatLngLiteral() { Lng = 144.695692, Lat = -38.330766},
+                new LatLngLiteral() { Lng = 175.053218, Lat = -39.927193},
+                new LatLngLiteral() { Lng = 174.865694, Lat = -41.330162},
+                new LatLngLiteral() { Lng = 147.439506, Lat = -42.734358},
+                new LatLngLiteral() { Lng = 147.501315, Lat = -42.734358},
+                new LatLngLiteral() { Lng = 147.438, Lat = -42.735258},
+                new LatLngLiteral() { Lng = 170.463352, Lat = -43.999792},
             };
         }
 
