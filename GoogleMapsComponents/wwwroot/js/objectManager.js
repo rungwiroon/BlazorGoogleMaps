@@ -675,7 +675,7 @@ window.googleMapsObjectManager = {
             return window._blazorGoogleMapsObjects[marker.guid];
         });
 
-        var markerClustererOptions = { map: map, markers: originalMarkers };
+        const markerClustererOptions = { map: map, markers: originalMarkers };
         if (!options.ZoomOnClick) {
             markerClustererOptions.onClusterClick = () => { };
         }

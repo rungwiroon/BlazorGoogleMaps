@@ -14,7 +14,7 @@ namespace GoogleMapsComponents.Maps.Extension
     /// Main concept is that each Marker to can be distinguished by other ones need
     /// to have a "unique key" with a "external world mean", so not necessary it's GUID
     ///
-    /// All properties should be called With a Dictionary<string, {property type}> indicating for each Marker(related to that key) the corresponding related property value
+    /// All properties should be called with a Dictionary<string, {property type}> indicating for each Marker(related to that key) the corresponding related property value
     /// </summary>
     public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
     {
@@ -293,6 +293,11 @@ namespace GoogleMapsComponents.Maps.Extension
                 dictArgs);
         }
 
+        /// <summary>
+        /// Sets the Clickable flag of one or more Markers to match a dictionary of marker keys and flag values.
+        /// </summary>
+        /// <param name="flags"></param>
+        /// <returns></returns>
         public Task SetClickables(Dictionary<string, bool> flags)
         {
             Dictionary<Guid, object> dictArgs = flags.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);

@@ -111,7 +111,7 @@ namespace GoogleMapsComponents.Maps.Extension
                     //Alternate if there are more constructors
                     //var ctor = typeof(TEntityBase).GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(c => !c.GetParameters().Any());
                     var ctor = typeof(TEntityBase).GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault();
-                    BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Instance;
+                    //BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Instance;
                     return (TEntityBase)ctor.Invoke(new object[] { e.Value });
                     //Old version which didnt catched internal consturctors
                     //return Activator.CreateInstance(typeof(TEntityBase), flags, null, e.Value) as TEntityBase;
