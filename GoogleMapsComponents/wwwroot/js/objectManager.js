@@ -676,7 +676,12 @@ window.googleMapsObjectManager = {
             return window._blazorGoogleMapsObjects[marker.guid];
         });
 
-        const markerCluster = new markerClusterer.MarkerClusterer({ map: map, markers: originalMarkers });
+        var markerClustererOptions = { map: map, markers: originalMarkers };
+        if (!options.ZoomOnClick) {
+            markerClustererOptions.onClusterClick = () => { };
+        }
+
+        const markerCluster = new markerClusterer.MarkerClusterer(markerClustererOptions);
 
 /*        const newMarkers = trees.map(({ geometry }, i) => new google.maps.Marker({
 			position: {
