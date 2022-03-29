@@ -1,6 +1,9 @@
 # BlazorGoogleMaps
 Blazor interop for GoogleMap library
 
+**Breaking change from 2.0.0**
+LatLngLiteral constructor's parameters order changed #173
+
 [![NuGet version (BlazorGoogleMaps)](https://img.shields.io/nuget/v/BlazorGoogleMaps)](https://www.nuget.org/packages/BlazorGoogleMaps/)
 
 ## Usage
