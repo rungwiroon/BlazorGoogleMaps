@@ -31,7 +31,7 @@ namespace GoogleMapsComponents.Maps
 
         public async Task RemoveAsync()
         {
-            await _jsObjectRef.InvokeAsync("google.maps.event.removeListener", _jsObjectRef);
+            await _jsObjectRef.InvokeAsync("remove");
             await _jsObjectRef.DisposeAsync();
         }
     }

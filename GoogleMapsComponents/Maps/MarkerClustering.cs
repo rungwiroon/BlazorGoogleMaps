@@ -130,8 +130,12 @@ namespace GoogleMapsComponents.Maps
         {
             if (EventListeners.ContainsKey(eventName))
             {
-                await _jsObjectRef.InvokeAsync("clearListeners", eventName);
+                //await _jsObjectRef.InvokeAsync("clearListeners", eventName);
 
+                foreach (MapEventListener listener in EventListeners[eventName])
+                {
+                    await listener.RemoveAsync();
+                }
                 //IMHO is better preserving the knowledge that Marker had some EventListeners attached to "eventName" in the past
                 //so, instead of clearing the list and removing the key from dictionary, I prefer to leave the key with an empty list
                 EventListeners[eventName].Clear();
