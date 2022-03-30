@@ -69,17 +69,16 @@ namespace ServerSideDemo.Pages
 
             _markerClustering = await MarkerClustering.CreateAsync(map1.JsRuntime, map1.InteropObject, markers);
 
+            if (!_markerClustering.EventListeners.ContainsKey("clusteringend") || _markerClustering.EventListeners["clusteringend"].Count == 0)
+                await _markerClustering.AddListener("clusteringend", async () => { await SetMarkerListeners(); });
+
             LatLngBoundsLiteral boundsLiteral = new LatLngBoundsLiteral(new LatLngLiteral() { Lat = coordinates.First().Lat, Lng = coordinates.First().Lng });
             foreach (var literal in coordinates)
                 LatLngBoundsLiteral.CreateOrExtend(ref boundsLiteral, literal);
             await map1.InteropObject.FitBounds(boundsLiteral, OneOf.OneOf<int, GoogleMapsComponents.Maps.Coordinates.Padding>.FromT0(1));
 
-
-            if (_clusteringendListener == null)
-                _clusteringendListener = await _markerClustering.AddListener("clusteringend", async () => { await SetMarkerListeners(); });
         }
 
-        private MapEventListener? _clusteringendListener;
         private List<string>? _listeningLoneMarkerKeys;
         private async Task SetMarkerListeners()
         {
@@ -117,9 +116,7 @@ namespace ServerSideDemo.Pages
             if (_listeningLoneMarkerKeys.Count == markers.Count)
             {
                 _listeningLoneMarkerKeys = null;
-                await _clusteringendListener.RemoveAsync();
-                _clusteringendListener.Dispose();
-                _clusteringendListener = null;
+                await _markerClustering.ClearListeners("clusteringend");
             }
         }
 
