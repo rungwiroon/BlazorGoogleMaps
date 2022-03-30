@@ -314,6 +314,20 @@ namespace GoogleMapsComponents.Maps.Extension
                 dictArgs);
         }
 
+        /// <summary>
+        /// Set Icon on each Marker matching a param dictionary key to the param value with single JSInterop call.
+        /// </summary>
+        /// <param name="icons"></param>
+        /// <returns></returns>
+        public Task SetIcons(Dictionary<string, OneOf<string, Icon, Symbol>> icons)
+        {
+            Dictionary<Guid, object> dictArgs = icons.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
+            return _jsObjectRef.InvokeMultipleAsync(
+                "setIcon",
+                dictArgs);
+        }
+
+        /// <inheritdoc cref="SetIcons(Dictionary{string, OneOf{string, Icon, Symbol}})"/>
         public Task SetIcons(Dictionary<string, string> icons)
         {
             Dictionary<Guid, object> dictArgs = icons.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
@@ -322,6 +336,7 @@ namespace GoogleMapsComponents.Maps.Extension
                 dictArgs);
         }
 
+        /// <inheritdoc cref="SetIcons(Dictionary{string, OneOf{string, Icon, Symbol}})"/>
         public Task SetIcons(Dictionary<string, Icon> icons)
         {
             Dictionary<Guid, object> dictArgs = icons.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
@@ -330,6 +345,9 @@ namespace GoogleMapsComponents.Maps.Extension
                 dictArgs);
         }
 
+
+        /// <inheritdoc cref="SetLabels(Dictionary{string, OneOf{string, MarkerLabel}})"/>
+        [Obsolete("Use overloads that take string, MarkerLabel, or OneOf<string, MarkerLabel> as dictionary value type.")]
         public Task SetLabels(Dictionary<string, Symbol> labels)
         {
             Dictionary<Guid, object> dictArgs = labels.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
@@ -337,6 +355,39 @@ namespace GoogleMapsComponents.Maps.Extension
                 "setLabel",
                 dictArgs);
         }
+
+        /// <summary>
+        /// Set Label on each Marker matching a param dictionary key to the param value with single JSInterop call.
+        /// </summary>
+        /// <param name="labels"></param>
+        /// <returns></returns>
+        public Task SetLabels(Dictionary<string, OneOf<string, MarkerLabel>> labels)
+        {
+            Dictionary<Guid, object> dictArgs = labels.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
+            return _jsObjectRef.InvokeMultipleAsync(
+                "setLabel",
+                dictArgs);
+        }
+
+        /// <inheritdoc cref="SetLabels(Dictionary{string, OneOf{string, MarkerLabel}})"/>
+        public Task SetLabels(Dictionary<string, string> labels)
+        {
+            Dictionary<Guid, object> dictArgs = labels.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
+            return _jsObjectRef.InvokeMultipleAsync(
+                "setLabel",
+                dictArgs);
+        }
+
+        /// <inheritdoc cref="SetLabels(Dictionary{string, OneOf{string, MarkerLabel}})"/>
+        public Task SetLabels(Dictionary<string, MarkerLabel> labels)
+        {
+            Dictionary<Guid, object> dictArgs = labels.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
+            return _jsObjectRef.InvokeMultipleAsync(
+                "setLabel",
+                dictArgs);
+        }
+
+        
 
         public Task SetOpacities(Dictionary<string, float> opacities)
         {

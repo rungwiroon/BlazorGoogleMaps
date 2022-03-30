@@ -75,11 +75,11 @@ namespace ServerSideDemo.Pages
             await map1.InteropObject.FitBounds(boundsLiteral, OneOf.OneOf<int, GoogleMapsComponents.Maps.Coordinates.Padding>.FromT0(1));
 
 
-            if (_IdleListenerForMarkerListeners == null)
-                _IdleListenerForMarkerListeners = await map1.InteropObject.AddListener("idle", async () => { await SetMarkerListeners(); });
+            if (_clusteringendListener == null)
+                _clusteringendListener = await _markerClustering.AddListener("clusteringend", async () => { await SetMarkerListeners(); });
         }
 
-        private MapEventListener? _IdleListenerForMarkerListeners;
+        private MapEventListener? _clusteringendListener;
         private List<string>? _listeningLoneMarkerKeys;
         private async Task SetMarkerListeners()
         {
@@ -117,9 +117,9 @@ namespace ServerSideDemo.Pages
             if (_listeningLoneMarkerKeys.Count == markers.Count)
             {
                 _listeningLoneMarkerKeys = null;
-                await _IdleListenerForMarkerListeners.RemoveAsync();
-                _IdleListenerForMarkerListeners.Dispose();
-                _IdleListenerForMarkerListeners = null;
+                await _clusteringendListener.RemoveAsync();
+                _clusteringendListener.Dispose();
+                _clusteringendListener = null;
             }
         }
 
