@@ -102,10 +102,9 @@ namespace GoogleMapsComponents.Maps
         /// <summary>
         /// Removes all clusters and markers from the map and also removes all markers managed by the clusterer.
         /// </summary>
-        public virtual async Task ClearMarkers()
+        public virtual async Task ClearMarkers(bool noDraw = false)
         {
-            await _jsObjectRef.InvokeAsync("clearMarkers");
-            await _jsObjectRef.InvokeAsync("render");
+            await _jsObjectRef.InvokeAsync("clearMarkers", noDraw);
         }
 
         /// <summary>
