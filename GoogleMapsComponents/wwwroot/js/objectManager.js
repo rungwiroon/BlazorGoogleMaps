@@ -668,7 +668,7 @@ window.googleMapsObjectManager = {
         return result;
     },
 
-    addClusteringMarkers(guid, mapGuid, markers, options) {
+    createClusteringMarkers(guid, mapGuid, markers, options) {
         const map = window._blazorGoogleMapsObjects[mapGuid];
 
         const originalMarkers = markers.map((marker, i) => {
@@ -701,6 +701,22 @@ window.googleMapsObjectManager = {
         }
 
         window._blazorGoogleMapsObjects[guid] = markerCluster;
+    },
+
+    removeClusteringMarkers(guid, markers, noDraw) {
+        const originalMarkers = markers.map((marker, i) => {
+            return window._blazorGoogleMapsObjects[marker.guid];
+        });
+
+        window._blazorGoogleMapsObjects[guid].addMarkers(originalMarkers, noDraw);
+    },
+
+    addClusteringMarkers(guid, markers, noDraw) {
+        const originalMarkers = markers.map((marker, i) => {
+            return window._blazorGoogleMapsObjects[marker.guid];
+        });
+
+        window._blazorGoogleMapsObjects[guid].addMarkers(originalMarkers, noDraw);
     }
 };
 
