@@ -33,7 +33,7 @@ namespace GoogleMapsComponents.Maps
             }
             var guid = System.Guid.NewGuid();
             var jsObjectRef = new JsObjectRef(jsRuntime, guid);
-            await jsRuntime.InvokeVoidAsync("googleMapsObjectManager.addClusteringMarkers", guid.ToString(), map.Guid.ToString(), markers, options);
+            await jsRuntime.InvokeVoidAsync("googleMapsObjectManager.createClusteringMarkers", guid.ToString(), map.Guid.ToString(), markers, options);
             var obj = new MarkerClustering(jsObjectRef, map, markers);
             return obj;
         }
@@ -46,7 +46,15 @@ namespace GoogleMapsComponents.Maps
             EventListeners = new Dictionary<string, List<MapEventListener>>();
         }
 
-        
+        /// <summary>
+        /// Add additional markers to an existing MarkerClusterer
+        /// </summary>
+        /// <param name="noDraw">when true, clusters will not be rerendered on the next map idle event rather than immediately after markers are added</param>
+        public virtual async Task AddMarkers(IEnumerable<Marker> markers, bool noDraw = false)
+        {
+            await _jsObjectRef.JSRuntime.InvokeVoidAsync("googleMapsObjectManager.addClusteringMarkers", _jsObjectRef.Guid.ToString(), markers, noDraw);
+        }
+
         public virtual async Task<MapEventListener> AddListener(string eventName, Action handler)
         {
             JsObjectRef listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync("addListener", eventName, handler);
@@ -81,6 +89,14 @@ namespace GoogleMapsComponents.Maps
         {
             _map = map;
             await _jsObjectRef.InvokeAsync("setMap", map);
+        }
+
+        /// <summary>
+        /// Removes provided markers from the clusterer's internal list of source markers.
+        /// </summary>
+        public virtual async Task RemoveMarkers(IEnumerable<Marker> markers, bool noDraw = false)
+        {
+            await _jsObjectRef.InvokeAsync("removeMarkers", markers, noDraw);
         }
 
         /// <summary>
