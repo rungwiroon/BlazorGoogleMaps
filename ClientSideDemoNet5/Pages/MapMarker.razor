@@ -202,6 +202,10 @@
 
         var markers = await GetMarkers(coordinates, map1.InteropObject);
 
+        // initialize markerclusering with an empty marker list if adding a clustering event listener
+        // Clustering happens immediately upon adding markers, so including markers with the init 
+        // creates a race condition with JSInterop adding a listener. If not adding a listener, pass markers
+        // to CreateAsync to eliminate the latency of a second JSInterop call to AddMarkers.
         _markerClustering = await MarkerClustering.CreateAsync(map1.JsRuntime, map1.InteropObject, markers);
         
 
