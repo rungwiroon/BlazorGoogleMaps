@@ -79,7 +79,7 @@ namespace GoogleMapsComponents
         public static Task<JsObjectRef> CreateAsync(
             IJSRuntime jsRuntime,
             string constructorFunctionName,
-            params object[] args)
+            params object?[] args)
         {
             return CreateAsync(jsRuntime, Guid.NewGuid(), constructorFunctionName, args);
         }
@@ -117,7 +117,7 @@ namespace GoogleMapsComponents
             IJSRuntime jsRuntime,
             Guid guid,
             string functionName,
-            params object[] args)
+            params object?[] args)
         {
             var jsObjectRef = new JsObjectRef(jsRuntime, guid);
 
@@ -144,7 +144,7 @@ namespace GoogleMapsComponents
             );
 
             return jsObjectRefs;
-        }        
+        }
 
         public virtual void Dispose()
         {

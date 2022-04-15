@@ -20,7 +20,7 @@ namespace GoogleMapsComponents.Maps
         /// If the second point is null, the bounds are set to the first point.
         /// The points may be positioned arbitrarily.
         /// </summary>
-        public LatLngBoundsLiteral(LatLngLiteral latLng1, LatLngLiteral latLng2 = null)
+        public LatLngBoundsLiteral(LatLngLiteral latLng1, LatLngLiteral? latLng2 = null)
         {
             East = latLng1.Lng;
             West = latLng1.Lng;
@@ -37,7 +37,7 @@ namespace GoogleMapsComponents.Maps
         /// Using this method you can initialize a LatLngBoundsLiteral reference with null and call 
         /// subsequently this method to extend the boundaries by given points.
         /// </summary>
-        public static void CreateOrExtend(ref LatLngBoundsLiteral latLngBoundsLiteral, LatLngLiteral latLng)
+        public static void CreateOrExtend(ref LatLngBoundsLiteral? latLngBoundsLiteral, LatLngLiteral latLng)
         {
             if (latLngBoundsLiteral == null)
             {

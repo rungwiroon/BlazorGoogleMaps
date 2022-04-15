@@ -6,7 +6,7 @@ namespace GoogleMapsComponents.Maps
 {
     public class Marker : ListableEntityBase<MarkerOptions>
     {
-        public static async Task<Marker> CreateAsync(IJSRuntime jsRuntime, MarkerOptions opts = null)
+        public static async Task<Marker> CreateAsync(IJSRuntime jsRuntime, MarkerOptions? opts = null)
         {
             var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Marker", opts);
             var obj = new Marker(jsObjectRef);
@@ -20,8 +20,7 @@ namespace GoogleMapsComponents.Maps
 
         public async Task<Animation?> GetAnimation()
         {
-            var animation = await _jsObjectRef.InvokeAsync<object>(
-                "getAnimation");
+            var animation = await _jsObjectRef.InvokeAsync<object?>("getAnimation");
 
             return Helper.ToNullableEnum<Animation>(animation?.ToString());
         }

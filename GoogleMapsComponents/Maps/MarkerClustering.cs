@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using GoogleMapsComponents.Maps.Extension;
 using Microsoft.JSInterop;
+// ReSharper disable UnusedMember.Global
 
 namespace GoogleMapsComponents.Maps
 {
@@ -24,14 +23,12 @@ namespace GoogleMapsComponents.Maps
             IJSRuntime jsRuntime,
             Map map,
             IEnumerable<Marker> markers,
-            MarkerClustererOptions options = null
+            MarkerClustererOptions? options = null
            )
         {
-            if (options == null)
-            {
-                options = new MarkerClustererOptions();
-            }
-            var guid = System.Guid.NewGuid();
+            options ??= new MarkerClustererOptions();
+
+            var guid = Guid.NewGuid();
             var jsObjectRef = new JsObjectRef(jsRuntime, guid);
             await jsRuntime.InvokeVoidAsync("googleMapsObjectManager.createClusteringMarkers", guid.ToString(), map.Guid.ToString(), markers, options);
             var obj = new MarkerClustering(jsObjectRef, map, markers);
@@ -76,7 +73,7 @@ namespace GoogleMapsComponents.Maps
             return eventListener;
         }
 
-        public virtual async Task<MapEventListener> AddListener<V>(string eventName, Action<V> handler)
+        public virtual async Task<MapEventListener> AddListener<TAction>(string eventName, Action<TAction> handler)
         {
             JsObjectRef listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync("addListener", eventName, handler);
             MapEventListener eventListener = new MapEventListener(listenerRef);

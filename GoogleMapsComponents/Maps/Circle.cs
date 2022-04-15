@@ -1,7 +1,5 @@
 ﻿using Microsoft.JSInterop;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
@@ -14,8 +12,9 @@ namespace GoogleMapsComponents.Maps
         /// <summary>
         /// Create a circle using the passed CircleOptions, which specify the center, radius, and style.
         /// </summary>
+        /// <param name="jsRuntime"></param>
         /// <param name="opts"></param>
-        public async static Task<Circle> CreateAsync(IJSRuntime jsRuntime, CircleOptions opts = null)
+        public static async Task<Circle> CreateAsync(IJSRuntime jsRuntime, CircleOptions? opts = null)
         {
             var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Circle", opts);
             var obj = new Circle(jsObjectRef);
@@ -23,9 +22,9 @@ namespace GoogleMapsComponents.Maps
         }
 
         internal Circle(JsObjectRef jsObjectRef)
-            :base(jsObjectRef)
+            : base(jsObjectRef)
         {
-        }        
+        }
 
         /// <summary>
         /// Gets the LatLngBounds of this Circle.
@@ -61,7 +60,7 @@ namespace GoogleMapsComponents.Maps
         public Task<bool> GetEditable()
         {
             return _jsObjectRef.InvokeAsync<bool>("getEditable");
-        }        
+        }
 
         /// <summary>
         /// Returns the radius of this circle (in meters).
@@ -106,7 +105,7 @@ namespace GoogleMapsComponents.Maps
         public Task SetEditable(bool editable)
         {
             return _jsObjectRef.InvokeAsync("setEditable", editable);
-        }        
+        }
 
         public Task SetOptions(CircleOptions options)
         {
@@ -138,6 +137,6 @@ namespace GoogleMapsComponents.Maps
         public Task SetVisible(bool visible)
         {
             return _jsObjectRef.InvokeAsync("setVisible", visible);
-        }        
+        }
     }
 }

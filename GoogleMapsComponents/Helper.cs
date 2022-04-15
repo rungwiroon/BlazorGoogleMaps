@@ -25,7 +25,7 @@ namespace GoogleMapsComponents
             return jsRuntime.MyInvokeAsync<object>(identifier, args);
         }
 
-        internal static T? ToNullableEnum<T>(string str)
+        internal static T? ToNullableEnum<T>(string? str)
             where T : struct
         {
             var enumType = typeof(T);
@@ -37,7 +37,9 @@ namespace GoogleMapsComponents
 
 
             if (str == "null")
+            {
                 return null;
+            }
 
             foreach (var name in Enum.GetNames(enumType))
             {
@@ -62,13 +64,15 @@ namespace GoogleMapsComponents
             return value;
         }
 
-        private static IEnumerable<object> MakeArgJsFriendly(IJSRuntime jsRuntime, IEnumerable<object> args)
+        private static IEnumerable<object> MakeArgJsFriendly(IJSRuntime jsRuntime, IEnumerable<object?> args)
         {
             var jsFriendlyArgs = args
                 .Select(arg =>
                 {
                     if (arg == null)
+                    {
                         return arg;
+                    }
 
                     if (arg is IOneOf oneof)
                     {
@@ -126,7 +130,7 @@ namespace GoogleMapsComponents
         internal static async Task<TRes> MyInvokeAsync<TRes>(
             this IJSRuntime jsRuntime,
             string identifier,
-            params object[] args)
+            params object?[] args)
         {
 
             var jsFriendlyArgs = MakeArgJsFriendly(jsRuntime, args);
@@ -141,7 +145,7 @@ namespace GoogleMapsComponents
             if (typeof(IOneOf).IsAssignableFrom(typeof(TRes)))
             {
                 var resultObject = await jsRuntime.InvokeAsync<string>(identifier, jsFriendlyArgs);
-                object result = null;
+                object? result = null;
 
                 if (resultObject is string someText)
                 {
