@@ -67,10 +67,16 @@ namespace ServerSideDemo.Pages
 
             var markers = await GetMarkers(coordinates, map1.InteropObject);
 
-            _markerClustering = await MarkerClustering.CreateAsync(map1.JsRuntime, map1.InteropObject, markers);
-
-            if (!_markerClustering.EventListeners.ContainsKey("clusteringend") || _markerClustering.EventListeners["clusteringend"].Count == 0)
+            if(_markerClustering == null)
+            {
+                // If adding a clustering event listener, initialize markerclusering with an empty marker list 
+                // Clustering happens immediately upon adding markers, so including markers with the init 
+                // creates a race condition with JSInterop adding a listener. If not adding a listener, pass markers
+                // to CreateAsync to eliminate the latency of a second JSInterop call to AddMarkers.
+                _markerClustering = await MarkerClustering.CreateAsync(map1.JsRuntime, map1.InteropObject, new List<Marker>());
                 await _markerClustering.AddListener("clusteringend", async () => { await SetMarkerListeners(); });
+            }
+            await _markerClustering.AddMarkers(markers);
 
             LatLngBoundsLiteral boundsLiteral = new LatLngBoundsLiteral(new LatLngLiteral() { Lat = coordinates.First().Lat, Lng = coordinates.First().Lng });
             foreach (var literal in coordinates)

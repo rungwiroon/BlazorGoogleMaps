@@ -52,6 +52,8 @@ namespace GoogleMapsComponents.Maps
         /// <param name="noDraw">when true, clusters will not be rerendered on the next map idle event rather than immediately after markers are added</param>
         public virtual async Task AddMarkers(IEnumerable<Marker> markers, bool noDraw = false)
         {
+            if (markers == null)
+                return;
             await _jsObjectRef.JSRuntime.InvokeVoidAsync("googleMapsObjectManager.addClusteringMarkers", _jsObjectRef.Guid.ToString(), markers, noDraw);
         }
 
