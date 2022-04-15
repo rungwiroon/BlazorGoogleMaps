@@ -49,11 +49,15 @@ namespace GoogleMapsComponents.Maps
         /// <summary>
         /// Add additional markers to an existing MarkerClusterer
         /// </summary>
+        /// <param name="markers"></param>
         /// <param name="noDraw">when true, clusters will not be rerendered on the next map idle event rather than immediately after markers are added</param>
-        public virtual async Task AddMarkers(IEnumerable<Marker> markers, bool noDraw = false)
+        public virtual async Task AddMarkers(IEnumerable<Marker>? markers, bool noDraw = false)
         {
             if (markers == null)
+            {
                 return;
+            }
+
             await _jsObjectRef.JSRuntime.InvokeVoidAsync("googleMapsObjectManager.addClusteringMarkers", _jsObjectRef.Guid.ToString(), markers, noDraw);
         }
 
@@ -117,7 +121,7 @@ namespace GoogleMapsComponents.Maps
         public virtual async Task FitMapToMarkers(int padding)
         {
             var newBounds = new LatLngBoundsLiteral(await _originalMarkers.First().GetPosition());
-            foreach(var marker in _originalMarkers)
+            foreach (var marker in _originalMarkers)
             {
                 newBounds.Extend(await marker.GetPosition());
             }
