@@ -676,7 +676,7 @@ window.googleMapsObjectManager = {
         });
 
         const markerClustererOptions = { map: map, markers: originalMarkers };
-        if (!options.ZoomOnClick) {
+        if (options && !options.zoomOnClick) {
             markerClustererOptions.onClusterClick = () => { };
         }
 
