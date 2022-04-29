@@ -85,9 +85,12 @@
             }
         });
         await polyline.AddListener("set_at", async () =>
-        {
-            path = (await polyline.GetPath().ConfigureAwait(true)).ToList();
-        });
+      {
+          if (polyline != null)
+          {
+              path = (await polyline.GetPath().ConfigureAwait(true)).ToList();
+          }
+      });
         await polyline.AddListener("remove_at", async () =>
         {
             if (polyline != null)
@@ -106,26 +109,28 @@
 
     private async Task ClearPolylinePath()
     {
-        var line = polylines.FirstOrDefault();
+        var line = polylines.LastOrDefault();
         if (line == null) return;
 
         var polylinePath = await line.CreatePath();
         await polylinePath.Clear();
+
     }
     private async Task AppendToPolylinePath()
     {
-        var line = polylines.FirstOrDefault();
+        var line = polylines.LastOrDefault();
         if (line == null) return;
 
-        var polylinePath = await line.CreatePath();
-        await polylinePath.Push(new LatLngLiteral(98.3256193, 7.8881847));
+        polyline = line;
+        path = (await polyline.GetPath().ConfigureAwait(true)).ToList();
     }
-    private async Task EndDrawingPolyline()
+    private Task EndDrawingPolyline()
     {
         polylines.Add(polyline);
 
         polyline = null;
         path.Clear();
+        return Task.CompletedTask;
     }
 
     private void AddArrowsToPolyline()
@@ -185,12 +190,13 @@
         path.Clear();
     }
 
-    private async Task EndDrawingPolygon()
+    private Task EndDrawingPolygon()
     {
         polygons.Add(polygon);
 
         polygon = null;
         path.Clear();
+        return Task.CompletedTask;
     }
 
     private async Task DrawingRectangle()
