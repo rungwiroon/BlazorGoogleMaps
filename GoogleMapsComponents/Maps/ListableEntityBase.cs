@@ -53,7 +53,7 @@ namespace GoogleMapsComponents.Maps
         /// If map is set to null, the map entity will be removed.
         /// </summary>
         /// <param name="map"></param>
-        public virtual async Task SetMap(Map map)
+        public virtual async Task SetMap(Map? map)
         {
             await _jsObjectRef.InvokeAsync("setMap", map);
 

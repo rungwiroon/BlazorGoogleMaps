@@ -202,7 +202,7 @@
 
         var markers = await GetMarkers(coordinates, map1.InteropObject);
 
-        // initialize markerclusering with an empty marker list if adding a clustering event listener
+        // If adding a clustering event listener, initialize markerclustering with an empty marker list 
         // Clustering happens immediately upon adding markers, so including markers with the init 
         // creates a race condition with JSInterop adding a listener. If not adding a listener, pass markers
         // to CreateAsync to eliminate the latency of a second JSInterop call to AddMarkers.
@@ -210,7 +210,7 @@
         
 
 
-        LatLngBoundsLiteral boundsLiteral = new LatLngBoundsLiteral(new LatLngLiteral() { Lat = coordinates.First().Lat, Lng = coordinates.First().Lng });
+        LatLngBoundsLiteral? boundsLiteral = new LatLngBoundsLiteral(new LatLngLiteral() { Lat = coordinates.First().Lat, Lng = coordinates.First().Lng });
         foreach (var literal in coordinates)
 		    LatLngBoundsLiteral.CreateOrExtend(ref boundsLiteral, literal);
 		

@@ -70,7 +70,7 @@ namespace GoogleMapsComponents.Maps
                 "getRouteIndex");
         }
 
-        public async Task SetDirections(DirectionsResult directions)
+        public async Task SetDirections(DirectionsResult? directions)
         {
             await _jsObjectRef.InvokeAsync(
                 "setDirections",
@@ -104,7 +104,7 @@ namespace GoogleMapsComponents.Maps
             }
         }
 
-        public async Task SetMap(Map map)
+        public async Task SetMap(Map? map)
         {
             await _jsObjectRef.InvokeAsync(
                    "setMap",
