@@ -698,7 +698,7 @@ window.googleMapsObjectManager = {
             try {
                 let algorithm = window[splits[0]];
                 for (i = 1; i < splits.length; i++) {
-                    algorithm = renderer[splits[i]];
+                    algorithm = algorithm[splits[i]];
                 }
                 markerClustererOptions.algorithm = algorithm;
             } catch (e) {
