@@ -694,7 +694,7 @@ window.googleMapsObjectManager = {
         }
 
         if (options && options.algorithmObjectName) {
-            const splits = options.rendererObjectName.split(".");
+            const splits = options.algorithmObjectName.split(".");
             try {
                 let algorithm = window[splits[0]];
                 for (i = 1; i < splits.length; i++) {
