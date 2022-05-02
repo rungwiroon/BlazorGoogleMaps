@@ -675,7 +675,37 @@ window.googleMapsObjectManager = {
             return window._blazorGoogleMapsObjects[marker.guid];
         });
 
-        const markerClustererOptions = { map: map, markers: originalMarkers };
+        const markerClustererOptions = {
+            map: map,
+            markers: originalMarkers,
+        };
+
+        if (options && options.rendererObjectName) {
+            const splits = options.rendererObjectName.split(".");
+            try {
+                let renderer = window[splits[0]];
+                for (i = 1; i < splits.length; i++) {
+                    renderer = renderer[splits[i]];
+                }
+                markerClustererOptions.renderer = renderer;
+            } catch (e){
+                console.log(e);
+            }
+        }
+
+        if (options && options.algorithmObjectName) {
+            const splits = options.rendererObjectName.split(".");
+            try {
+                let algorithm = window[splits[0]];
+                for (i = 1; i < splits.length; i++) {
+                    algorithm = renderer[splits[i]];
+                }
+                markerClustererOptions.algorithm = algorithm;
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
         if (options && !options.zoomOnClick) {
             markerClustererOptions.onClusterClick = () => { };
         }
@@ -721,3 +751,46 @@ window.googleMapsObjectManager = {
 };
 
 //export { googleMapsObjectManager }
+
+
+//window.customRendererLib = {
+//    interpolatedRenderer: {
+//        render: function ({ count, position }, stats) {
+//            const color = count > Math.max(5, stats.clusters.markers.mean) ? "#F00" : "#00F";
+
+//            let countText;
+//            try {
+//                let formatter = Intl.NumberFormat('en', { notation: 'compact' });
+//                countText = formatter.format(count);
+//            } catch {
+//                countText = String(count);
+//            }
+
+//            // create svg url with fill color
+//            const svg = window.btoa(`
+//  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+//    <circle cx="120" cy="120" opacity=".1" r="120" fill="#000000"/>
+//    <circle cx="120" cy="120" opacity="1" r="100" fill="#ffffff"/>
+//    <circle cx="120" cy="120" opacity="1" r="64" fill="${color}"/>
+//  </svg>`);
+//            // create marker using svg icon
+//            return new google.maps.Marker({
+//                position,
+//                icon: {
+//                    url: `data:image/svg+xml;base64,${svg}`,
+//                    scaledSize: new google.maps.Size(50, 50),
+//                },
+//                label: {
+//                    text: countText,
+//                    color: "#ffffff",
+//                    fontSize: "16px",
+//                    fontWeight: "bold",
+//                    fontFamily: "Open Sans"
+//                },
+//                // adjust zIndex to be above other markers
+//                zIndex: Number(google.maps.Marker.MAX_ZINDEX) + count,
+//            });
+//        },
+//    }
+//};
+
