@@ -73,7 +73,10 @@ namespace ServerSideDemo.Pages
                 // Clustering happens immediately upon adding markers, so including markers with the init 
                 // creates a race condition with JSInterop adding a listener. If not adding a listener, pass markers
                 // to CreateAsync to eliminate the latency of a second JSInterop call to AddMarkers.
-                _markerClustering = await MarkerClustering.CreateAsync(map1.JsRuntime, map1.InteropObject, new List<Marker>());
+                _markerClustering = await MarkerClustering.CreateAsync(map1.JsRuntime, map1.InteropObject, new List<Marker>(), new MarkerClustererOptions()
+                {
+                    // RendererObjectName = "customRendererLib.interpolatedRenderer"
+                });
                 await _markerClustering.AddListener("clusteringend", async () => { await SetMarkerListeners(); });
             }
             await _markerClustering.AddMarkers(markers);

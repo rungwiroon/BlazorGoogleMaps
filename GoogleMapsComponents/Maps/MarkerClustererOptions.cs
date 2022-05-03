@@ -98,5 +98,18 @@ namespace GoogleMapsComponents.Maps
         /// and it deals with zooming on its own.
         /// </summary>
         public bool? ZoomOnClick { get; set; }
+
+        /// <summary>
+        /// full js object name in dot notation from window, for the object containing the algorithm function for js-markerclusterer use in calculating clusters. 
+        /// options built-in to js-markerclusterer include "markerClusterer.GridAlgorithm", "markerClusterer.NoopAlgorithm", and "markerClusterer.SuperClusterAlgorithm" (default)
+        /// see: https://googlemaps.github.io/js-markerclusterer/ for latest options.
+        /// </summary>
+        public string? AlgorithmObjectName { get; set; }
+
+        /// <summary>
+        /// full js object name in dot notation from window, for the object containing the render function for js-markerclusterer to use in rendering cluster markers.
+        /// js-markerclusterer only includes one renderer, DefaultRenderer which is a class and would need to be instantiated before it is referenced in this property.
+        /// </summary>
+        public string? RendererObjectName { get; set; }
     }
 }
