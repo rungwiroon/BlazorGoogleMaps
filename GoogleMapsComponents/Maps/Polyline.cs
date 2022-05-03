@@ -15,7 +15,7 @@ namespace GoogleMapsComponents.Maps
         /// <summary>
         /// Create a polyline using the passed PolylineOptions, which specify both the path of the polyline and the stroke style to use when drawing the polyline.
         /// </summary>
-        public async static Task<Polyline> CreateAsync(IJSRuntime jsRuntime, PolylineOptions opts = null)
+        public static async Task<Polyline> CreateAsync(IJSRuntime jsRuntime, PolylineOptions opts = null)
         {
             var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Polyline", opts);
 

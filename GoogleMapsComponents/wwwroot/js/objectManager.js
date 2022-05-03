@@ -668,6 +668,7 @@ window.googleMapsObjectManager = {
         return result;
     },
 
+    //based on https://googlemaps.github.io/js-markerclusterer/
     createClusteringMarkers(guid, mapGuid, markers, options) {
         const map = window._blazorGoogleMapsObjects[mapGuid];
 
@@ -688,7 +689,7 @@ window.googleMapsObjectManager = {
                     renderer = renderer[splits[i]];
                 }
                 markerClustererOptions.renderer = renderer;
-            } catch (e){
+            } catch (e) {
                 console.log(e);
             }
         }
@@ -712,21 +713,21 @@ window.googleMapsObjectManager = {
 
         const markerCluster = new markerClusterer.MarkerClusterer(markerClustererOptions);
 
-/*        const newMarkers = trees.map(({ geometry }, i) => new google.maps.Marker({
-			position: {
-				lat: geometry.coordinates[1],
-				lng: geometry.coordinates[0],
-			},
-			label: labels[i % labels.length],
-			map,
-        }));
-		const markerCluster = new markerClusterer.MarkerClusterer({
-			map: map,
-            markers: newMarkers
-		});
-*/
+        /*        const newMarkers = trees.map(({ geometry }, i) => new google.maps.Marker({
+                    position: {
+                        lat: geometry.coordinates[1],
+                        lng: geometry.coordinates[0],
+                    },
+                    label: labels[i % labels.length],
+                    map,
+                }));
+                const markerCluster = new markerClusterer.MarkerClusterer({
+                    map: map,
+                    markers: newMarkers
+                });
+        */
 
-		if ("set" in markerCluster) {
+        if ("set" in markerCluster) {
             markerCluster.set("guidString", guid);
         }
 
@@ -749,48 +750,3 @@ window.googleMapsObjectManager = {
         window._blazorGoogleMapsObjects[guid].addMarkers(originalMarkers, noDraw);
     }
 };
-
-//export { googleMapsObjectManager }
-
-
-//window.customRendererLib = {
-//    interpolatedRenderer: {
-//        render: function ({ count, position }, stats) {
-//            const color = count > Math.max(5, stats.clusters.markers.mean) ? "#F00" : "#00F";
-
-//            let countText;
-//            try {
-//                let formatter = Intl.NumberFormat('en', { notation: 'compact' });
-//                countText = formatter.format(count);
-//            } catch {
-//                countText = String(count);
-//            }
-
-//            // create svg url with fill color
-//            const svg = window.btoa(`
-//  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
-//    <circle cx="120" cy="120" opacity=".1" r="120" fill="#000000"/>
-//    <circle cx="120" cy="120" opacity="1" r="100" fill="#ffffff"/>
-//    <circle cx="120" cy="120" opacity="1" r="64" fill="${color}"/>
-//  </svg>`);
-//            // create marker using svg icon
-//            return new google.maps.Marker({
-//                position,
-//                icon: {
-//                    url: `data:image/svg+xml;base64,${svg}`,
-//                    scaledSize: new google.maps.Size(50, 50),
-//                },
-//                label: {
-//                    text: countText,
-//                    color: "#ffffff",
-//                    fontSize: "16px",
-//                    fontWeight: "bold",
-//                    fontFamily: "Open Sans"
-//                },
-//                // adjust zIndex to be above other markers
-//                zIndex: Number(google.maps.Marker.MAX_ZINDEX) + count,
-//            });
-//        },
-//    }
-//};
-
