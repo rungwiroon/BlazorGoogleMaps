@@ -39,7 +39,7 @@ namespace GoogleMapsComponents.Maps.Visualization
         /// By default, heatmap colors are dynamically scaled according to the greatest concentration of points at any particular pixel on the map. 
         /// This property allows you to specify a fixed maximum.
         /// </summary>
-        public float? MaxIntesity { get; set; }
+        public float? MaxIntensity { get; set; }
 
         /// <summary>
         /// The opacity of the heatmap, expressed as a number between 0 and 1. Defaults to 0.6.
