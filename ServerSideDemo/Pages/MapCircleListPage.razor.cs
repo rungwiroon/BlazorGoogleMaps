@@ -47,7 +47,7 @@ namespace ServerSideDemo.Pages
         var color = colors[rnd.Next(0,colors.Length)];
         var circleOptions = new CircleOptions {
           Map=this.map1.InteropObject,
-          Center=new LatLngLiteral(bounds.West+rnd.NextDouble()*(bounds.East-bounds.West),bounds.South+rnd.NextDouble()*(bounds.North-bounds.South)),
+          Center=new LatLngLiteral { Lat = bounds.South+rnd.NextDouble()*(bounds.North-bounds.South), Lng = bounds.West+rnd.NextDouble()*(bounds.East-bounds.West) },
           Radius=(rnd.NextDouble()+0.2)/1.2*maxRadius,
           StrokeColor=color,
           StrokeOpacity=0.60f,
