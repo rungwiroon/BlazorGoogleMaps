@@ -9,7 +9,7 @@
 </GoogleMap>
 
 Overlay Opacity:
-<input type="range" min="0" max="1" step="0.1" @bind="LayerOpacity" />
+<input type="range" min="0" max="1" step="0.02" @bind-value="@LayerOpacity" @bind-value:event="oninput" />
 <br />
 <button @onclick="AddMarker">Add marker</button>&nbsp;
 <button @onclick="RemoveMarker">Remove marker</button>
@@ -31,7 +31,7 @@ Overlay Opacity:
         get => layerOpacity;
         set
         {
-            overlayImage.SetOpacity(value);
+            _ = overlayImage.SetOpacity(value); // don't await
             layerOpacity = value;
         }
     }
@@ -98,7 +98,14 @@ Overlay Opacity:
 
         await map1.InteropObject.AddListener("zoom_changed", OnZoomChanged);
 
-        overlayImage = await ImageMapType.CreateAsync(map1.JsRuntime, "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png", 0, 20, "OSM", 0.75f);
+        ////////////////////////////////////////////
+        // To use a single url/subdomain, you can use this call
+        //overlayImage = await ImageMapType.CreateAsync(map1.JsRuntime, "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png", 0, 20, "OSM", 0.75f);
+
+        ////////////////////////////////////////////
+        // to provide multiple subdomains (which use y mod subDomains.Length as the index into the array of domains), us this call
+        overlayImage = await ImageMapType.CreateAsync(map1.JsRuntime, "https://{domain}.tile.openstreetmap.org/{z}/{x}/{y}.png", new string[] { "a", "b", "c" }, 0, 20, "OSM", 0.75f);
+
         await map1.InteropObject?.AddImageLayer(overlayImage);
     }
 

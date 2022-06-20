@@ -46,7 +46,32 @@ namespace GoogleMapsComponents.Maps
             };
             return to;
         }
+        public async static Task<ImageMapType> CreateAsync(IJSRuntime jsRuntime, string baseUrlFormat, string[] subDomains, int minZoom, int maxZoom, string name, float opacity)
+        {
+            // check if any subdomains were provided
+            if(subDomains == null || subDomains.Length == 0) return await CreateAsync(jsRuntime, baseUrlFormat, minZoom, maxZoom, name, opacity);
+            var realUrl = baseUrlFormat.Replace("{z}", "' + zoom + '").Replace("{x}", "' + coord.x + '").Replace("{y}", "' + coord.y + '");
+            string initOpts = @"{
+                'getTileUrl': (coord, zoom) => {
+                            var subDomains = ['" + String.Join("','", subDomains) + @"'];
+                            var ndx = coord.y % " + subDomains.Length + @";
+                            var tUrl = '" + realUrl + @"'
+                            return tUrl.replace('{domain}', subDomains[ndx]);
+                        },
+                'tileSize': new google.maps.Size(256, 256),
+                'maxZoom': " + maxZoom.ToString() + @",
+                'minZoom': " + minZoom.ToString() + @",
+                'opacity': " + opacity.ToString() + @",
+                'name': '" + name + @"'
+            }";
 
+            var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.ImageMapType", initOpts);
+            var to = new ImageMapType(jsObjectRef)
+            {
+                Name = name
+            };
+            return to;
+        }
         internal ImageMapType(JsObjectRef jsObjectRef)
         {
             _jsObjectRef = jsObjectRef;
