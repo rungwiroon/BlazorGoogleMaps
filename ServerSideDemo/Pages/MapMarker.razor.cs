@@ -67,7 +67,7 @@ namespace ServerSideDemo.Pages
 
             var markers = await GetMarkers(coordinates, map1.InteropObject);
 
-            if(_markerClustering == null)
+            if (_markerClustering == null)
             {
                 // If adding a clustering event listener, initialize markerclusering with an empty marker list 
                 // Clustering happens immediately upon adding markers, so including markers with the init 
@@ -138,14 +138,9 @@ namespace ServerSideDemo.Pages
 
             _markerClustering = await MarkerClustering.CreateAsync(map1.JsRuntime, map1.InteropObject, markers, new()
             {
-                ClusterClass = "custom-clustericon",
+
                 AverageCenter = true,
-                Styles = new()
-                {
-                    new MarkerClusterIconStyle { Height = 40, Width = 40, ClassName = "custom-clustericon-1", },
-                    new MarkerClusterIconStyle { Height = 40, Width = 40, ClassName = "custom-clustericon-2", TextColor = "White" },
-                    new MarkerClusterIconStyle { Height = 50, Width = 50, ClassName = "custom-clustericon-3" }
-                },
+                RendererObjectName = "customRendererLib.interpolatedRenderer",
                 ZoomOnClick = true,
 
             });
