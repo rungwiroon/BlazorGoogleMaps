@@ -107,13 +107,18 @@ namespace GoogleMapsComponents.Maps
         /// Passing in null will cause any animation to stop.
         /// </summary>
         /// <param name="animation"></param>
-        public Task SetAnimation(Animation animation)
+        public Task SetAnimation(Animation? animation)
         {
-            int animationCode = 0;
-            if (animation == Animation.Bounce)
+            int? animationCode;
+
+            switch (animation)
             {
-                animationCode = 1;
+                case null: animationCode = null; break;
+                case Animation.Bounce: animationCode = 1; break;
+                case Animation.Drop: animationCode = 2; break;
+                default: animationCode = 0; break;
             }
+
             return _jsObjectRef.InvokeAsync(
                 "setAnimation",
                 animationCode);
