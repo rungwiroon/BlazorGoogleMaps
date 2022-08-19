@@ -1,14 +1,16 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
-namespace ClientSideDemoNet5
+namespace ClientSideDemoNet6
 {
-    public class Startup {
+    public class Startup
+    {
 
-        private static async Task Main(string[] args) {
+        private static async Task Main(string[] args)
+        {
 
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
-            
+
             builder.RootComponents.Add<App>("app");
 
             await builder.Build().RunAsync();
