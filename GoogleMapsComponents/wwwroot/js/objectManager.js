@@ -739,7 +739,7 @@ window.googleMapsObjectManager = {
             return window._blazorGoogleMapsObjects[marker.guid];
         });
 
-        window._blazorGoogleMapsObjects[guid].addMarkers(originalMarkers, noDraw);
+        window._blazorGoogleMapsObjects[guid].removeMarkers(originalMarkers, noDraw);
     },
 
     addClusteringMarkers(guid, markers, noDraw) {

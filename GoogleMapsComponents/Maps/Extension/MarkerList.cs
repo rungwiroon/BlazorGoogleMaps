@@ -285,12 +285,23 @@ namespace GoogleMapsComponents.Maps.Extension
         /// Passing in null will cause any animation to stop.
         /// </summary>
         /// <param name="animation"></param>
-        public Task SetAnimations(Dictionary<string, Animation> animations)
+        public Task SetAnimations(Dictionary<string, Animation?> animations)
         {
-            Dictionary<Guid, object> dictArgs = animations.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
+            Dictionary<Guid, object?> dictArgs = animations.ToDictionary(e => Markers[e.Key].Guid, e => (object?)GetAnimationCode(e.Value));
             return _jsObjectRef.InvokeMultipleAsync(
                 "setAnimation",
                 dictArgs);
+        }
+
+        public int? GetAnimationCode(Animation? animation)
+        {
+            switch (animation)
+            {
+                case null: return null;
+                case Animation.Bounce: return 1;
+                case Animation.Drop: return 2;
+                default: return 0;
+            }
         }
 
         /// <summary>
