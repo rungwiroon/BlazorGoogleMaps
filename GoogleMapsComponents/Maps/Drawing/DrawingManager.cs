@@ -158,9 +158,13 @@ namespace GoogleMapsComponents.Maps.Drawing
         private class OverlaycompleteArgs
         {
             // ReSharper disable once InconsistentNaming
+            // ReSharper disable once UnusedAutoPropertyAccessor.Local
             public Guid uuid { get; set; }
             // ReSharper disable once InconsistentNaming
+            // ReSharper disable once UnusedAutoPropertyAccessor.Local
+#pragma warning disable CS8618
             public string type { get; set; }
+#pragma warning restore CS8618
         }
 
     }
