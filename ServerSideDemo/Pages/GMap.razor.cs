@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using GoogleMapsComponents.Maps;
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Options;
 
 namespace ServerSideDemo.Pages
 {
