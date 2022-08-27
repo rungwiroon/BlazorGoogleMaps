@@ -99,7 +99,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         public virtual async Task RemoveMarkers(IEnumerable<Marker> markers, bool noDraw = false)
         {
-            await _jsObjectRef.InvokeAsync("removeMarkers", markers, noDraw);
+            await _jsObjectRef.JSRuntime.InvokeVoidAsync("googleMapsObjectManager.removeClusteringMarkers", _jsObjectRef.Guid.ToString(), markers, noDraw);
         }
 
         /// <summary>
