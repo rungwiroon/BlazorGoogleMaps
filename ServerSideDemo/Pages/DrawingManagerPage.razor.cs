@@ -10,9 +10,9 @@ namespace ServerSideDemo.Pages
 {
     public partial class DrawingManagerPage
     {
-        private DrawingManager drawingManager;
-        private DrawingManagerOptions managerOptions;
-        private PolygonOptions polygonOptions;
+        private DrawingManager _drawingManager;
+        private DrawingManagerOptions _managerOptions;
+        private PolygonOptions _polygonOptions;
         private GoogleMap map1;
         private MapOptions mapOptions;
 
@@ -33,7 +33,7 @@ namespace ServerSideDemo.Pages
                 DisableDefaultUI = true
             };
 
-            polygonOptions = new PolygonOptions()
+            _polygonOptions = new PolygonOptions()
             {
                 StrokeWeight = 1,
                 FillOpacity = 0.45f,
@@ -58,19 +58,19 @@ namespace ServerSideDemo.Pages
                 DrawingModes = overlayTypes
             };
 
-            managerOptions = new DrawingManagerOptions()
+            _managerOptions = new DrawingManagerOptions()
             {
                 Map = map1.InteropObject,
-                PolygonOptions = polygonOptions,
+                PolygonOptions = _polygonOptions,
                 //DrawingMode = OverlayType.Polygon,
                 DrawingControl = true,
                 DrawingControlOptions = drawingControlOptions
             };
 
-            drawingManager = await DrawingManager.CreateAsync(JsRuntime, managerOptions);
+            _drawingManager = await DrawingManager.CreateAsync(JsRuntime, _managerOptions);
 
             //https://developers.google.com/maps/documentation/javascript/drawinglayer
-            await drawingManager.AddOverlayCompleteListener(async (overComplete) =>
+            await _drawingManager.AddOverlayCompleteListener(async (overComplete) =>
             {
                 if (overComplete.Type == OverlayType.Polygon)
                 {
@@ -91,14 +91,19 @@ namespace ServerSideDemo.Pages
 
         private async Task ChangeDrawingModeToLine()
         {
-            await drawingManager.SetDrawingMode(OverlayType.Polyline);
+            await _drawingManager.SetDrawingMode(OverlayType.Polyline);
 
         }
 
         private async Task StopDrawingMode()
         {
-            await drawingManager.SetDrawingMode(null);
+            await _drawingManager.SetDrawingMode(null);
 
+        }
+
+        private Task SetMap()
+        {
+            return _drawingManager.SetMap(_drawingManager.GetMap());
         }
     }
 }

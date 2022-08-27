@@ -77,12 +77,13 @@ namespace GoogleMapsComponents.Maps.Drawing
 
         /// <summary>
         /// Attaches the DrawingManager object to the specified Map.
+        /// https://developers.google.com/maps/documentation/javascript/reference/drawing#DrawingManager.setMap
         /// </summary>
         /// <param name="map"></param>
         public async Task SetMap(Map map)
         {
             await _jsObjectRef.InvokeAsync(
-                   "googleMapDrawingManagerJsFunctions.setMap",
+                   "setMap",
                    map);
 
             _map = map;
