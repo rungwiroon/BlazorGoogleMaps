@@ -167,11 +167,11 @@ namespace GoogleMapsComponents
             );
         }
 
-        public Task InvokeAsync(string functionName, params object[] args)
+        public Task InvokeAsync(string functionName, params object?[] args)
         {
             return _jsRuntime.MyInvokeAsync(
                 "googleMapsObjectManager.invoke",
-                new object[] { _guid.ToString(), functionName }
+                new object?[] { _guid.ToString(), functionName }
                     .Concat(args).ToArray()
             );
         }

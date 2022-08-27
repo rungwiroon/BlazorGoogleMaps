@@ -1,7 +1,5 @@
 ﻿using Microsoft.JSInterop;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps.Drawing
@@ -14,12 +12,12 @@ namespace GoogleMapsComponents.Maps.Drawing
     public class DrawingManager : IDisposable
     {
         private readonly JsObjectRef _jsObjectRef;
-        private Map _map;
+        private Map? _map;
 
         /// <summary>
         /// Creates a DrawingManager that allows users to draw overlays on the map, and switch between the type of overlay to be drawn with a drawing control.
         /// </summary>
-        public async static Task<DrawingManager> CreateAsync(IJSRuntime jsRuntime, DrawingManagerOptions opts = null)
+        public static async Task<DrawingManager> CreateAsync(IJSRuntime jsRuntime, DrawingManagerOptions? opts = null)
         {
             var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.drawing.DrawingManager", opts);
 
@@ -31,12 +29,14 @@ namespace GoogleMapsComponents.Maps.Drawing
         /// <summary>
         /// Creates a DrawingManager that allows users to draw overlays on the map, and switch between the type of overlay to be drawn with a drawing control.
         /// </summary>
-        private DrawingManager(JsObjectRef jsObjectRef, DrawingManagerOptions opt = null)
+        private DrawingManager(JsObjectRef jsObjectRef, DrawingManagerOptions? opt = null)
         {
             _jsObjectRef = jsObjectRef;
 
             if (opt?.Map != null)
+            {
                 _map = opt.Map;
+            }
         }
 
         public void Dispose()
@@ -59,7 +59,7 @@ namespace GoogleMapsComponents.Maps.Drawing
         /// Returns the Map to which the DrawingManager is attached, which is the Map on which the overlays created will be placed.
         /// </summary>
         /// <returns></returns>
-        public Map GetMap()
+        public Map? GetMap()
         {
             return _map;
         }
@@ -72,9 +72,7 @@ namespace GoogleMapsComponents.Maps.Drawing
         /// <returns></returns>
         public Task SetDrawingMode(OverlayType? drawingMode)
         {
-            return _jsObjectRef.InvokeAsync(
-                "setDrawingMode",
-                drawingMode);
+            return _jsObjectRef.InvokeAsync("setDrawingMode", drawingMode);
         }
 
         /// <summary>
@@ -144,8 +142,6 @@ namespace GoogleMapsComponents.Maps.Drawing
 
             await _jsObjectRef.JSRuntime.MyInvokeAsync("googleMapsObjectManager.drawingManagerOverlaycomplete",
                 new object[] { this._jsObjectRef.Guid.ToString(), (Action<OverlaycompleteArgs>)Act });
-
-            return;
         }
 
         public async Task<MapEventListener> AddListener<T>(string eventName, Action<T> handler)

@@ -20,7 +20,7 @@ namespace GoogleMapsComponents
         internal static Task MyInvokeAsync(
             this IJSRuntime jsRuntime,
             string identifier,
-            params object[] args)
+            params object?[] args)
         {
             return jsRuntime.MyInvokeAsync<object>(identifier, args);
         }
