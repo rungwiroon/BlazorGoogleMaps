@@ -16,6 +16,7 @@
 <button @onclick="StartDrawingPolygon">Start drawing polygon</button>
 <button @onclick="EndDrawingPolygon">End drawing polygon</button>
 <button @onclick="SetAndGetPathPolygon">Set and Get path polygon</button>
+<button @onclick="SetAndGetPolygonPaths">Set and Get polygon paths</button>
 <br />
 <button @onclick="DrawingRectangle">Drawing rectangle</button>
 <br />
@@ -298,4 +299,48 @@
             Console.WriteLine(latLngLiteral);
         }
     }
+
+    // Reference from https://developers.google.com/maps/documentation/javascript/examples/polygon-hole
+    private async Task SetAndGetPolygonPaths()
+    {
+        var outerCoords = new List<LatLngLiteral>()
+        {
+            new LatLngLiteral(13.501908279929077, 100.69801114196777),
+            new LatLngLiteral(13.491392275719202, 100.74933789367675),
+            new LatLngLiteral(13.465851481053091, 100.71637890930175),
+        };
+
+        var innerCoords = new List<LatLngLiteral>()
+        {
+            new LatLngLiteral(13.487386057049033, 100.72633526916503),
+            new LatLngLiteral(13.48137660307361, 100.719125491333),
+            new LatLngLiteral(13.478705686132331, 100.72959683532714),
+        };
+
+        var polygonForPaths = await Polygon.CreateAsync(map1.JsRuntime, new PolygonOptions()
+        {
+            Paths = new[] { outerCoords, innerCoords },
+            Draggable = true,
+            Editable = false,
+            FillColor = "blue",
+            ZIndex = 999,
+        });
+
+        polygons.Add(polygonForPaths);
+        await polygonForPaths.SetMap(map1.InteropObject);
+
+        var polygonPaths = await polygonForPaths.GetPaths();
+        var polygonPathsList = polygonPaths.ToList();
+
+        for (var i = 0; i < polygonPathsList.Count; i++)
+        {
+            Console.WriteLine($"Path: {i}");
+            foreach (var coords in polygonPathsList[i])
+            {
+                Console.WriteLine($"\tLat: {coords.Lat} Lng: {coords.Lng}");
+            }
+        }
+
+    }
+
 }
