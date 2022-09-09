@@ -1,6 +1,4 @@
-﻿using OneOf;
-
-namespace GoogleMapsComponents.Maps.Places
+﻿namespace GoogleMapsComponents.Maps.Places
 {
     public class ComponentRestrictions
     {

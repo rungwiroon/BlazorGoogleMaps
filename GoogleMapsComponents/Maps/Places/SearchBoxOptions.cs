@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace GoogleMapsComponents.Maps.Places
+﻿namespace GoogleMapsComponents.Maps.Places
 {
     public class SearchBoxOptions
     {

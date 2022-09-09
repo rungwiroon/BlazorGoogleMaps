@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace GoogleMapsComponents.Maps
+﻿namespace GoogleMapsComponents.Maps
 {
     /// <summary>
     /// https://developers.google.com/maps/documentation/javascript/reference/marker#MarkerLabel.className

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace GoogleMapsComponents.Maps.Visualization
+﻿namespace GoogleMapsComponents.Maps.Visualization
 {
     /// <summary>
     /// A data point entry for a heatmap. This is a geographical data point with a weight attribute.

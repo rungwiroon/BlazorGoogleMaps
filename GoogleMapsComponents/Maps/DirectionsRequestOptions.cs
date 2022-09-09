@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace GoogleMapsComponents.Maps
+﻿namespace GoogleMapsComponents.Maps
 {
     /// <summary>
     /// By default route request strips overview_path, overview_polyline, legs.steps,legs.steps.lat_lngs, legs.steps.path since these brings overhead to resposne.

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace GoogleMapsComponents.Maps
+﻿namespace GoogleMapsComponents.Maps
 {
     /// <summary>
     /// Details about the departure, arrival, and mode of transit used in this step.
