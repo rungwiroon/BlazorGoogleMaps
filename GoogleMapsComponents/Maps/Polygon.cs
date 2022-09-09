@@ -9,7 +9,8 @@ namespace GoogleMapsComponents.Maps
     public class Polygon : IDisposable
     {
         protected readonly JsObjectRef _jsObjectRef;
-        private Map _map;
+
+        private Map? _map;
         
         public Guid Guid => _jsObjectRef.Guid;
 
@@ -17,8 +18,9 @@ namespace GoogleMapsComponents.Maps
         /// Create a polygon using the passed PolygonOptions, which specify the polygon's path, the stroke style for the polygon's edges, and the fill style for the polygon's interior regions. 
         /// A polygon may contain one or more paths, where each path consists of an array of LatLngs.
         /// </summary>
+        /// <param name="jsRuntime"></param>
         /// <param name="opts"></param>
-        public static async Task<Polygon> CreateAsync(IJSRuntime jsRuntime, PolygonOptions opts = null)
+        public static async Task<Polygon> CreateAsync(IJSRuntime jsRuntime, PolygonOptions? opts = null)
         {
             var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Polygon", opts);
 
@@ -31,8 +33,9 @@ namespace GoogleMapsComponents.Maps
         /// Create a polygon using the passed PolygonOptions, which specify the polygon's path, the stroke style for the polygon's edges, and the fill style for the polygon's interior regions. 
         /// A polygon may contain one or more paths, where each path consists of an array of LatLngs.
         /// </summary>
+        /// <param name="jsObjectRef"></param>
         /// <param name="opts"></param>
-        internal Polygon(JsObjectRef jsObjectRef, PolygonOptions opts = null)
+        internal Polygon(JsObjectRef jsObjectRef, PolygonOptions? opts = null)
         {
             _jsObjectRef = jsObjectRef;
             _map = opts?.Map;
@@ -67,7 +70,7 @@ namespace GoogleMapsComponents.Maps
         /// Returns the map on which this shape is attached.
         /// </summary>
         /// <returns></returns>
-        public Map GetMap()
+        public Map? GetMap()
         {
             return _map;
         }
