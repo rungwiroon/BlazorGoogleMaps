@@ -74,9 +74,10 @@ namespace GoogleMapsComponents.Maps
         /// <param name="geoJson"></param>
         /// <param name="options"></param>
         /// <returns></returns>
-        public Task<IEnumerable<Data.Feature>> AddGeoJson(object geoJson, Maps.Data.GeoJsonOptions options = null)
+        public Task<IEnumerable<Data.Feature>> AddGeoJson(object geoJson, Maps.Data.GeoJsonOptions? options = null)
         {
-            throw new NotImplementedException();
+            return _jsObjectRef.InvokeAsync<IEnumerable<Data.Feature>>(
+                "addGeoJson", geoJson);
         }
 
         /// <summary>
