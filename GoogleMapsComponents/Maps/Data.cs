@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using GoogleMapsComponents.Maps.Data;
 using Microsoft.JSInterop;
 using OneOf;
 
@@ -74,10 +76,22 @@ namespace GoogleMapsComponents.Maps
         /// <param name="geoJson"></param>
         /// <param name="options"></param>
         /// <returns></returns>
-        public Task<IEnumerable<Data.Feature>> AddGeoJson(object geoJson, Maps.Data.GeoJsonOptions? options = null)
+        public Task<object> AddGeoJson(Feature geoJson, Maps.Data.GeoJsonOptions? options = null)
         {
-            return _jsObjectRef.InvokeAsync<IEnumerable<Data.Feature>>(
-                "addGeoJson", geoJson);
+            return _jsObjectRef.InvokeAsync<object>(
+                "addGeoJson", geoJson.Properties.First());
+        }
+
+        /// <summary>
+        /// Adds GeoJSON features to the collection. Give this method a parsed JSON. 
+        /// The imported features are returned. Throws an exception if the GeoJSON could not be imported.
+        /// </summary>
+        /// <param name="geoJson"></param>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        public Task<object> AddGeoJson(string geoJson, Maps.Data.GeoJsonOptions? options = null)
+        {
+            return _jsObjectRef.InvokeAsync<object>("addGeoJson", geoJson);
         }
 
         /// <summary>

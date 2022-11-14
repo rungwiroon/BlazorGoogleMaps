@@ -1,7 +1,5 @@
-﻿using Newtonsoft.Json;
-using OneOf;
+﻿using OneOf;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -10,7 +8,7 @@ namespace GoogleMapsComponents.Maps.Data
     /// <summary>
     /// A feature has a geometry, an id, and a set of properties
     /// </summary>
-    public class Feature : IEnumerable<string>
+    public class Feature //: IEnumerable<string>
     {
         private readonly FeatureOptions? _options;
 
@@ -101,12 +99,12 @@ namespace GoogleMapsComponents.Maps.Data
             throw new NotImplementedException();
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            foreach (var keyValuePair in Properties)
-            {
-                yield return JsonConvert.SerializeObject(keyValuePair).Replace("\\\\", "");
-            }
-        }
+        //IEnumerator IEnumerable.GetEnumerator()
+        //{
+        //    foreach (var keyValuePair in Properties)
+        //    {
+        //        yield return JsonConvert.SerializeObject(keyValuePair).Replace("\\\\", "");
+        //    }
+        //}
     }
 }
