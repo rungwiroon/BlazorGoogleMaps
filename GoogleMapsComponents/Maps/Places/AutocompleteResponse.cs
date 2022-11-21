@@ -1,4 +1,6 @@
-﻿namespace GoogleMapsComponents.Maps.Places
+﻿using System.Text.Json.Serialization;
+
+namespace GoogleMapsComponents.Maps.Places
 {
     /// <summary>
     /// An Autocomplete response returned by the call to <see cref="AutocompleteService.GetPlacePredictions"></see>
@@ -11,6 +13,8 @@
         /// The list of <see cref="AutocompletePrediction"></see>s.
         /// </summary>
         public AutocompletePrediction[] Predictions { get; set; } = new AutocompletePrediction[] { };
+
+        [JsonConverter(typeof(EnumMemberConverter<PlaceServiceStatus>))]
         public PlaceServiceStatus Status { get; set; }
     }
 }

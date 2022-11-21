@@ -16,6 +16,7 @@ namespace GoogleMapsComponents.Maps
         /// The type of location returned in <see cref="Location"></see>
         /// </summary>
         [JsonPropertyName("location_type")]
+        [JsonConverter(typeof(EnumMemberConverter<GeocoderLocationType>))]
         public GeocoderLocationType LocationType { get; set; }
 
         /// <summary>

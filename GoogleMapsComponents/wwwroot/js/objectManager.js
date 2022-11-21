@@ -196,11 +196,15 @@ function tryParseJson(item) {
                     }
                 }
 
-                if (typeof propertyValue === "object"
-                    && propertyValue !== null
-                    && "guidString" in propertyValue) {
-                    //console.log("Found object has Guid property.");
-                    item2[propertyName] = window._blazorGoogleMapsObjects[propertyValue.guidString];
+                if (typeof propertyValue === "object" && propertyValue !== null) {
+                    if ("guidString" in propertyValue) {
+                        //console.log("Found object has Guid property.");
+                        item2[propertyName] = window._blazorGoogleMapsObjects[propertyValue.guidString];
+                    }
+                    else if (propertyName === "sessionToken" && "guid" in propertyValue) {
+                        //sometimes AutocompleteSessionToken doesn't have guidString property. Not sure why
+                        item2[propertyName] = window._blazorGoogleMapsObjects[propertyValue.guid];
+                    }
                 }
             }
 
@@ -532,7 +536,8 @@ window.googleMapsObjectManager = {
             return new Promise(function (resolve, reject) {
                 try {
                     obj[functionToInvoke](args2[0], function (result, status) {
-                        resolve({ results: result, status: status });
+                        var results = (result == null || result instanceof Array) ? result : [result];
+                        resolve({ results: results, status: status });
                     });
                 } catch (e) {
                     console.log(e);

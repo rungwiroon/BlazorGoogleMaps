@@ -1,5 +1,6 @@
-﻿using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System.Runtime.Serialization;
 
 namespace GoogleMapsComponents.Maps
 {
@@ -7,7 +8,7 @@ namespace GoogleMapsComponents.Maps
     /// The status returned by the Geocoder on the completion of a call to geocode(). Specify these by value, or by using the constant's name.
     /// For example, 'OK' or google.maps.GeocoderStatus.OK.
     /// </summary>
-    [JsonConverter(typeof(JsonStringEnumConverter))]
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum GeocoderStatus
     {
         /// <summary>

@@ -1,5 +1,6 @@
-﻿using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System.Runtime.Serialization;
 
 namespace GoogleMapsComponents.Maps.Places
 {
@@ -8,7 +9,7 @@ namespace GoogleMapsComponents.Maps.Places
     /// For example, 'OK' or google.maps.places.PlacesServiceStatus.OK.
     /// Requires the &libraries=places URL parameter.
     /// </summary>
-    [JsonConverter(typeof(JsonStringEnumConverter))]
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum PlaceServiceStatus
     {
         /// <summary>
