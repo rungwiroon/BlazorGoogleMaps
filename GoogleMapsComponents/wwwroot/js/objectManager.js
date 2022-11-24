@@ -196,15 +196,11 @@ function tryParseJson(item) {
                     }
                 }
 
-                if (typeof propertyValue === "object" && propertyValue !== null) {
-                    if ("guidString" in propertyValue) {
-                        //console.log("Found object has Guid property.");
-                        item2[propertyName] = window._blazorGoogleMapsObjects[propertyValue.guidString];
-                    }
-                    else if (propertyName === "sessionToken" && "guid" in propertyValue) {
-                        //sometimes AutocompleteSessionToken doesn't have guidString property. Not sure why
-                        item2[propertyName] = window._blazorGoogleMapsObjects[propertyValue.guid];
-                    }
+                if (typeof propertyValue === "object"
+                    && propertyValue !== null
+                    && "guidString" in propertyValue) {
+                    //console.log("Found object has Guid property.");
+                    item2[propertyName] = window._blazorGoogleMapsObjects[propertyValue.guidString];
                 }
             }
 

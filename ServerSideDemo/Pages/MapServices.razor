@@ -84,7 +84,7 @@
 
     private async Task<AutocompleteSessionToken> GetOrCreateTokenAsync()
     {
-        // It is not officially documented, how long a session token is valid for.
+        // It is not officially documented how long a session token is valid for.
         // Google only says "a few minutes", but there is one mention of 3 minutes in StackOverflow
         // https://stackoverflow.com/questions/50398801/how-long-do-the-new-places-api-session-tokens-last
         if (token is null || tokenStamp == DateTime.MinValue || tokenStamp.AddMinutes(3).CompareTo(DateTime.Now) < 1)
@@ -170,7 +170,7 @@
                 {
                     PlaceId = placeId,
                     Fields = new string[] { "address_components", "formatted_address", "geometry", "name", "place_id" },
-                    SessionToken = token
+                    SessionToken = await GetOrCreateTokenAsync()
                 });
 
             if (place.Status == PlaceServiceStatus.Ok)

@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.JSInterop;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace GoogleMapsComponents.Maps.Places
 {
@@ -8,6 +9,7 @@ namespace GoogleMapsComponents.Maps.Places
     {
         private readonly JsObjectRef _jsObjectRef;
 
+        [JsonProperty("GuidString")]
         public Guid Guid => _jsObjectRef.Guid;
 
         public async static Task<AutocompleteSessionToken> CreateAsync(IJSRuntime jsRuntime)
