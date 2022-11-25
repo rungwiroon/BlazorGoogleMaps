@@ -1,0 +1,19 @@
+{
+  "name": "blazorgooglemaps",
+  "version": "1.0.0",
+  "description": "Blazor interop for GoogleMap library",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rungwiroon/BlazorGoogleMaps.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rungwiroon/BlazorGoogleMaps/issues"
+  },
+  "homepage": "https://github.com/rungwiroon/BlazorGoogleMaps#readme"
+}
