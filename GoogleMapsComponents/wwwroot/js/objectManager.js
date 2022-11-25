@@ -507,15 +507,54 @@ window.googleMapsObjectManager = {
             }
         }
         else if (functionToInvoke == "fromLatLngToPoint") {
-
             try {
                 var point = obj[functionToInvoke](args2[0]);
                 return point;
             } catch (e) {
                 console.log(e);
             }
-
-        } else if (functionToInvoke == "getPaths") {
+        }
+        else if (obj instanceof google.maps.places.AutocompleteService) {
+            //AutocompleteService predictions to handle callbacks in the promise
+            return new Promise(function (resolve, reject) {
+                try {
+                    obj[functionToInvoke](args2[0], function (result, status) {
+                        resolve({ predictions: result, status: status });
+                    });
+                } catch (e) {
+                    console.log(e);
+                    reject(e);
+                }
+            });
+        }
+        else if (obj instanceof google.maps.places.PlacesService) {
+            //PlacesService results to handle callbacks in the promise
+            return new Promise(function (resolve, reject) {
+                try {
+                    obj[functionToInvoke](args2[0], function (result, status) {
+                        var results = (result == null || result instanceof Array) ? result : [result];
+                        resolve({ results: results, status: status });
+                    });
+                } catch (e) {
+                    console.log(e);
+                    reject(e);
+                }
+            });
+        }
+        else if (obj instanceof google.maps.Geocoder) {
+            //Geocoder results to handle callback in the promise
+            return new Promise(function (resolve, reject) {
+                try {
+                    obj[functionToInvoke](args2[0], function (result, status) {
+                        resolve({ results: result, status: status });
+                    });
+                } catch (e) {
+                    console.log(e);
+                    reject(e);
+                }
+            });
+        }
+        else if (functionToInvoke == "getPaths") {
             // Polygon.getPaths returns nested MVCArray
             // https://developers.google.com/maps/documentation/javascript/reference/polygon#Polygon.getPaths
             try {

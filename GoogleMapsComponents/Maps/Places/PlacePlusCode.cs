@@ -5,15 +5,17 @@ namespace GoogleMapsComponents.Maps.Places
     public class PlacePlusCode
     {
         /// <summary>
-        /// It is  a 6 character or longer local code with an explicit location (CWC8+R9, Mountain View, CA, USA)
-        /// </summary>
-        [JsonPropertyName("compound_code")]
-        public string CompoundCode { get; set; }
-
-        /// <summary>
-        /// It is a 4 character area code and 6 character or longer local code (849VCWC8+R9)
+        /// A plus code with a 1/8000th of a degree by 1/8000th of a degree area. For example, "8FVC9G8F+5W".
         /// </summary>
         [JsonPropertyName("global_code")]
-        public string GlobalCode { get; set; }
+        public string GlobalCode { get; set; } = default!;
+
+        /// <summary>
+        /// (optional) A plus code with a 1/8000th of a degree by 1/8000th of a degree area where the first four characters (the area code) are dropped and replaced with a locality description.
+        /// For example, "9G8F+5W Zurich, Switzerland". If no suitable locality that can be found to shorten the code then this field is omitted.
+        /// </summary>
+        [JsonPropertyName("compound_code")]
+        public string? CompoundCode { get; set; }
+
     }
 }
