@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
-namespace ClientSideDemoNet6
+namespace ClientSideDemoNet7
 {
     public class Startup
     {
