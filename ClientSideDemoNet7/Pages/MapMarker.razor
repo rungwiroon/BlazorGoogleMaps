@@ -213,9 +213,11 @@
 
         LatLngBoundsLiteral? boundsLiteral = new LatLngBoundsLiteral(new LatLngLiteral() { Lat = coordinates.First().Lat, Lng = coordinates.First().Lng });
         foreach (var literal in coordinates)
-		    LatLngBoundsLiteral.CreateOrExtend(ref boundsLiteral, literal);
-		
-		await map1.InteropObject.FitBounds(boundsLiteral, OneOf.OneOf<int, GoogleMapsComponents.Maps.Coordinates.Padding>.FromT0(1));
+        {
+            LatLngBoundsLiteral.CreateOrExtend(ref boundsLiteral, literal);
+        }
+
+        await map1.InteropObject.FitBounds(boundsLiteral, OneOf.OneOf<int, GoogleMapsComponents.Maps.Coordinates.Padding>.FromT0(1));
     }
 
     private async Task<IEnumerable<Marker>> GetMarkers(IEnumerable<LatLngLiteral> coords, Map map)

@@ -72,7 +72,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="bounds"></param>
         /// <returns></returns>
-        public Task FitBounds(LatLngBoundsLiteral bounds, OneOf<int, Padding>? padding = null)
+        public Task FitBounds(LatLngBoundsLiteral? bounds, OneOf<int, Padding>? padding = null)
         {
             return _jsObjectRef.InvokeAsync("fitBounds", bounds, padding);
         }
