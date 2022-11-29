@@ -7,9 +7,9 @@ using GoogleMapsComponents.Maps;
 
 namespace ServerSideDemo.Pages
 {
-    public partial class MapRoutes
+    public partial class MapRoutes : IAsyncDisposable
     {
-        private GoogleMap map1;
+        private GoogleMap? map1;
         private MapOptions mapOptions;
         private DirectionsRenderer dirRend;
         private string _durationTotalString;
@@ -32,8 +32,10 @@ namespace ServerSideDemo.Pages
 
         private async Task RemoveRoute()
         {
-            await dirRend.SetDirections(null);
             await dirRend.SetMap(null);
+
+            _durationTotalString = null;
+            _distanceTotalString = null;
         }
 
         private async Task OnAfterInitAsync()
@@ -47,6 +49,10 @@ namespace ServerSideDemo.Pages
 
         private async Task AddDirections()
         {
+            _durationTotalString = null;
+            _distanceTotalString = null;
+            if (await dirRend.GetMap() is null) await dirRend.SetMap(map1!.InteropObject);
+
             //Adding a waypoint
             var waypoints = new List<DirectionsWaypoint>();
             waypoints.Add(new DirectionsWaypoint() { Location = "Bethlehem, PA", Stopover = true });
@@ -79,6 +85,15 @@ namespace ServerSideDemo.Pages
             {
                 _durationTotalString += route.DurationInTraffic?.Text;
                 _distanceTotalString += route.Distance.Text;
+            }
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            if (dirRend is not null)
+            {
+                await dirRend.SetMap(null);
+                dirRend.Dispose();
             }
         }
     }

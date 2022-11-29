@@ -141,7 +141,7 @@ namespace GoogleMapsComponents.Maps.Drawing
                 action.Invoke(completeEvent);
             }
 
-            await _jsObjectRef.JSRuntime.MyInvokeAsync("googleMapsObjectManager.drawingManagerOverlaycomplete",
+            await _jsObjectRef.JSRuntime.MyInvokeAsync("blazorGoogleMaps.objectManager.drawingManagerOverlaycomplete",
                 new object[] { this._jsObjectRef.Guid.ToString(), (Action<OverlaycompleteArgs>)Act });
         }
 
