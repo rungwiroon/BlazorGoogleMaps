@@ -463,37 +463,6 @@
                 if (functionToInvoke == "blazorGoogleMaps.directionService.route") {
                     var responseOrError = await directionService.route.call(obj, args2[0], args2[1]);
                     return responseOrError;
-
-                    let dirRequest = args2[0];
-                    let dirRequestOptions = args2[1];
-
-                    let promise = new Promise((resolve, reject) => {
-                        let directionsService = new google.maps.DirectionsService();
-                        directionsService.route(dirRequest, (result, status) => {
-                            if (status == 'OK') {
-                                resolve(result);
-                            }
-                            else {
-                                reject(status);
-                            }
-                        });
-                    });
-
-                    //Wait for promise
-                    try {
-                        let result = await promise;
-                        if (typeof obj.setDirections === "function") {
-                            obj.setDirections(result);
-                        }
-
-                        let jsonRest = JSON.stringify(cleanDirectionResult(result, dirRequestOptions));
-                        //console.log(JSON.stringify(jsonRest));
-                        return jsonRest;
-                    } catch (error) {
-                        console.log(error);
-                        return error;
-                    }
-
                 }
                 //Used in HeatampLayer. We must use LatLng since LatLngLiteral doesnt work
                 else if (functionToInvoke == "setData") {
