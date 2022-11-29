@@ -523,7 +523,7 @@
                         console.log(e);
                     }
                 }
-                else if (obj instanceof google.maps.places.AutocompleteService) {
+                else if (google.maps.places !== undefined && obj instanceof google.maps.places.AutocompleteService) {
                     //AutocompleteService predictions to handle callbacks in the promise
                     return new Promise(function (resolve, reject) {
                         try {
@@ -536,7 +536,7 @@
                         }
                     });
                 }
-                else if (obj instanceof google.maps.places.PlacesService) {
+                else if (google.maps.places !== undefined && obj instanceof google.maps.places.PlacesService) {
                     //PlacesService results to handle callbacks in the promise
                     return new Promise(function (resolve, reject) {
                         try {
