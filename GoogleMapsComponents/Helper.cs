@@ -137,7 +137,8 @@ namespace GoogleMapsComponents
             {
                 var guid = await jsRuntime.InvokeAsync<string>(identifier, jsFriendlyArgs);
 
-                return (TRes)JsObjectRefInstances.GetInstance(guid);
+                
+                return guid == null ? default : (TRes)JsObjectRefInstances.GetInstance(guid);
             }
 
             if (typeof(IOneOf).IsAssignableFrom(typeof(TRes)))
@@ -150,10 +151,10 @@ namespace GoogleMapsComponents
                     try
                     {
                         var jo = JObject.Parse(someText);
-
-                        if (jo.ContainsKey("dotnetTypeName"))
+                        var typeToken = jo.SelectToken("dotnetTypeName");
+                        if (typeToken != null)
                         {
-                            var typeName = jo.SelectToken("dotnetTypeName").Value<string>();
+                            var typeName = typeToken.Value<string>();
                             var asm = typeof(Map).Assembly;
                             var type = asm.GetType(typeName);
                             result = jo.ToObject(type);
@@ -201,10 +202,10 @@ namespace GoogleMapsComponents
                 try
                 {
                     var jo = JObject.Parse(someText);
-
-                    if (jo.ContainsKey("dotnetTypeName"))
+                    var typeToken = jo.SelectToken("dotnetTypeName");
+                    if (typeToken != null)
                     {
-                        var typeName = jo.SelectToken("dotnetTypeName").Value<string>();
+                        var typeName = typeToken.Value<string>();
                         var asm = typeof(Map).Assembly;
                         var type = asm.GetType(typeName);
                         result = jo.ToObject(type);

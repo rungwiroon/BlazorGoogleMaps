@@ -20,11 +20,6 @@ namespace GoogleMapsComponents.Maps
         public string Copyrights { get; set; }
 
         /// <summary>
-        /// The total fare for the whole transit trip. Only applicable to transit requests.
-        /// </summary>
-        public TransitFare Fare { get; set; }
-
-        /// <summary>
         /// An array of DirectionsLegs, each of which contains information about the steps of which it is composed. 
         /// There will be one leg for each stopover waypoint or destination specified. 
         /// So a route with no stopover waypoints will contain one DirectionsLeg and a route with one stopover waypoint will contain two.
@@ -46,6 +41,11 @@ namespace GoogleMapsComponents.Maps
         public string OverviewPolyline { get; set; }
 
         /// <summary>
+        /// Contains a short textual description for the route, suitable for naming and disambiguating the route from alternatives.
+        /// </summary>
+        public string Summary { get; set; }
+
+        /// <summary>
         /// Warnings to be displayed when showing these directions.
         /// </summary>
         public List<string> Warnings { get; set; }
@@ -63,5 +63,10 @@ namespace GoogleMapsComponents.Maps
         ///  If any of the input waypoints has stopover set to false, this field will be empty, since route optimization is not available for such queries.
         /// </summary>
         public List<int> WaypointOrder { get; set; }
+
+        /// <summary>
+        /// The total fare for the whole transit trip. Only applicable to transit requests.
+        /// </summary>
+        public TransitFare Fare { get; set; }
     }
 }

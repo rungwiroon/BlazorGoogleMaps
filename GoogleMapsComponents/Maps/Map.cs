@@ -44,26 +44,26 @@ namespace GoogleMapsComponents.Maps
 
         public async Task AddControl(ControlPosition position, ElementReference reference)
         {
-            await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("googleMapsObjectManager.addControls", this.Guid.ToString(), position, reference);
+            await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("blazorGoogleMaps.objectManager.addControls", this.Guid.ToString(), position, reference);
         }
 
         public async Task AddImageLayer(ImageMapType reference)
         {
-            await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("googleMapsObjectManager.addImageLayer", this.Guid.ToString(), reference.Guid.ToString());
+            await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("blazorGoogleMaps.objectManager.addImageLayer", this.Guid.ToString(), reference.Guid.ToString());
         }
         public async Task RemoveImageLayer(ImageMapType reference)
         {
-            await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("googleMapsObjectManager.removeImageLayer", this.Guid.ToString(), reference.Guid.ToString());
+            await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("blazorGoogleMaps.objectManager.removeImageLayer", this.Guid.ToString(), reference.Guid.ToString());
         }
         public async Task RemoveAllImageLayers()
         {
-            await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("googleMapsObjectManager.removeAllImageLayers", this.Guid.ToString());
+            await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("blazorGoogleMaps.objectManager.removeAllImageLayers", this.Guid.ToString());
         }
 
         public void Dispose()
         {
             JsObjectRefInstances.Remove(_jsObjectRef.Guid.ToString());
-            _jsObjectRef.JSRuntime.InvokeAsync<object>("googleMapsObjectManager.disposeMapElements", Guid.ToString());
+            _jsObjectRef.JSRuntime.InvokeAsync<object>("blazorGoogleMaps.objectManager.disposeMapElements", Guid.ToString());
             _jsObjectRef.Dispose();
         }
 

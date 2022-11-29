@@ -41,7 +41,7 @@ namespace GoogleMapsComponents.Maps
             }
 
             var response = await _jsObjectRef.InvokeAsync<string>(
-                "googleMapDirectionServiceFunctions.route",
+                "blazorGoogleMaps.directionService.route",
                 request, directionsRequestOptions);
             try
             {
