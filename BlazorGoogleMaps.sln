@@ -9,8 +9,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{575D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerSideDemo", "ServerSideDemo\ServerSideDemo.csproj", "{4529EAF0-F632-485C-B76D-3B908767D0ED}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientSideDemo", "ClientSideDemo\ClientSideDemo.csproj", "{4391E333-F33D-4E18-8D45-1C6E73B77285}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8F72007D-A784-445E-907F-C68F6F9A72DA}"
 	ProjectSection(SolutionItems) = preProject
 		LICENSE = LICENSE
@@ -33,10 +31,6 @@ Global
 		{4529EAF0-F632-485C-B76D-3B908767D0ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4529EAF0-F632-485C-B76D-3B908767D0ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4529EAF0-F632-485C-B76D-3B908767D0ED}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4391E333-F33D-4E18-8D45-1C6E73B77285}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4391E333-F33D-4E18-8D45-1C6E73B77285}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4391E333-F33D-4E18-8D45-1C6E73B77285}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4391E333-F33D-4E18-8D45-1C6E73B77285}.Release|Any CPU.Build.0 = Release|Any CPU
 		{101D4021-9338-498D-834D-0335F6B8175B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{101D4021-9338-498D-834D-0335F6B8175B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{101D4021-9338-498D-834D-0335F6B8175B}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -47,7 +41,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{4529EAF0-F632-485C-B76D-3B908767D0ED} = {575D69F2-3102-4FE1-A094-23A553B772AA}
-		{4391E333-F33D-4E18-8D45-1C6E73B77285} = {575D69F2-3102-4FE1-A094-23A553B772AA}
 		{101D4021-9338-498D-834D-0335F6B8175B} = {575D69F2-3102-4FE1-A094-23A553B772AA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
