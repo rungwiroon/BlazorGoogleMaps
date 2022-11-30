@@ -23,7 +23,7 @@ jobs:
 
       # Publish the site
       - name: Publish
-        run: dotnet publish ClientSideDemoNet7/ClientSideDemoNet7.csproj -c:Release -p:GHPages=true -o dist/Web --nologo
+        run: dotnet publish BlazorGoogleMaps.sln -c:Release -o:publish -p:GHPages=true
 
       # Deploy the site
       - name: Deploy
