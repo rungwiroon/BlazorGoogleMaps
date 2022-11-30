@@ -1,12 +1,12 @@
+# This is ".github/workflows/gh-pages.yml" file.
+# This is an EXAMPLE of "GitHub Actions Workflow file".
+
 name: github pages
 
 on:
   push:
     branches:
-      - main
-  pull_request:
-    branches:
-      - main
+      - master
 
 jobs:
   deploy:
@@ -17,21 +17,18 @@ jobs:
 
       # Install .NET Core SDK
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v2
         with:
           dotnet-version: 6.0.x
-          
-      # Install dotnet wasm buildtools workload
-      - name: Install .NET WASM Build Tools
-        run: dotnet workload install wasm-tools
-          
-      # Publishes Blazor project to the release-folder
-      - name: Publish .NET Core Project
-        run: dotnet publish Web/Web.csproj -c:Release -p:GHPages=true -o dist/Web --nologo
 
-      - name: Commit wwwroot to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@3.7.1
+      # Publish the site
+      - name: Publish
+        run: dotnet publish BlazorGoogleMaps.sln -c:Release -o:publish -p:GHPages=true
+
+      # Deploy the site
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: gh-pages
-          FOLDER: dist/Web/wwwroot
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: publish/wwwroot
+          force_orphan: true
