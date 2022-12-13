@@ -353,7 +353,7 @@
 
                 let guids = JSON.parse(args[0]);
 
-                for (var i = 0; i < args2.length; i++) {
+                for (var i = 0, len = args2.length; i < len; i++) {
                     let obj = new constructor(args2[i]);
 
                     if ("set" in obj) {
@@ -394,7 +394,7 @@
                 let elem = mapObjects[args[1]];
 
                 var arr = map.overlayMapTypes.getArray();
-                for (var i = 0; i < arr.length; i++) {
+                for (var i = 0, len = arr.length; i < len; i++) {
                     if (arr[i].name === elem.name) {
                         map.overlayMapTypes.removeAt(i);
                         return;
@@ -433,7 +433,7 @@
             },
 
             disposeMultipleObjects: function (guids) {
-                for (var i = 0; i < guids.length; i++) {
+                for (var i = 0, len = guids.length; i < len; i++) {
                     this.disposeObject(guids[i]);
                 }
             },
@@ -467,7 +467,7 @@
                 //Used in HeatampLayer. We must use LatLng since LatLngLiteral doesnt work
                 else if (functionToInvoke == "setData") {
                     var pointArray = new google.maps.MVCArray();
-                    for (i = 0; i < args2[0].length; i++) {
+                    for (i = 0, len = args2[0].length; i < len; i++) {
                         var cord = args2[0][i];
 
                         if (cord.hasOwnProperty("weight")) {
@@ -619,7 +619,7 @@
                 let objs = [];
                 let guids = JSON.parse(args[0]);
 
-                for (var i = 0; i < guids.length; i++) {
+                for (var i = 0, len = guids.length; i < len; i++) {
                     objs[i] = mapObjects[guids[i]];
                     let args3 = [];
                     args3 = args3.concat(guids[i]).concat(args[1]).concat(args2[i]);
@@ -671,7 +671,7 @@
 
                 let results = {};
 
-                for (var i = 0; i < guids.length; i++) {
+                for (var i = 0, len = guids.length; i < len; i++) {
                     let uuid = uuidv4();
                     let args2 = [];
                     args2 = args2.concat(guids[i]).concat(otherArgs).concat(what[i]);
@@ -690,7 +690,7 @@
                 let objs = [];
                 let guids = JSON.parse(args[0]);
 
-                for (var i = 0; i < guids.length; i++) {
+                for (var i = 0, len = guids.length; i < len; i++) {
                     objs[i] = mapObjects[guids[i]];
                     let args3 = [];
                     args3 = args3.concat(guids[i]).concat("addListener").concat(args[1]).concat(args2[i]);
@@ -725,7 +725,7 @@
                 let obj = mapObjects[args[0]];
                 let result = obj[args[1]];
                 let props = tryParseJson(args[2]);
-                for (var i = 0; i < props.length; i++) {
+                for (var i = 0, len = props.length; i < len; i++) {
                     result = result.map((x) => x[props[i]]);
                 }
                 return result;
@@ -748,7 +748,7 @@
                     const splits = options.rendererObjectName.split(".");
                     try {
                         let renderer = window[splits[0]];
-                        for (i = 1; i < splits.length; i++) {
+                        for (i = 1, len = splits.length; i < len; i++) {
                             renderer = renderer[splits[i]];
                         }
                         markerClustererOptions.renderer = renderer;
@@ -761,7 +761,7 @@
                     const splits = options.algorithmObjectName.split(".");
                     try {
                         let algorithm = window[splits[0]];
-                        for (i = 1; i < splits.length; i++) {
+                        for (i = 1, len = splits.length; i < len; i++) {
                             algorithm = algorithm[splits[i]];
                         }
                         markerClustererOptions.algorithm = algorithm;
