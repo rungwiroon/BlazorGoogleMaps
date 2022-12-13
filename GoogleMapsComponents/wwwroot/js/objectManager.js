@@ -70,9 +70,15 @@
                 };
 
 
-                //OLD code
-                //await item.invokeMethodAsync("Invoke", JSON.stringify(args), guid);
-                await item.invokeMethodAsync("Invoke", JSON.stringify(args, getCircularReplacer()), guid);
+                if (args.length == 1 && typeof args[0].marker !== "undefined") {
+                    var n = args[0].marker;
+                    args[0].marker = null;
+                    await item.invokeMethodAsync("Invoke", JSON.stringify(args, getCircularReplacer()), guid);
+                    args[0].marker = n;
+                }
+                else {
+                    await item.invokeMethodAsync("Invoke", JSON.stringify(args, getCircularReplacer()), guid);
+                }
 
                 blazorGoogleMaps.objectManager.disposeObject(guid);
             };
