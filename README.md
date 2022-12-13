@@ -66,4 +66,7 @@ services.AddServerSideBlazor().AddHubOptions(config => config.MaximumReceiveMess
 
 ## Samples
  Please check server side samples https://github.com/rungwiroon/BlazorGoogleMaps/tree/master/ServerSideDemo which are most to date
+ 
+ ClientSide demos. Just a few and missing code, but will be updated little by little
+ https://rungwiroon.github.io/BlazorGoogleMaps/mapEvents
 
