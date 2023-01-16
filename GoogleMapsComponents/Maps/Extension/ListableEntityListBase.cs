@@ -140,7 +140,6 @@ namespace GoogleMapsComponents.Maps.Extension
         public virtual async Task RemoveAllAsync()
         {
             await RemoveMultipleAsync(BaseListableEntities.Keys.ToList());
-
         }
 
         /// <summary>
@@ -152,7 +151,6 @@ namespace GoogleMapsComponents.Maps.Extension
         {
             if ((filterKeys != null) && (filterKeys.Count > 0))
             {
-
                 List<string> foundKeys = BaseListableEntities.Keys.Intersect(filterKeys).ToList();
                 if (foundKeys.Count > 0)
                 {
@@ -168,8 +166,6 @@ namespace GoogleMapsComponents.Maps.Extension
                     }
                 }
             }
-
-
         }
 
         public virtual async Task RemoveMultipleAsync(List<Guid> guids)

@@ -1,7 +1,6 @@
 ﻿@page "/map-data"
 @using GoogleMapsComponents
 @using GoogleMapsComponents.Maps
-@using System.Diagnostics
 @using GoogleMapsComponents.Maps.Data
 @*
     The code for this sample was taken from below on 09/02/2020:
@@ -11,7 +10,9 @@
 <h1>Map Data</h1>
 
 <GoogleMap @ref="@(this._map1)" Id="map1" Options="@(this._mapOptions)" OnAfterInit="async () => await OnAfterMapInit()"></GoogleMap>
-<button @onclick="@GetMapData">Get MapData </button>
+<button @onclick="@GetMapDataFeature">Get MapData (Feature)</button>
+<button @onclick="@GetMapDataGeoJson">Get MapData (GeoJson)</button>
+<button @onclick="@RemoveFeatures">Remove All Features</button>
 
 <div>
     <p style="font-weight: bold; font-size: 1.2em">@this._message</p>
@@ -24,16 +25,16 @@
 
     protected override void OnInitialized()
     {
-        this._mapOptions = new MapOptions
-        {
-            Zoom = 13,
-            Center = new LatLngLiteral
+        _mapOptions = new MapOptions
             {
-                Lat = -33.8688,
-                Lng = 151.2195
-            },
-            MapTypeId = MapTypeId.Roadmap
-        };
+                Zoom = 13,
+                Center = new LatLngLiteral
+                {
+                    Lat = -33.8688,
+                    Lng = 151.2195
+                },
+                MapTypeId = MapTypeId.Roadmap
+            };
     }
 
     private async Task OnAfterMapInit()
@@ -41,14 +42,8 @@
 
     }
 
-    private async Task GetMapData()
+    private async Task GetMapDataFeature()
     {
-        var jsonData = "{ \"type\": \"FeatureCollection\"," +
-                       "  \"features\": [" +
-                       "{ \"type\": \"Feature\"," +
-                       " \"properties\": { \"stroke\": \"#555555\", \"stroke-width\": 2, \"stroke-opacity\": 1 }, " +
-                       " \"geometry\": {\"type\": \"LineString\",  \"coordinates\": [ [ 151.219, -33.869], [151.23, -33.88]]}}]}";
-        
         var rootFeature = new Feature();
         var childFeature = new Feature();
         childFeature.Properties = new Dictionary<string, object>[]
@@ -56,7 +51,7 @@
             new Dictionary<string, object>()
             {
                 {"type", "Feature"},
-                {"properties", 
+                {"properties",
                     new Dictionary<string, object>()
                     {
                         {"stroke", "#555555"},
@@ -64,6 +59,7 @@
                         {"stroke-opacity", 1},
                     }
                 },
+                {"id", 1},
                 {"geometry",
                     new Dictionary<string, object>()
                     {
@@ -88,7 +84,27 @@
             }
         };
 
+        await _map1.InteropObject.Data.AddGeoJson(rootFeature);
+
+        await _map1.InteropObject.Data.SetStyle(new StyleOptions { StrokeColor = "blue", StrokeWeight = 2 });
+    }
+
+    private async Task GetMapDataGeoJson()
+    {
+        var jsonData = "{ \"type\": \"FeatureCollection\"," +
+                       "  \"features\": [" +
+                       "{ \"type\": \"Feature\"," +
+                       " \"id\": 2," +
+                       " \"properties\": { \"stroke\": \"#555555\", \"stroke-width\": 2, \"stroke-opacity\": 1 }, " +
+                       " \"geometry\": {\"type\": \"LineString\",  \"coordinates\": [ [ 151.219, -33.888], [151.23, -33.869]]}}]}";
+
         await _map1.InteropObject.Data.AddGeoJson(jsonData);
+        await _map1.InteropObject.Data.SetStyle(new StyleOptions { StrokeColor = "green", StrokeWeight = 2 });
+    }
+
+    private async Task RemoveFeatures()
+    {
+        await _map1.InteropObject.Data.RemoveAll();
     }
 }
 

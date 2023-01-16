@@ -70,7 +70,7 @@ namespace GoogleMapsComponents.Maps
         }
 
         /// <summary>
-        /// Adds GeoJSON features to the collection. Give this method a parsed JSON. 
+        /// Adds GeoJSON features to the collection. Give this method a parsed JSON.
         /// The imported features are returned. Throws an exception if the GeoJSON could not be imported.
         /// </summary>
         /// <param name="geoJson"></param>
@@ -79,11 +79,11 @@ namespace GoogleMapsComponents.Maps
         public Task<object> AddGeoJson(Feature geoJson, Maps.Data.GeoJsonOptions? options = null)
         {
             return _jsObjectRef.InvokeAsync<object>(
-                "addGeoJson", geoJson.Properties.First());
+                "addGeoJson", geoJson.Properties.First(), options);
         }
 
         /// <summary>
-        /// Adds GeoJSON features to the collection. Give this method a parsed JSON. 
+        /// Adds GeoJSON features to the collection. Give this method a parsed JSON.
         /// The imported features are returned. Throws an exception if the GeoJSON could not be imported.
         /// </summary>
         /// <param name="geoJson"></param>
@@ -91,7 +91,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<object> AddGeoJson(string geoJson, Maps.Data.GeoJsonOptions? options = null)
         {
-            return _jsObjectRef.InvokeAsync<object>("addGeoJson", geoJson);
+            return _jsObjectRef.InvokeAsync<object>("addGeoJson", geoJson, options);
         }
 
         /// <summary>
@@ -165,39 +165,36 @@ namespace GoogleMapsComponents.Maps
         /// Gets the style for all features in the collection.
         /// </summary>
         /// <returns></returns>
-        public Task<OneOf<Func<Data.Feature, Data.StyleOptions>, Data.StyleOptions>> GetStyle()
+        public Task<Data.StyleOptions> GetStyle()
         {
-            //return Helper.InvokeWithDefinedGuidAndMethodAsync<Data.Feature>(
-            //    "googleMapDataJsFunctions.invoke",
-            //    _guid.ToString(),
-            //    "getStyle");
-
-            throw new NotImplementedException();
+            return  _jsObjectRef.InvokeAsync<Data.StyleOptions>(
+                "getStyle");
         }
 
         /// <summary>
         /// Loads GeoJSON from a URL, and adds the features to the collection.
-        /// NOTE: The GeoJSON is fetched using XHR, and may not work cross-domain.If you have issues, we recommend you fetch the GeoJSON using your choice of AJAX library, and then call addGeoJson().
+        /// NOTE: The GeoJSON is fetched using XHR, and may not work cross-domain.If you have issues, we recommend
+        /// you fetch the GeoJSON using your choice of AJAX library, and then call addGeoJson().
         /// </summary>
         /// <param name="url"></param>
-        /// <param name="otpions"></param>
+        /// <param name="options"></param>
         /// <returns></returns>
-        public Task<Data.Feature> LoadGeoJson(string url, Data.GeoJsonOptions otpions = null)
+        public Task<Data.Feature> LoadGeoJson(string url, Data.GeoJsonOptions options = null)
         {
             throw new NotImplementedException();
         }
 
         /// <summary>
-        /// Changes the style of a feature. These changes are applied on top of the style specified by setStyle(). 
+        /// Changes the style of a feature. These changes are applied on top of the style specified by setStyle().
         /// Style properties set to null revert to the value specified via setStyle().
         /// </summary>
         /// <param name="feature"></param>
         /// <param name="style"></param>
         /// <returns></returns>
-        public Task OverrideSytle(Data.Feature feature, Data.StyleOptions style)
+        public Task OverrideStyle(Data.Feature feature, Data.StyleOptions style)
         {
             return _jsObjectRef.InvokeAsync(
-                "overrideSytle",
+                "overrideStyle",
                 feature,
                 style);
         }
@@ -215,7 +212,17 @@ namespace GoogleMapsComponents.Maps
         }
 
         /// <summary>
-        /// moves the effect of previous overrideStyle() calls. 
+        /// Remove all features from the collection
+        /// </summary>
+        /// <returns></returns>
+        public Task RemoveAll()
+        {
+            return _jsObjectRef.InvokeAsync(
+                "removeAllFeatures");
+        }
+
+        /// <summary>
+        /// moves the effect of previous overrideStyle() calls.
         /// The style of the given feature reverts to the style specified by setStyle().
         /// </summary>
         /// <param name="feature"></param>
@@ -284,7 +291,7 @@ namespace GoogleMapsComponents.Maps
         }
 
         /// <summary>
-        /// Sets the style for all features in the collection. 
+        /// Sets the style for all features in the collection.
         /// Styles specified on a per-feature basis via overrideStyle() continue to apply.
         /// Pass either an object with the desired style options, or a function that computes the style for each feature.
         /// The function will be called every time a feature's properties are updated.
@@ -293,7 +300,9 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task SetStyle(OneOf<Func<Data.Feature, Data.StyleOptions>, Data.StyleOptions> style)
         {
-            throw new NotImplementedException();
+            return _jsObjectRef.InvokeAsync(
+                "setStyle",
+                style);
         }
 
         /// <summary>

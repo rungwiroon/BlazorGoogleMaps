@@ -71,6 +71,7 @@ namespace GoogleMapsComponents.Maps
         /// Sets the viewport to contain the given bounds.
         /// </summary>
         /// <param name="bounds"></param>
+        /// <param name="padding"></param>
         /// <returns></returns>
         public Task FitBounds(LatLngBoundsLiteral? bounds, OneOf<int, Padding>? padding = null)
         {

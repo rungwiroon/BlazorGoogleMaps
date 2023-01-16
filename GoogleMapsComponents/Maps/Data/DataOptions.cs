@@ -16,7 +16,7 @@ namespace GoogleMapsComponents.Maps.Data
         public ControlPosition ControlPosition { get; set; }
 
         /// <summary>
-        /// Describes which drawing modes are available for the user to select, in the order they are displayed. 
+        /// Describes which drawing modes are available for the user to select, in the order they are displayed.
         /// This should not include the null drawing mode, which is added by default. 
         /// If null, drawing controls are disabled and not displayed. 
         /// Defaults to null. 
@@ -26,15 +26,15 @@ namespace GoogleMapsComponents.Maps.Data
 
         /// <summary>
         /// The current drawing mode of the given Data layer. 
-        /// A drawing mode of null means that the user can interact with the map as normal, and clicks do not draw anything. 
+        /// A drawing mode of null means that the user can interact with the map as normal, and clicks do not draw anything.
         /// Defaults to null. 
         /// Possible drawing modes are null, "Point", "LineString" or "Polygon".
         /// </summary>
         public string DrawingMode { get; set; }
 
         /// <summary>
-        /// When drawing is enabled and a user draws a Geometry (a Point, Line String or Polygon), this function is called with that Geometry and should return a Feature that is to be added to the Data layer. 
-        /// If a featureFactory is not supplied, a Feature with no id and no properties will be created from that Geometry instead. 
+        /// When drawing is enabled and a user draws a Geometry (a Point, Line String or Polygon), this function is called with that Geometry and should return a Feature that is to be added to the Data layer.
+        /// If a featureFactory is not supplied, a Feature with no id and no properties will be created from that Geometry instead.
         /// Defaults to null.
         /// </summary>
         public Func<Geometry, Feature> FeatureFactory { get; set; }
