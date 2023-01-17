@@ -13,7 +13,7 @@ namespace GoogleMapsComponents.Maps
         public readonly Dictionary<string, List<MapEventListener>> EventListeners;
 
         public Guid Guid => _jsObjectRef.Guid;
-        
+
         internal ListableEntityBase(JsObjectRef jsObjectRef)
         {
             _jsObjectRef = jsObjectRef;

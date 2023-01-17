@@ -174,8 +174,6 @@ namespace GoogleMapsComponents
                 new object?[] { _guid.ToString(), functionName }
                     .Concat(args).ToArray()
             );
-
-            var a = 10;
         }
 
         public Task InvokeMultipleAsync(string functionName, Dictionary<Guid, object> dictArgs)
@@ -219,8 +217,7 @@ namespace GoogleMapsComponents
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <typeparam name="U"></typeparam>
-        /// <param name="jsRuntime"></param>
-        /// <param name="identifier"></param>
+        /// <param name="functionName"></param>
         /// <param name="args"></param>
         /// <returns>Discriminated union of specified types</returns>
         public async Task<OneOf<T, U>> InvokeAsync<T, U>(string functionName, params object[] args)
@@ -240,8 +237,7 @@ namespace GoogleMapsComponents
         /// <typeparam name="T"></typeparam>
         /// <typeparam name="U"></typeparam>
         /// <typeparam name="V"></typeparam>
-        /// <param name="jsRuntime"></param>
-        /// <param name="identifier"></param>
+        /// <param name="functionName"></param>
         /// <param name="args"></param>
         /// <returns>Discriminated union of specified types</returns>
         public Task<OneOf<T, U, V>> InvokeAsync<T, U, V>(string functionName, params object[] args)

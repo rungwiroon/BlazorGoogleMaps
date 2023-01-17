@@ -130,14 +130,12 @@ namespace GoogleMapsComponents
             string identifier,
             params object?[] args)
         {
-
             var jsFriendlyArgs = MakeArgJsFriendly(jsRuntime, args);
 
             if (typeof(IJsObjectRef).IsAssignableFrom(typeof(TRes)))
             {
                 var guid = await jsRuntime.InvokeAsync<string>(identifier, jsFriendlyArgs);
 
-                
                 return guid == null ? default : (TRes)JsObjectRefInstances.GetInstance(guid);
             }
 
@@ -229,7 +227,6 @@ namespace GoogleMapsComponents
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <typeparam name="U"></typeparam>
-        /// <typeparam name="V"></typeparam>
         /// <param name="jsRuntime"></param>
         /// <param name="identifier"></param>
         /// <param name="args"></param>
@@ -257,6 +254,7 @@ namespace GoogleMapsComponents
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <typeparam name="U"></typeparam>
+        /// <typeparam name="V"></typeparam>
         /// <param name="jsRuntime"></param>
         /// <param name="identifier"></param>
         /// <param name="args"></param>

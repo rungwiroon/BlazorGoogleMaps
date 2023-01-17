@@ -1,18 +1,12 @@
 ﻿using Microsoft.JSInterop;
-using OneOf;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
 {
-    public class Polygon : IDisposable
+    public class Polygon : ListableEntityBase<PolygonOptions>
     {
-        protected readonly JsObjectRef _jsObjectRef;
-
         private Map? _map;
-        
-        public Guid Guid => _jsObjectRef.Guid;
 
         /// <summary>
         /// Create a polygon using the passed PolygonOptions, which specify the polygon's path, the stroke style for the polygon's edges, and the fill style for the polygon's interior regions. 
@@ -30,20 +24,22 @@ namespace GoogleMapsComponents.Maps
         }
 
         /// <summary>
+        /// Constructor for use in ListableEntityListBase. Must be the first constructor!
+        /// </summary>
+        internal Polygon(JsObjectRef jsObjectRef)
+            : base(jsObjectRef)
+        {
+        }
+
+        /// <summary>
         /// Create a polygon using the passed PolygonOptions, which specify the polygon's path, the stroke style for the polygon's edges, and the fill style for the polygon's interior regions. 
         /// A polygon may contain one or more paths, where each path consists of an array of LatLngs.
         /// </summary>
         /// <param name="jsObjectRef"></param>
         /// <param name="opts"></param>
-        internal Polygon(JsObjectRef jsObjectRef, PolygonOptions? opts = null)
+        internal Polygon(JsObjectRef jsObjectRef, PolygonOptions? opts = null) : this(jsObjectRef)
         {
-            _jsObjectRef = jsObjectRef;
             _map = opts?.Map;
-        }
-
-        public void Dispose()
-        {
-            _jsObjectRef.Dispose();
         }
 
         /// <summary>
@@ -64,15 +60,6 @@ namespace GoogleMapsComponents.Maps
         {
             return _jsObjectRef.InvokeAsync<bool>(
                 "getEditable");
-        }
-
-        /// <summary>
-        /// Returns the map on which this shape is attached.
-        /// </summary>
-        /// <returns></returns>
-        public Map? GetMap()
-        {
-            return _map;
         }
 
         /// <summary>
@@ -129,19 +116,6 @@ namespace GoogleMapsComponents.Maps
         }
 
         /// <summary>
-        /// Renders this shape on the specified map. If map is set to null, the shape will be removed.
-        /// </summary>
-        /// <param name="map"></param>
-        public Task SetMap(Map map)
-        {
-            _map = map;
-
-            return _jsObjectRef.InvokeAsync(
-                "setMap",
-                map);
-        }
-
-        /// <summary>
         /// Sets the first path. See PolygonOptions for more details.
         /// </summary>
         /// <param name="options"></param>
@@ -184,41 +158,5 @@ namespace GoogleMapsComponents.Maps
                 "setVisible",
                 visible);
         }
-
-        public Task InvokeAsync(string functionName, params object[] args)
-        {
-            return _jsObjectRef.InvokeAsync(functionName, args);
         }
-
-        public Task<T> InvokeAsync<T>(string functionName, params object[] args)
-        {
-            return _jsObjectRef.InvokeAsync<T>(functionName, args);
-        }
-
-        public Task<OneOf<T, U>> InvokeAsync<T, U>(string functionName, params object[] args)
-        {
-            return _jsObjectRef.InvokeAsync<T, U>(functionName, args);
-        }
-
-        public Task<OneOf<T, U, V>> InvokeAsync<T, U, V>(string functionName, params object[] args)
-        {
-            return _jsObjectRef.InvokeAsync<T, U, V>(functionName, args);
-        }
-
-        public async Task<MapEventListener> AddListener(string eventName, Action handler)
-        {
-            var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
-                "addListener", eventName, handler);
-
-            return new MapEventListener(listenerRef);
-        }
-
-        public async Task<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
-        {
-            var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
-                "addListener", eventName, handler);
-
-            return new MapEventListener(listenerRef);
-        }
-    }
 }

@@ -78,7 +78,6 @@ namespace ServerSideDemo.Pages
                 StripLegsSteps = false
             });
 
-
             var routes = _directionsResult.Routes.SelectMany(x => x.Legs).ToList();
 
             foreach (var route in routes)

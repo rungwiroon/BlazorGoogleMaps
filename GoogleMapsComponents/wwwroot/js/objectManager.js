@@ -17,6 +17,24 @@
     let mapObjects = {};
     const dateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
 
+    //Strip circular dependencies, map object and functions
+    //https://stackoverflow.com/questions/11616630/how-can-i-print-a-circular-structure-in-a-json-like-format
+    const getCircularReplacer = () => {
+        const seen = new WeakSet();
+        return (key, value) => {
+            if (key == "map") return undefined;
+            if (typeof (value) == 'function') return undefined;
+
+            if (typeof value === "object" && value !== null) {
+                if (seen.has(value)) {
+                    return;
+                }
+                seen.add(value);
+            }
+            return value;
+        };
+    };
+
     function dateObjectReviver(key, value) {
         if (typeof value === "string" && dateFormat.test(value)) {
             return new Date(value);
@@ -50,25 +68,6 @@
                 //console.log(args);
 
                 var guid = blazorGoogleMaps.objectManager.addObject(args[0]);
-
-                //Strip circular dependencies, map object and functions
-                //https://stackoverflow.com/questions/11616630/how-can-i-print-a-circular-structure-in-a-json-like-format
-                const getCircularReplacer = () => {
-                    const seen = new WeakSet();
-                    return (key, value) => {
-                        if (key == "map") return undefined;
-                        if (typeof (value) == 'function') return undefined;
-
-                        if (typeof value === "object" && value !== null) {
-                            if (seen.has(value)) {
-                                return;
-                            }
-                            seen.add(value);
-                        }
-                        return value;
-                    };
-                };
-
 
                 if (args.length == 1 && typeof args[0].marker !== "undefined") {
                     var n = args[0].marker;
@@ -584,6 +583,17 @@
                         console.log(e);
                     }
                 }
+                else if (functionToInvoke == "removeAllFeatures") {
+                    //Artificial function to remove all features from the data layer
+                    try {
+                        obj.forEach(function (feature) {
+                            obj.remove(feature);
+                        });
+                        return null;
+                    } catch (e) {
+                        console.log(e);
+                    }
+                }
                 else {
                     var result = null;
                     try {
@@ -606,9 +616,9 @@
                         if ("get" in result) {
                             return result.get("guidString");
                         } else if ("dotnetTypeName" in result) {
-                            return JSON.stringify(result);
+                            return JSON.stringify(result, getCircularReplacer());
                         } else {
-                            return result;
+                            return JSON.parse(JSON.stringify(result, getCircularReplacer()));
                         }
                     } else {
                         return result;
