@@ -11,7 +11,8 @@
 
 <GoogleMap @ref="@(this._map1)" Id="map1" Options="@(this._mapOptions)" OnAfterInit="async () => await OnAfterMapInit()"></GoogleMap>
 <button @onclick="@GetMapDataFeature">Get MapData (Feature)</button>
-<button @onclick="@GetMapDataGeoJson">Get MapData (GeoJson)</button>
+<button @onclick="@GetMapDataGeoJsonLine">Get MapData (GeoJson Line)</button>
+<button @onclick="@GetMapDataGeoJsonPolygon">Get MapData (GeoJson Polygon)</button>
 <button @onclick="@RemoveFeatures">Remove All Features</button>
 
 <div>
@@ -89,7 +90,7 @@
         await _map1.InteropObject.Data.SetStyle(new StyleOptions { StrokeColor = "blue", StrokeWeight = 2 });
     }
 
-    private async Task GetMapDataGeoJson()
+    private async Task GetMapDataGeoJsonLine()
     {
         var jsonData = "{ \"type\": \"FeatureCollection\"," +
                        "  \"features\": [" +
@@ -100,6 +101,19 @@
 
         await _map1.InteropObject.Data.AddGeoJson(jsonData);
         await _map1.InteropObject.Data.SetStyle(new StyleOptions { StrokeColor = "green", StrokeWeight = 2 });
+    }
+
+    private async Task GetMapDataGeoJsonPolygon()
+    {
+        var jsonData = "{ \"type\": \"FeatureCollection\"," +
+                       "  \"features\": [" +
+                       "{ \"type\": \"Feature\"," +
+                       " \"id\": 3," +
+                       " \"properties\": { \"stroke\": \"#555555\", \"stroke-width\": 2, \"stroke-opacity\": 1 }, " +
+                       " \"geometry\": {\"type\": \"Polygon\",  \"coordinates\": [ [ [ 151.219, -33.888], [151.23, -33.888], [151.23, -33.869], [ 151.219, -33.869], [ 151.219, -33.888]]]}}]}";
+
+        await _map1.InteropObject.Data.AddGeoJson(jsonData);
+        await _map1.InteropObject.Data.SetStyle(new StyleOptions { StrokeColor = "magenta", StrokeWeight = 2, FillColor = "magenta", FillOpacity = 0.3f });
     }
 
     private async Task RemoveFeatures()
