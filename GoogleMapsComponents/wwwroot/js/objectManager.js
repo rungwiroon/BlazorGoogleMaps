@@ -613,6 +613,10 @@
                         if ("getArray" in result) {
                             return result.getArray();
                         }
+                        //It is event handler. Dont serialize it
+                        if ("addListener" == functionToInvoke) {
+                            return result;
+                        }
                         if ("get" in result) {
                             return result.get("guidString");
                         } else if ("dotnetTypeName" in result) {

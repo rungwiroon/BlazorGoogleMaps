@@ -13,7 +13,7 @@ namespace GoogleMapsComponents.Maps
 
         public Guid Guid => _jsObjectRef.Guid;
         public string Name { get; private set; }
-        
+
         public async static Task<ImageMapType> CreateAsync(IJSRuntime jsRuntime, string baseUrlFormat, int minZoom, int maxZoom, string name, float opacity)
         {
             var realUrl = baseUrlFormat.Replace("{z}", "' + zoom + '").Replace("{x}", "' + coord.x + '").Replace("{y}", "' + coord.y + '");
@@ -40,7 +40,8 @@ namespace GoogleMapsComponents.Maps
             //}";
 
             var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.ImageMapType", initOpts);
-            var to = new ImageMapType(jsObjectRef) {
+            var to = new ImageMapType(jsObjectRef)
+            {
                 Name = name
             };
             return to;
@@ -48,7 +49,7 @@ namespace GoogleMapsComponents.Maps
         public async static Task<ImageMapType> CreateAsync(IJSRuntime jsRuntime, string baseUrlFormat, string[] subDomains, int minZoom, int maxZoom, string name, float opacity)
         {
             // check if any subdomains were provided
-            if(subDomains == null || subDomains.Length == 0) return await CreateAsync(jsRuntime, baseUrlFormat, minZoom, maxZoom, name, opacity);
+            if (subDomains == null || subDomains.Length == 0) return await CreateAsync(jsRuntime, baseUrlFormat, minZoom, maxZoom, name, opacity);
             var realUrl = baseUrlFormat.Replace("{z}", "' + zoom + '").Replace("{x}", "' + coord.x + '").Replace("{y}", "' + coord.y + '");
             string initOpts = @"{
                 'getTileUrl': (coord, zoom) => {

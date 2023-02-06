@@ -57,7 +57,7 @@ namespace GoogleMapsComponents.Maps
         {
             return _jsObjectRef.InvokeAsync("extend", point);
         }
-        
+
         /// <summary>
         /// Computes the center of this LatLngBounds
         /// </summary>
@@ -81,7 +81,7 @@ namespace GoogleMapsComponents.Maps
         {
             return _jsObjectRef.InvokeAsync<LatLngLiteral>("getSouthWest");
         }
-        
+
         /// <summary>
         /// Returns true if this bounds shares any points with the other bounds.
         /// </summary>
