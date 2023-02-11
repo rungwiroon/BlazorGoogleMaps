@@ -42,7 +42,10 @@ namespace GoogleMapsComponents
             foreach (var name in Enum.GetNames(enumType))
             {
                 var enumMemberAttribute = ((EnumMemberAttribute[])enumType.GetField(name).GetCustomAttributes(typeof(EnumMemberAttribute), true)).Single();
-                if (enumMemberAttribute.Value == str) return (T)Enum.Parse(enumType, name);
+                if (enumMemberAttribute.Value == str)
+                {
+                    return (T)Enum.Parse(enumType, name);
+                }
             }
 
             //throw exception or whatever handling you want
@@ -285,7 +288,15 @@ namespace GoogleMapsComponents
             foreach (var name in Enum.GetNames(enumType))
             {
                 var enumMemberAttribute = ((EnumMemberAttribute[])enumType.GetField(name).GetCustomAttributes(typeof(EnumMemberAttribute), true)).Single();
-                if (enumMemberAttribute.Value == str) return (T)Enum.Parse(enumType, name);
+                if (enumMemberAttribute.Value == str)
+                {
+                    return (T)Enum.Parse(enumType, name);
+                }
+
+                if (string.Equals(name, str, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return (T)Enum.Parse(enumType, name);
+                }
             }
 
             //throw exception or whatever handling you want
