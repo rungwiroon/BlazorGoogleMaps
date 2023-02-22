@@ -13,6 +13,13 @@ namespace GoogleMapsComponents.Maps
             return obj;
         }
 
+        public static async Task<Marker> CreateAsync(IJSRuntime jsRuntime, string? jsConstructor, MarkerOptions? opts = null)
+        {
+            var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, jsConstructor ?? "google.maps.Marker", opts);
+            var obj = new Marker(jsObjectRef);
+            return obj;
+        }
+
         internal Marker(JsObjectRef jsObjectRef)
             : base(jsObjectRef)
         {
