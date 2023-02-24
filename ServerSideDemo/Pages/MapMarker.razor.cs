@@ -1,30 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using GoogleMapsComponents;
+﻿using GoogleMapsComponents;
 using GoogleMapsComponents.Maps;
 using GoogleMapsComponents.Maps.Coordinates;
 using GoogleMapsComponents.Maps.Extension;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using ServerSideDemo.Shared;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ServerSideDemo.Pages
 {
     public partial class MapMarker
     {
-        private GoogleMap map1;
+        private GoogleMap _map1;
+        private MapOptions _mapOptions;
 
-        private MapOptions mapOptions;
+        private readonly Stack<Marker> _markers = new Stack<Marker>();
+        private readonly List<String> _events = new List<String>();
 
-        private Stack<Marker> markers = new Stack<Marker>();
+        private MapEventList _eventList;
 
-        private List<String> _events = new List<String>();
-
-        private MapEventList eventList;
-
-        private LatLngBounds bounds;
+        private LatLngBounds _bounds;
         private MarkerClustering _markerClustering;
         public int ZIndex { get; set; } = 0;
 
@@ -33,7 +31,7 @@ namespace ServerSideDemo.Pages
 
         protected override void OnInitialized()
         {
-            mapOptions = new MapOptions()
+            _mapOptions = new MapOptions()
             {
                 Zoom = 13,
                 Center = new LatLngLiteral()
@@ -50,7 +48,7 @@ namespace ServerSideDemo.Pages
         {
             if (firstRender)
             {
-                bounds = await LatLngBounds.CreateAsync(map1.JsRuntime);
+                _bounds = await LatLngBounds.CreateAsync(_map1.JsRuntime);
             }
         }
 
@@ -65,7 +63,7 @@ namespace ServerSideDemo.Pages
             await ClearClustering();
             var coordinates = GetClusterCoordinates();
 
-            var markers = await GetMarkers(coordinates, map1.InteropObject);
+            var markers = await GetMarkers(coordinates, _map1.InteropObject);
 
             if (_markerClustering == null)
             {
@@ -73,7 +71,7 @@ namespace ServerSideDemo.Pages
                 // Clustering happens immediately upon adding markers, so including markers with the init 
                 // creates a race condition with JSInterop adding a listener. If not adding a listener, pass markers
                 // to CreateAsync to eliminate the latency of a second JSInterop call to AddMarkers.
-                _markerClustering = await MarkerClustering.CreateAsync(map1.JsRuntime, map1.InteropObject, new List<Marker>(), new MarkerClustererOptions()
+                _markerClustering = await MarkerClustering.CreateAsync(_map1.JsRuntime, _map1.InteropObject, new List<Marker>(), new MarkerClustererOptions()
                 {
                     // RendererObjectName = "customRendererLib.interpolatedRenderer"
                 });
@@ -84,7 +82,7 @@ namespace ServerSideDemo.Pages
             LatLngBoundsLiteral boundsLiteral = new LatLngBoundsLiteral(new LatLngLiteral() { Lat = coordinates.First().Lat, Lng = coordinates.First().Lng });
             foreach (var literal in coordinates)
                 LatLngBoundsLiteral.CreateOrExtend(ref boundsLiteral, literal);
-            await map1.InteropObject.FitBounds(boundsLiteral, OneOf.OneOf<int, GoogleMapsComponents.Maps.Coordinates.Padding>.FromT0(1));
+            await _map1.InteropObject.FitBounds(boundsLiteral, OneOf.OneOf<int, GoogleMapsComponents.Maps.Coordinates.Padding>.FromT0(1));
 
         }
 
@@ -106,7 +104,7 @@ namespace ServerSideDemo.Pages
             MarkerList deafLoneMarkersList = await MarkerList.CreateAsync(JsObjectRef, new Dictionary<string, MarkerOptions>());
             foreach (var key in guidStrings)
             {
-                var markr = markers.First(x => key == x.Guid.ToString());
+                var markr = _markers.First(x => key == x.Guid.ToString());
                 if (_listeningLoneMarkerKeys.Contains(key))
                     continue;
                 deafLoneMarkersList.BaseListableEntities.Add(key, markr);
@@ -122,7 +120,7 @@ namespace ServerSideDemo.Pages
             });
 
             // if all points set, clean up idle listener.
-            if (_listeningLoneMarkerKeys.Count == markers.Count)
+            if (_listeningLoneMarkerKeys.Count == _markers.Count)
             {
                 _listeningLoneMarkerKeys = null;
                 await _markerClustering.ClearListeners("clusteringend");
@@ -134,9 +132,9 @@ namespace ServerSideDemo.Pages
             await ClearClustering();
             var coordinates = GetClusterCoordinates();
 
-            var markers = await GetMarkers(coordinates, map1.InteropObject);
+            var markers = await GetMarkers(coordinates, _map1.InteropObject);
 
-            _markerClustering = await MarkerClustering.CreateAsync(map1.JsRuntime, map1.InteropObject, markers, new()
+            _markerClustering = await MarkerClustering.CreateAsync(_map1.JsRuntime, _map1.InteropObject, markers, new()
             {
 
                 AverageCenter = true,
@@ -154,29 +152,29 @@ namespace ServerSideDemo.Pages
         {
             return new List<LatLngLiteral>()
             {
-                new LatLngLiteral() { Lng = 147.154312, Lat = -31.56391},
-                new LatLngLiteral() { Lng = 150.363181, Lat = -33.718234},
-                new LatLngLiteral() { Lng = 150.371124, Lat = -33.727111},
-                new LatLngLiteral() { Lng = 151.209834, Lat = -33.848588},
-                new LatLngLiteral() { Lng = 151.216968, Lat = -33.851702},
-                new LatLngLiteral() { Lng = 150.863657, Lat = -34.671264},
-                new LatLngLiteral() { Lng = 148.662905, Lat = -35.304724},
-                new LatLngLiteral() { Lng = 175.699196, Lat = -36.817685},
-                new LatLngLiteral() { Lng = 175.790222, Lat = -36.828611},
-                new LatLngLiteral() { Lng = 145.116667, Lat = -37.75},
-                new LatLngLiteral() { Lng = 145.128708, Lat = -37.759859},
-                new LatLngLiteral() { Lng = 145.133858, Lat = -37.765015},
-                new LatLngLiteral() { Lng = 145.143299, Lat = -37.770104},
-                new LatLngLiteral() { Lng = 145.145187, Lat = -37.7737},
-                new LatLngLiteral() { Lng = 145.137978, Lat = -37.774785},
-                new LatLngLiteral() { Lng = 144.968119, Lat = -37.819616},
-                new LatLngLiteral() { Lng = 144.695692, Lat = -38.330766},
-                new LatLngLiteral() { Lng = 175.053218, Lat = -39.927193},
-                new LatLngLiteral() { Lng = 174.865694, Lat = -41.330162},
-                new LatLngLiteral() { Lng = 147.439506, Lat = -42.734358},
-                new LatLngLiteral() { Lng = 147.501315, Lat = -42.734358},
-                new LatLngLiteral() { Lng = 147.438, Lat = -42.735258},
-                new LatLngLiteral() { Lng = 170.463352, Lat = -43.999792},
+                new() { Lng = 147.154312, Lat = -31.56391},
+                new() { Lng = 150.363181, Lat = -33.718234},
+                new() { Lng = 150.371124, Lat = -33.727111},
+                new() { Lng = 151.209834, Lat = -33.848588},
+                new() { Lng = 151.216968, Lat = -33.851702},
+                new() { Lng = 150.863657, Lat = -34.671264},
+                new() { Lng = 148.662905, Lat = -35.304724},
+                new() { Lng = 175.699196, Lat = -36.817685},
+                new() { Lng = 175.790222, Lat = -36.828611},
+                new() { Lng = 145.116667, Lat = -37.75},
+                new() { Lng = 145.128708, Lat = -37.759859},
+                new() { Lng = 145.133858, Lat = -37.765015},
+                new() { Lng = 145.143299, Lat = -37.770104},
+                new() { Lng = 145.145187, Lat = -37.7737},
+                new() { Lng = 145.137978, Lat = -37.774785},
+                new() { Lng = 144.968119, Lat = -37.819616},
+                new() { Lng = 144.695692, Lat = -38.330766},
+                new() { Lng = 175.053218, Lat = -39.927193},
+                new() { Lng = 174.865694, Lat = -41.330162},
+                new() { Lng = 147.439506, Lat = -42.734358},
+                new() { Lng = 147.501315, Lat = -42.734358},
+                new() { Lng = 147.438, Lat = -42.735258},
+                new() { Lng = 170.463352, Lat = -43.999792},
             };
         }
 
@@ -186,7 +184,7 @@ namespace ServerSideDemo.Pages
             var index = 1;
             foreach (var latLngLiteral in coords)
             {
-                var marker = await Marker.CreateAsync(map1.JsRuntime, new MarkerOptions()
+                var marker = await Marker.CreateAsync(_map1.JsRuntime, new MarkerOptions()
                 {
                     Position = latLngLiteral,
                     Map = map,
@@ -208,13 +206,13 @@ namespace ServerSideDemo.Pages
 
         private async Task AddMarkerStyled()
         {
-            var mapCenter = await map1.InteropObject.GetCenter();
+            var mapCenter = await _map1.InteropObject.GetCenter();
             ZIndex++;
 
-            var marker = await Marker.CreateAsync(map1.JsRuntime, new MarkerOptions()
+            var marker = await Marker.CreateAsync(_map1.JsRuntime, new MarkerOptions()
             {
                 Position = mapCenter,
-                Map = map1.InteropObject,
+                Map = _map1.InteropObject,
                 ZIndex = ZIndex,
                 //Icon = new Symbol()
                 //{
@@ -225,7 +223,7 @@ namespace ServerSideDemo.Pages
                 //https://developers.google.com/maps/documentation/javascript/reference/marker#MarkerLabel.className
                 Label = new MarkerLabel
                 {
-                    Text = $"Test {markers.Count()}",
+                    Text = $"Test {_markers.Count()}",
                     FontWeight = "bold",
                     Color = "#5B32FF",
                     FontSize = "24",
@@ -234,19 +232,19 @@ namespace ServerSideDemo.Pages
                 },
             });
 
-            markers.Push(marker);
+            _markers.Push(marker);
 
             return;
         }
         private async Task AddMarker()
         {
-            var mapCenter = await map1.InteropObject.GetCenter();
+            var mapCenter = await _map1.InteropObject.GetCenter();
             ZIndex++;
 
-            var marker = await Marker.CreateAsync(map1.JsRuntime, new MarkerOptions()
+            var marker = await Marker.CreateAsync(_map1.JsRuntime, new MarkerOptions()
             {
                 Position = mapCenter,
-                Map = map1.InteropObject,
+                Map = _map1.InteropObject,
                 //Label = $"Test {markers.Count}",
                 ZIndex = ZIndex,
                 //CollisionBehavior = CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY,//2021-07 supported only in beta google maps version
@@ -258,10 +256,10 @@ namespace ServerSideDemo.Pages
                 //Icon = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
             });
 
-            markers.Push(marker);
+            _markers.Push(marker);
 
             //return;
-            await bounds.Extend(mapCenter);
+            await _bounds.Extend(mapCenter);
 
             var icon = await marker.GetIcon();
 
@@ -272,10 +270,15 @@ namespace ServerSideDemo.Pages
                 i => Console.WriteLine(i.Url),
                 _ => { });
 
-            markers.Push(marker);
+            _markers.Push(marker);
 
             await marker.AddListener<MouseEvent>("click", async e =>
             {
+                //https://github.com/rungwiroon/BlazorGoogleMaps/issues/246
+                //var before = marker.EventListeners;
+                //await marker.ClearListeners("click");
+                //var after = marker.EventListeners;
+
                 var markerLabel = await marker.GetLabel();
                 _events.Add("click on " + markerLabel);
                 StateHasChanged();
@@ -286,64 +289,64 @@ namespace ServerSideDemo.Pages
 
         private async Task RemoveMarker()
         {
-            if (!markers.Any())
+            if (!_markers.Any())
             {
                 return;
             }
 
-            var lastMarker = markers.Pop();
+            var lastMarker = _markers.Pop();
             await lastMarker.SetMap(null);
         }
 
         private async Task Recenter()
         {
-            if (!markers.Any())
+            if (!_markers.Any())
             {
                 return;
             }
-            var lastMarker = markers.Peek();
-            var center = await map1.InteropObject.GetCenter();
+            var lastMarker = _markers.Peek();
+            var center = await _map1.InteropObject.GetCenter();
             await lastMarker.SetPosition(center);
-            bounds = await LatLngBounds.CreateAsync(map1.JsRuntime);
-            foreach (var m in markers)
+            _bounds = await LatLngBounds.CreateAsync(_map1.JsRuntime);
+            foreach (var m in _markers)
             {
                 var pos = await m.GetPosition();
-                await bounds.Extend(pos);
+                await _bounds.Extend(pos);
             }
         }
 
 
         private async Task SetAnimation()
         {
-            if (!markers.Any())
+            if (!_markers.Any())
             {
                 return;
             }
-            var lastMarker = markers.Peek();
+            var lastMarker = _markers.Peek();
             await lastMarker.SetAnimation(Animation.Bounce);
             var position = await lastMarker.GetPosition();
             _events.Add($"SetAnimation {position.Lat},{position.Lng} Animation.Bounce");
         }
         private async Task GetAnimation()
         {
-            if (!markers.Any())
+            if (!_markers.Any())
             {
                 return;
             }
-            var lastMarker = markers.Peek();
+            var lastMarker = _markers.Peek();
             var animation = await lastMarker.GetAnimation();
             var position = await lastMarker.GetPosition();
             _events.Add($"GetAnimation {position.Lat},{position.Lng} {animation?.ToString()}");
         }
         private async Task FitBounds()
         {
-            if (await this.bounds.IsEmpty())
+            if (await this._bounds.IsEmpty())
             {
                 return;
             }
 
-            var boundsLiteral = await bounds.ToJson();
-            await map1.InteropObject.FitBounds(boundsLiteral, OneOf.OneOf<int, Padding>.FromT0(5));
+            var boundsLiteral = await _bounds.ToJson();
+            await _map1.InteropObject.FitBounds(boundsLiteral, OneOf.OneOf<int, Padding>.FromT0(5));
         }
     }
 }

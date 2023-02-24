@@ -3,7 +3,7 @@
 
 <h1>Google Map Markers</h1>
 
-<GoogleMap @ref="@map1" Id="map1" Options="@mapOptions"></GoogleMap>
+<GoogleMap @ref="@_map1" Id="map1" Options="@_mapOptions"></GoogleMap>
 <button @onclick="@AddMarker">Add marker</button>
 <button @onclick="@AddMarkerStyled">Add styled font marker</button>
 <button @onclick="@RemoveMarker">Remove marker</button>
@@ -16,7 +16,7 @@
 <button @onclick="@SetAnimation">SetAnimation </button>
 
 
-<MapEventList @ref="@eventList" Events="@_events"></MapEventList>
+<MapEventList @ref="@_eventList" Events="@_events"></MapEventList>
 <style>
     /* Optional: Makes the sample page fill the window. */
     html,
