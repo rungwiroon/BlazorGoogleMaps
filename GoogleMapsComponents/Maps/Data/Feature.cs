@@ -13,6 +13,13 @@ namespace GoogleMapsComponents.Maps.Data
         private readonly FeatureOptions? _options;
 
         /// <summary>
+        /// Needed for json serializations
+        /// </summary>
+        public Feature()
+        {
+        }
+
+        /// <summary>
         /// Constructs a Feature with the given options.
         /// </summary>
         /// <param name="options"></param>
