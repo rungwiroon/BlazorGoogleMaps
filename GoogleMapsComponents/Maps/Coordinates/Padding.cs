@@ -1,19 +1,22 @@
 ﻿using Newtonsoft.Json;
-using System;
 
 namespace GoogleMapsComponents.Maps.Coordinates
 {
     public class Padding
     {
         [JsonProperty("top")]
-        public int Top { get; set; } = 0;
+        public int Top { get; set; }
 
         [JsonProperty("right")]
-        public int Right { get; set; } = 0;
+        public int Right { get; set; }
 
         [JsonProperty("left")]
-        public int Left { get; set; } = 0;
+        public int Left { get; set; }
 
+        public Padding()
+        {
+
+        }
 
         public Padding(int padding)
         {
