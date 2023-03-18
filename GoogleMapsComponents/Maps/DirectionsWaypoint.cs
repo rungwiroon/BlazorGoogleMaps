@@ -1,5 +1,5 @@
 ﻿using OneOf;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace GoogleMapsComponents.Maps
 {

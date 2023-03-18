@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace GoogleMapsComponents.Maps
 {
@@ -55,13 +55,13 @@ namespace GoogleMapsComponents.Maps
         public TravelMode TravelMode { get; set; }
 
 
-        [JsonProperty("lat_lngs")]
+        [JsonPropertyName("lat_lngs")]
         public IEnumerable<LatLngLiteral> LatLngs { get; set; }
 
         /// <summary>
         /// A sequence of LatLngs describing the course of this step.
         /// </summary>
-        [JsonProperty("path")]
+        [JsonPropertyName("path")]
         public IEnumerable<LatLngLiteral> Path { get; set; }
     }
 }

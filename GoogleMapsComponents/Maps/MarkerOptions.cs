@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using OneOf;
+﻿using OneOf;
 
 namespace GoogleMapsComponents.Maps
 {
@@ -30,13 +29,13 @@ namespace GoogleMapsComponents.Maps
         /// Icon for the foreground. 
         /// If a string is provided, it is treated as though it were an Icon with the string as url.
         /// </summary>
-        [JsonConverter(typeof(OneOfConverter))]
+        //[JsonConverter(typeof(OneOfConverter))]
         public OneOf<string, Icon, Symbol> Icon { get; set; }
 
         /// <summary>
         /// Adds a label to the marker. The label can either be a string, or a MarkerLabel object.
         /// </summary>
-        [JsonConverter(typeof(OneOfConverter))]
+        //[JsonConverter(typeof(OneOfConverter))]
         public OneOf<string, MarkerLabel> Label { get; set; }
 
         /// <summary>

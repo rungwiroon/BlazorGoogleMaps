@@ -1,7 +1,7 @@
 ﻿using Microsoft.JSInterop;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
+using System.Text.Json;
 
 namespace GoogleMapsComponents
 {
@@ -27,18 +27,39 @@ namespace GoogleMapsComponents
                 return;
             }
 
-            var jArray = JArray.Parse(args);
+            var jArray = JsonDocument.Parse(args)
+                .RootElement
+                .EnumerateArray();
+
             var arguments = _argumentTypes.Zip(jArray, (type, jToken) => new { jToken, type })
                 .Select(x =>
                 {
-                    var obj = x.jToken.ToObject(x.type);
+                    //var obj = x.jToken.ToObject(x.type);
+                    var json = x.jToken.GetString();
+
+                    var obj = Helper.DeSerializeObject<object>(json);
 
                     if (obj is IActionArgument actionArg)
+                    {
                         actionArg.JsObjectRef = new JsObjectRef(_jsRuntime, new Guid(guid));
+                    }
 
                     return obj;
                 })
                 .ToArray();
+
+            //var jArray = JArray.Parse(args);
+            //var arguments = _argumentTypes.Zip(jArray, (type, jToken) => new { jToken, type })
+            //    .Select(x =>
+            //    {
+            //        var obj = x.jToken.ToObject(x.type);
+
+            //        if (obj is IActionArgument actionArg)
+            //            actionArg.JsObjectRef = new JsObjectRef(_jsRuntime, new Guid(guid));
+
+            //        return obj;
+            //    })
+            //    .ToArray();
 
             //Debug.WriteLine(arguments.FirstOrDefault()?.GetType());
 

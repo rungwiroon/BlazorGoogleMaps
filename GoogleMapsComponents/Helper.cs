@@ -1,14 +1,12 @@
-﻿using GoogleMapsComponents.Maps;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
 using OneOf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents
@@ -51,16 +49,33 @@ namespace GoogleMapsComponents
             //throw exception or whatever handling you want
             return default;
         }
-        private static string SerializeObject(object obj)
+
+        public static TObject DeSerializeObject<TObject>(string json)
         {
-            var value = JsonConvert.SerializeObject(
-                        obj,
-                        Formatting.None,
-                        new JsonSerializerSettings
-                        {
-                            NullValueHandling = NullValueHandling.Ignore,
-                            ContractResolver = new CamelCasePropertyNamesContractResolver()
-                        });
+            var opt = new JsonSerializerOptions();
+            opt.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+            opt.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+
+            var value = JsonSerializer.Deserialize<TObject>(json, opt);
+            return value;
+        }
+
+        public static string SerializeObject(object obj)
+        {
+            var opt = new JsonSerializerOptions();
+            opt.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+            opt.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            opt.Converters.Add(new OneOfConverterFactory());
+
+            var value = JsonSerializer.Serialize(
+                obj,
+                opt);
+            //Formatting.None,
+            //new JsonSerializerSettings
+            //{
+            //    NullValueHandling = NullValueHandling.Ignore,
+            //    ContractResolver = new CamelCasePropertyNamesContractResolver()
+            //});
 
             return value;
         }
@@ -151,19 +166,33 @@ namespace GoogleMapsComponents
                 {
                     try
                     {
-                        var jo = JObject.Parse(someText);
-                        var typeToken = jo.SelectToken("dotnetTypeName");
+                        var jo = JsonDocument.Parse(someText);
+                        var typeToken = jo.RootElement.GetProperty("dotnetTypeName").GetString();
                         if (typeToken != null)
                         {
-                            var typeName = typeToken.Value<string>();
-                            var asm = typeof(Map).Assembly;
-                            var type = asm.GetType(typeName);
-                            result = jo.ToObject(type);
+                            result = DeSerializeObject<TRes>(typeToken);
+                            //var typeName = typeToken.Value<string>();
+                            //var asm = typeof(Map).Assembly;
+                            //var type = asm.GetType(typeName);
+                            //result = jo.ToObject(type);
                         }
                         else
                         {
                             result = someText;
                         }
+                        //var jo = JsonNode.Parse(someText);
+                        //var typeToken = jo.SelectToken("dotnetTypeName");
+                        //if (typeToken != null)
+                        //{
+                        //    var typeName = typeToken.Value<string>();
+                        //    var asm = typeof(Map).Assembly;
+                        //    var type = asm.GetType(typeName);
+                        //    result = jo.ToObject(type);
+                        //}
+                        //else
+                        //{
+                        //    result = someText;
+                        //}
                     }
                     catch
                     {
@@ -202,14 +231,17 @@ namespace GoogleMapsComponents
             {
                 try
                 {
-                    var jo = JObject.Parse(someText);
-                    var typeToken = jo.SelectToken("dotnetTypeName");
+                    //var jo = JObject.Parse(someText);
+                    //var typeToken = jo.SelectToken("dotnetTypeName");
+                    var jo = JsonDocument.Parse(someText);
+                    var typeToken = jo.RootElement.GetProperty("dotnetTypeName").GetString();
                     if (typeToken != null)
                     {
-                        var typeName = typeToken.Value<string>();
-                        var asm = typeof(Map).Assembly;
-                        var type = asm.GetType(typeName);
-                        result = jo.ToObject(type);
+                        result = DeSerializeObject<object>(typeToken);
+                        //var typeName = typeToken.Value<string>();
+                        //var asm = typeof(Map).Assembly;
+                        //var type = asm.GetType(typeName);
+                        //result = jo.ToObject(type);
                     }
                     else
                     {

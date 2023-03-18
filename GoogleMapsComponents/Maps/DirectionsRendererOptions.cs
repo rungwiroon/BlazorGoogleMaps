@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace GoogleMapsComponents.Maps
 {
@@ -37,7 +37,7 @@ namespace GoogleMapsComponents.Maps
         /// Options for the markers. All markers rendered by the DirectionsRenderer will use these options.
         /// </summary>
         public MarkerOptions MarkerOptions { get; set; }
-                
+
         //TODO Figure out what a "Node" type is.
         /// <summary>
         /// The <div> in which to display the directions steps.

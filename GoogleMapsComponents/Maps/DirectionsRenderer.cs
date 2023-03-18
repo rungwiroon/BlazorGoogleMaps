@@ -1,7 +1,6 @@
-﻿using System;
+﻿using Microsoft.JSInterop;
+using System;
 using System.Threading.Tasks;
-using Microsoft.JSInterop;
-using Newtonsoft.Json;
 
 namespace GoogleMapsComponents.Maps
 {
@@ -45,7 +44,7 @@ namespace GoogleMapsComponents.Maps
                 request, directionsRequestOptions);
             try
             {
-                var dirResult = JsonConvert.DeserializeObject<DirectionsResult>(response);
+                var dirResult = Helper.DeSerializeObject<DirectionsResult>(response);
                 return dirResult;
             }
             catch (Exception e)
@@ -92,7 +91,7 @@ namespace GoogleMapsComponents.Maps
                 directionsRequestOptions);
             try
             {
-                var dirResult = JsonConvert.DeserializeObject<DirectionsResult>(response);
+                var dirResult = Helper.DeSerializeObject<DirectionsResult>(response);
                 return dirResult;
             }
             catch (Exception e)
