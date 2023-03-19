@@ -1,4 +1,10 @@
-﻿namespace GoogleMapsComponents.Serialization
+﻿using GoogleMapsComponents.Maps;
+using OneOf;
+using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
+namespace GoogleMapsComponents.Serialization
 {
     //internal class OneOfConverterOneOf3<T0, T1, T2> : JsonConverter<OneOf<T0, T1, T2>>
     //{
