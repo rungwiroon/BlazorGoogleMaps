@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace GoogleMapsComponents
+namespace GoogleMapsComponents.Serialization
 {
     public class OneOfConverterFactory : JsonConverterFactory
     {

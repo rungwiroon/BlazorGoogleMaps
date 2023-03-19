@@ -66,6 +66,7 @@ namespace GoogleMapsComponents
             opt.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             opt.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             opt.Converters.Add(new OneOfConverterFactory());
+            opt.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
 
             var value = JsonSerializer.Serialize(
                 obj,
