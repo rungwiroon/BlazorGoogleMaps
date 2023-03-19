@@ -29,7 +29,7 @@ namespace GoogleMapsComponents
             return jsonConverter;
         }
 
-        static (Type? oneOfGenericType, Type? converterType) GetTypes(Type? type)
+        private static (Type? oneOfGenericType, Type? converterType) GetTypes(Type? type)
         {
             while (type is not null)
             {
@@ -92,7 +92,7 @@ namespace GoogleMapsComponents
             return (null, null);
         }
 
-        static IOneOf CreateOneOf(JsonSerializerOptions options,
+        private static IOneOf CreateOneOf(JsonSerializerOptions options,
                                   int index,
                                   JsonDocument doc,
                                   Type oneOfType,
@@ -113,12 +113,12 @@ namespace GoogleMapsComponents
             return (IOneOf)oneOf;
         }
 
-        const string IndexKey = "$index";
+        private const string IndexKey = "$index";
 
-        class OneOf2JsonConverter<T0, T1> : JsonConverter<OneOf<T0, T1>>
+        private class OneOf2JsonConverter<T0, T1> : JsonConverter<OneOf<T0, T1>>
         {
-            static readonly Type OneOfType = typeof(OneOf<,>).MakeGenericType(typeof(T0), typeof(T1));
-            static readonly Type[] Types = { typeof(T0), typeof(T1) };
+            private static readonly Type OneOfType = typeof(OneOf<,>).MakeGenericType(typeof(T0), typeof(T1));
+            private static readonly Type[] Types = { typeof(T0), typeof(T1) };
 
             public OneOf2JsonConverter(JsonSerializerOptions _)
             {
@@ -147,8 +147,8 @@ namespace GoogleMapsComponents
             {
                 writer.WriteStartObject();
 
-                writer.WritePropertyName(IndexKey);
-                writer.WriteNumberValue(value.Index);
+                //writer.WritePropertyName(IndexKey);
+                //writer.WriteNumberValue(value.Index);
 
                 using var doc = value.Match(
                   t0 => JsonSerializer.SerializeToDocument(t0, typeof(T0), options),
@@ -167,10 +167,10 @@ namespace GoogleMapsComponents
             }
         }
 
-        class OneOf3JsonConverter<T0, T1, T2> : JsonConverter<OneOf<T0, T1, T2>>
+        private class OneOf3JsonConverter<T0, T1, T2> : JsonConverter<OneOf<T0, T1, T2>>
         {
-            static readonly Type OneOfType = typeof(OneOf<,,>).MakeGenericType(typeof(T0), typeof(T1), typeof(T2));
-            static readonly Type[] Types = { typeof(T0), typeof(T1), typeof(T2) };
+            private static readonly Type OneOfType = typeof(OneOf<,,>).MakeGenericType(typeof(T0), typeof(T1), typeof(T2));
+            private static readonly Type[] Types = { typeof(T0), typeof(T1), typeof(T2) };
 
             public OneOf3JsonConverter(JsonSerializerOptions _)
             {
@@ -199,8 +199,8 @@ namespace GoogleMapsComponents
             {
                 writer.WriteStartObject();
 
-                writer.WritePropertyName(IndexKey);
-                writer.WriteNumberValue(value.Index);
+                //writer.WritePropertyName(IndexKey);
+                //writer.WriteNumberValue(value.Index);
 
                 using var doc = value.Match(
                   t0 => JsonSerializer.SerializeToDocument(t0, typeof(T0), options),

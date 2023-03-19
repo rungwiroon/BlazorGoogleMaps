@@ -15,7 +15,7 @@
         /// <summary>
         /// The initial Map center. Required.
         /// </summary>
-        public LatLngLiteral Center { get; set; }
+        public LatLngLiteral? Center { get; set; }
 
         /// <summary>
         /// When false, map icons are not clickable. 
@@ -63,7 +63,7 @@
         /// <summary>
         /// The display options for the Fullscreen control.
         /// </summary>
-        public FullscreenControlOptions FullscreenControlOptions { get; set; }
+        public FullscreenControlOptions? FullscreenControlOptions { get; set; }
 
         /// <summary>
         /// This setting controls how the API handles gestures on the map. Allowed values:
@@ -94,7 +94,7 @@
         /// <summary>
         /// The initial display options for the Map type control.
         /// </summary>
-        public MapTypeControlOptions MapTypeControlOptions { get; set; }
+        public MapTypeControlOptions? MapTypeControlOptions { get; set; }
 
         /// <summary>
         /// The initial Map mapTypeId. Defaults to ROADMAP.
@@ -129,13 +129,13 @@
         /// <summary>
         /// The display options for the Pan control.
         /// </summary>
-        public PanControlOptions PanControlOptions { get; set; }
+        public PanControlOptions? PanControlOptions { get; set; }
 
         /// <summary>
         /// Defines a boundary that restricts the area of the map accessible to users. 
         /// When set, a user can only pan and zoom while the camera view stays inside the limits of the boundary.
         /// </summary>
-        public MapRestriction Restriction { get; set; }
+        public MapRestriction? Restriction { get; set; }
 
         /// <summary>
         /// The enabled/disabled state of the Rotate control.
@@ -145,7 +145,7 @@
         /// <summary>
         /// The display options for the Rotate control.
         /// </summary>
-        public RotateControlOptions RotateControlOptions { get; set; }
+        public RotateControlOptions? RotateControlOptions { get; set; }
 
         /// <summary>
         /// The initial enabled/disabled state of the Scale control.
@@ -155,7 +155,7 @@
         /// <summary>
         /// The initial display options for the Scale control.
         /// </summary>
-        public ScaleControlOptions ScaleControlOptions { get; set; }
+        public ScaleControlOptions? ScaleControlOptions { get; set; }
 
         /// <summary>
         /// If false, disables zooming on the map using a mouse scroll wheel. 
@@ -178,7 +178,7 @@
         /// <summary>
         /// The initial display options for the Street View Pegman control.
         /// </summary>
-        public StreetViewControlOptions StreetViewControlOptions { get; set; }
+        public StreetViewControlOptions? StreetViewControlOptions { get; set; }
 
         /// <summary>
         /// Styles to apply to each of the default map types. 
@@ -209,7 +209,7 @@
         /// <summary>
         /// The display options for the Zoom control.
         /// </summary>
-        public ZoomControlOptions ZoomControlOptions { get; set; }
+        public ZoomControlOptions? ZoomControlOptions { get; set; }
 
         /// <summary>
         /// Type:  string optional

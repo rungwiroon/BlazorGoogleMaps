@@ -6,18 +6,18 @@ using System.Text.Json.Serialization;
 
 namespace GoogleMapsComponents
 {
-    internal class OneOfConverterOneOf3<T0, T1, T2> : JsonConverter<OneOf<T0, T1, T2>>
-    {
-        public override OneOf<T0, T1, T2> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            throw new NotImplementedException();
-        }
+    //internal class OneOfConverterOneOf3<T0, T1, T2> : JsonConverter<OneOf<T0, T1, T2>>
+    //{
+    //    public override OneOf<T0, T1, T2> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
 
-        public override void Write(Utf8JsonWriter writer, OneOf<T0, T1, T2> value, JsonSerializerOptions options)
-        {
-            writer.WriteStringValue("HIiiii");
-        }
-    }
+    //    public override void Write(Utf8JsonWriter writer, OneOf<T0, T1, T2> value, JsonSerializerOptions options)
+    //    {
+    //        writer.WriteStringValue("HIiiii");
+    //    }
+    //}
     internal class OneOfConverter : JsonConverter<IOneOf>
     {
         //public override IOneOf ReadJson(JsonReader reader, Type objectType, IOneOf existingValue, bool hasExistingValue, JsonSerializer serializer)

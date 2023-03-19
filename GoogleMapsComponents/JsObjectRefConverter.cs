@@ -23,8 +23,24 @@ namespace GoogleMapsComponents
 
         public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
         {
-            var json = Helper.SerializeObject(new JsObjectRef1(value.Guid));
-            writer.WriteStringValue(json);
+            //var json = Helper.SerializeObject(new JsObjectRef1(value.Guid));
+            //writer.WriteStringValue(json);
+
+            writer.WriteStartObject();
+
+            //writer.WritePropertyName(IndexKey);
+            //writer.WriteNumberValue(value.Index);
+
+            using var doc = JsonSerializer.SerializeToDocument(new JsObjectRef1(value.Guid), typeof(JsObjectRef1), options);
+
+
+            foreach (var prop in doc.RootElement.EnumerateObject())
+            {
+                prop.WriteTo(writer);
+            }
+
+
+            writer.WriteEndObject();
         }
     }
 }
