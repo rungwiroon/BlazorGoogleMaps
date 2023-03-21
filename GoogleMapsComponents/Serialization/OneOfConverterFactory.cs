@@ -155,7 +155,7 @@ namespace GoogleMapsComponents.Serialization
                   t1 => JsonSerializer.SerializeToDocument(t1, typeof(T1), options)
                 );
 
-                if (doc.RootElement.GetString() != null)
+                if (doc.RootElement.ValueKind == JsonValueKind.Object && doc.RootElement.ValueKind != JsonValueKind.Null)
                 {
                     foreach (var prop in doc.RootElement.EnumerateObject())
                     {

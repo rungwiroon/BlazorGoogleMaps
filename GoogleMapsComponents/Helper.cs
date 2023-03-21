@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using GoogleMapsComponents.Serialization;
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using OneOf;
 using System;

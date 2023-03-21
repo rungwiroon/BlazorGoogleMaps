@@ -25,7 +25,8 @@ namespace GoogleMapsComponents.Serialization
             foreach (var value in values)
             {
                 var enumMember = type.GetMember(value.ToString())[0];
-                var attr = enumMember.GetCustomAttributes(typeof(EnumMemberAttribute), false)
+                var attr = enumMember
+                    .GetCustomAttributes(typeof(EnumMemberAttribute), false)
                     .Cast<EnumMemberAttribute>()
                     .FirstOrDefault();
 
@@ -33,12 +34,12 @@ namespace GoogleMapsComponents.Serialization
 
                 if (attr?.Value != null)
                 {
-                    _enumToString.Add(value, attr.Value);
-                    _stringToEnum.Add(attr.Value, value);
+                    _enumToString.Add((TEnum)value, attr.Value);
+                    _stringToEnum.Add(attr.Value, (TEnum)value);
                 }
                 else
                 {
-                    _enumToString.Add(value, value.ToString());
+                    _enumToString.Add((TEnum)value, value.ToString());
                 }
             }
         }
@@ -58,6 +59,14 @@ namespace GoogleMapsComponents.Serialization
         public override void Write(Utf8JsonWriter writer, TEnum value, JsonSerializerOptions options)
         {
             writer.WriteStringValue(_enumToString[value]);
+        }
+
+        public static string ToLowerFirstChar(string str)
+        {
+            if (String.IsNullOrEmpty(str) || Char.IsLower(str, 0))
+                return str;
+
+            return Char.ToLowerInvariant(str[0]) + str.Substring(1);
         }
     }
 }
