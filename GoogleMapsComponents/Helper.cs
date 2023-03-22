@@ -14,6 +14,18 @@ namespace GoogleMapsComponents
 {
     internal static class Helper
     {
+        private static readonly JsonSerializerOptions Options = new JsonSerializerOptions()
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        };
+
+        static Helper()
+        {
+            Options.Converters.Add(new OneOfConverterFactory());
+            Options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+        }
+
         internal static Task MyInvokeAsync(
             this IJSRuntime jsRuntime,
             string identifier,
@@ -51,13 +63,15 @@ namespace GoogleMapsComponents
             return default;
         }
 
+        public static object? DeSerializeObject(JsonElement json, Type type)
+        {
+            var obj = json.Deserialize(type, Options);
+            return obj;
+        }
         public static TObject DeSerializeObject<TObject>(string json)
         {
-            var opt = new JsonSerializerOptions();
-            opt.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-            opt.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 
-            var value = JsonSerializer.Deserialize<TObject>(json, opt);
+            var value = JsonSerializer.Deserialize<TObject>(json, Options);
             return value;
         }
 
@@ -71,7 +85,7 @@ namespace GoogleMapsComponents
 
             var value = JsonSerializer.Serialize(
                 obj,
-                opt);
+                Options);
             //Formatting.None,
             //new JsonSerializerSettings
             //{

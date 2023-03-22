@@ -35,9 +35,10 @@ namespace GoogleMapsComponents
                 .Select(x =>
                 {
                     //var obj = x.jToken.ToObject(x.type);
-                    var json = x.jToken.GetString();
+                    //var json = x.jToken.GetString();
+                    var obj = Helper.DeSerializeObject(x.jToken, x.type);
 
-                    var obj = Helper.DeSerializeObject<object>(json);
+                    //var obj = Helper.DeSerializeObject<object>(json);
 
                     if (obj is IActionArgument actionArg)
                     {
