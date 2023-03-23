@@ -217,6 +217,7 @@ namespace GoogleMapsComponents.Serialization
                 }
 
                 writer.WriteEndObject();
+
             }
         }
     }
