@@ -197,11 +197,13 @@ namespace GoogleMapsComponents.Serialization
                                        OneOf<T0, T1, T2> value,
                                        JsonSerializerOptions options)
             {
-                writer.WriteStartObject();
 
-                //writer.WritePropertyName(IndexKey);
-                //writer.WriteNumberValue(value.Index);
+                //var jo = JObject.FromObject(value.Value, serializer);
+                //var typeNameProperty = new JProperty("dotnetTypeName", value.Value.GetType().FullName);
+                //writer.WritePropertyName("dotnetTypeName");
+                //writer.WriteStringValue(value.Value.GetType().FullName);
 
+                //writer.WriteStartObject();
                 using var doc = value.Match(
                   t0 => JsonSerializer.SerializeToDocument(t0, typeof(T0), options),
                   t1 => JsonSerializer.SerializeToDocument(t1, typeof(T1), options),
