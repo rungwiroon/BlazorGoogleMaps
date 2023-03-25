@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using GoogleMapsComponents;
+﻿using GoogleMapsComponents;
 using GoogleMapsComponents.Maps;
 using GoogleMapsComponents.Maps.Visualization;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ServerSideDemo.Pages
 {
@@ -28,8 +28,6 @@ namespace ServerSideDemo.Pages
 
         private async Task AddHeatMap()
         {
-
-
             var heatMap = await HeatmapLayer.CreateAsync(map1.JsRuntime, new HeatmapLayerOptions
             {
                 Map = map1.InteropObject,

@@ -1,6 +1,4 @@
-﻿using GoogleMapsComponents.Serialization;
-using OneOf;
-using System.Text.Json.Serialization;
+﻿using OneOf;
 
 
 namespace GoogleMapsComponents.Maps
@@ -14,7 +12,6 @@ namespace GoogleMapsComponents.Maps
         /// Type:  LatLng|LatLngLiteral optional
         /// The LatLng of the entity described by this place.
         /// </summary>
-        [JsonConverter(typeof(OneOfConverter))]
         public OneOf<string, LatLngLiteral> Location { get; set; }
 
         /// <summary>

@@ -1,6 +1,4 @@
-﻿using GoogleMapsComponents.Serialization;
-using OneOf;
-using System.Text.Json.Serialization;
+﻿using OneOf;
 
 namespace GoogleMapsComponents.Maps
 {
@@ -13,7 +11,6 @@ namespace GoogleMapsComponents.Maps
         /// Waypoint location. Can be an address string, a LatLng, or a Place. 
         /// Optional.
         /// </summary>
-        [JsonConverter(typeof(OneOfConverter))]
         public OneOf<string, LatLngLiteral, Place> Location { get; set; }
 
         /// <summary>

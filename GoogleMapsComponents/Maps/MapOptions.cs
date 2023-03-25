@@ -1,4 +1,6 @@
-﻿namespace GoogleMapsComponents.Maps
+﻿using System.Text.Json.Serialization;
+
+namespace GoogleMapsComponents.Maps
 {
     /// <summary>
     /// MapOptions object used to define the properties that can be set on a Map.
@@ -100,6 +102,7 @@
         /// The initial Map mapTypeId. Defaults to ROADMAP.
         /// </summary>
         //[JsonConverter(typeof(StringEnumConverter))]
+        [JsonConverter(typeof(EnumMemberConverter<MapTypeId>))]
         public MapTypeId MapTypeId { get; set; }
 
         /// <summary>

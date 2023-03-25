@@ -1,6 +1,4 @@
-﻿using GoogleMapsComponents.Serialization;
-using OneOf;
-using System.Text.Json.Serialization;
+﻿using OneOf;
 
 namespace GoogleMapsComponents.Maps
 {
@@ -18,7 +16,6 @@ namespace GoogleMapsComponents.Maps
         /// <summary>
         /// (optional) LatLngBounds within which to search.
         /// </summary>
-        [JsonConverter(typeof(OneOfConverter))]
         public OneOf<LatLngBounds, LatLngBoundsLiteral>? Bounds { get; set; }
 
         /// <summary>

@@ -29,7 +29,7 @@ namespace GoogleMapsComponents.Maps.Visualization
         /// The map on which to display the layer.
         /// </summary>
         [JsonConverter(typeof(JsObjectRefConverter<Map>))]
-        public Map Map { get; set; }
+        public Map? Map { get; set; }
 
         /// <summary>
         /// The maximum intensity of the heatmap. 

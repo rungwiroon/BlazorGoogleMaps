@@ -1,6 +1,4 @@
-﻿using GoogleMapsComponents.Serialization;
-using OneOf;
-using System.Text.Json.Serialization;
+﻿using OneOf;
 
 namespace GoogleMapsComponents.Maps.Places
 {
@@ -19,7 +17,6 @@ namespace GoogleMapsComponents.Maps.Places
         /// (optional) Bounds for prediction biasing. Predictions will be biased towards, but not restricted to, the given bounds.
         /// Both location and radius will be ignored if bounds is set.
         /// </summary>
-        [JsonConverter(typeof(OneOfConverter))]
         public OneOf<LatLngBounds, LatLngBoundsLiteral>? Bounds { get; set; }
 
         /// <summary>
