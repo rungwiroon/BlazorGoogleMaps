@@ -145,11 +145,6 @@ namespace GoogleMapsComponents.Serialization
                                        OneOf<T0, T1> value,
                                        JsonSerializerOptions options)
             {
-                writer.WriteStartObject();
-
-                //writer.WritePropertyName(IndexKey);
-                //writer.WriteNumberValue(value.Index);
-
                 using var doc = value.Match(
                   t0 => JsonSerializer.SerializeToDocument(t0, typeof(T0), options),
                   t1 => JsonSerializer.SerializeToDocument(t1, typeof(T1), options)
@@ -157,13 +152,19 @@ namespace GoogleMapsComponents.Serialization
 
                 if (doc.RootElement.ValueKind == JsonValueKind.Object && doc.RootElement.ValueKind != JsonValueKind.Null)
                 {
+                    writer.WriteStartObject();
                     foreach (var prop in doc.RootElement.EnumerateObject())
                     {
                         prop.WriteTo(writer);
                     }
+                    writer.WritePropertyName("dotnetTypeName");
+                    writer.WriteStringValue(value.Value.GetType().FullName);
+                    writer.WriteEndObject();
                 }
-
-                writer.WriteEndObject();
+                else
+                {
+                    writer.WriteStringValue(value.Value.ToString());
+                }
             }
         }
 
@@ -198,12 +199,6 @@ namespace GoogleMapsComponents.Serialization
                                        JsonSerializerOptions options)
             {
 
-                //var jo = JObject.FromObject(value.Value, serializer);
-                //var typeNameProperty = new JProperty("dotnetTypeName", value.Value.GetType().FullName);
-                //writer.WritePropertyName("dotnetTypeName");
-                //writer.WriteStringValue(value.Value.GetType().FullName);
-
-                //writer.WriteStartObject();
                 using var doc = value.Match(
                   t0 => JsonSerializer.SerializeToDocument(t0, typeof(T0), options),
                   t1 => JsonSerializer.SerializeToDocument(t1, typeof(T1), options),
@@ -212,14 +207,20 @@ namespace GoogleMapsComponents.Serialization
 
                 if (doc.RootElement.ValueKind == JsonValueKind.Object && doc.RootElement.ValueKind != JsonValueKind.Null)
                 {
+                    writer.WriteStartObject();
                     foreach (var prop in doc.RootElement.EnumerateObject())
                     {
                         prop.WriteTo(writer);
                     }
+
+                    writer.WritePropertyName("dotnetTypeName");
+                    writer.WriteStringValue(value.Value.GetType().FullName);
+                    writer.WriteEndObject();
                 }
-
-                writer.WriteEndObject();
-
+                else
+                {
+                    writer.WriteStringValue(value.Value.ToString());
+                }
             }
         }
     }

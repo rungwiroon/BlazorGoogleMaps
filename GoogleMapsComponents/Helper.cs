@@ -1,4 +1,5 @@
-﻿using GoogleMapsComponents.Serialization;
+﻿using GoogleMapsComponents.Maps;
+using GoogleMapsComponents.Serialization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using OneOf;
@@ -68,9 +69,15 @@ namespace GoogleMapsComponents
             var obj = json.Deserialize(type, Options);
             return obj;
         }
+
+        public static object? DeSerializeObject(string json, Type type)
+        {
+            var obj = JsonSerializer.Deserialize(json, type, Options);
+            return obj;
+        }
+
         public static TObject DeSerializeObject<TObject>(string json)
         {
-
             var value = JsonSerializer.Deserialize<TObject>(json, Options);
             return value;
         }
@@ -293,7 +300,21 @@ namespace GoogleMapsComponents
             string identifier,
             params object[] args)
         {
-            var result = await jsRuntime.InvokeAsync(identifier, args);
+            var resultObject = await jsRuntime.MyInvokeAsync<object>(identifier, args);
+            object? result = null;
+
+            if (resultObject is JsonElement jsonElement)
+            {
+                var json = jsonElement.GetString();
+                var propArray = Helper.DeSerializeObject<Dictionary<string, object>>(json);
+                if (propArray.TryGetValue("dotnetTypeName", out var typeName))
+                {
+                    var asm = typeof(Map).Assembly;
+                    var typeNameString = typeName.ToString();
+                    var type = asm.GetType(typeNameString);
+                    result = Helper.DeSerializeObject(json, type);
+                }
+            }
 
             switch (result)
             {
@@ -322,63 +343,20 @@ namespace GoogleMapsComponents
             params object[] args)
         {
             var resultObject = await jsRuntime.MyInvokeAsync<object>(identifier, args);
-            object result = null;
-
-            if (resultObject is string someText)
-            {
-                try
-                {
-                    //var jo = JObject.Parse(someText);
-                    //var typeToken = jo.SelectToken("dotnetTypeName");
-                    var jo = JsonDocument.Parse(someText);
-                    var typeToken = jo.RootElement.GetProperty("dotnetTypeName").GetString();
-                    if (typeToken != null)
-                    {
-                        result = DeSerializeObject<object>(typeToken);
-                        //var typeName = typeToken.Value<string>();
-                        //var asm = typeof(Map).Assembly;
-                        //var type = asm.GetType(typeName);
-                        //result = jo.ToObject(type);
-                    }
-                    else
-                    {
-                        result = someText;
-                    }
-                }
-                catch
-                {
-                    result = someText;
-                }
-            }
+            object? result = null;
 
             if (resultObject is JsonElement jsonElement)
             {
-                try
+                var json = jsonElement.GetString();
+                var propArray = Helper.DeSerializeObject<Dictionary<string, object>>(json);
+                if (propArray.TryGetValue("dotnetTypeName", out var typeName))
                 {
-                    var tt = jsonElement.GetType();
-                    result = Helper.DeSerializeObject(jsonElement, typeof(T));
+                    var asm = typeof(Map).Assembly;
+                    var typeNameString = typeName.ToString();
+                    var type = asm.GetType(typeNameString);
+                    result = Helper.DeSerializeObject(json, type);
                 }
-                catch (Exception exception)
-                {
-                }
-
-                try
-                {
-                    result = Helper.DeSerializeObject(jsonElement, typeof(U));
-
-                }
-                catch (Exception e)
-                {
-                }
-
-                if (result == null)
-                {
-                    result = Helper.DeSerializeObject(jsonElement, typeof(V));
-                }
-
-
             }
-
 
             switch (result)
             {

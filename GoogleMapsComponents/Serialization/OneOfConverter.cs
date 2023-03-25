@@ -18,6 +18,7 @@ namespace GoogleMapsComponents.Serialization
     //        writer.WriteStringValue("HIiiii");
     //    }
     //}
+    [Obsolete("Use OneOfConverterFactory")]
     internal class OneOfConverter : JsonConverter<IOneOf>
     {
         //public override IOneOf ReadJson(JsonReader reader, Type objectType, IOneOf existingValue, bool hasExistingValue, JsonSerializer serializer)
