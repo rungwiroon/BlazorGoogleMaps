@@ -49,7 +49,11 @@ namespace GoogleMapsComponents.Maps
         public async static Task<ImageMapType> CreateAsync(IJSRuntime jsRuntime, string baseUrlFormat, string[] subDomains, int minZoom, int maxZoom, string name, float opacity)
         {
             // check if any subdomains were provided
-            if (subDomains == null || subDomains.Length == 0) return await CreateAsync(jsRuntime, baseUrlFormat, minZoom, maxZoom, name, opacity);
+            if (subDomains == null || subDomains.Length == 0)
+            {
+                return await CreateAsync(jsRuntime, baseUrlFormat, minZoom, maxZoom, name, opacity);
+            }
+
             var realUrl = baseUrlFormat.Replace("{z}", "' + zoom + '").Replace("{x}", "' + coord.x + '").Replace("{y}", "' + coord.y + '");
             string initOpts = @"{
                 'getTileUrl': (coord, zoom) => {
@@ -99,8 +103,15 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public async Task SetOpacity(double opacity)
         {
-            if (opacity > 1) return;
-            if (opacity < 0) return;
+            if (opacity > 1)
+            {
+                return;
+            }
+
+            if (opacity < 0)
+            {
+                return;
+            }
 
             await _jsObjectRef.InvokeAsync("setOpacity", opacity);
         }
