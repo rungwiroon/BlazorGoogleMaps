@@ -4,6 +4,9 @@ Blazor interop for GoogleMap library
 **Breaking change from 2.0.0**
 LatLngLiteral constructor's parameters order changed #173
 
+**Breaking change from 3.0.0**
+Migrate from Newtonsoft.Json to System.Text.Json. Could be some issue so please register anything which is suspicious #254
+
 [![NuGet version (BlazorGoogleMaps)](https://img.shields.io/nuget/v/BlazorGoogleMaps)](https://www.nuget.org/packages/BlazorGoogleMaps/)
 
 ## Usage
