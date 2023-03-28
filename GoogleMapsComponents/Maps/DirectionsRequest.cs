@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json;
-using OneOf;
+﻿using OneOf;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace GoogleMapsComponents.Maps
 {
@@ -31,7 +31,6 @@ namespace GoogleMapsComponents.Maps
         /// Location of destination. This can be specified as either a string to be geocoded, or a LatLng, or a Place. 
         /// Required.
         /// </summary>
-        [JsonConverter(typeof(OneOfConverter))]
         public OneOf<string, LatLngLiteral, Place> Destination { get; set; }
 
         /// <summary>
@@ -51,7 +50,6 @@ namespace GoogleMapsComponents.Maps
         /// This can be specified as either a string to be geocoded, or a LatLng, or a Place. 
         /// Required.
         /// </summary>
-        [JsonConverter(typeof(OneOfConverter))]
         public OneOf<string, LatLngLiteral, Place> Origin { get; set; }
 
         /// <summary>
@@ -76,6 +74,7 @@ namespace GoogleMapsComponents.Maps
         /// Type of routing requested. 
         /// Required.
         /// </summary>
+        [JsonConverter(typeof(EnumMemberConverter<TravelMode>))]
         public TravelMode TravelMode { get; set; }
 
         /// <summary>

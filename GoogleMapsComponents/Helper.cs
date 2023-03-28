@@ -1,20 +1,32 @@
 ﻿using GoogleMapsComponents.Maps;
+using GoogleMapsComponents.Serialization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
 using OneOf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents
 {
     internal static class Helper
     {
+        private static readonly JsonSerializerOptions Options = new JsonSerializerOptions()
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        };
+
+        static Helper()
+        {
+            Options.Converters.Add(new OneOfConverterFactory());
+            Options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+        }
+
         internal static Task MyInvokeAsync(
             this IJSRuntime jsRuntime,
             string identifier,
@@ -51,16 +63,42 @@ namespace GoogleMapsComponents
             //throw exception or whatever handling you want
             return default;
         }
-        private static string SerializeObject(object obj)
+
+        public static object? DeSerializeObject(JsonElement json, Type type)
         {
-            var value = JsonConvert.SerializeObject(
-                        obj,
-                        Formatting.None,
-                        new JsonSerializerSettings
-                        {
-                            NullValueHandling = NullValueHandling.Ignore,
-                            ContractResolver = new CamelCasePropertyNamesContractResolver()
-                        });
+            var obj = json.Deserialize(type, Options);
+            return obj;
+        }
+
+        public static object? DeSerializeObject(string json, Type type)
+        {
+            var obj = JsonSerializer.Deserialize(json, type, Options);
+            return obj;
+        }
+
+        public static TObject DeSerializeObject<TObject>(string json)
+        {
+            var value = JsonSerializer.Deserialize<TObject>(json, Options);
+            return value;
+        }
+
+        public static string SerializeObject(object obj)
+        {
+            var opt = new JsonSerializerOptions();
+            opt.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+            opt.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            opt.Converters.Add(new OneOfConverterFactory());
+            opt.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+
+            var value = JsonSerializer.Serialize(
+                obj,
+                Options);
+            //Formatting.None,
+            //new JsonSerializerSettings
+            //{
+            //    NullValueHandling = NullValueHandling.Ignore,
+            //    ContractResolver = new CamelCasePropertyNamesContractResolver()
+            //});
 
             return value;
         }
@@ -151,19 +189,33 @@ namespace GoogleMapsComponents
                 {
                     try
                     {
-                        var jo = JObject.Parse(someText);
-                        var typeToken = jo.SelectToken("dotnetTypeName");
+                        var jo = JsonDocument.Parse(someText);
+                        var typeToken = jo.RootElement.GetProperty("dotnetTypeName").GetString();
                         if (typeToken != null)
                         {
-                            var typeName = typeToken.Value<string>();
-                            var asm = typeof(Map).Assembly;
-                            var type = asm.GetType(typeName);
-                            result = jo.ToObject(type);
+                            result = DeSerializeObject<TRes>(typeToken);
+                            //var typeName = typeToken.Value<string>();
+                            //var asm = typeof(Map).Assembly;
+                            //var type = asm.GetType(typeName);
+                            //result = jo.ToObject(type);
                         }
                         else
                         {
                             result = someText;
                         }
+                        //var jo = JsonNode.Parse(someText);
+                        //var typeToken = jo.SelectToken("dotnetTypeName");
+                        //if (typeToken != null)
+                        //{
+                        //    var typeName = typeToken.Value<string>();
+                        //    var asm = typeof(Map).Assembly;
+                        //    var type = asm.GetType(typeName);
+                        //    result = jo.ToObject(type);
+                        //}
+                        //else
+                        //{
+                        //    result = someText;
+                        //}
                     }
                     catch
                     {
@@ -195,21 +247,24 @@ namespace GoogleMapsComponents
             string identifier,
             params object[] args)
         {
-            var resultObject = await jsRuntime.MyInvokeAsync<string>(identifier, args);
+            var resultObject = await jsRuntime.MyInvokeAsync<object>(identifier, args);
             object result = null;
 
             if (resultObject is string someText)
             {
                 try
                 {
-                    var jo = JObject.Parse(someText);
-                    var typeToken = jo.SelectToken("dotnetTypeName");
+                    //var jo = JObject.Parse(someText);
+                    //var typeToken = jo.SelectToken("dotnetTypeName");
+                    var jo = JsonDocument.Parse(someText);
+                    var typeToken = jo.RootElement.GetProperty("dotnetTypeName").GetString();
                     if (typeToken != null)
                     {
-                        var typeName = typeToken.Value<string>();
-                        var asm = typeof(Map).Assembly;
-                        var type = asm.GetType(typeName);
-                        result = jo.ToObject(type);
+                        result = DeSerializeObject<object>(typeToken);
+                        //var typeName = typeToken.Value<string>();
+                        //var asm = typeof(Map).Assembly;
+                        //var type = asm.GetType(typeName);
+                        //result = jo.ToObject(type);
                     }
                     else
                     {
@@ -220,6 +275,12 @@ namespace GoogleMapsComponents
                 {
                     result = someText;
                 }
+            }
+
+            if (resultObject is JsonElement jsonElement)
+            {
+
+
             }
 
             return result;
@@ -239,7 +300,21 @@ namespace GoogleMapsComponents
             string identifier,
             params object[] args)
         {
-            var result = await jsRuntime.InvokeAsync(identifier, args);
+            var resultObject = await jsRuntime.MyInvokeAsync<object>(identifier, args);
+            object? result = null;
+
+            if (resultObject is JsonElement jsonElement)
+            {
+                var json = jsonElement.GetString();
+                var propArray = Helper.DeSerializeObject<Dictionary<string, object>>(json);
+                if (propArray.TryGetValue("dotnetTypeName", out var typeName))
+                {
+                    var asm = typeof(Map).Assembly;
+                    var typeNameString = typeName.ToString();
+                    var type = asm.GetType(typeNameString);
+                    result = Helper.DeSerializeObject(json, type);
+                }
+            }
 
             switch (result)
             {
@@ -267,7 +342,21 @@ namespace GoogleMapsComponents
             string identifier,
             params object[] args)
         {
-            var result = await jsRuntime.InvokeAsync(identifier, args);
+            var resultObject = await jsRuntime.MyInvokeAsync<object>(identifier, args);
+            object? result = null;
+
+            if (resultObject is JsonElement jsonElement)
+            {
+                var json = jsonElement.GetString();
+                var propArray = Helper.DeSerializeObject<Dictionary<string, object>>(json);
+                if (propArray.TryGetValue("dotnetTypeName", out var typeName))
+                {
+                    var asm = typeof(Map).Assembly;
+                    var typeNameString = typeName.ToString();
+                    var type = asm.GetType(typeNameString);
+                    result = Helper.DeSerializeObject(json, type);
+                }
+            }
 
             switch (result)
             {

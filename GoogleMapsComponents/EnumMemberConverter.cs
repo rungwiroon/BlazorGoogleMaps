@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text.Json;
@@ -11,11 +10,11 @@ namespace GoogleMapsComponents
     {
         public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            string jsonValue = reader.GetString();
+            var jsonValue = reader.GetString();
 
             foreach (var fi in typeToConvert.GetFields())
             {
-                var description = (EnumMemberAttribute)fi.GetCustomAttribute(typeof(EnumMemberAttribute), false);
+                var description = (EnumMemberAttribute?)fi.GetCustomAttribute(typeof(EnumMemberAttribute), false);
 
                 if (description != null)
                 {
@@ -25,6 +24,7 @@ namespace GoogleMapsComponents
                     }
                 }
             }
+
             throw new JsonException($"string {jsonValue} was not found as a description in the enum {typeToConvert}");
         }
 

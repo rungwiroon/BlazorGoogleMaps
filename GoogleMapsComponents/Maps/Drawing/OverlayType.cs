@@ -1,13 +1,12 @@
 ﻿using System.Runtime.Serialization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json.Serialization;
 
 namespace GoogleMapsComponents.Maps.Drawing
 {
     /// <summary>
     /// The types of overlay that may be created by the DrawingManager. 
     /// </summary>
-    [JsonConverter(typeof(StringEnumConverter))]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum OverlayType
     {
         /// <summary>

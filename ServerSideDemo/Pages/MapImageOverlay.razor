@@ -99,11 +99,11 @@ Overlay Opacity:
 
         ////////////////////////////////////////////
         // To use a single url/subdomain, you can use this call
-        //overlayImage = await ImageMapType.CreateAsync(map1.JsRuntime, "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png", 0, 20, "OSM", 0.75f);
+        overlayImage = await ImageMapType.CreateAsync(map1.JsRuntime, "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png", 0, 20, "OSM", 0.75f);
 
         ////////////////////////////////////////////
         // to provide multiple subdomains (which use y mod subDomains.Length as the index into the array of domains), us this call
-        overlayImage = await ImageMapType.CreateAsync(map1.JsRuntime, "https://{domain}.tile.openstreetmap.org/{z}/{x}/{y}.png", new string[] { "a", "b", "c" }, 0, 20, "OSM", 0.75f);
+        //overlayImage = await ImageMapType.CreateAsync(map1.JsRuntime, "https://{domain}.tile.openstreetmap.org/{z}/{x}/{y}.png", new string[] { "a", "b", "c" }, 0, 20, "OSM", 0.75f);
 
         await map1.InteropObject?.AddImageLayer(overlayImage);
     }

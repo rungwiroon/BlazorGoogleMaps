@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace GoogleMapsComponents.Maps
 {
@@ -17,13 +17,13 @@ namespace GoogleMapsComponents.Maps
         /// Optional. 
         /// If elementType is not specified, the value is assumed to be 'all'.
         /// </summary>
-        public string elementType { get; set; }
+        public string? elementType { get; set; }
 
         /// <summary>
         /// The feature, or group of features, to which a styler should be applied. Optional. 
         /// If featureType is not specified, the value is assumed to be 'all'.
         /// </summary>
-        public string featureType { get; set; }
+        public string? featureType { get; set; }
 
         /// <summary>
         /// The style rules to apply to the selected map features and elements. 
@@ -127,7 +127,7 @@ namespace GoogleMapsComponents.Maps
             MapTypeStyle s = new MapTypeStyle();
             s.elementType = elementType;
             s.featureType = featureType;
-            s.stylers = new[] {(GoogleMapStyleVisibility) visibility};
+            s.stylers = new[] { (GoogleMapStyleVisibility)visibility };
             _styles.Add(s);
 
             return this;
@@ -146,7 +146,7 @@ namespace GoogleMapsComponents.Maps
             MapTypeStyle s = new MapTypeStyle();
             s.elementType = elementType;
             s.featureType = featureType;
-            s.stylers = new[] {(GoogleMapStyleColor) colorHex};
+            s.stylers = new[] { (GoogleMapStyleColor)colorHex };
             _styles.Add(s);
 
             return this;
@@ -221,7 +221,7 @@ namespace GoogleMapsComponents.Maps
             MapTypeStyle s = new MapTypeStyle();
             s.elementType = elementType;
             s.featureType = featureType;
-            s.stylers = new[] {element};
+            s.stylers = new[] { element };
             _styles.Add(s);
 
             return this;
@@ -234,62 +234,128 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public GoogleMapStyleBuilder AddStyle(string json)
         {
-            var dirResult = JsonConvert.DeserializeObject<dynamic>(json);
-            foreach (var styleItem in dirResult)
+            //dynamic dirResult = Helper.DeSerializeObject<object>(json);
+
+            var jdoc = JsonDocument.Parse(json);
+            var arr = jdoc.RootElement.EnumerateArray();
+            foreach (var styleItem in arr)
             {
-                MapTypeStyle s = new MapTypeStyle();
-                s.elementType = styleItem.elementType;
-                s.featureType = styleItem.featureType;
-                if (IsPropertyExist(styleItem, "stylers"))
+                var s = new MapTypeStyle();
+                if (styleItem.TryGetProperty(nameof(MapTypeStyle.elementType), out var elementType))
                 {
-                    if (IsPropertyExist(styleItem.stylers[0], "visibility"))
-                    {
-                        string stylerValue = styleItem.stylers[0].visibility?.ToString();
-                        if (!string.IsNullOrEmpty(stylerValue))
-                        {
-                            s.stylers = new[] {new GoogleMapStyleVisibility() {visibility = stylerValue}};
-                        }
-                    }
+                    s.elementType = elementType.GetString();
+                }
 
-                    if (IsPropertyExist(styleItem.stylers[0], "color"))
-                    {
-                        string stylerValue = styleItem.stylers[0].color?.ToString();
-                        if (!string.IsNullOrEmpty(stylerValue))
-                        {
-                            s.stylers = new[] {new GoogleMapStyleColor() {color = stylerValue}};
-                        }
-                    }
+                if (styleItem.TryGetProperty(nameof(MapTypeStyle.featureType), out var featureType))
+                {
+                    s.featureType = featureType.GetString();
+                }
 
-                    if (IsPropertyExist(styleItem.stylers[0], "lightness"))
+                if (styleItem.TryGetProperty("stylers", out var stylers))
+                {
+                    if (stylers.ValueKind == JsonValueKind.Array)
                     {
-                        string stylerValue = styleItem.stylers[0].lightness?.ToString();
-                        if (!string.IsNullOrEmpty(stylerValue) && int.TryParse(stylerValue, out int l))
+                        foreach (var styler in stylers.EnumerateArray())
                         {
-                            s.stylers = new[] { new GoogleMapStyleLightness { lightness = l } };
-                        }
-                    }
+                            if (styler.TryGetProperty(nameof(GoogleMapStyleVisibility.visibility), out var visibility))
+                            {
+                                var stylerValue = visibility.GetString();
+                                if (!string.IsNullOrEmpty(stylerValue))
+                                {
+                                    s.stylers = new[] { new GoogleMapStyleVisibility() { visibility = stylerValue } };
+                                }
+                            }
 
-                    if (IsPropertyExist(styleItem.stylers[0], "saturation"))
-                    {
-                        string stylerValue = styleItem.stylers[0].saturation?.ToString();
-                        if (!string.IsNullOrEmpty(stylerValue) && int.TryParse(stylerValue, out int sat))
-                        {
-                            s.stylers = new[] { new GoogleMapStyleSaturation { saturation = sat } };
-                        }
-                    }
+                            if (styler.TryGetProperty(nameof(GoogleMapStyleColor.color), out var color))
+                            {
+                                var stylerValue = color.GetString();
+                                if (!string.IsNullOrEmpty(stylerValue))
+                                {
+                                    s.stylers = new[] { new GoogleMapStyleColor() { color = stylerValue } };
+                                }
+                            }
 
-                    if (IsPropertyExist(styleItem.stylers[0], "weight"))
-                    {
-                        string stylerValue = styleItem.stylers[0].weight?.ToString();
-                        if (!string.IsNullOrEmpty(stylerValue) && double.TryParse(stylerValue, out double w))
-                        {
-                            s.stylers = new[] { new GoogleMapStyleWeight { weight = w } };
+                            if (styler.TryGetProperty(nameof(GoogleMapStyleLightness.lightness), out var lightness))
+                            {
+                                var stylerValue = lightness.GetInt32();
+                                s.stylers = new[] { new GoogleMapStyleLightness() { lightness = stylerValue } };
+
+                            }
+
+                            if (styler.TryGetProperty(nameof(GoogleMapStyleSaturation.saturation), out var saturation))
+                            {
+                                var stylerValue = lightness.GetInt32();
+                                s.stylers = new[] { new GoogleMapStyleSaturation() { saturation = stylerValue } };
+                            }
+
+                            if (styler.TryGetProperty(nameof(GoogleMapStyleWeight.weight), out var weight))
+                            {
+                                var stylerValue = lightness.GetDouble();
+                                s.stylers = new[] { new GoogleMapStyleWeight() { weight = stylerValue } };
+
+                            }
                         }
                     }
                 }
 
                 _styles.Add(s);
             }
+
+            //foreach (var styleItem in dirResult)
+            //{
+            //    var s = new MapTypeStyle();
+            //    s.elementType = styleItem.elementType;
+            //    s.featureType = styleItem.featureType;
+            //    if (IsPropertyExist(styleItem, "stylers"))
+            //    {
+            //        if (IsPropertyExist(styleItem.stylers[0], "visibility"))
+            //        {
+            //            string stylerValue = styleItem.stylers[0].visibility?.ToString();
+            //            if (!string.IsNullOrEmpty(stylerValue))
+            //            {
+            //                s.stylers = new[] { new GoogleMapStyleVisibility() { visibility = stylerValue } };
+            //            }
+            //        }
+
+            //        if (IsPropertyExist(styleItem.stylers[0], "color"))
+            //        {
+            //            string stylerValue = styleItem.stylers[0].color?.ToString();
+            //            if (!string.IsNullOrEmpty(stylerValue))
+            //            {
+            //                s.stylers = new[] { new GoogleMapStyleColor() { color = stylerValue } };
+            //            }
+            //        }
+
+            //        if (IsPropertyExist(styleItem.stylers[0], "lightness"))
+            //        {
+            //            string stylerValue = styleItem.stylers[0].lightness?.ToString();
+            //            if (!string.IsNullOrEmpty(stylerValue) && int.TryParse(stylerValue, out var l))
+            //            {
+            //                s.stylers = new[] { new GoogleMapStyleLightness { lightness = l } };
+            //            }
+            //        }
+
+            //        if (IsPropertyExist(styleItem.stylers[0], "saturation"))
+            //        {
+            //            string stylerValue = styleItem.stylers[0].saturation?.ToString();
+            //            if (!string.IsNullOrEmpty(stylerValue) && int.TryParse(stylerValue, out var sat))
+            //            {
+            //                s.stylers = new[] { new GoogleMapStyleSaturation { saturation = sat } };
+            //            }
+            //        }
+
+            //        if (IsPropertyExist(styleItem.stylers[0], "weight"))
+            //        {
+            //            string stylerValue = styleItem.stylers[0].weight?.ToString();
+            //            if (!string.IsNullOrEmpty(stylerValue) && double.TryParse(stylerValue, out var w))
+            //            {
+            //                s.stylers = new[] { new GoogleMapStyleWeight { weight = w } };
+            //            }
+            //        }
+            //    }
+
+            //_styles.Add(s);
+            //}
 
             return this;
         }

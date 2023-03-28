@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace GoogleMapsComponents.Maps
 {
@@ -30,14 +30,14 @@ namespace GoogleMapsComponents.Maps
         /// An array of LatLngs representing the entire course of this route. 
         /// The path is simplified in order to make it suitable in contexts where a small number of vertices is required (such as Static Maps API URLs).
         /// </summary>
-        [JsonProperty("overview_path")]
+        [JsonPropertyName("overview_path")]
         public IEnumerable<LatLngLiteral> OverviewPath { get; set; }
 
         /// <summary>
         /// An encoded polyline representation of the route in overview_path. 
         /// This polyline is an approximate (smoothed) path of the resulting directions.
         /// </summary>
-        [JsonProperty("overview_polyline")]
+        [JsonPropertyName("overview_polyline")]
         public string OverviewPolyline { get; set; }
 
         /// <summary>

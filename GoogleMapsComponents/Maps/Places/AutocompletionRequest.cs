@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json;
-using OneOf;
+﻿using OneOf;
+using System.Text.Json.Serialization;
 
 namespace GoogleMapsComponents.Maps.Places
 {
@@ -17,7 +17,6 @@ namespace GoogleMapsComponents.Maps.Places
         /// (optional) Bounds for prediction biasing. Predictions will be biased towards, but not restricted to, the given bounds.
         /// Both location and radius will be ignored if bounds is set.
         /// </summary>
-        [JsonConverter(typeof(OneOfConverter))]
         public OneOf<LatLngBounds, LatLngBoundsLiteral>? Bounds { get; set; }
 
         /// <summary>
@@ -48,7 +47,6 @@ namespace GoogleMapsComponents.Maps.Places
         /// <summary>
         /// (optional) The location where <see cref="AutocompletePrediction.DistanceInMeters"></see> is calculated from.
         /// </summary>
-        [JsonConverter(typeof(OneOfConverter))]
         public OneOf<LatLngBounds, LatLngBoundsLiteral>? Origin { get; set; }
 
         /// <summary>

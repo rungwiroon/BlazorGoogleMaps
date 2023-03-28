@@ -1,5 +1,4 @@
 ﻿using OneOf;
-using Newtonsoft.Json;
 
 
 namespace GoogleMapsComponents.Maps
@@ -13,7 +12,6 @@ namespace GoogleMapsComponents.Maps
         /// Type:  LatLng|LatLngLiteral optional
         /// The LatLng of the entity described by this place.
         /// </summary>
-        [JsonConverter(typeof(OneOfConverter))]
         public OneOf<string, LatLngLiteral> Location { get; set; }
 
         /// <summary>

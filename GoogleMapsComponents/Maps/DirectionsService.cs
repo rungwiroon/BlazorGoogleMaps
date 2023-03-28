@@ -1,5 +1,4 @@
 ﻿using Microsoft.JSInterop;
-using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
 
@@ -56,7 +55,7 @@ namespace GoogleMapsComponents.Maps
 
             try
             {
-                var dirResult = JsonConvert.DeserializeObject<DirectionsResult>(response);
+                var dirResult = Helper.DeSerializeObject<DirectionsResult>(response);
                 return dirResult;
             }
             catch (Exception e)

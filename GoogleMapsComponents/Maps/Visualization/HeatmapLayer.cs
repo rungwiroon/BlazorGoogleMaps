@@ -20,7 +20,7 @@ namespace GoogleMapsComponents.Maps.Visualization
         /// Creates a new instance of HeatmapLayer.
         /// </summary>
         /// <param name="opts"></param>
-        public async static Task<HeatmapLayer> CreateAsync(IJSRuntime jsRuntime, HeatmapLayerOptions opts = null)
+        public static async Task<HeatmapLayer> CreateAsync(IJSRuntime jsRuntime, HeatmapLayerOptions? opts = null)
         {
             var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.visualization.HeatmapLayer", opts);
 
@@ -33,7 +33,7 @@ namespace GoogleMapsComponents.Maps.Visualization
         /// Creates a new instance of HeatmapLayer.
         /// </summary>
         /// <param name="opts"></param>
-        private HeatmapLayer(JsObjectRef jsObjectRef, HeatmapLayerOptions opts = null)
+        private HeatmapLayer(JsObjectRef jsObjectRef, HeatmapLayerOptions? opts = null)
         {
             _jsObjectRef = jsObjectRef;
             _map = opts?.Map;
