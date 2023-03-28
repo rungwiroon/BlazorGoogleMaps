@@ -12,8 +12,10 @@ Migrate from Newtonsoft.Json to System.Text.Json. Could be some issue so please 
 ## Usage
 1. Add google map script HEAD tag to wwwroot/index.html in Client side or _Host.cshtml in Server Side.
 How to get key follow https://developers.google.com/maps/documentation/javascript/get-api-key
-Do not forgor addition libraries if required &libraries=places,visualization,drawing
-If you got 'Loading the Google Maps JavaScript API without a callback is not supported' then add &callback=Function.prototype
+
+Do not forgor addition libraries if required *&libraries=places,visualization,drawing*
+
+If you got 'Loading the Google Maps JavaScript API without a callback is not supported' then add *&callback=Function.prototype*
 ```
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_GOES_HERE&v=3"></script>
 ```
