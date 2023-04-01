@@ -136,11 +136,8 @@ namespace ServerSideDemo.Pages
 
             _markerClustering = await MarkerClustering.CreateAsync(_map1.JsRuntime, _map1.InteropObject, markers, new()
             {
-
-                AverageCenter = true,
                 RendererObjectName = "customRendererLib.interpolatedRenderer",
                 ZoomOnClick = true,
-
             });
 
             await _markerClustering.FitMapToMarkers(1);

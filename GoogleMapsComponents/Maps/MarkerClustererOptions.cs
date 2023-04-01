@@ -12,6 +12,7 @@ namespace GoogleMapsComponents.Maps
         /// The maximum zoom level at which clustering is enabled or if
         /// clustering is to be enabled at all zoom levels.
         /// </summary>
+        [Obsolete("Not used. Will be removed in future releases")]
         public int? MaxZoom { get; set; }
 
         /// <summary>
@@ -19,6 +20,7 @@ namespace GoogleMapsComponents.Maps
         /// the average position of all markers in the cluster. If set to `false`, the
         /// cluster marker is positioned at the location of the first marker added to the cluster.
         /// </summary>
+        [Obsolete("Not used. Will be removed in future releases")]
         public bool? AverageCenter { get; set; }
 
         /// <summary>
@@ -38,11 +40,13 @@ namespace GoogleMapsComponents.Maps
         /// as these look better when viewed on high-resolution monitors such as Apple's Retina displays.
         /// Note: if this property is `true`, sprites cannot be used as cluster icons.
         /// </summary>
+        [Obsolete("Not used. Will be removed in future releases")]
         public bool? EnableRetinaIcons { get; set; }
 
         /// <summary>
         ///The grid size of a cluster in pixels. The grid is a square.
         /// </summary>
+        [Obsolete("Not used. Will be removed in future releases")]
         public int? GridSize { get; set; }
 
         /// <summary>
@@ -50,22 +54,26 @@ namespace GoogleMapsComponents.Maps
         /// may want to set this to `true` to ensure that hidden markers are not included
         /// in the marker count that appears on a cluster marker.
         /// </summary>
+        [Obsolete("Not used. Will be removed in future releases")]
         public bool? IgnoreHidden { get; set; }
 
         /// <summary>
         /// The full URL of the root name of the group of image files to use for cluster icons.
         /// </summary>
+        [Obsolete("Not used. Will be removed in future releases")]
         public string ImagePath { get; set; } = "_content/BlazorGoogleMaps/m";
 
         /// <summary>
         /// The extension name for the cluster icon image files (e.g., `"png"` or `"jpg"`).
         /// </summary>
+        [Obsolete("Not used. Will be removed in future releases")]
         public string? ImageExtension { get; set; }
 
         /// <summary>
         /// The minimum number of markers needed in a cluster
         /// before the markers are hidden and a cluster marker appears.
         /// </summary>
+        [Obsolete("Not used. Will be removed in future releases")]
         public int? MinimumClusterSize { get; set; }
 
         /// <summary>
@@ -83,11 +91,13 @@ namespace GoogleMapsComponents.Maps
         /// <summary>
         /// The tooltip to display when the mouse moves over a cluster marker.
         /// </summary>
+        [Obsolete("Not used. Will be removed in future releases")]
         public string? Title { get; set; }
 
         /// <summary>
         /// The z-index of a cluster.
         /// </summary>
+        [Obsolete("Not used. Will be removed in future releases")]
         public int? ZIndex { get; set; }
 
         /// <summary>
