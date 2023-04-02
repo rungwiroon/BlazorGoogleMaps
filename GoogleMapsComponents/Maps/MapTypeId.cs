@@ -29,7 +29,7 @@ namespace GoogleMapsComponents.Maps
         /// <summary>
         /// This map type displays maps with physical features such as terrain and vegetation.
         /// </summary>
-        [EnumMember(Value = "rerrain")]
+        [EnumMember(Value = "terrain")]
         Terrain
     }
 }

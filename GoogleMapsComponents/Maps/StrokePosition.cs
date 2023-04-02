@@ -1,9 +1,14 @@
-﻿namespace GoogleMapsComponents.Maps
+﻿using System.Runtime.Serialization;
+
+namespace GoogleMapsComponents.Maps
 {
     public enum StrokePosition
     {
-        Center,
-        Inside,
-        Outside
+        [EnumMember(Value = "0")]
+        Center = 0,
+        [EnumMember(Value = "1")]
+        Inside = 1,
+        [EnumMember(Value = "2")]
+        Outside = 2,
     }
 }
