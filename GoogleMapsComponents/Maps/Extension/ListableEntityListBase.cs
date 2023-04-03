@@ -192,7 +192,7 @@ namespace GoogleMapsComponents.Maps.Extension
         //Find the eventual match between required keys (if any) and yet stored markers key (if any)
         //If filterKeys is null or empty all keys are returned
         //Otherwise only eventually yet stored marker keys that matches with filterKeys
-        protected virtual List<string> ComputeMathingKeys(List<string> filterKeys = null)
+        protected virtual List<string> ComputeMathingKeys(List<string>? filterKeys = null)
         {
             List<string> matchingKeys;
 
@@ -202,7 +202,7 @@ namespace GoogleMapsComponents.Maps.Extension
             }
             else
             {
-                matchingKeys = BaseListableEntities.Keys.Where(e => filterKeys.Contains(e)).ToList();
+                matchingKeys = BaseListableEntities.Keys.Where(filterKeys.Contains).ToList();
             }
 
             return matchingKeys;

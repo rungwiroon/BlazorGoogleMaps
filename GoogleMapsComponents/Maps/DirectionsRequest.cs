@@ -37,7 +37,7 @@ namespace GoogleMapsComponents.Maps
         /// Settings that apply only to requests where travelMode is DRIVING. 
         /// This object will have no effect for other travel modes.
         /// </summary>
-        public DrivingOptions DrivingOptions { get; set; }
+        public DrivingOptions? DrivingOptions { get; set; }
 
         /// <summary>
         /// If set to true, the DirectionsService will attempt to re-order the supplied intermediate waypoints to minimize overall cost of the route. 
@@ -62,13 +62,13 @@ namespace GoogleMapsComponents.Maps
         /// Region code used as a bias for geocoding requests. 
         /// Optional.
         /// </summary>
-        public string Region { get; set; }
+        public string? Region { get; set; }
 
         /// <summary>
         /// Settings that apply only to requests where travelMode is TRANSIT. 
         /// This object will have no effect for other travel modes.
         /// </summary>
-        public TransitOptions TransitOptions { get; set; }
+        public TransitOptions? TransitOptions { get; set; }
 
         /// <summary>
         /// Type of routing requested. 
@@ -88,6 +88,6 @@ namespace GoogleMapsComponents.Maps
         /// See the developer's guide for the maximum number of waypoints allowed. 
         /// Waypoints are not supported for transit directions. Optional.
         /// </summary>
-        public IEnumerable<DirectionsWaypoint> Waypoints { get; set; }
+        public IEnumerable<DirectionsWaypoint>? Waypoints { get; set; }
     }
 }
