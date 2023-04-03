@@ -1,4 +1,6 @@
-﻿namespace GoogleMapsComponents.Maps
+﻿using System.Text.Json.Serialization;
+
+namespace GoogleMapsComponents.Maps
 {
     /// <summary>
     /// CircleOptions object used to define the properties that can be set on a Circle.
@@ -47,6 +49,7 @@
         /// The stroke position. Defaults to CENTER. 
         /// This property is not supported on Internet Explorer 8 and earlier.
         /// </summary>
+        [JsonConverter(typeof(EnumMemberConverter<StrokePosition>))]
         public StrokePosition? StrokePosition { get; set; }
 
         /// <summary>

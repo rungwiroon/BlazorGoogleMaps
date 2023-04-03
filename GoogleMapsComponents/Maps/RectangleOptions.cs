@@ -59,6 +59,7 @@ namespace GoogleMapsComponents.Maps
         /// Defaults to CENTER. 
         /// This property is not supported on Internet Explorer 8 and earlier.
         /// </summary>
+        [JsonConverter(typeof(EnumMemberConverter<StrokePosition>))]
         public StrokePosition? StrokePosition { get; set; }
 
         /// <summary>
