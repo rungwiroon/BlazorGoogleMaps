@@ -17,7 +17,7 @@ namespace GoogleMapsComponents.Maps.Extension
     /// </summary>
     public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
     {
-        public Dictionary<string, Marker> Markers => base.BaseListableEntities;
+        public Dictionary<string, Marker> Markers => BaseListableEntities;
 
         /// <summary>
         /// Create markers list
@@ -50,10 +50,14 @@ namespace GoogleMapsComponents.Maps.Extension
         /// </param>
         /// <param name="jsRuntime"></param>
         /// <param name="opts"></param>
+        /// <param name="clickCallback"></param>
         /// <returns>
         /// The managed list. Assign to the variable you used as parameter.
         /// </returns>
-        public static async Task<MarkerList> SyncAsync(MarkerList list, IJSRuntime jsRuntime, Dictionary<string, MarkerOptions> opts, Action<MouseEvent, string, Marker> clickCallback = null)
+        public static async Task<MarkerList> SyncAsync(MarkerList? list,
+            IJSRuntime jsRuntime,
+            Dictionary<string, MarkerOptions> opts,
+            Action<MouseEvent, string, Marker>? clickCallback = null)
         {
             if (opts.Count == 0)
             {
@@ -106,7 +110,7 @@ namespace GoogleMapsComponents.Maps.Extension
             await base.AddMultipleAsync(opts, "google.maps.Marker");
         }
 
-        public Task<Dictionary<string, Animation>> GetAnimations(List<string> filterKeys = null)
+        public Task<Dictionary<string, Animation>> GetAnimations(List<string>? filterKeys = null)
         {
             List<string> matchingKeys = ComputeMathingKeys(filterKeys);
 
@@ -125,7 +129,7 @@ namespace GoogleMapsComponents.Maps.Extension
             }
         }
 
-        public Task<Dictionary<string, bool>> GetClickables(List<string> filterKeys = null)
+        public Task<Dictionary<string, bool>> GetClickables(List<string>? filterKeys = null)
         {
             List<string> matchingKeys = ComputeMathingKeys(filterKeys);
 
@@ -144,7 +148,7 @@ namespace GoogleMapsComponents.Maps.Extension
             }
         }
 
-        public Task<Dictionary<string, string>> GetCursors(List<string> filterKeys = null)
+        public Task<Dictionary<string, string>> GetCursors(List<string>? filterKeys = null)
         {
             List<string> matchingKeys = ComputeMathingKeys(filterKeys);
 
@@ -163,7 +167,7 @@ namespace GoogleMapsComponents.Maps.Extension
             }
         }
 
-        public Task<Dictionary<string, OneOf<string, Icon, Symbol>>> GetIcons(List<string> filterKeys = null)
+        public Task<Dictionary<string, OneOf<string, Icon, Symbol>>> GetIcons(List<string>? filterKeys = null)
         {
             List<string> matchingKeys = ComputeMathingKeys(filterKeys);
 
@@ -182,7 +186,7 @@ namespace GoogleMapsComponents.Maps.Extension
             }
         }
 
-        public Task<Dictionary<string, string>> GetLabels(List<string> filterKeys = null)
+        public Task<Dictionary<string, string>> GetLabels(List<string>? filterKeys = null)
         {
             List<string> matchingKeys = ComputeMathingKeys(filterKeys);
 
@@ -201,7 +205,7 @@ namespace GoogleMapsComponents.Maps.Extension
             }
         }
 
-        public Task<Dictionary<string, LatLngLiteral>> GetPositions(List<string> filterKeys = null)
+        public Task<Dictionary<string, LatLngLiteral>> GetPositions(List<string>? filterKeys = null)
         {
             List<string> matchingKeys = ComputeMathingKeys(filterKeys);
 
@@ -220,7 +224,7 @@ namespace GoogleMapsComponents.Maps.Extension
             }
         }
 
-        public Task<Dictionary<string, MarkerShape>> GetShapes(List<string> filterKeys = null)
+        public Task<Dictionary<string, MarkerShape>> GetShapes(List<string>? filterKeys = null)
         {
             List<string> matchingKeys = ComputeMathingKeys(filterKeys);
 
@@ -239,7 +243,7 @@ namespace GoogleMapsComponents.Maps.Extension
             }
         }
 
-        public Task<Dictionary<string, string>> GetTitles(List<string> filterKeys = null)
+        public Task<Dictionary<string, string>> GetTitles(List<string>? filterKeys = null)
         {
             List<string> matchingKeys = ComputeMathingKeys(filterKeys);
 
@@ -258,7 +262,7 @@ namespace GoogleMapsComponents.Maps.Extension
             }
         }
 
-        public Task<Dictionary<string, int>> GetZIndexes(List<string> filterKeys = null)
+        public Task<Dictionary<string, int>> GetZIndexes(List<string>? filterKeys = null)
         {
             List<string> matchingKeys = ComputeMathingKeys(filterKeys);
 
@@ -283,7 +287,7 @@ namespace GoogleMapsComponents.Maps.Extension
         /// Currently supported animations are: BOUNCE, DROP. 
         /// Passing in null will cause any animation to stop.
         /// </summary>
-        /// <param name="animation"></param>
+        /// <param name="animations"></param>
         public Task SetAnimations(Dictionary<string, Animation?> animations)
         {
             Dictionary<Guid, object?> dictArgs = animations.ToDictionary(e => Markers[e.Key].Guid, e => (object?)GetAnimationCode(e.Value));
@@ -356,15 +360,15 @@ namespace GoogleMapsComponents.Maps.Extension
         }
 
 
-        /// <inheritdoc cref="SetLabels(Dictionary{string, OneOf{string, MarkerLabel}})"/>
-        [Obsolete("Use overloads that take string, MarkerLabel, or OneOf<string, MarkerLabel> as dictionary value type.")]
-        public Task SetLabels(Dictionary<string, Symbol> labels)
-        {
-            Dictionary<Guid, object> dictArgs = labels.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
-            return _jsObjectRef.InvokeMultipleAsync(
-                "setLabel",
-                dictArgs);
-        }
+        // <inheritdoc cref="SetLabels(Dictionary{string, OneOf{string, MarkerLabel}})"/>
+        //[Obsolete("Use overloads that take string, MarkerLabel, or OneOf<string, MarkerLabel> as dictionary value type.")]
+        //public Task SetLabels(Dictionary<string, Symbol> labels)
+        //{
+        //    Dictionary<Guid, object> dictArgs = labels.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
+        //    return _jsObjectRef.InvokeMultipleAsync(
+        //        "setLabel",
+        //        dictArgs);
+        //}
 
         /// <summary>
         /// Set Label on each Marker matching a param dictionary key to the param value with single JSInterop call.
@@ -397,7 +401,7 @@ namespace GoogleMapsComponents.Maps.Extension
                 dictArgs);
         }
 
-        
+
 
         public Task SetOpacities(Dictionary<string, float> opacities)
         {

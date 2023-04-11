@@ -8,9 +8,9 @@ namespace GoogleMapsComponents.Maps.Data
     /// <summary>
     /// A feature has a geometry, an id, and a set of properties
     /// </summary>
-    public class Feature //: IEnumerable<string>
+    public class Feature
     {
-        private readonly FeatureOptions? _options;
+        //private readonly FeatureOptions? _options;
 
         /// <summary>
         /// Needed for json serializations
@@ -25,7 +25,7 @@ namespace GoogleMapsComponents.Maps.Data
         /// <param name="options"></param>
         public Feature(FeatureOptions? options = null)
         {
-            _options = options;
+            //_options = options;
         }
 
         public IEnumerable<IDictionary<string, object>> Properties { get; set; }

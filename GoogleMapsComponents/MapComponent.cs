@@ -1,14 +1,11 @@
-﻿using Microsoft.JSInterop;
-using GoogleMapsComponents.Maps;
+﻿using GoogleMapsComponents.Maps;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-
-#nullable enable
 
 namespace GoogleMapsComponents
 {
-    //[Obsolete] //<-- No Idea why this is here.
     public class MapComponent : ComponentBase, IDisposable
     {
         [Inject]
@@ -23,7 +20,7 @@ namespace GoogleMapsComponents
 
         public void Dispose()
         {
-            InteropObject?.Dispose();
+            InteropObject.Dispose();
         }
     }
 }

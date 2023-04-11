@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Microsoft.JSInterop;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.JSInterop;
 // ReSharper disable UnusedMember.Global
 
 namespace GoogleMapsComponents.Maps
@@ -126,23 +126,19 @@ namespace GoogleMapsComponents.Maps
             await _map.FitBounds(newBounds, padding);
         }
 
-        /// <summary>
-        /// Recalculates and redraws all the marker clusters from scratch. Call this after changing any properties.
-        /// </summary>
-        [Obsolete("Deprecated in favor of Redraw() to match latest js-markerclusterer")]
-        public virtual Task Repaint()
-        {
-            return Render();
-        }
 
-        /// <summary>
-        /// Recalculates and redraws all the marker clusters from scratch. Call this after changing any properties.
-        /// </summary>
-        [Obsolete("Deprecated in favor of Render() to match latest js-markerclusterer")]
-        public virtual Task Redraw()
-        {
-            return Render();
-        }
+        //[Obsolete("Deprecated in favor of Redraw() to match latest js-markerclusterer")]
+        //public virtual Task Repaint()
+        //{
+        //    return Render();
+        //}
+
+
+        //[Obsolete("Deprecated in favor of Render() to match latest js-markerclusterer")]
+        //public virtual Task Redraw()
+        //{
+        //    return Render();
+        //}
 
         /// <summary>
         /// https://googlemaps.github.io/js-markerclusterer/interfaces/Renderer.html#render
