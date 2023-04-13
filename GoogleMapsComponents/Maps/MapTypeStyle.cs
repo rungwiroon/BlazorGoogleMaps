@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace GoogleMapsComponents.Maps
 {
@@ -31,7 +32,7 @@ namespace GoogleMapsComponents.Maps
         /// The style rules to apply to the selected map features and elements. 
         /// The rules are applied in the order that you specify in this array.
         /// </summary>
-        public object[]? stylers { get; set; }
+        public GoogleMapStyleElement[]? stylers { get; set; }
     }
     
     public enum MapStyleVisbility
@@ -41,13 +42,19 @@ namespace GoogleMapsComponents.Maps
         Simplified
     }
 
+    [JsonDerivedType(typeof(GoogleMapStyleColor))]
+    [JsonDerivedType(typeof(GoogleMapStyleHue))]
+    [JsonDerivedType(typeof(GoogleMapStyleSaturation))]
+    [JsonDerivedType(typeof(GoogleMapStyleVisibility))]
+    [JsonDerivedType(typeof(GoogleMapStyleLightness))]
+    [JsonDerivedType(typeof(GoogleMapStyleWeight))]
     public abstract class GoogleMapStyleElement
     {
     }
 
     public class GoogleMapStyleColor : GoogleMapStyleElement
     {
-        public string color;
+        public string color { get; set; }
 
         public static explicit operator GoogleMapStyleColor(string textColor)
         {
@@ -59,7 +66,7 @@ namespace GoogleMapsComponents.Maps
     
     public class GoogleMapStyleHue : GoogleMapStyleElement
     {
-        public string hue;
+        public string hue { get; set; }
 
         public static explicit operator GoogleMapStyleHue(string hueColor)
         {
@@ -71,7 +78,7 @@ namespace GoogleMapsComponents.Maps
 
     public class GoogleMapStyleVisibility : GoogleMapStyleElement
     {
-        public string visibility;
+        public string visibility { get; set; }
 
         public static explicit operator GoogleMapStyleVisibility(bool isVisible)
         {
@@ -95,7 +102,7 @@ namespace GoogleMapsComponents.Maps
 
     public class GoogleMapStyleLightness : GoogleMapStyleElement
     {
-        public int lightness;
+        public int lightness { get; set; }
 
         public static explicit operator GoogleMapStyleLightness(int lightness)
         {
@@ -109,7 +116,7 @@ namespace GoogleMapsComponents.Maps
 
     public class GoogleMapStyleSaturation : GoogleMapStyleElement
     {
-        public int saturation;
+        public int saturation { get; set; }
 
         public static explicit operator GoogleMapStyleSaturation(int saturation)
         {
@@ -123,7 +130,7 @@ namespace GoogleMapsComponents.Maps
 
     public class GoogleMapStyleWeight : GoogleMapStyleElement
     {
-        public double weight;
+        public double weight { get; set; }
 
         public static explicit operator GoogleMapStyleWeight(double weight)
         {
@@ -349,7 +356,7 @@ namespace GoogleMapsComponents.Maps
             
             if (styleItem.TryGetProperty("stylers", out var stylersElement) && stylersElement.ValueKind == JsonValueKind.Array)
             {
-                var stylers = new List<object>();
+                var stylers = new List<GoogleMapStyleElement>();
                 foreach (var styler in stylersElement.EnumerateArray())
                 {
                     if (styler.TryGetProperty("visibility", out var visbility))
