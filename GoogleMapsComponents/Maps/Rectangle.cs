@@ -1,13 +1,14 @@
 ﻿using Microsoft.JSInterop;
 using System;
 using System.Threading.Tasks;
+using GoogleMapsComponents.Maps.Extension;
 
 namespace GoogleMapsComponents.Maps
 {
     /// <summary>
     /// A rectangle overlay.
     /// </summary>
-    public class Rectangle : IDisposable
+    public class Rectangle : EventEntityBase, IDisposable
     {
         public Guid Guid => _jsObjetRef.Guid;
 
@@ -31,7 +32,7 @@ namespace GoogleMapsComponents.Maps
         /// Create a rectangle using the passed RectangleOptions, which specify the bounds and style.
         /// </summary>
         /// <param name="opts"></param>
-        internal Rectangle(JsObjectRef jsObjectRef, RectangleOptions opts = null)
+        internal Rectangle(JsObjectRef jsObjectRef, RectangleOptions opts = null) : base(jsObjectRef)
         {
             _jsObjetRef = jsObjectRef;
             _map = opts?.Map;
@@ -153,22 +154,6 @@ namespace GoogleMapsComponents.Maps
             return _jsObjetRef.InvokeAsync(
                 "setVisible",
                 visible);
-        }
-
-        public async Task<MapEventListener> AddListener(string eventName, Action handler)
-        {
-            var listenerRef = await _jsObjetRef.InvokeWithReturnedObjectRefAsync(
-                "addListener", eventName, handler);
-
-            return new MapEventListener(listenerRef);
-        }
-
-        public async Task<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
-        {
-            var listenerRef = await _jsObjetRef.InvokeWithReturnedObjectRefAsync(
-                "addListener", eventName, handler);
-
-            return new MapEventListener(listenerRef);
         }
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.JSInterop;
 using OneOf;
 using System;
 using System.Threading.Tasks;
+using GoogleMapsComponents.Maps.Extension;
 
 #nullable enable
 
@@ -13,7 +14,7 @@ namespace GoogleMapsComponents.Maps
     /// google.maps.Map class
     /// </summary>
     //[JsonConverter(typeof(JsObjectRefConverter<Map>))]
-    public class Map : IDisposable, IJsObjectRef
+    public class Map : EventEntityBase, IDisposable, IJsObjectRef
     {
         private readonly JsObjectRef _jsObjectRef;
 
@@ -36,7 +37,7 @@ namespace GoogleMapsComponents.Maps
             return map;
         }
 
-        private Map(JsObjectRef jsObjectRef, MapData data)
+        private Map(JsObjectRef jsObjectRef, MapData data) : base(jsObjectRef)
         {
             _jsObjectRef = jsObjectRef;
             Data = data;
@@ -227,22 +228,6 @@ namespace GoogleMapsComponents.Maps
         public Task SetOptions(MapOptions mapOptions)
         {
             return _jsObjectRef.InvokeAsync("setOptions", mapOptions);
-        }
-
-        public async Task<MapEventListener> AddListener(string eventName, Action handler)
-        {
-            var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
-                "addListener", eventName, handler);
-
-            return new MapEventListener(listenerRef);
-        }
-
-        public async Task<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
-        {
-            var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
-                "addListener", eventName, handler);
-
-            return new MapEventListener(listenerRef);
         }
     }
 }
