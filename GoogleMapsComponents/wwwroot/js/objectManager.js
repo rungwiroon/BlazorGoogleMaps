@@ -621,6 +621,9 @@
                         if ("addListener" == functionToInvoke) {
                             return result;
                         }
+                        if (functionToInvoke == "remove") {
+                            delete mapObjects[args[0]]; //Clean up the object
+                        }
                         if ("get" in result) {
                             return result.get("guidString");
                         } else if ("dotnetTypeName" in result) {

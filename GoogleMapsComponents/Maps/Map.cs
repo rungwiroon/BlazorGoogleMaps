@@ -61,8 +61,9 @@ namespace GoogleMapsComponents.Maps
             await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("blazorGoogleMaps.objectManager.removeAllImageLayers", this.Guid.ToString());
         }
 
-        public void Dispose()
+        public new void Dispose()
         {
+            base.Dispose();
             JsObjectRefInstances.Remove(_jsObjectRef.Guid.ToString());
             _jsObjectRef.JSRuntime.InvokeAsync<object>("blazorGoogleMaps.objectManager.disposeMapElements", Guid.ToString());
             _jsObjectRef.Dispose();

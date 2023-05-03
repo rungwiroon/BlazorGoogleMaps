@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using GoogleMapsComponents.Maps.Extension;
 
 namespace GoogleMapsComponents.Maps
 {
@@ -28,11 +29,9 @@ namespace GoogleMapsComponents.Maps
     /// Each setter properties can be used as follow:
     /// With a Dictionary<string, {property type}> indicating for each Marker (related to that key) the corresponding related property value
     /// </summary>
-    public class InfoWindow : IDisposable, IJsObjectRef
+    public class InfoWindow : EventEntityBase, IDisposable, IJsObjectRef
     {
         private readonly JsObjectRef _jsObjectRef;
-
-        public readonly Dictionary<string, List<MapEventListener>> EventListeners;
 
         public Guid Guid => _jsObjectRef.Guid;
 
@@ -61,29 +60,14 @@ namespace GoogleMapsComponents.Maps
         /// The user can click the close button on the InfoWindow to remove it from the map, or the developer can call close() for the same effect.
         /// </summary>
         /// <param name="opts"></param>
-        private InfoWindow(JsObjectRef jsObjectRef, InfoWindowOptions opts)
+        private InfoWindow(JsObjectRef jsObjectRef, InfoWindowOptions opts) : base(jsObjectRef)
         {
             _jsObjectRef = jsObjectRef;
-            EventListeners = new Dictionary<string, List<MapEventListener>>();
         }
 
-        public void Dispose()
+        public new void Dispose()
         {
-            foreach (string key in EventListeners.Keys)
-            {
-                //Probably superfluous...
-                if (EventListeners[key] != null)
-                {
-                    foreach (MapEventListener eventListener in EventListeners[key])
-                    {
-                        eventListener.Dispose();
-                    }
-
-                    EventListeners[key].Clear();
-                }
-            }
-
-            EventListeners.Clear();
+            base.Dispose();
             _jsObjectRef.Dispose();
         }
 
@@ -138,46 +122,6 @@ namespace GoogleMapsComponents.Maps
             return _jsObjectRef.InvokeAsync(
                 "setZIndex",
                 zIndex);
-        }
-
-        public async Task<MapEventListener> AddListener(string eventName, Action handler)
-        {
-            JsObjectRef listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync("addListener", eventName, handler);
-            MapEventListener eventListener = new MapEventListener(listenerRef);
-
-            if (!EventListeners.ContainsKey(eventName))
-            {
-                EventListeners.Add(eventName, new List<MapEventListener>());
-            }
-            EventListeners[eventName].Add(eventListener);
-
-            return eventListener;
-        }
-
-        public async Task<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
-        {
-            JsObjectRef listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync("addListener", eventName, handler);
-            MapEventListener eventListener = new MapEventListener(listenerRef);
-
-            if (!EventListeners.ContainsKey(eventName))
-            {
-                EventListeners.Add(eventName, new List<MapEventListener>());
-            }
-            EventListeners[eventName].Add(eventListener);
-
-            return eventListener;
-        }
-
-        public async Task ClearListeners(string eventName)
-        {
-            if (EventListeners.ContainsKey(eventName))
-            {
-                await _jsObjectRef.InvokeAsync("clearListeners", eventName);
-
-                //IMHO is better preserving the knowledge that Marker had some EventListeners attached to "eventName" in the past
-                //so, instead to clear the list and remove the key from dictionary, I prefer to leave the key with an empty list
-                EventListeners[eventName].Clear();
-            }
         }
     }
 }

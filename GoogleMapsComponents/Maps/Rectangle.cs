@@ -38,8 +38,9 @@ namespace GoogleMapsComponents.Maps
             _map = opts?.Map;
         }
 
-        public void Dispose()
+        public new void Dispose()
         {
+            base.Dispose();
             _jsObjetRef.Dispose();
         }
 

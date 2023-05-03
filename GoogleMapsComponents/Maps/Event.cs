@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 namespace GoogleMapsComponents.Maps
 {
     
+    [Obsolete("Use addListener instead, see: https://developers.google.com/maps/deprecations?hl=en#googlemapseventadddomlistener_and_googlemapseventadddomlisteneronce_deprecated_on_april_7_2022")]
     public class Event
     {
         private readonly IJSRuntime _jsRuntime;
