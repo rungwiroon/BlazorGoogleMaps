@@ -621,9 +621,6 @@
                         if ("addListener" == functionToInvoke) {
                             return result;
                         }
-                        if (functionToInvoke == "remove") {
-                            delete mapObjects[args[0]]; //Clean up the object
-                        }
                         if ("get" in result) {
                             return result.get("guidString");
                         } else if ("dotnetTypeName" in result) {
@@ -631,6 +628,8 @@
                         } else {
                             return JSON.parse(JSON.stringify(result, getCircularReplacer()));
                         }
+                    } else if (functionToInvoke === "remove") {
+                        this.disposeObject(args[0]);
                     } else {
                         return result;
                     }
