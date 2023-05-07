@@ -1,33 +1,22 @@
-﻿using OneOf;
+﻿using GoogleMapsComponents.Maps.Extension;
+using OneOf;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using GoogleMapsComponents.Maps.Extension;
 
 namespace GoogleMapsComponents.Maps
 {
-    public class ListableEntityBase<TEntityOptions> : EventEntityBase, IDisposable, IJsObjectRef
+    public class ListableEntityBase<TEntityOptions> : EventEntityBase, IJsObjectRef
         where TEntityOptions : ListableEntityOptionsBase
     {
-        protected readonly JsObjectRef _jsObjectRef;
-
         public Guid Guid => _jsObjectRef.Guid;
 
         internal ListableEntityBase(JsObjectRef jsObjectRef) : base(jsObjectRef)
         {
-            _jsObjectRef = jsObjectRef;
-        }
-
-        public new void Dispose()
-        {
-            base.Dispose();
-            _jsObjectRef.Dispose();
         }
 
         public virtual Task<Map> GetMap()
         {
-            return _jsObjectRef.InvokeAsync<Map>(
-                "getMap");
+            return _jsObjectRef.InvokeAsync<Map>("getMap");
         }
 
         /// <summary>

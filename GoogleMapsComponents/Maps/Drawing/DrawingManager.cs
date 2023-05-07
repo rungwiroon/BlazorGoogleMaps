@@ -1,7 +1,7 @@
-﻿using Microsoft.JSInterop;
+﻿using GoogleMapsComponents.Maps.Extension;
+using Microsoft.JSInterop;
 using System;
 using System.Threading.Tasks;
-using GoogleMapsComponents.Maps.Extension;
 
 namespace GoogleMapsComponents.Maps.Drawing
 {
@@ -10,9 +10,8 @@ namespace GoogleMapsComponents.Maps.Drawing
     /// The DrawingManager's drawing mode defines the type of overlay that will be created by the user. 
     /// Adds a control to the map, allowing the user to switch drawing mode.
     /// </summary>
-    public class DrawingManager : EventEntityBase, IDisposable
+    public class DrawingManager : EventEntityBase
     {
-        private readonly JsObjectRef _jsObjectRef;
         private Map? _map;
 
         /// <summary>
@@ -32,18 +31,10 @@ namespace GoogleMapsComponents.Maps.Drawing
         /// </summary>
         private DrawingManager(JsObjectRef jsObjectRef, DrawingManagerOptions? opt = null) : base(jsObjectRef)
         {
-            _jsObjectRef = jsObjectRef;
-
             if (opt?.Map != null)
             {
                 _map = opt.Map;
             }
-        }
-
-        public new void Dispose()
-        {
-            base.Dispose();
-            _jsObjectRef.Dispose();
         }
 
         /// <summary>

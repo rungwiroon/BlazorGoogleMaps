@@ -1,9 +1,9 @@
-﻿using Microsoft.JSInterop;
+﻿using GoogleMapsComponents.Maps.Extension;
+using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GoogleMapsComponents.Maps.Extension;
 
 // ReSharper disable UnusedMember.Global
 
@@ -14,7 +14,6 @@ namespace GoogleMapsComponents.Maps
     /// </summary>
     public class MarkerClustering : EventEntityBase, IJsObjectRef
     {
-        private readonly JsObjectRef _jsObjectRef;
         public Guid Guid => _jsObjectRef.Guid;
         private Map _map;
         private readonly IEnumerable<Marker> _originalMarkers;
@@ -37,7 +36,6 @@ namespace GoogleMapsComponents.Maps
 
         internal MarkerClustering(JsObjectRef jsObjectRef, Map map, IEnumerable<Marker> markers) : base(jsObjectRef)
         {
-            _jsObjectRef = jsObjectRef;
             _map = map;
             _originalMarkers = markers;
         }
@@ -116,12 +114,6 @@ namespace GoogleMapsComponents.Maps
         public virtual Task Render()
         {
             return _jsObjectRef.InvokeAsync("render");
-        }
-        
-        public new void Dispose()
-        {
-            base.Dispose();
-            _jsObjectRef.Dispose();
         }
     }
 }

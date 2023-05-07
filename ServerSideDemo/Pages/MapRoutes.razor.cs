@@ -51,7 +51,10 @@ public partial class MapRoutes : IAsyncDisposable
     {
         _durationTotalString = null;
         _distanceTotalString = null;
-        if (await _dirRend.GetMap() is null) await _dirRend.SetMap(_map1!.InteropObject);
+        if (await _dirRend.GetMap() is null)
+        {
+            await _dirRend.SetMap(_map1!.InteropObject);
+        }
 
         //Adding a waypoint
         var waypoints = new List<DirectionsWaypoint>();
@@ -78,6 +81,10 @@ public partial class MapRoutes : IAsyncDisposable
             StripLegsSteps = false
         });
 
+        if (_directionsResult is null)
+        {
+            return;
+        }
         var routes = _directionsResult.Routes.SelectMany(x => x.Legs).ToList();
 
         foreach (var route in routes)

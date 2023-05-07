@@ -70,10 +70,13 @@
 
         //Calculate Route
         var directionsResult = await dirRend.Route(dr);
-        foreach (var route in directionsResult.Routes.SelectMany(x => x.Legs))
+        if (directionsResult != null)
         {
-            _durationTotalString += route.Duration.Text;
-            _distanceTotalString += route.Distance.Text;
+            foreach (var route in directionsResult.Routes.SelectMany(x => x.Legs))
+            {
+                _durationTotalString += route.Duration.Text;
+                _distanceTotalString += route.Distance.Text;
+            }
         }
     }
 }

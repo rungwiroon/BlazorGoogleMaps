@@ -7,7 +7,7 @@ namespace GoogleMapsComponents.Maps.Extension;
 
 public abstract class EventEntityBase : IDisposable
 {
-    private readonly JsObjectRef _jsObjectRef;
+    protected readonly JsObjectRef _jsObjectRef;
     private readonly Dictionary<string, List<MapEventListener>> EventListeners;
 
     private void AddEvent(string eventName, MapEventListener listener)
@@ -85,19 +85,21 @@ public abstract class EventEntityBase : IDisposable
 
     /// <summary>
     /// This method takes care of disposing the possible event listeners that were added.
-    /// NOTE: It does not dispose the JsObjectRef and uses it to remove listeners
-    /// ENSURE: If you dispose the jsObjectRef that you do it after calling this method, otherwise dont call this at all.
+    /// It also dispose the JsObjectRef and uses it to remove listeners
     /// </summary>
     public virtual void Dispose()
     {
         foreach (var eventListener in EventListeners.SelectMany(listener => listener.Value))
         {
-            if (eventListener.IsRemoved) continue;
+            if (eventListener.IsRemoved)
+            {
+                continue;
+            }
+
             eventListener.Dispose();
         }
 
         EventListeners.Clear();
-        //Should this base class be resposible for disposing this?
-        // _jsObjectRef.Dispose();
+        _jsObjectRef.Dispose();
     }
 }

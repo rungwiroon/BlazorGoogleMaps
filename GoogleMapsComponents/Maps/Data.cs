@@ -1,12 +1,12 @@
-﻿using System;
+﻿using GoogleMapsComponents.Maps.Data;
+using GoogleMapsComponents.Maps.Extension;
+using Microsoft.JSInterop;
+using OneOf;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GoogleMapsComponents.Maps.Data;
-using GoogleMapsComponents.Maps.Extension;
-using Microsoft.JSInterop;
-using OneOf;
 
 namespace GoogleMapsComponents.Maps
 {
@@ -15,16 +15,16 @@ namespace GoogleMapsComponents.Maps
     /// Every Map has a Data object by default, so most of the time there is no need to construct one.
     /// The Data object is a collection of Features.
     /// </summary>
-    public class MapData : EventEntityBase, IEnumerable<Maps.Data.Feature>, IDisposable
+    public class MapData : EventEntityBase, IEnumerable<Feature>, IDisposable
     {
-        private readonly JsObjectRef _jsObjectRef;
-        private Map _map;
+        private Map? _map;
 
         /// <summary>
         /// Creates an empty collection, with the given DataOptions.
         /// </summary>
-        /// <param name="options"></param>
-        public async static Task<MapData> CreateAsync(IJSRuntime jsRuntime, Data.DataOptions opts = null)
+        /// <param name="jsRuntime"></param>
+        /// <param name="opts"></param>
+        public static async Task<MapData> CreateAsync(IJSRuntime jsRuntime, DataOptions? opts = null)
         {
             var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Data", opts);
 
@@ -38,13 +38,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         internal MapData(JsObjectRef jsObjectRef) : base(jsObjectRef)
         {
-            _jsObjectRef = jsObjectRef;
-        }
-
-        public new void Dispose()
-        {
-            base.Dispose();
-            _jsObjectRef.Dispose();
+            //_jsObjectRef = jsObjectRef;
         }
 
         public IEnumerator<Data.Feature> GetEnumerator()
@@ -169,7 +163,7 @@ namespace GoogleMapsComponents.Maps
         /// <returns></returns>
         public Task<Data.StyleOptions> GetStyle()
         {
-            return  _jsObjectRef.InvokeAsync<Data.StyleOptions>(
+            return _jsObjectRef.InvokeAsync<Data.StyleOptions>(
                 "getStyle");
         }
 

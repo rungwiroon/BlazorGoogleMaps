@@ -1,10 +1,10 @@
 ﻿using GoogleMapsComponents.Maps.Coordinates;
+using GoogleMapsComponents.Maps.Extension;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using OneOf;
 using System;
 using System.Threading.Tasks;
-using GoogleMapsComponents.Maps.Extension;
 
 #nullable enable
 
@@ -16,8 +16,6 @@ namespace GoogleMapsComponents.Maps
     //[JsonConverter(typeof(JsObjectRefConverter<Map>))]
     public class Map : EventEntityBase, IDisposable, IJsObjectRef
     {
-        private readonly JsObjectRef _jsObjectRef;
-
         public Guid Guid => _jsObjectRef.Guid;
 
         public MapData Data { get; private set; }
@@ -39,7 +37,6 @@ namespace GoogleMapsComponents.Maps
 
         private Map(JsObjectRef jsObjectRef, MapData data) : base(jsObjectRef)
         {
-            _jsObjectRef = jsObjectRef;
             Data = data;
         }
 
@@ -61,12 +58,12 @@ namespace GoogleMapsComponents.Maps
             await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("blazorGoogleMaps.objectManager.removeAllImageLayers", this.Guid.ToString());
         }
 
-        public new void Dispose()
+        public override void Dispose()
         {
-            base.Dispose();
             JsObjectRefInstances.Remove(_jsObjectRef.Guid.ToString());
             _jsObjectRef.JSRuntime.InvokeAsync<object>("blazorGoogleMaps.objectManager.disposeMapElements", Guid.ToString());
-            _jsObjectRef.Dispose();
+            base.Dispose();
+            //_jsObjectRef.Dispose();
         }
 
         /// <summary>
