@@ -1,6 +1,7 @@
 ﻿using Microsoft.JSInterop;
 using System;
 using System.Threading.Tasks;
+using GoogleMapsComponents.Maps.Extension;
 
 namespace GoogleMapsComponents.Maps.Drawing
 {
@@ -9,7 +10,7 @@ namespace GoogleMapsComponents.Maps.Drawing
     /// The DrawingManager's drawing mode defines the type of overlay that will be created by the user. 
     /// Adds a control to the map, allowing the user to switch drawing mode.
     /// </summary>
-    public class DrawingManager : IDisposable
+    public class DrawingManager : EventEntityBase, IDisposable
     {
         private readonly JsObjectRef _jsObjectRef;
         private Map? _map;
@@ -29,7 +30,7 @@ namespace GoogleMapsComponents.Maps.Drawing
         /// <summary>
         /// Creates a DrawingManager that allows users to draw overlays on the map, and switch between the type of overlay to be drawn with a drawing control.
         /// </summary>
-        private DrawingManager(JsObjectRef jsObjectRef, DrawingManagerOptions? opt = null)
+        private DrawingManager(JsObjectRef jsObjectRef, DrawingManagerOptions? opt = null) : base(jsObjectRef)
         {
             _jsObjectRef = jsObjectRef;
 
@@ -39,8 +40,9 @@ namespace GoogleMapsComponents.Maps.Drawing
             }
         }
 
-        public void Dispose()
+        public new void Dispose()
         {
+            base.Dispose();
             _jsObjectRef.Dispose();
         }
 
@@ -100,14 +102,6 @@ namespace GoogleMapsComponents.Maps.Drawing
                    options);
         }
 
-        public async Task<MapEventListener> AddListener(string eventName, Action handler)
-        {
-            var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
-                "addListener", eventName, handler);
-
-            return new MapEventListener(listenerRef);
-        }
-
         public async Task AddOverlayCompleteListener(Action<OverlayCompleteEvent> action)
         {
             void Act(OverlaycompleteArgs args)
@@ -143,14 +137,6 @@ namespace GoogleMapsComponents.Maps.Drawing
 
             await _jsObjectRef.JSRuntime.MyInvokeAsync("blazorGoogleMaps.objectManager.drawingManagerOverlaycomplete",
                 new object[] { this._jsObjectRef.Guid.ToString(), (Action<OverlaycompleteArgs>)Act });
-        }
-
-        public async Task<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
-        {
-            var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
-                "addListener", eventName, handler);
-
-            return new MapEventListener(listenerRef);
         }
 
         /// <summary>

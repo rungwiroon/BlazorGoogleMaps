@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using GoogleMapsComponents.Maps.Extension;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
 namespace GoogleMapsComponents.Maps.Places
 {
-    public class Autocomplete : IDisposable
+    public class Autocomplete : EventEntityBase, IDisposable
     {
         private readonly JsObjectRef _jsObjectRef;
 
@@ -18,13 +19,14 @@ namespace GoogleMapsComponents.Maps.Places
             return obj;
         }
 
-        private Autocomplete(JsObjectRef jsObjectRef)
+        private Autocomplete(JsObjectRef jsObjectRef) : base (jsObjectRef)
         {
             _jsObjectRef = jsObjectRef;
         }
 
-        public void Dispose()
+        public new void Dispose()
         {
+            base.Dispose();
             _jsObjectRef?.Dispose();
         }
 
@@ -93,14 +95,6 @@ namespace GoogleMapsComponents.Maps.Places
         public Task SetTypes(IEnumerable<string> types)
         {
             return _jsObjectRef.InvokeAsync("setTypes", types);
-        }
-
-        public async Task<MapEventListener> AddListener(string eventName, Action handler)
-        {
-            var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
-                "addListener", eventName, handler);
-
-            return new MapEventListener(listenerRef);
         }
     }
 }

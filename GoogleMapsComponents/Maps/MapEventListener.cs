@@ -10,6 +10,7 @@ namespace GoogleMapsComponents.Maps
     public class MapEventListener : IJsObjectRef, IDisposable
     {
         private readonly JsObjectRef _jsObjectRef;
+        public bool IsRemoved = false;
 
         internal MapEventListener(JsObjectRef jsObjectRef)
         {
@@ -30,6 +31,7 @@ namespace GoogleMapsComponents.Maps
         {
             await _jsObjectRef.InvokeAsync("remove");
             await _jsObjectRef.DisposeAsync();
+            IsRemoved = true;
         }
     }
 }

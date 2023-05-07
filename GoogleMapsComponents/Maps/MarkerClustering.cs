@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GoogleMapsComponents.Maps.Extension;
+
 // ReSharper disable UnusedMember.Global
 
 namespace GoogleMapsComponents.Maps
@@ -10,14 +12,12 @@ namespace GoogleMapsComponents.Maps
     /// <summary>
     /// https://github.com/googlemaps/js-markerclusterer
     /// </summary>
-    public class MarkerClustering : IJsObjectRef
+    public class MarkerClustering : EventEntityBase, IJsObjectRef
     {
         private readonly JsObjectRef _jsObjectRef;
         public Guid Guid => _jsObjectRef.Guid;
         private Map _map;
         private readonly IEnumerable<Marker> _originalMarkers;
-
-        public readonly Dictionary<string, List<MapEventListener>> EventListeners;
 
         public static async Task<MarkerClustering> CreateAsync(
             IJSRuntime jsRuntime,
@@ -35,12 +35,11 @@ namespace GoogleMapsComponents.Maps
             return obj;
         }
 
-        internal MarkerClustering(JsObjectRef jsObjectRef, Map map, IEnumerable<Marker> markers)
+        internal MarkerClustering(JsObjectRef jsObjectRef, Map map, IEnumerable<Marker> markers) : base(jsObjectRef)
         {
             _jsObjectRef = jsObjectRef;
             _map = map;
             _originalMarkers = markers;
-            EventListeners = new Dictionary<string, List<MapEventListener>>();
         }
 
         /// <summary>
@@ -56,36 +55,6 @@ namespace GoogleMapsComponents.Maps
             }
 
             await _jsObjectRef.JSRuntime.InvokeVoidAsync("blazorGoogleMaps.objectManager.addClusteringMarkers", _jsObjectRef.Guid.ToString(), markers, noDraw);
-        }
-
-        public virtual async Task<MapEventListener> AddListener(string eventName, Action handler)
-        {
-            JsObjectRef listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync("addListener", eventName, handler);
-            MapEventListener eventListener = new MapEventListener(listenerRef);
-
-            if (!EventListeners.ContainsKey(eventName))
-            {
-                EventListeners.Add(eventName, new List<MapEventListener>());
-            }
-
-            EventListeners[eventName].Add(eventListener);
-
-            return eventListener;
-        }
-
-        public virtual async Task<MapEventListener> AddListener<TAction>(string eventName, Action<TAction> handler)
-        {
-            JsObjectRef listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync("addListener", eventName, handler);
-            MapEventListener eventListener = new MapEventListener(listenerRef);
-
-            if (!EventListeners.ContainsKey(eventName))
-            {
-                EventListeners.Add(eventName, new List<MapEventListener>());
-            }
-
-            EventListeners[eventName].Add(eventListener);
-
-            return eventListener;
         }
 
         public virtual async Task SetMap(Map map)
@@ -147,23 +116,12 @@ namespace GoogleMapsComponents.Maps
         public virtual Task Render()
         {
             return _jsObjectRef.InvokeAsync("render");
-
         }
-
-        public virtual async Task ClearListeners(string eventName)
+        
+        public new void Dispose()
         {
-            if (EventListeners.ContainsKey(eventName))
-            {
-                //await _jsObjectRef.InvokeAsync("clearListeners", eventName);
-
-                foreach (MapEventListener listener in EventListeners[eventName])
-                {
-                    await listener.RemoveAsync();
-                }
-                //IMHO is better preserving the knowledge that Marker had some EventListeners attached to "eventName" in the past
-                //so, instead of clearing the list and removing the key from dictionary, I prefer to leave the key with an empty list
-                EventListeners[eventName].Clear();
-            }
+            base.Dispose();
+            _jsObjectRef.Dispose();
         }
     }
 }

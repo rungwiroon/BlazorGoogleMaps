@@ -47,6 +47,10 @@
         //Debug.WriteLine("Start OnAfterRenderAsync");
 
         await map1.InteropObject.AddListener("bounds_changed", OnBoundsChanged);
+        //Once can be removed before it is triggered, this shows that it is not triggered
+        var reference = await map1.InteropObject.AddListenerOnce("rightclick", OnBoundsChangedOnce);
+        await reference.RemoveAsync();
+        
 
         await map1.InteropObject.AddListener("center_changed", OnCenterChanged);
 
@@ -67,6 +71,9 @@
         await map1.InteropObject.AddListener("maptypeid_changed", OnMapTypeIdChanged);
 
         await map1.InteropObject.AddListener<MouseEvent>("mousemove", OnMouseMove);
+        
+        await map1.InteropObject.AddListenerOnce<MouseEvent>("mousemove", OnMouseMoveOnce);
+        
         await map1.InteropObject.AddListener<MouseEvent>("mousedown", OnMouseMove);
 
         await map1.InteropObject.AddListener("mouseout", OnMouseOut);
@@ -89,6 +96,14 @@
         //Console.WriteLine("Bounds changed.");
 
         _events.Insert(0, "Bounds changed.");
+        _events = _events.Take(100).ToList();
+
+        StateHasChanged();
+    }
+    
+    private void OnBoundsChangedOnce()
+    {
+        _events.Insert(0, "Bounds changed once.");
         _events = _events.Take(100).ToList();
 
         StateHasChanged();
@@ -193,6 +208,16 @@
         //Console.WriteLine("OnMouseMove.");
 
         _events.Insert(0, $"OnMouseMove {e.LatLng}.");
+        _events = _events.Take(100).ToList();
+
+        StateHasChanged();
+    }
+    
+    private void OnMouseMoveOnce(MouseEvent e)
+    {
+        //Console.WriteLine("OnMouseMove.");
+
+        _events.Insert(0, $"OnMouseMoveOnce {e.LatLng.Lat}x{e.LatLng.Lng}.");
         _events = _events.Take(100).ToList();
 
         StateHasChanged();

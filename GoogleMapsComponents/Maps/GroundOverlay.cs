@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using GoogleMapsComponents.Maps.Extension;
 using Microsoft.JSInterop;
 
 namespace GoogleMapsComponents.Maps
 {
-    public class GroundOverlay : IDisposable, IJsObjectRef
+    public class GroundOverlay : EventEntityBase, IDisposable, IJsObjectRef
     {
         private readonly JsObjectRef _jsObjectRef;
-
-        public readonly Dictionary<string, List<MapEventListener>> EventListeners;
 
         public Guid Guid => _jsObjectRef.Guid;
 
@@ -21,24 +20,9 @@ namespace GoogleMapsComponents.Maps
             return obj;
         }
 
-        internal GroundOverlay(JsObjectRef jsObjectRef)
+        internal GroundOverlay(JsObjectRef jsObjectRef) : base (jsObjectRef)
         {
             _jsObjectRef = jsObjectRef;
-            EventListeners = new Dictionary<string, List<MapEventListener>>();
-        }
-
-        public async Task<MapEventListener> AddListener(string eventName, Action handler)
-        {
-            JsObjectRef listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync("addListener", eventName, handler);
-            MapEventListener eventListener = new MapEventListener(listenerRef);
-
-            if (!EventListeners.ContainsKey(eventName))
-            {
-                EventListeners.Add(eventName, new List<MapEventListener>());
-            }
-            EventListeners[eventName].Add(eventListener);
-
-            return eventListener;
         }
 
         /// <summary>
@@ -73,8 +57,9 @@ namespace GoogleMapsComponents.Maps
             //_map = map;
         }
 
-        public void Dispose()
+        public new void Dispose()
         {
+            base.Dispose();
             _jsObjectRef?.Dispose();
         }
     }

@@ -528,6 +528,10 @@
                         console.log(e);
                     }
                 }
+                else if (functionToInvoke === "addListenerOnce") {
+                    const eventId = new google.maps.event.addListenerOnce(obj, args2[0], args2[1]);
+                    return eventId;
+                }
                 else if (google.maps.places !== undefined && obj instanceof google.maps.places.AutocompleteService) {
                     //AutocompleteService predictions to handle callbacks in the promise
                     return new Promise(function (resolve, reject) {
@@ -624,6 +628,8 @@
                         } else {
                             return JSON.parse(JSON.stringify(result, getCircularReplacer()));
                         }
+                    } else if (functionToInvoke === "remove") {
+                        this.disposeObject(args[0]);
                     } else {
                         return result;
                     }

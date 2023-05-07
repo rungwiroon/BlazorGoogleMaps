@@ -1,10 +1,11 @@
 ﻿using Microsoft.JSInterop;
 using System;
 using System.Threading.Tasks;
+using GoogleMapsComponents.Maps.Extension;
 
 namespace GoogleMapsComponents.Maps
 {
-    public class DirectionsRenderer : IDisposable
+    public class DirectionsRenderer : EventEntityBase, IDisposable
     {
         private readonly JsObjectRef _jsObjectRef;
 
@@ -16,13 +17,14 @@ namespace GoogleMapsComponents.Maps
             return obj;
         }
 
-        private DirectionsRenderer(JsObjectRef jsObjectRef)
+        private DirectionsRenderer(JsObjectRef jsObjectRef) : base(jsObjectRef)
         {
             _jsObjectRef = jsObjectRef;
         }
 
-        public void Dispose()
+        public new void Dispose()
         {
+            base.Dispose();
             _jsObjectRef?.Dispose();
         }
 
@@ -114,22 +116,5 @@ namespace GoogleMapsComponents.Maps
                 "setRouteIndex",
                 routeIndex);
         }
-
-        public async Task<MapEventListener> AddListener(string eventName, Action handler)
-        {
-            var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
-                "addListener", eventName, handler);
-
-            return new MapEventListener(listenerRef);
-        }
-
-        public async Task<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
-        {
-            var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
-                "addListener", eventName, handler);
-
-            return new MapEventListener(listenerRef);
-        }
-
     }
 }
