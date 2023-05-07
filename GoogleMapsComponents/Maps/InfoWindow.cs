@@ -1,8 +1,8 @@
-﻿using Microsoft.JSInterop;
+﻿using GoogleMapsComponents.Maps.Extension;
+using Microsoft.JSInterop;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using GoogleMapsComponents.Maps.Extension;
+// ReSharper disable InvalidXmlDocComment
 
 namespace GoogleMapsComponents.Maps
 {
@@ -29,7 +29,7 @@ namespace GoogleMapsComponents.Maps
     /// Each setter properties can be used as follow:
     /// With a Dictionary<string, {property type}> indicating for each Marker (related to that key) the corresponding related property value
     /// </summary>
-    public class InfoWindow : EventEntityBase, IDisposable, IJsObjectRef
+    public class InfoWindow : EventEntityBase, IJsObjectRef
     {
         private readonly JsObjectRef _jsObjectRef;
 
@@ -42,12 +42,13 @@ namespace GoogleMapsComponents.Maps
         /// After constructing an InfoWindow, you must call open to display it on the map. 
         /// The user can click the close button on the InfoWindow to remove it from the map, or the developer can call close() for the same effect.
         /// </summary>
+        /// <param name="jsRuntime"></param>
         /// <param name="opts"></param>
-        public async static Task<InfoWindow> CreateAsync(IJSRuntime jsRuntime, InfoWindowOptions opts = null)
+        public static async Task<InfoWindow> CreateAsync(IJSRuntime jsRuntime, InfoWindowOptions? opts = null)
         {
             var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.InfoWindow", opts);
 
-            var obj = new InfoWindow(jsObjectRef, opts);
+            var obj = new InfoWindow(jsObjectRef);
 
             return obj;
         }
@@ -59,13 +60,13 @@ namespace GoogleMapsComponents.Maps
         /// After constructing an InfoWindow, you must call open to display it on the map. 
         /// The user can click the close button on the InfoWindow to remove it from the map, or the developer can call close() for the same effect.
         /// </summary>
-        /// <param name="opts"></param>
-        private InfoWindow(JsObjectRef jsObjectRef, InfoWindowOptions opts) : base(jsObjectRef)
+        /// <param name="jsObjectRef"></param>
+        private InfoWindow(JsObjectRef jsObjectRef) : base(jsObjectRef)
         {
             _jsObjectRef = jsObjectRef;
         }
 
-        public new void Dispose()
+        public override void Dispose()
         {
             base.Dispose();
             _jsObjectRef.Dispose();
@@ -100,7 +101,7 @@ namespace GoogleMapsComponents.Maps
         /// </summary>
         /// <param name="map"></param>
         /// <param name="anchor"></param>
-        public Task Open(Map map, object anchor = null)
+        public Task Open(Map map, object? anchor = null)
         {
             return _jsObjectRef.InvokeAsync("open", map, anchor);
         }
