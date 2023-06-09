@@ -1,4 +1,5 @@
 ﻿using OneOf;
+using System.Text.Json.Serialization;
 
 namespace GoogleMapsComponents.Maps
 {
@@ -58,6 +59,7 @@ namespace GoogleMapsComponents.Maps
         /// <summary>
         /// 2021-07 supported only in beta google maps version
         /// </summary>
+        [JsonConverter(typeof(GoogleMapsComponents.Serialization.JsonStringEnumConverterEx<CollisionBehavior>))]
         public CollisionBehavior? CollisionBehavior { get; set; }
 
         /// <summary>
