@@ -1,6 +1,5 @@
-﻿namespace GoogleMapsComponents.Maps
+﻿namespace GoogleMapsComponents.Maps;
+
+public class FullscreenControlOptions
 {
-    public class FullscreenControlOptions
-    {
-    }
 }

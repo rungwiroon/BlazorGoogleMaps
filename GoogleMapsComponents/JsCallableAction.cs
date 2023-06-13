@@ -3,68 +3,67 @@ using System;
 using System.Linq;
 using System.Text.Json;
 
-namespace GoogleMapsComponents
+namespace GoogleMapsComponents;
+
+public class JsCallableAction
 {
-    public class JsCallableAction
+    private readonly Delegate _delegate;
+    private readonly Type[] _argumentTypes;
+    private readonly IJSRuntime _jsRuntime;
+
+    public JsCallableAction(IJSRuntime jsRuntime, Delegate @delegate, params Type[] argumentTypes)
     {
-        private readonly Delegate _delegate;
-        private readonly Type[] _argumentTypes;
-        private readonly IJSRuntime _jsRuntime;
+        _jsRuntime = jsRuntime;
+        _delegate = @delegate;
+        _argumentTypes = argumentTypes;
+    }
 
-        public JsCallableAction(IJSRuntime jsRuntime, Delegate @delegate, params Type[] argumentTypes)
+    [JSInvokable]
+    public void Invoke(string args, string guid)
+    {
+        if (string.IsNullOrWhiteSpace(args) || !_argumentTypes.Any())
         {
-            _jsRuntime = jsRuntime;
-            _delegate = @delegate;
-            _argumentTypes = argumentTypes;
+            _delegate.DynamicInvoke();
+            return;
         }
 
-        [JSInvokable]
-        public void Invoke(string args, string guid)
-        {
-            if (string.IsNullOrWhiteSpace(args) || !_argumentTypes.Any())
+        var jArray = JsonDocument.Parse(args)
+            .RootElement
+            .EnumerateArray();
+
+        var arguments = _argumentTypes.Zip(jArray, (type, jToken) => new { jToken, type })
+            .Select(x =>
             {
-                _delegate.DynamicInvoke();
-                return;
-            }
+                //var obj = x.jToken.ToObject(x.type);
+                //var json = x.jToken.GetString();
+                var obj = Helper.DeSerializeObject(x.jToken, x.type);
 
-            var jArray = JsonDocument.Parse(args)
-                .RootElement
-                .EnumerateArray();
+                //var obj = Helper.DeSerializeObject<object>(json);
 
-            var arguments = _argumentTypes.Zip(jArray, (type, jToken) => new { jToken, type })
-                .Select(x =>
+                if (obj is IActionArgument actionArg)
                 {
-                    //var obj = x.jToken.ToObject(x.type);
-                    //var json = x.jToken.GetString();
-                    var obj = Helper.DeSerializeObject(x.jToken, x.type);
+                    actionArg.JsObjectRef = new JsObjectRef(_jsRuntime, new Guid(guid));
+                }
 
-                    //var obj = Helper.DeSerializeObject<object>(json);
+                return obj;
+            })
+            .ToArray();
 
-                    if (obj is IActionArgument actionArg)
-                    {
-                        actionArg.JsObjectRef = new JsObjectRef(_jsRuntime, new Guid(guid));
-                    }
+        //var jArray = JArray.Parse(args);
+        //var arguments = _argumentTypes.Zip(jArray, (type, jToken) => new { jToken, type })
+        //    .Select(x =>
+        //    {
+        //        var obj = x.jToken.ToObject(x.type);
 
-                    return obj;
-                })
-                .ToArray();
+        //        if (obj is IActionArgument actionArg)
+        //            actionArg.JsObjectRef = new JsObjectRef(_jsRuntime, new Guid(guid));
 
-            //var jArray = JArray.Parse(args);
-            //var arguments = _argumentTypes.Zip(jArray, (type, jToken) => new { jToken, type })
-            //    .Select(x =>
-            //    {
-            //        var obj = x.jToken.ToObject(x.type);
+        //        return obj;
+        //    })
+        //    .ToArray();
 
-            //        if (obj is IActionArgument actionArg)
-            //            actionArg.JsObjectRef = new JsObjectRef(_jsRuntime, new Guid(guid));
+        //Debug.WriteLine(arguments.FirstOrDefault()?.GetType());
 
-            //        return obj;
-            //    })
-            //    .ToArray();
-
-            //Debug.WriteLine(arguments.FirstOrDefault()?.GetType());
-
-            _delegate.DynamicInvoke(arguments);
-        }
+        _delegate.DynamicInvoke(arguments);
     }
 }

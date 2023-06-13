@@ -1,9 +1,8 @@
-﻿namespace GoogleMapsComponents.Maps
-{
-    public class DirectionResponse
-    {
-        public DirectionsResult Response { get; set; }
+﻿namespace GoogleMapsComponents.Maps;
 
-        public DirectionsStatus Status { get; set; }
-    }
+public class DirectionResponse
+{
+    public DirectionsResult Response { get; set; }
+
+    public DirectionsStatus Status { get; set; }
 }

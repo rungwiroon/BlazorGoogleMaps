@@ -1,7 +1,6 @@
-﻿namespace GoogleMapsComponents
+﻿namespace GoogleMapsComponents;
+
+internal interface IActionArgument
 {
-    internal interface IActionArgument
-    {
-        JsObjectRef JsObjectRef { get; set; }
-    }
+    JsObjectRef JsObjectRef { get; set; }
 }

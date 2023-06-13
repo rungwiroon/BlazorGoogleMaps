@@ -1,6 +1,5 @@
-﻿namespace GoogleMapsComponents.Maps.Coordinates
+﻿namespace GoogleMapsComponents.Maps.Coordinates;
+
+public class Point
 {
-    public class Point
-    {
-    }
 }

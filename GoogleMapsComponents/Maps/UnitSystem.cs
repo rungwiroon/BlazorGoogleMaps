@@ -1,18 +1,17 @@
-﻿namespace GoogleMapsComponents.Maps
+﻿namespace GoogleMapsComponents.Maps;
+
+/// <summary>
+/// The valid unit systems that can be specified in a DirectionsRequest.
+/// </summary>
+public enum UnitSystem
 {
     /// <summary>
-    /// The valid unit systems that can be specified in a DirectionsRequest.
+    /// Specifies that distances in the DirectionsResult should be expressed in imperial units.
     /// </summary>
-    public enum UnitSystem
-    {
-        /// <summary>
-        /// Specifies that distances in the DirectionsResult should be expressed in imperial units.
-        /// </summary>
-        Imperial,
+    Imperial,
 
-        /// <summary>
-        /// Specifies that distances in the DirectionsResult should be expressed in metric units.
-        /// </summary>
-        Metric
-    }
+    /// <summary>
+    /// Specifies that distances in the DirectionsResult should be expressed in metric units.
+    /// </summary>
+    Metric
 }

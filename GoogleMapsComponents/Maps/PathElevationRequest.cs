@@ -1,6 +1,5 @@
-﻿namespace GoogleMapsComponents.Maps
+﻿namespace GoogleMapsComponents.Maps;
+
+public class PathElevationRequest
 {
-    public class PathElevationRequest
-    {
-    }
 }

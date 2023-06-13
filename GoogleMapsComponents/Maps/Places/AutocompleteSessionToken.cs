@@ -3,31 +3,30 @@ using System;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace GoogleMapsComponents.Maps.Places
+namespace GoogleMapsComponents.Maps.Places;
+
+public class AutocompleteSessionToken : IDisposable, IJsObjectRef
 {
-    public class AutocompleteSessionToken : IDisposable, IJsObjectRef
+    private readonly JsObjectRef _jsObjectRef;
+
+    [JsonPropertyName("GuidString")]
+    public Guid Guid => _jsObjectRef.Guid;
+
+    public async static Task<AutocompleteSessionToken> CreateAsync(IJSRuntime jsRuntime)
     {
-        private readonly JsObjectRef _jsObjectRef;
+        var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.places.AutocompleteSessionToken");
+        var obj = new AutocompleteSessionToken(jsObjectRef);
 
-        [JsonPropertyName("GuidString")]
-        public Guid Guid => _jsObjectRef.Guid;
+        return obj;
+    }
 
-        public async static Task<AutocompleteSessionToken> CreateAsync(IJSRuntime jsRuntime)
-        {
-            var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.places.AutocompleteSessionToken");
-            var obj = new AutocompleteSessionToken(jsObjectRef);
+    private AutocompleteSessionToken(JsObjectRef jsObjectRef)
+    {
+        _jsObjectRef = jsObjectRef;
+    }
 
-            return obj;
-        }
-
-        private AutocompleteSessionToken(JsObjectRef jsObjectRef)
-        {
-            _jsObjectRef = jsObjectRef;
-        }
-
-        public void Dispose()
-        {
-            _jsObjectRef.Dispose();
-        }
+    public void Dispose()
+    {
+        _jsObjectRef.Dispose();
     }
 }

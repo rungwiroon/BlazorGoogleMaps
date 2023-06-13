@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace GoogleMapsComponents
+namespace GoogleMapsComponents;
+
+public interface IJsObjectRef
 {
-    public interface IJsObjectRef
-    {
-        Guid Guid { get; }
-    }
+    Guid Guid { get; }
 }

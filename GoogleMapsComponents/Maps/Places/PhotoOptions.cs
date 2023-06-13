@@ -1,6 +1,5 @@
-﻿namespace GoogleMapsComponents.Maps.Places
+﻿namespace GoogleMapsComponents.Maps.Places;
+
+public class PhotoOptions
 {
-    public class PhotoOptions
-    {
-    }
 }

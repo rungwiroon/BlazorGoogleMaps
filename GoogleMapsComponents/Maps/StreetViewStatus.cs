@@ -1,6 +1,5 @@
-﻿namespace GoogleMapsComponents.Maps
+﻿namespace GoogleMapsComponents.Maps;
+
+public enum StreetViewStatus
 {
-    public enum StreetViewStatus
-    {
-    }
 }

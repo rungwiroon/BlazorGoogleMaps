@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 
-namespace GoogleMapsComponents.Maps
+namespace GoogleMapsComponents.Maps;
+
+public class Offset : List<int>
 {
-    public class Offset : List<int>
+    public Offset(int y, int x)
     {
-        public Offset(int y, int x)
-        {
-            Add(y);
-            Add(x);
-        }
+        Add(y);
+        Add(x);
     }
 }

@@ -1,13 +1,12 @@
-﻿namespace GoogleMapsComponents.Maps.Data
+﻿namespace GoogleMapsComponents.Maps.Data;
+
+/// <summary>
+/// google.maps.Data.RemoveFeatureEvent interface 
+/// </summary>
+public class RemoveFeatureEvent
 {
     /// <summary>
-    /// google.maps.Data.RemoveFeatureEvent interface 
+    /// The feature that was removed from the FeatureCollection.
     /// </summary>
-    public class RemoveFeatureEvent
-    {
-        /// <summary>
-        /// The feature that was removed from the FeatureCollection.
-        /// </summary>
-        public Feature Feature { get; set; }
-    }
+    public Feature Feature { get; set; }
 }

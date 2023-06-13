@@ -1,13 +1,12 @@
-﻿namespace GoogleMapsComponents.Maps
+﻿namespace GoogleMapsComponents.Maps;
+
+/// <summary>
+/// Identifiers for scale control ids.
+/// </summary>
+public class ScaleControlStyle
 {
     /// <summary>
-    /// Identifiers for scale control ids.
+    /// The standard scale control.
     /// </summary>
-    public class ScaleControlStyle
-    {
-        /// <summary>
-        /// The standard scale control.
-        /// </summary>
-        public const string DEFAULT = "DEFAULT";
-    }
+    public const string DEFAULT = "DEFAULT";
 }

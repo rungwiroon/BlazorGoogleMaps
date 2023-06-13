@@ -1,12 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace GoogleMapsComponents
+namespace GoogleMapsComponents;
+
+public static class DependencyInjectionExtensions
 {
-    public static class DependencyInjectionExtensions
+    public static IServiceCollection AddBlazorGoogleMaps(this IServiceCollection service)
     {
-        public static IServiceCollection AddBlazorGoogleMaps(this IServiceCollection service)
-        {
-            return service;
-        }
+        return service;
     }
 }

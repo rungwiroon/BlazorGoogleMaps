@@ -1,6 +1,5 @@
-﻿namespace GoogleMapsComponents.Maps.Controls
+﻿namespace GoogleMapsComponents.Maps.Controls;
+
+public class MotionTrackingControlOptions
 {
-    public class MotionTrackingControlOptions
-    {
-    }
 }
