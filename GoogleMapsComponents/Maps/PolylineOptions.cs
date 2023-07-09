@@ -44,4 +44,11 @@ public class PolylineOptions : ListableEntityOptionsBase
     /// The stroke width in pixels.
     /// </summary>
     public int? StrokeWeight { get; set; }
+
+    /// <summary>    
+    /// Hide the undo button
+    /// Undocuments property.
+    /// </summary>
+    public bool? suppressUndo { get; set; }
+
 }
