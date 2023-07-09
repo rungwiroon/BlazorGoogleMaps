@@ -34,12 +34,7 @@ public class JsCallableAction
         var arguments = _argumentTypes.Zip(jArray, (type, jToken) => new { jToken, type })
             .Select(x =>
             {
-                //var obj = x.jToken.ToObject(x.type);
-                //var json = x.jToken.GetString();
                 var obj = Helper.DeSerializeObject(x.jToken, x.type);
-
-                //var obj = Helper.DeSerializeObject<object>(json);
-
                 if (obj is IActionArgument actionArg)
                 {
                     actionArg.JsObjectRef = new JsObjectRef(_jsRuntime, new Guid(guid));
@@ -48,21 +43,6 @@ public class JsCallableAction
                 return obj;
             })
             .ToArray();
-
-        //var jArray = JArray.Parse(args);
-        //var arguments = _argumentTypes.Zip(jArray, (type, jToken) => new { jToken, type })
-        //    .Select(x =>
-        //    {
-        //        var obj = x.jToken.ToObject(x.type);
-
-        //        if (obj is IActionArgument actionArg)
-        //            actionArg.JsObjectRef = new JsObjectRef(_jsRuntime, new Guid(guid));
-
-        //        return obj;
-        //    })
-        //    .ToArray();
-
-        //Debug.WriteLine(arguments.FirstOrDefault()?.GetType());
 
         _delegate.DynamicInvoke(arguments);
     }

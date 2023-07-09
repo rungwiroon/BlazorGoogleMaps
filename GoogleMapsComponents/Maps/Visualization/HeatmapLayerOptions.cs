@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using GoogleMapsComponents.Serialization;
 
 namespace GoogleMapsComponents.Maps.Visualization;
 

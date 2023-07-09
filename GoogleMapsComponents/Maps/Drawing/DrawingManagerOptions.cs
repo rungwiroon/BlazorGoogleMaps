@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using GoogleMapsComponents.Serialization;
 
 namespace GoogleMapsComponents.Maps.Drawing;
 

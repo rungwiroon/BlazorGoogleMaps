@@ -1,4 +1,5 @@
-﻿using OneOf;
+﻿using GoogleMapsComponents.Serialization;
+using OneOf;
 using System.Text.Json.Serialization;
 
 namespace GoogleMapsComponents.Maps.Places;

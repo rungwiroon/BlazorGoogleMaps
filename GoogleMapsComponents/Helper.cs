@@ -84,16 +84,7 @@ internal static class Helper
 
     public static string SerializeObject(object obj)
     {
-        var value = JsonSerializer.Serialize(
-            obj,
-            Options);
-        //Formatting.None,
-        //new JsonSerializerSettings
-        //{
-        //    NullValueHandling = NullValueHandling.Ignore,
-        //    ContractResolver = new CamelCasePropertyNamesContractResolver()
-        //});
-
+        var value = JsonSerializer.Serialize(obj, Options);
         return value;
     }
 
@@ -129,38 +120,38 @@ internal static class Helper
                     case Action action:
                         return DotNetObjectReference.Create(new JsCallableAction(jsRuntime, action));
                     default:
-                    {
-                        if (argType.IsGenericType
-                            && (argType.GetGenericTypeDefinition() == typeof(Action<>)))
                         {
-                            var genericArguments = argType.GetGenericArguments();
-
-                            //Debug.WriteLine($"Generic args : {genericArguments.Count()}");
-
-                            return DotNetObjectReference.Create(new JsCallableAction(jsRuntime, (Delegate)arg, genericArguments));
-                        }
-
-                        switch (arg)
-                        {
-                            case JsCallableAction _:
-                                return DotNetObjectReference.Create(arg);
-                            case IJsObjectRef jsObjectRef:
+                            if (argType.IsGenericType
+                                && (argType.GetGenericTypeDefinition() == typeof(Action<>)))
                             {
-                                //Debug.WriteLine("Serialize IJsObjectRef");
+                                var genericArguments = argType.GetGenericArguments();
 
-                                var guid = jsObjectRef.Guid;
-                                return SerializeObject(new JsObjectRef1(guid));
+                                //Debug.WriteLine($"Generic args : {genericArguments.Count()}");
+
+                                return DotNetObjectReference.Create(new JsCallableAction(jsRuntime, (Delegate)arg, genericArguments));
                             }
-                            default:
-                                return SerializeObject(arg);
+
+                            switch (arg)
+                            {
+                                case JsCallableAction _:
+                                    return DotNetObjectReference.Create(arg);
+                                case IJsObjectRef jsObjectRef:
+                                    {
+                                        //Debug.WriteLine("Serialize IJsObjectRef");
+
+                                        var guid = jsObjectRef.Guid;
+                                        return SerializeObject(new JsObjectRef1(guid));
+                                    }
+                                default:
+                                    return SerializeObject(arg);
+                            }
                         }
-                    }
                 }
             });
         return jsFriendlyArgs;
     }
 
-    internal static async Task<TRes> MyInvokeAsync<TRes>(
+    internal static async Task<TRes?> MyInvokeAsync<TRes>(
         this IJSRuntime jsRuntime,
         string identifier,
         params object?[] args)
@@ -188,28 +179,11 @@ internal static class Helper
                     if (typeToken != null)
                     {
                         result = DeSerializeObject<TRes>(typeToken);
-                        //var typeName = typeToken.Value<string>();
-                        //var asm = typeof(Map).Assembly;
-                        //var type = asm.GetType(typeName);
-                        //result = jo.ToObject(type);
                     }
                     else
                     {
                         result = someText;
                     }
-                    //var jo = JsonNode.Parse(someText);
-                    //var typeToken = jo.SelectToken("dotnetTypeName");
-                    //if (typeToken != null)
-                    //{
-                    //    var typeName = typeToken.Value<string>();
-                    //    var asm = typeof(Map).Assembly;
-                    //    var type = asm.GetType(typeName);
-                    //    result = jo.ToObject(type);
-                    //}
-                    //else
-                    //{
-                    //    result = someText;
-                    //}
                 }
                 catch
                 {
@@ -217,7 +191,7 @@ internal static class Helper
                 }
             }
 
-            return (TRes)result;
+            return (TRes?)result;
         }
         else
         {
@@ -234,50 +208,6 @@ internal static class Helper
         var jsFriendlyArgs = MakeArgJsFriendly(jsRuntime, args);
 
         return await jsRuntime.InvokeAsync<object>(identifier, jsFriendlyArgs);
-    }
-
-    private static async Task<object> InvokeAsync(
-        this IJSRuntime jsRuntime,
-        string identifier,
-        params object[] args)
-    {
-        var resultObject = await jsRuntime.MyInvokeAsync<object>(identifier, args);
-        object result = null;
-
-        if (resultObject is string someText)
-        {
-            try
-            {
-                //var jo = JObject.Parse(someText);
-                //var typeToken = jo.SelectToken("dotnetTypeName");
-                var jo = JsonDocument.Parse(someText);
-                var typeToken = jo.RootElement.GetProperty("dotnetTypeName").GetString();
-                if (typeToken != null)
-                {
-                    result = DeSerializeObject<object>(typeToken);
-                    //var typeName = typeToken.Value<string>();
-                    //var asm = typeof(Map).Assembly;
-                    //var type = asm.GetType(typeName);
-                    //result = jo.ToObject(type);
-                }
-                else
-                {
-                    result = someText;
-                }
-            }
-            catch
-            {
-                result = someText;
-            }
-        }
-
-        if (resultObject is JsonElement jsonElement)
-        {
-
-
-        }
-
-        return result;
     }
 
     /// <summary>
