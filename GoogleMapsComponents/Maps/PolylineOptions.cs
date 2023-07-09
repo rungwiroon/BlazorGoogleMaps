@@ -48,7 +48,8 @@ public class PolylineOptions : ListableEntityOptionsBase
     /// <summary>    
     /// Hide the undo button
     /// Undocuments property.
+    /// https://issuetracker.google.com/issues/35821607
     /// </summary>
-    public bool? suppressUndo { get; set; }
+    public bool? SuppressUndo { get; set; }
 
 }
