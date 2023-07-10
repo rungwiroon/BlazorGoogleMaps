@@ -419,6 +419,8 @@
                         var element = mapObjects[key];
                         if (element.hasOwnProperty("map")
                             && element.hasOwnProperty("guidString")
+                            && element.map !== null
+                            && element.map !== undefined
                             && element.map.guidString === mapGuid) {
                             keysToRemove.push(element.guidString);
                         }
