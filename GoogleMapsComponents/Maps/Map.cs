@@ -14,10 +14,10 @@ namespace GoogleMapsComponents.Maps;
 /// google.maps.Map class
 /// </summary>
 //[JsonConverter(typeof(JsObjectRefConverter<Map>))]
-public class Map : EventEntityBase, IDisposable, IJsObjectRef
+public class Map : EventEntityBase, IJsObjectRef, IDisposable, IAsyncDisposable
 {
     public Guid Guid => _jsObjectRef.Guid;
-
+    bool isDisposed;
     public MapData Data { get; private set; }
 
     public static async Task<Map> CreateAsync(
@@ -58,13 +58,7 @@ public class Map : EventEntityBase, IDisposable, IJsObjectRef
         await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("blazorGoogleMaps.objectManager.removeAllImageLayers", this.Guid.ToString());
     }
 
-    public override void Dispose()
-    {
-        JsObjectRefInstances.Remove(_jsObjectRef.Guid.ToString());
-        _jsObjectRef.JSRuntime.InvokeAsync<object>("blazorGoogleMaps.objectManager.disposeMapElements", Guid.ToString());
-        base.Dispose();
-        //_jsObjectRef.Dispose();
-    }
+   
 
     /// <summary>
     /// Sets the viewport to contain the given bounds.
@@ -226,5 +220,52 @@ public class Map : EventEntityBase, IDisposable, IJsObjectRef
     public Task SetOptions(MapOptions mapOptions)
     {
         return _jsObjectRef.InvokeAsync("setOptions", mapOptions);
+    }
+
+    
+
+    public override async ValueTask DisposeAsync()
+    {
+        // Perform async cleanup.
+        await DisposeAsyncCore();
+
+        // Dispose of unmanaged resources.
+        Dispose(false);
+
+        // Suppress finalization.
+        GC.SuppressFinalize(this);
+    }
+
+    protected override async ValueTask DisposeAsyncCore()
+    {
+        await base.DisposeAsyncCore();
+        JsObjectRefInstances.Remove(_jsObjectRef.Guid.ToString());
+        await _jsObjectRef.JSRuntime.InvokeAsync<object>("blazorGoogleMaps.objectManager.disposeMapElements", Guid.ToString());
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+
+        if (!isDisposed)
+        {
+            base.Dispose(disposing);
+            //_jsObjectRef.Dispose();
+
+            if (disposing)
+            {
+                // TODO: dispose managed state (managed objects)
+            }
+
+            // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+            // TODO: set large fields to null
+            isDisposed = true;
+        }
+    }
+
+    public override void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 }

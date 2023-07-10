@@ -9,6 +9,7 @@ public abstract class EventEntityBase : IDisposable
 {
     protected readonly JsObjectRef _jsObjectRef;
     private readonly Dictionary<string, List<MapEventListener>> EventListeners;
+    private bool isDisposed;
 
     private void AddEvent(string eventName, MapEventListener listener)
     {
@@ -83,23 +84,61 @@ public abstract class EventEntityBase : IDisposable
         }
     }
 
+    
+    public virtual async ValueTask DisposeAsync()
+    {
+        // Perform async cleanup.
+        await DisposeAsyncCore();
+
+        // Dispose of unmanaged resources.
+        Dispose(false);
+
+        // Suppress finalization.
+        GC.SuppressFinalize(this);
+    }
+
+
     /// <summary>
     /// This method takes care of disposing the possible event listeners that were added.
     /// It also dispose the JsObjectRef and uses it to remove listeners
     /// </summary>
-    public virtual void Dispose()
+    protected virtual async ValueTask DisposeAsyncCore()
     {
         foreach (var eventListener in EventListeners.SelectMany(listener => listener.Value))
         {
             if (eventListener.IsRemoved)
-            {
                 continue;
-            }
+            
 
-            eventListener.Dispose();
+            await eventListener.DisposeAsync();
         }
 
         EventListeners.Clear();
-        _jsObjectRef.Dispose();
+        await _jsObjectRef.DisposeAsync();
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+
+        if (!isDisposed)
+        {            
+            //_jsObjectRef.Dispose();
+
+            if (disposing)
+            {
+                // TODO: dispose managed state (managed objects)
+            }
+
+            // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+            // TODO: set large fields to null
+            isDisposed = true;
+        }
+    }
+
+    public virtual void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 }
