@@ -1,0 +1,17 @@
+﻿@page "/dispose-circle-list"
+@using Microsoft.AspNetCore.Components
+@using GoogleMapsComponents
+
+<h1>Disposing Google Map with Circle List</h1>
+
+<GoogleMap @ref="@map1" Id="map1" Options="@mapOptions"></GoogleMap>
+
+<EditForm Model="new object()">
+    Bunch size: <InputNumber TValue="int" @bind-Value="bunchsize" /><br />
+    <button @onclick="async (_)=> await CreateBunchOfCircles()">Add a bunch of circles</button><br />
+    <p>
+        Click on a circle to remove it.
+        <br />
+        @this.descriptionText
+    </p>
+</EditForm>

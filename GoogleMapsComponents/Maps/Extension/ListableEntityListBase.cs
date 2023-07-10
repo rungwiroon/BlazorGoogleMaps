@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps.Extension;
 
-public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposable
+public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposable, IAsyncDisposable
     where TEntityBase : ListableEntityBase<TEntityOptionsBase>
     where TEntityOptionsBase : ListableEntityOptionsBase
 {
     protected readonly JsObjectRef _jsObjectRef;
 
     public readonly Dictionary<string, TEntityBase> BaseListableEntities;
+    private bool isDisposed;
 
     protected ListableEntityListBase(JsObjectRef jsObjectRef, Dictionary<string, TEntityBase> baseListableEntities)
     {
@@ -20,14 +21,7 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
         BaseListableEntities = baseListableEntities;
     }
 
-    public void Dispose()
-    {
-        if (BaseListableEntities.Count > 0)
-        {
-            _jsObjectRef.DisposeMultipleAsync(BaseListableEntities.Select(e => e.Value.Guid).ToList());
-            BaseListableEntities.Clear();
-        }
-    }
+
 
     /// <summary>
     /// Set the set of entities; entities will be removed, added or changed to mirror the given set.
@@ -331,4 +325,50 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
         }));
         await _jsObjectRef.AddMultipleListenersAsync(eventName, dictArgs);
     }
+
+    public async ValueTask DisposeAsync()
+    {
+        // Perform async cleanup.
+        await DisposeAsyncCore();
+
+        // Dispose of unmanaged resources.
+        Dispose(false);
+
+        // Suppress finalization.
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual async ValueTask DisposeAsyncCore()
+    {
+        if (BaseListableEntities.Count > 0)
+        {
+            await _jsObjectRef.DisposeMultipleAsync(BaseListableEntities.Select(e => e.Value.Guid).ToList());            
+            BaseListableEntities.Clear();
+        }
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        
+        if (!isDisposed)
+        {
+            if (disposing)
+            {
+                // TODO: dispose managed state (managed objects)
+            }
+
+            // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+            // TODO: set large fields to null
+            isDisposed = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
+
+
 }
