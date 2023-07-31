@@ -36,12 +36,27 @@ public class MapComponent : ComponentBase, IDisposable, IAsyncDisposable
 
     protected virtual async ValueTask DisposeAsyncCore()
     {
-        //For some reasons this one is null when you refresh the page
-        //Then second call it is not null and it being disposed
         if (InteropObject is not null)
-            await InteropObject.DisposeAsync();
+            try
+            {
+                await InteropObject.DisposeAsync();
+                InteropObject = null;
+            }
+            catch (Exception ex)
+            {
+                var isPossibleRefreshError = ex.HasInnerExceptionsOfType<TaskCanceledException>();
+                isPossibleRefreshError |= ex.HasInnerExceptionsOfType<ObjectDisposedException>();
+                //Unfortenatly, JSDisconnectedException is available in dotnet >= 6.0, and not in dotnet standard.
+                isPossibleRefreshError |= true;
+                //If we get an exception here, we can assume that the page was refreshed. So assentialy, we swallow all exception here...
+                //isPossibleRefreshError = isPossibleRefreshError || ex.HasInnerExceptionsOfType<JSDisconnectedException>();
 
+
+                if (!isPossibleRefreshError)
+                    throw;
+            }
     }
+
 
     protected virtual void Dispose(bool disposing)
     {
