@@ -1,0 +1,52 @@
+﻿@page "/kmllayer"
+@using GoogleMapsComponents
+@using GoogleMapsComponents.Maps
+@using System.Text.Json
+@using GoogleMapsComponents.Maps.KmlLayer
+
+<h1>Map Events</h1>
+
+<GoogleMap @ref="@map1" Id="map1" Options="@mapOptions" OnAfterInit="@OnAfterInitAsync">
+</GoogleMap>
+
+<p>Click on of the pins to see the Kml capture in action.</p>
+<a href="https://developers.google.com/maps/documentation/javascript/kml#setting_up_the_kml_file_for_import" target="_blank">Copy of Google's example</a>
+<br>
+<div id="capture">@((MarkupString)(capture))</div>
+
+@code {
+    private GoogleMap map1;
+    private MapOptions mapOptions = new MapOptions()
+    {
+        Zoom = 2,
+        Center = new LatLngLiteral()
+        {
+            Lat = -19.257753,
+            Lng = 146.823688
+        },
+        MapTypeId = MapTypeId.Terrain
+    };
+
+    const string src = "https://developers.google.com/maps/documentation/javascript/examples/kml/westcampus.kml";
+    string? capture = null;
+
+    private bool DisablePoiInfoWindow { get; set; } = false;
+
+    private async Task OnAfterInitAsync()
+    {
+        //Debug.WriteLine("Start OnAfterRenderAsync");
+        var kmllayer = await KmlLayer.CreateAsync(map1.JsRuntime, src, new KmlLayerOptions()
+        {
+            PreserveViewport = false,
+            SuppressInfoWindows = true,
+            Map = map1.InteropObject
+        });
+        await kmllayer.AddListener<KmlMouseEvent>("click", e =>
+        {
+            var content = e.FeatureData.InfoWindowHtml;   
+            capture = content;
+            StateHasChanged();
+        });
+    }
+
+}
