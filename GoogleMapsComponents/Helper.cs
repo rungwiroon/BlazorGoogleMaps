@@ -229,7 +229,18 @@ internal static class Helper
 
         if (resultObject is JsonElement jsonElement)
         {
-            var json = jsonElement.GetString();
+            var json = string.Empty;
+            if (jsonElement.ValueKind == JsonValueKind.Number)
+            {
+                json = jsonElement.GetRawText();
+
+            }
+            else
+            {
+                json = jsonElement.GetString();
+            }
+
+
             var propArray = Helper.DeSerializeObject<Dictionary<string, object>>(json);
             if (propArray.TryGetValue("dotnetTypeName", out var typeName))
             {

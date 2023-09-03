@@ -194,7 +194,7 @@ public class JsObjectRef : IJsObjectRef, IDisposable
         );
     }
 
-    public Task<T> InvokeAsync<T>(string functionName, params object[] args)
+    public Task<T> InvokeAsync<T>(string functionName, params object?[] args)
     {
         return _jsRuntime.MyInvokeAsync<T>(
             "blazorGoogleMaps.objectManager.invoke",

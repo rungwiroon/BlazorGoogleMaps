@@ -7,28 +7,22 @@ namespace GoogleMapsComponents.Maps.Data;
 
 /// <summary>
 /// A feature has a geometry, an id, and a set of properties
+/// https://developers.google.com/maps/documentation/javascript/reference/data#Data.Feature.constructor
 /// </summary>
-public class Feature
+public class Feature : IJsObjectRef
 {
-    //private readonly FeatureOptions? _options;
+    private readonly JsObjectRef _jsObjectRef;
+    public Guid Guid => _jsObjectRef.Guid;
 
     /// <summary>
     /// Needed for json serializations
     /// </summary>
-    public Feature()
+    public Feature(JsObjectRef jsObjectRef)
     {
+        _jsObjectRef = jsObjectRef;
     }
 
-    /// <summary>
-    /// Constructs a Feature with the given options.
-    /// </summary>
-    /// <param name="options"></param>
-    public Feature(FeatureOptions? options = null)
-    {
-        //_options = options;
-    }
-
-    public IEnumerable<IDictionary<string, object>> Properties { get; set; }
+    public IEnumerable<IDictionary<string, object>>? Properties { get; set; }
 
     /// <summary>
     /// Repeatedly invokes the given function, passing a property value and name on each invocation. 
@@ -53,9 +47,10 @@ public class Feature
     /// Returns the feature ID.
     /// </summary>
     /// <returns></returns>
-    public OneOf<int, string> GetId()
+    public async Task<int> GetId()
     {
-        throw new NotImplementedException();
+        var result = await _jsObjectRef.InvokeAsync<int>("getId");
+        return result;
     }
 
     /// <summary>
@@ -113,4 +108,5 @@ public class Feature
     //        yield return JsonConvert.SerializeObject(keyValuePair).Replace("\\\\", "");
     //    }
     //}
+
 }

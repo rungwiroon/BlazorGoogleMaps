@@ -85,9 +85,19 @@ public class MapData : EventEntityBase, IEnumerable<Feature>, IDisposable
     /// <param name="geoJson"></param>
     /// <param name="options"></param>
     /// <returns></returns>
-    public Task<object> AddGeoJson(string geoJson, Maps.Data.GeoJsonOptions? options = null)
+    public async Task<IReadOnlyCollection<Feature>> AddGeoJson(string geoJson, Maps.Data.GeoJsonOptions? options = null)
     {
-        return _jsObjectRef.InvokeAsync<object>("addGeoJson", geoJson, options);
+        //https://developers.google.com/maps/documentation/javascript/reference/data#Data.addGeoJson
+        //addGeoJson returns features array right away, so i add them explicitly to mapObjects and return just guids
+        var addedFeaturesGuids = await _jsObjectRef.InvokeAsync<IReadOnlyCollection<Guid>>("addGeoJson", geoJson, options);
+        var features = new List<Feature>();
+        foreach (var addedFeatureGuid in addedFeaturesGuids)
+        {
+            var feature = new Feature(new JsObjectRef(_jsObjectRef.JSRuntime, addedFeatureGuid));
+            features.Add(feature);
+        }
+
+        return features;
     }
 
     /// <summary>
@@ -175,7 +185,7 @@ public class MapData : EventEntityBase, IEnumerable<Feature>, IDisposable
     /// <param name="url"></param>
     /// <param name="options"></param>
     /// <returns></returns>
-    public Task<Data.Feature> LoadGeoJson(string url, Data.GeoJsonOptions options = null)
+    public Task<Data.Feature> LoadGeoJson(string url, Data.GeoJsonOptions? options = null)
     {
         throw new NotImplementedException();
     }
@@ -191,7 +201,7 @@ public class MapData : EventEntityBase, IEnumerable<Feature>, IDisposable
     {
         return _jsObjectRef.InvokeAsync(
             "overrideStyle",
-            feature,
+            feature.Guid,
             style);
     }
 

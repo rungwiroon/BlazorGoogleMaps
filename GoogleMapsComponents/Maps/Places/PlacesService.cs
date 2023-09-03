@@ -19,7 +19,7 @@ public class PlacesService
     /// <param name="jsRuntime"></param>
     /// <param name="attrContainer"></param>
     /// <returns></returns>
-    public async static Task<PlacesService> CreateAsync(IJSRuntime jsRuntime, OneOf<ElementReference, Map> attrContainer)
+    public static async Task<PlacesService> CreateAsync(IJSRuntime jsRuntime, OneOf<ElementReference, Map> attrContainer)
     {
         var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.places.PlacesService", attrContainer);
         var obj = new PlacesService(jsObjectRef);

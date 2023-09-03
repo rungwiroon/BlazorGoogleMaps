@@ -600,6 +600,17 @@
                         console.log(e);
                     }
                 }
+                else if (functionToInvoke == "overrideStyle") {
+
+                    try {
+                        var featureId = args[2].replace('"', "").replace('"', "");
+                        var feature = mapObjects[featureId];
+                        var data = mapObjects[args[0]];
+                        data.overrideStyle(feature, args[3]);
+                    } catch (e) {
+                        console.log(e);
+                    }
+                }
                 else {
                     var result = null;
                     try {
@@ -623,6 +634,17 @@
                         if ("addListener" == functionToInvoke) {
                             return result;
                         }
+
+                        if ("addGeoJson" == functionToInvoke) {
+                            var resultGuids = [];
+                            result.forEach(coords => {
+                                var addedObjGuid = this.addObject(coords);
+                                resultGuids.push(addedObjGuid);
+                            });
+
+                            return resultGuids;
+                        }
+
                         if ("get" in result) {
                             return result.get("guidString");
                         } else if ("dotnetTypeName" in result) {

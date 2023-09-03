@@ -103,6 +103,23 @@
         await _map1.InteropObject.Data.SetStyle(new StyleOptions { StrokeColor = "green", StrokeWeight = 2 });
     }
 
+    private async Task GetMapDataGeoJsonLineWithOvveriderStyle()
+    {
+        var jsonData = "{ \"type\": \"FeatureCollection\"," +
+                       "  \"features\": [" +
+                       "{ \"type\": \"Feature\"," +
+                       " \"id\": 2," +
+                       " \"properties\": { \"stroke\": \"#555555\", \"stroke-width\": 2, \"stroke-opacity\": 1 }, " +
+                       " \"geometry\": {\"type\": \"LineString\",  \"coordinates\": [ [ 151.219, -33.888], [151.23, -33.869]]}}]}";
+
+        var features = await _map1.InteropObject.Data.AddGeoJson(jsonData);
+        var firstFeature = features.First();
+        var featureId = await firstFeature.GetId();
+     
+    //var feature = await _map1.InteropObject.Data.GetFeatureById(featureId);
+        await _map1.InteropObject.Data.OverrideStyle(firstFeature, new StyleOptions { StrokeColor = "green", StrokeWeight = 2 });
+    }
+
     private async Task GetMapDataGeoJsonPolygon()
     {
         var jsonData = "{ \"type\": \"FeatureCollection\"," +
