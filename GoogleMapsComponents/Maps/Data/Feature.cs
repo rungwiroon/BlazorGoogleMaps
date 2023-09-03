@@ -22,6 +22,11 @@ public class Feature : IJsObjectRef
         _jsObjectRef = jsObjectRef;
     }
 
+    public Feature()
+    {
+
+    }
+
     public IEnumerable<IDictionary<string, object>>? Properties { get; set; }
 
     /// <summary>
