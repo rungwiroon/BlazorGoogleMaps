@@ -606,7 +606,8 @@
                         var featureId = args[2].replace('"', "").replace('"', "");
                         var feature = mapObjects[featureId];
                         var data = mapObjects[args[0]];
-                        data.overrideStyle(feature, args[3]);
+                        var request = tryParseJson(args[3]);
+                        data.overrideStyle(feature, request);
                     } catch (e) {
                         console.log(e);
                     }
