@@ -1,0 +1,56 @@
+﻿@page "/advancedMapMarker"
+@using GoogleMapsComponents
+@using GoogleMapsComponents.Maps
+
+<h1>Google Map Advanced Markers</h1>
+<smallNotice: Available only in the v=beta channel.></smallNotice:>
+<GoogleMap @ref="@_map1" Id="map1" Options="@_mapOptions"></GoogleMap>
+<button @onclick="@AddMarker">Add marker</button>
+@code {
+    private GoogleMap _map1;
+    private MapOptions _mapOptions;
+
+    private readonly List<String> _events = new List<String>();
+
+
+    private LatLngBounds _bounds;
+
+    [Inject]
+    public IJSRuntime JsObjectRef { get; set; }
+
+    protected override void OnInitialized()
+    {
+        _mapOptions = new MapOptions()
+        {
+            Zoom = 13,
+            Center = new LatLngLiteral()
+            {
+                Lat = 13.505892,
+                Lng = 100.8162
+            },
+            MapTypeId = MapTypeId.Roadmap,
+            MapId = "e5asd595q2121"
+        };
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _bounds = await LatLngBounds.CreateAsync(_map1.JsRuntime);
+        }
+    }
+
+    private async Task AddMarker()
+    {
+        var mapCenter = await _map1.InteropObject.GetCenter();
+
+        var marker = await AdvancedMarkerView.CreateAsync(_map1.JsRuntime, new AdvancedMarkerViewOptions()
+        {
+            Position = mapCenter,
+            Map = _map1.InteropObject,
+        });
+
+        await _bounds.Extend(mapCenter);
+    }
+}
