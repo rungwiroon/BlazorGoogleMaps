@@ -12,13 +12,13 @@ public class Rectangle : EventEntityBase, IDisposable
 {
     public Guid Guid => _jsObjectRef.Guid;
 
-    private Map _map;
+    private Map? _map;
 
     /// <summary>
     /// Create a rectangle using the passed RectangleOptions, which specify the bounds and style.
     /// </summary>
     /// <param name="opts"></param>
-    public static async Task<Rectangle> CreateAsync(IJSRuntime jsRuntime, RectangleOptions opts = null)
+    public static async Task<Rectangle> CreateAsync(IJSRuntime jsRuntime, RectangleOptions? opts = null)
     {
         var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Rectangle", opts);
 
@@ -31,7 +31,7 @@ public class Rectangle : EventEntityBase, IDisposable
     /// Create a rectangle using the passed RectangleOptions, which specify the bounds and style.
     /// </summary>
     /// <param name="opts"></param>
-    internal Rectangle(JsObjectRef jsObjectRef, RectangleOptions opts = null) : base(jsObjectRef)
+    internal Rectangle(JsObjectRef jsObjectRef, RectangleOptions? opts = null) : base(jsObjectRef)
     {
         _map = opts?.Map;
     }
