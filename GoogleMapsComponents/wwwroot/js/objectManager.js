@@ -333,6 +333,15 @@
                 let args2 = args.slice(2).map(arg => tryParseJson(arg));
                 //console.log(args2);
                 let functionName = args[1];
+                if (functionName == "google.maps.marker.AdvancedMarkerView") {
+                    var content = args2[0].content;
+                    if (content != null && content !== undefined) {
+                        var template = document.createElement('template');
+                        content = content.trim();
+                        template.innerHTML = content;
+                        args2[0].content = template.content.firstChild;
+                    }
+                }
                 let constructor = stringToFunction(functionName);
                 let obj = new constructor(...args2);
                 let guid = args[0];
