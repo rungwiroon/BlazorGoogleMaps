@@ -272,8 +272,8 @@
                 return google.maps.ControlPosition.LEFT_BOTTOM;
             case "LEFT_CENTER":
                 return google.maps.ControlPosition.LEFT_CENTER;
-            case "LEFT_CENTER":
-                return google.maps.ControlPosition.LEFT_CENTER;
+            case "LEFT_TOP":
+                return google.maps.ControlPosition.LEFT_TOP;
             case "RIGHT_BOTTOM":
                 return google.maps.ControlPosition.RIGHT_BOTTOM;
             case "RIGHT_CENTER":
