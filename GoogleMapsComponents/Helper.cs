@@ -148,6 +148,7 @@ internal static class Helper
                         }
                 }
             });
+
         return jsFriendlyArgs;
     }
 

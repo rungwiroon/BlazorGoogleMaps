@@ -84,7 +84,7 @@ public class JsObjectRef : IJsObjectRef, IDisposable
         return CreateAsync(jsRuntime, Guid.NewGuid(), constructorFunctionName, args);
     }
 
-    public async static Task<Dictionary<string, JsObjectRef>> CreateMultipleAsync(
+    public static async Task<Dictionary<string, JsObjectRef>> CreateMultipleAsync(
         IJSRuntime jsRuntime,
         string constructorFunctionName,
         Dictionary<string, object> args)

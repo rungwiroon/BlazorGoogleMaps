@@ -8,7 +8,7 @@ namespace GoogleMapsComponents;
 
 public class MapComponent : ComponentBase, IDisposable, IAsyncDisposable
 {
-    private bool isDisposed;
+    private bool _isDisposed;
 
     [Inject]
     public IJSRuntime JsRuntime { get; protected set; } = default!;
@@ -20,7 +20,7 @@ public class MapComponent : ComponentBase, IDisposable, IAsyncDisposable
         InteropObject = await Map.CreateAsync(JsRuntime, element, options);
     }
 
-   
+
 
     public async ValueTask DisposeAsync()
     {
@@ -37,6 +37,7 @@ public class MapComponent : ComponentBase, IDisposable, IAsyncDisposable
     protected virtual async ValueTask DisposeAsyncCore()
     {
         if (InteropObject is not null)
+        {
             try
             {
                 await InteropObject.DisposeAsync();
@@ -53,24 +54,26 @@ public class MapComponent : ComponentBase, IDisposable, IAsyncDisposable
 
 
                 if (!isPossibleRefreshError)
+                {
                     throw;
+                }
             }
+        }
     }
 
 
     protected virtual void Dispose(bool disposing)
     {
-
-        if (!isDisposed)
+        if (!_isDisposed)
         {
             if (disposing)
             {
-                InteropObject?.Dispose();                
+                InteropObject?.Dispose();
             }
 
             // TODO: free unmanaged resources (unmanaged objects) and override finalizer
             // TODO: set large fields to null
-            isDisposed = true;
+            _isDisposed = true;
         }
     }
 

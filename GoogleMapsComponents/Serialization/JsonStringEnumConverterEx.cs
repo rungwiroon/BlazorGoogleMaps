@@ -11,7 +11,7 @@ namespace GoogleMapsComponents.Serialization;
 /// TODO apply to all enum with EnumMember attribute
 /// </summary>
 /// <typeparam name="TEnum"></typeparam>
-public class JsonStringEnumConverterEx<TEnum> : JsonConverter<TEnum> where TEnum : struct, System.Enum
+public class JsonStringEnumConverterEx<TEnum> : JsonConverter<TEnum> where TEnum : struct, Enum
 {
 
     private readonly Dictionary<TEnum, string> _enumToString = new Dictionary<TEnum, string>();
@@ -20,7 +20,7 @@ public class JsonStringEnumConverterEx<TEnum> : JsonConverter<TEnum> where TEnum
     public JsonStringEnumConverterEx()
     {
         var type = typeof(TEnum);
-        var values = System.Enum.GetValues(typeof(TEnum));
+        var values = Enum.GetValues(typeof(TEnum));
 
         foreach (var value in values)
         {
