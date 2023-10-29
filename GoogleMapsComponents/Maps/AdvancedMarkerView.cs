@@ -20,4 +20,9 @@ public class AdvancedMarkerView : ListableEntityBase<AdvancedMarkerViewOptions>
         : base(jsObjectRef)
     {
     }
+
+    public Task<int> GetZIndex()
+    {
+        return _jsObjectRef.InvokeAsync<int>("getZIndex");
+    }
 }
