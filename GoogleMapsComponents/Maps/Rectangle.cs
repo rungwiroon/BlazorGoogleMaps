@@ -99,12 +99,12 @@ public class Rectangle : EventEntityBase, IDisposable
     /// <summary>
     /// If set to true, the user can drag this rectangle over the map.
     /// </summary>
-    /// <param name="draggble"></param>
-    public Task SetDraggable(bool draggble)
+    /// <param name="draggable"></param>
+    public Task SetDraggable(bool draggable)
     {
         return _jsObjectRef.InvokeAsync(
             "setDraggable",
-            draggble);
+            draggable);
     }
 
     /// <summary>

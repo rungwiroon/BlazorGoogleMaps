@@ -46,10 +46,10 @@ public class Polygon : ListableEntityBase<PolygonOptions>
     /// Returns whether this shape can be dragged by the user.
     /// </summary>
     /// <returns></returns>
-    public Task<bool> GetDraggble()
+    public Task<bool> GetDraggable()
     {
         return _jsObjectRef.InvokeAsync<bool>(
-            "getDraggble");
+            "getDraggable");
     }
 
     /// <summary>
@@ -96,12 +96,12 @@ public class Polygon : ListableEntityBase<PolygonOptions>
     /// If set to true, the user can drag this shape over the map. 
     /// The geodesic property defines the mode of dragging.
     /// </summary>
-    /// <param name="draggble"></param>
-    public Task SetDraggble(bool draggble)
+    /// <param name="draggable"></param>
+    public Task SetDraggable(bool draggable)
     {
         return _jsObjectRef.InvokeAsync(
-            "setDraggble",
-            draggble);
+            "setDraggable",
+            draggable);
     }
 
     /// <summary>
