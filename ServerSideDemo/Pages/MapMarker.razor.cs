@@ -93,7 +93,7 @@ public partial class MapMarker
             _listeningLoneMarkerKeys = new List<string>();
 
         //use GetMappedValue<T> to map and extract the array of guid keys of unclustered markers
-        GoogleMapsComponents.JsObjectRef jsRef = new GoogleMapsComponents.JsObjectRef(JsObjectRef, _markerClustering.Guid);
+        JsObjectRef jsRef = new GoogleMapsComponents.JsObjectRef(JsObjectRef, _markerClustering.Guid);
         var guidStrings = (await jsRef.GetMappedValue<List<string>>("clusters", "marker", "guidString"))
             .Where((x) => { return x != null; });
 
@@ -244,6 +244,7 @@ public partial class MapMarker
             Map = _map1.InteropObject,
             //Label = $"Test {markers.Count}",
             ZIndex = ZIndex,
+            Label = "test 01",
             //CollisionBehavior = CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY,//2021-07 supported only in beta google maps version
             //Animation = Animation.Bounce
             //Icon = new Icon()
@@ -268,6 +269,8 @@ public partial class MapMarker
             _ => { });
 
         _markers.Push(marker);
+
+        var labelText = await marker.GetLabelText();
 
         await marker.AddListener<MouseEvent>("click", async e =>
         {

@@ -6,39 +6,39 @@
 
 <h1>Google Map Markers</h1>
 
-<GoogleMap @ref="@map1" Id="map1" Options="@mapOptions"></GoogleMap>
+<GoogleMap @ref="@_map1" Id="map1" Options="@_mapOptions"></GoogleMap>
 <button @onclick="AddMarker">Add marker</button>
 <button @onclick="RemoveMarker">Remove marker</button>
 <button @onclick="Recenter">Re-center marker</button>
-@if(markers.Any())
+@if(_markers.Any())
 {
-<br/><text>Label: </text><input type="text" value="@labelText" @onchange="UpdateLabelText" />
+<br/><text>Label: </text><input type="text" value="@_labelText" @onchange="UpdateLabelText" />
 <br />
 }
 <button @onclick="ToggleLabelFontWeight">Toggle label font-weight</button>
 <button @onclick="InvokeClustering">Invoke map cluster</button>
 <button @onclick="@ClearClustering">Clear cluster</button>
 
-<MapEventList @ref="@eventList" Events="@_events"></MapEventList>
+<MapEventList @ref="@_eventList" Events="@_events"></MapEventList>
 
 @functions {
-    private GoogleMap map1 = default!;
+    private GoogleMap _map1 = default!;
 
-    private MapOptions mapOptions = default!;
+    private MapOptions _mapOptions = default!;
 
-    private Stack<Marker> markers = new Stack<Marker>();
+    private readonly Stack<Marker> _markers = new Stack<Marker>();
 
-    private List<String> _events = new List<String>();
+    private readonly List<String> _events = new List<String>();
 
-    private MapEventList eventList = default!;
+    private MapEventList _eventList = default!;
 
-    private string labelText = "";
+    private string _labelText = "";
 
     private MarkerClustering _markerClustering = default!;
 
     protected override void OnInitialized()
     {
-        mapOptions = new MapOptions()
+        _mapOptions = new MapOptions()
         {
             Zoom = 13,
             Center = new LatLngLiteral()
@@ -52,12 +52,12 @@
 
     private async Task AddMarker()
     {
-        var marker = await Marker.CreateAsync(map1.JsRuntime, markers.Count() % 2 == 0 ?
+        var marker = await Marker.CreateAsync(_map1.JsRuntime, _markers.Count() % 2 == 0 ?
             new MarkerOptions()
             {
-                Position = await map1.InteropObject.GetCenter(),
-                Map = map1.InteropObject,
-                Label = new MarkerLabel { Text = $"Test {markers.Count()}", FontWeight = "bold" },
+                Position = await _map1.InteropObject.GetCenter(),
+                Map = _map1.InteropObject,
+                Label = new MarkerLabel { Text = $"Test {_markers.Count()}", FontWeight = "bold" },
                 Draggable=true,
                 Icon = new Icon()
                 {
@@ -67,9 +67,9 @@
             } :
             new MarkerOptions()
             {
-                Position = await map1.InteropObject.GetCenter(),
-                Map = map1.InteropObject,
-                Label = $"Test {markers.Count()}",
+                Position = await _map1.InteropObject.GetCenter(),
+                Map = _map1.InteropObject,
+                Label = $"Test {_markers.Count()}",
                 Draggable=true,
                 Icon = new Icon()
                 {
@@ -78,9 +78,6 @@
                 //Icon = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
             });
 
-        //await marker.SetMap(map1);
-
-        //var map = await marker.GetMap();
 
         var icon = await marker.GetIcon();
 
@@ -91,17 +88,8 @@
             i => Console.WriteLine(i.Url),
             _ => { });
 
-        //if (map == map1.InteropObject)
-        //{
-        //    Console.WriteLine("Yess");
-        //}
-        //else
-        //{
-        //    Console.WriteLine("Nooo");
-        //}
-
-        markers.Push(marker);
-        labelText = await marker.GetLabelText();
+        _markers.Push(marker);
+        _labelText = await marker.GetLabelText();
 
         await marker.AddListener<MouseEvent>("click", async e =>
         {
@@ -115,53 +103,53 @@
 
     private async Task RemoveMarker()
     {
-        if (!markers.Any())
+        if (!_markers.Any())
         {
             return;
         }
 
-        var lastMarker = markers.Pop();
+        var lastMarker = _markers.Pop();
         await lastMarker.SetMap(null);
-        labelText = markers.Any() ? await markers.Peek().GetLabelText() : "";
+        _labelText = _markers.Any() ? await _markers.Peek().GetLabelText() : "";
     }
 
     private async Task Recenter()
     {
-        if (!markers.Any())
+        if (!_markers.Any())
         {
             return;
         }
 
-        var lastMarker = markers.Peek();
-        var center = await map1.InteropObject.GetCenter();
+        var lastMarker = _markers.Peek();
+        var center = await _map1.InteropObject.GetCenter();
         await lastMarker.SetPosition(center);
     }
 
     private async Task UpdateLabelText(ChangeEventArgs e)
     {
-        if (!markers.Any())
+        if (!_markers.Any())
         {
             return;
         }
 
         string newLabelText = e.Value?.ToString() ?? "";
-        if (labelText != newLabelText)
+        if (_labelText != newLabelText)
         {
-            labelText = newLabelText;
+            _labelText = newLabelText;
 
-            var lastMarker = markers.Peek();
-            await lastMarker.SetLabelText(labelText);
+            var lastMarker = _markers.Peek();
+            await lastMarker.SetLabelText(_labelText);
         }
     }
 
     private async Task ToggleLabelFontWeight()
     {
-        if (!markers.Any())
+        if (!_markers.Any())
         {
             return;
         }
 
-        var lastMarker = markers.Peek();
+        var lastMarker = _markers.Peek();
         var lastMarkerLabel = await lastMarker.GetLabelMarkerLabel();
         lastMarkerLabel.FontWeight = (lastMarkerLabel.FontWeight == "bold") ? "normal" : "bold";
         await lastMarker.SetLabel(lastMarkerLabel);
@@ -201,13 +189,13 @@
                 new LatLngLiteral() { Lng = 170.463352,Lat =  -43.999792 },
             };
 
-        var markers = await GetMarkers(coordinates, map1.InteropObject);
+        var markers = await GetMarkers(coordinates, _map1.InteropObject);
 
         // If adding a clustering event listener, initialize markerclustering with an empty marker list 
         // Clustering happens immediately upon adding markers, so including markers with the init 
         // creates a race condition with JSInterop adding a listener. If not adding a listener, pass markers
         // to CreateAsync to eliminate the latency of a second JSInterop call to AddMarkers.
-        _markerClustering = await MarkerClustering.CreateAsync(map1.JsRuntime, map1.InteropObject, markers);
+        _markerClustering = await MarkerClustering.CreateAsync(_map1.JsRuntime, _map1.InteropObject, markers);
         
 
 
@@ -217,7 +205,7 @@
             LatLngBoundsLiteral.CreateOrExtend(ref boundsLiteral, literal);
         }
 
-        await map1.InteropObject.FitBounds(boundsLiteral, OneOf.OneOf<int, GoogleMapsComponents.Maps.Coordinates.Padding>.FromT0(1));
+        await _map1.InteropObject.FitBounds(boundsLiteral, OneOf.OneOf<int, GoogleMapsComponents.Maps.Coordinates.Padding>.FromT0(1));
     }
 
     private async Task<IEnumerable<Marker>> GetMarkers(IEnumerable<LatLngLiteral> coords, Map map)
@@ -225,7 +213,7 @@
         var result = new List<Marker>(coords.Count());
         foreach (var latLngLiteral in coords)
         {
-            var marker = await Marker.CreateAsync(map1.JsRuntime, new MarkerOptions()
+            var marker = await Marker.CreateAsync(_map1.JsRuntime, new MarkerOptions()
             {
                 Position = latLngLiteral,
                 Map = map,

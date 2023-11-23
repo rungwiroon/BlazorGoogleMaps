@@ -70,14 +70,24 @@ internal static class Helper
         return obj;
     }
 
-    public static object? DeSerializeObject(string json, Type type)
+    public static object? DeSerializeObject(string? json, Type type)
     {
+        if (json == null)
+        {
+            return default;
+        }
+
         var obj = JsonSerializer.Deserialize(json, type, Options);
         return obj;
     }
 
-    public static TObject DeSerializeObject<TObject>(string json)
+    public static TObject? DeSerializeObject<TObject>(string? json)
     {
+        if (json == null)
+        {
+            return default;
+        }
+
         var value = JsonSerializer.Deserialize<TObject>(json, Options);
         return value;
     }
@@ -230,10 +240,28 @@ internal static class Helper
 
         if (resultObject is JsonElement jsonElement)
         {
-            var json = string.Empty;
+            string? json;
             if (jsonElement.ValueKind == JsonValueKind.Number)
             {
                 json = jsonElement.GetRawText();
+
+            }
+            else if (jsonElement.ValueKind == JsonValueKind.String)
+            {
+                json = jsonElement.GetString();
+                //Not sure if this is ok
+                //Basically fails for marker GetLabel if skip this
+                if (typeof(T) == typeof(string))
+                {
+                    result = json ?? "";
+                    return (T)result;
+                }
+
+                if (typeof(U) == typeof(string))
+                {
+                    result = json ?? "";
+                    return (T)result;
+                }
 
             }
             else
@@ -243,7 +271,7 @@ internal static class Helper
 
 
             var propArray = Helper.DeSerializeObject<Dictionary<string, object>>(json);
-            if (propArray.TryGetValue("dotnetTypeName", out var typeName))
+            if (propArray?.TryGetValue("dotnetTypeName", out var typeName) ?? false)
             {
                 var asm = typeof(Map).Assembly;
                 var typeNameString = typeName.ToString();
@@ -285,7 +313,7 @@ internal static class Helper
         {
             var json = jsonElement.GetString();
             var propArray = Helper.DeSerializeObject<Dictionary<string, object>>(json);
-            if (propArray.TryGetValue("dotnetTypeName", out var typeName))
+            if (propArray?.TryGetValue("dotnetTypeName", out var typeName) ?? false)
             {
                 var asm = typeof(Map).Assembly;
                 var typeNameString = typeName.ToString();
@@ -307,7 +335,7 @@ internal static class Helper
         }
     }
 
-    internal static T ToEnum<T>(string str)
+    internal static T? ToEnum<T>(string str)
     {
         var enumType = typeof(T);
         foreach (var name in Enum.GetNames(enumType))

@@ -289,7 +289,7 @@ public class JsObjectRef : IJsObjectRef, IDisposable
         return new JsObjectRef(_jsRuntime, new Guid(guid));
     }
 
-    public Task<T> GetMappedValue<T>(string propertyName, params string[] mappedNames)
+    public Task<T?> GetMappedValue<T>(string propertyName, params string[] mappedNames)
     {
         return _jsRuntime.MyInvokeAsync<T>(
             "blazorGoogleMaps.objectManager.readObjectPropertyValueAndMapToArray",
