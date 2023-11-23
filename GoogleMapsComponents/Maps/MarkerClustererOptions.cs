@@ -5,56 +5,10 @@
 /// </summary>
 public class MarkerClustererOptions
 {
-
-    //[Obsolete("Not used. Will be removed in future releases")]
-    //public int? MaxZoom { get; set; }
-
-    //[Obsolete("Not used. Will be removed in future releases")]
-    //public bool? AverageCenter { get; set; }
-
     /// <summary>
     /// Set this property to the number of markers to be processed in a single batch
     /// </summary>
     public int? BatchSize { get; set; }
-
-
-    //[Obsolete("User RendererObjectName")]
-    //public string? ClusterClass { get; set; }
-
-
-    //[Obsolete("Not used. Will be removed in future releases")]
-    //public bool? EnableRetinaIcons { get; set; }
-
-
-    //[Obsolete("Not used. Will be removed in future releases")]
-    //public int? GridSize { get; set; }
-
-
-    //[Obsolete("Not used. Will be removed in future releases")]
-    //public bool? IgnoreHidden { get; set; }
-
-
-    //[Obsolete("Not used. Will be removed in future releases")]
-    //public string ImagePath { get; set; } = "_content/BlazorGoogleMaps/m";
-
-
-    //[Obsolete("Not used. Will be removed in future releases")]
-    //public string? ImageExtension { get; set; }
-
-
-    //[Obsolete("Not used. Will be removed in future releases")]
-    //public int? MinimumClusterSize { get; set; }
-
-
-    //[Obsolete("Use RendererObjectName")]
-    //public List<MarkerClusterIconStyle>? Styles { get; set; }
-
-    //[Obsolete("Not used. Will be removed in future releases")]
-    //public string? Title { get; set; }
-
-
-    //[Obsolete("Not used. Will be removed in future releases")]
-    //public int? ZIndex { get; set; }
 
     /// <summary>
     /// Whether to zoom the map when a cluster marker is clicked. You may want to

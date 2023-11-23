@@ -27,16 +27,15 @@ public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
     /// <returns>new instance of MarkerList class will be returned with its Markers dictionary member populated with the corresponding results</returns>
     public static async Task<MarkerList> CreateAsync(IJSRuntime jsRuntime, Dictionary<string, MarkerOptions> opts)
     {
-        JsObjectRef jsObjectRef = new JsObjectRef(jsRuntime, Guid.NewGuid());
+        var jsObjectRef = new JsObjectRef(jsRuntime, Guid.NewGuid());
 
-        MarkerList obj;
         Dictionary<string, JsObjectRef> jsObjectRefs = await JsObjectRef.CreateMultipleAsync(
             jsRuntime,
             "google.maps.Marker",
             opts.ToDictionary(e => e.Key, e => (object)e.Value));
 
         Dictionary<string, Marker> objs = jsObjectRefs.ToDictionary(e => e.Key, e => new Marker(e.Value));
-        obj = new MarkerList(jsObjectRef, objs);
+        var obj = new MarkerList(jsObjectRef, objs);
 
         return obj;
     }
@@ -74,7 +73,7 @@ public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
                 list = await MarkerList.CreateAsync(jsRuntime, new Dictionary<string, MarkerOptions>());
                 if (clickCallback != null)
                 {
-                    list.EntityClicked += (sender, e) =>
+                    list.EntityClicked += (_, e) =>
                     {
                         clickCallback(e.MouseEvent, e.Key, e.Entity);
                     };
@@ -112,7 +111,7 @@ public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
 
     public Task<Dictionary<string, Animation>> GetAnimations(List<string>? filterKeys = null)
     {
-        List<string> matchingKeys = ComputeMathingKeys(filterKeys);
+        var matchingKeys = ComputeMathingKeys(filterKeys);
 
         if (matchingKeys.Any())
         {
@@ -131,7 +130,7 @@ public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
 
     public Task<Dictionary<string, bool>> GetClickables(List<string>? filterKeys = null)
     {
-        List<string> matchingKeys = ComputeMathingKeys(filterKeys);
+        var matchingKeys = ComputeMathingKeys(filterKeys);
 
         if (matchingKeys.Any())
         {
@@ -150,7 +149,7 @@ public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
 
     public Task<Dictionary<string, string>> GetCursors(List<string>? filterKeys = null)
     {
-        List<string> matchingKeys = ComputeMathingKeys(filterKeys);
+        var matchingKeys = ComputeMathingKeys(filterKeys);
 
         if (matchingKeys.Any())
         {
@@ -169,7 +168,7 @@ public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
 
     public Task<Dictionary<string, OneOf<string, Icon, Symbol>>> GetIcons(List<string>? filterKeys = null)
     {
-        List<string> matchingKeys = ComputeMathingKeys(filterKeys);
+        var matchingKeys = ComputeMathingKeys(filterKeys);
 
         if (matchingKeys.Any())
         {
@@ -188,7 +187,7 @@ public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
 
     public Task<Dictionary<string, string>> GetLabels(List<string>? filterKeys = null)
     {
-        List<string> matchingKeys = ComputeMathingKeys(filterKeys);
+        var matchingKeys = ComputeMathingKeys(filterKeys);
 
         if (matchingKeys.Any())
         {
@@ -207,7 +206,7 @@ public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
 
     public Task<Dictionary<string, LatLngLiteral>> GetPositions(List<string>? filterKeys = null)
     {
-        List<string> matchingKeys = ComputeMathingKeys(filterKeys);
+        var matchingKeys = ComputeMathingKeys(filterKeys);
 
         if (matchingKeys.Any())
         {
@@ -226,7 +225,7 @@ public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
 
     public Task<Dictionary<string, MarkerShape>> GetShapes(List<string>? filterKeys = null)
     {
-        List<string> matchingKeys = ComputeMathingKeys(filterKeys);
+        var matchingKeys = ComputeMathingKeys(filterKeys);
 
         if (matchingKeys.Any())
         {
@@ -245,7 +244,7 @@ public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
 
     public Task<Dictionary<string, string>> GetTitles(List<string>? filterKeys = null)
     {
-        List<string> matchingKeys = ComputeMathingKeys(filterKeys);
+        var matchingKeys = ComputeMathingKeys(filterKeys);
 
         if (matchingKeys.Any())
         {
@@ -264,7 +263,7 @@ public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
 
     public Task<Dictionary<string, int>> GetZIndexes(List<string>? filterKeys = null)
     {
-        List<string> matchingKeys = ComputeMathingKeys(filterKeys);
+        var matchingKeys = ComputeMathingKeys(filterKeys);
 
         if (matchingKeys.Any())
         {
@@ -290,10 +289,8 @@ public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
     /// <param name="animations"></param>
     public Task SetAnimations(Dictionary<string, Animation?> animations)
     {
-        Dictionary<Guid, object?> dictArgs = animations.ToDictionary(e => Markers[e.Key].Guid, e => (object?)GetAnimationCode(e.Value));
-        return _jsObjectRef.InvokeMultipleAsync(
-            "setAnimation",
-            dictArgs);
+        var dictArgs = animations.ToDictionary(e => Markers[e.Key].Guid, e => (object?)GetAnimationCode(e.Value));
+        return _jsObjectRef.InvokeMultipleAsync("setAnimation", dictArgs);
     }
 
     public int? GetAnimationCode(Animation? animation)
@@ -314,18 +311,14 @@ public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
     /// <returns></returns>
     public Task SetClickables(Dictionary<string, bool> flags)
     {
-        Dictionary<Guid, object> dictArgs = flags.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
-        return _jsObjectRef.InvokeMultipleAsync(
-            "setClickable",
-            dictArgs);
+        var dictArgs = flags.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
+        return _jsObjectRef.InvokeMultipleAsync("setClickable", dictArgs);
     }
 
     public Task SetCursors(Dictionary<string, string> cursors)
     {
-        Dictionary<Guid, object> dictArgs = cursors.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
-        return _jsObjectRef.InvokeMultipleAsync(
-            "setCursor",
-            dictArgs);
+        var dictArgs = cursors.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
+        return _jsObjectRef.InvokeMultipleAsync("setCursor", dictArgs);
     }
 
     /// <summary>
@@ -335,7 +328,7 @@ public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
     /// <returns></returns>
     public Task SetIcons(Dictionary<string, OneOf<string, Icon, Symbol>> icons)
     {
-        Dictionary<Guid, object> dictArgs = icons.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
+        var dictArgs = icons.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
         return _jsObjectRef.InvokeMultipleAsync(
             "setIcon",
             dictArgs);
@@ -344,31 +337,16 @@ public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
     /// <inheritdoc cref="SetIcons(Dictionary{string, OneOf{string, Icon, Symbol}})"/>
     public Task SetIcons(Dictionary<string, string> icons)
     {
-        Dictionary<Guid, object> dictArgs = icons.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
-        return _jsObjectRef.InvokeMultipleAsync(
-            "setIcon",
-            dictArgs);
+        var dictArgs = icons.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
+        return _jsObjectRef.InvokeMultipleAsync("setIcon", dictArgs);
     }
 
     /// <inheritdoc cref="SetIcons(Dictionary{string, OneOf{string, Icon, Symbol}})"/>
     public Task SetIcons(Dictionary<string, Icon> icons)
     {
-        Dictionary<Guid, object> dictArgs = icons.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
-        return _jsObjectRef.InvokeMultipleAsync(
-            "setIcon",
-            dictArgs);
+        var dictArgs = icons.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
+        return _jsObjectRef.InvokeMultipleAsync("setIcon", dictArgs);
     }
-
-
-    // <inheritdoc cref="SetLabels(Dictionary{string, OneOf{string, MarkerLabel}})"/>
-    //[Obsolete("Use overloads that take string, MarkerLabel, or OneOf<string, MarkerLabel> as dictionary value type.")]
-    //public Task SetLabels(Dictionary<string, Symbol> labels)
-    //{
-    //    Dictionary<Guid, object> dictArgs = labels.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
-    //    return _jsObjectRef.InvokeMultipleAsync(
-    //        "setLabel",
-    //        dictArgs);
-    //}
 
     /// <summary>
     /// Set Label on each Marker matching a param dictionary key to the param value with single JSInterop call.
@@ -377,7 +355,7 @@ public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
     /// <returns></returns>
     public Task SetLabels(Dictionary<string, OneOf<string, MarkerLabel>> labels)
     {
-        Dictionary<Guid, object> dictArgs = labels.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
+        var dictArgs = labels.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
         return _jsObjectRef.InvokeMultipleAsync(
             "setLabel",
             dictArgs);
@@ -386,7 +364,7 @@ public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
     /// <inheritdoc cref="SetLabels(Dictionary{string, OneOf{string, MarkerLabel}})"/>
     public Task SetLabels(Dictionary<string, string> labels)
     {
-        Dictionary<Guid, object> dictArgs = labels.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
+        var dictArgs = labels.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
         return _jsObjectRef.InvokeMultipleAsync(
             "setLabel",
             dictArgs);
@@ -395,17 +373,15 @@ public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
     /// <inheritdoc cref="SetLabels(Dictionary{string, OneOf{string, MarkerLabel}})"/>
     public Task SetLabels(Dictionary<string, MarkerLabel> labels)
     {
-        Dictionary<Guid, object> dictArgs = labels.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
+        var dictArgs = labels.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
         return _jsObjectRef.InvokeMultipleAsync(
             "setLabel",
             dictArgs);
     }
 
-
-
     public Task SetOpacities(Dictionary<string, float> opacities)
     {
-        Dictionary<Guid, object> dictArgs = opacities.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
+        var dictArgs = opacities.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
         return _jsObjectRef.InvokeMultipleAsync(
             "setOpacity",
             dictArgs);
@@ -413,33 +389,25 @@ public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
 
     public Task SetPositions(Dictionary<string, LatLngLiteral> latLngs)
     {
-        Dictionary<Guid, object> dictArgs = latLngs.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
-        return _jsObjectRef.InvokeMultipleAsync(
-            "setPosition",
-            dictArgs);
+        var dictArgs = latLngs.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
+        return _jsObjectRef.InvokeMultipleAsync("setPosition", dictArgs);
     }
 
     public Task SetShapes(Dictionary<string, MarkerShape> shapes)
     {
-        Dictionary<Guid, object> dictArgs = shapes.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
-        return _jsObjectRef.InvokeMultipleAsync(
-            "setShape",
-            dictArgs);
+        var dictArgs = shapes.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
+        return _jsObjectRef.InvokeMultipleAsync("setShape", dictArgs);
     }
 
     public Task SetTitles(Dictionary<string, string> titles)
     {
-        Dictionary<Guid, object> dictArgs = titles.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
-        return _jsObjectRef.InvokeMultipleAsync(
-            "setTitle",
-            dictArgs);
+        var dictArgs = titles.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
+        return _jsObjectRef.InvokeMultipleAsync("setTitle", dictArgs);
     }
 
     public Task SetZIndexes(Dictionary<string, int> zIndexes)
     {
-        Dictionary<Guid, object> dictArgs = zIndexes.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
-        return _jsObjectRef.InvokeMultipleAsync(
-            "setZIndex",
-            dictArgs);
+        var dictArgs = zIndexes.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
+        return _jsObjectRef.InvokeMultipleAsync("setZIndex", dictArgs);
     }
 }

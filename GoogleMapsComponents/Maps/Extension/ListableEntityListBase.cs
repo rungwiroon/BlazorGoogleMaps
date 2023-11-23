@@ -13,7 +13,7 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
     protected readonly JsObjectRef _jsObjectRef;
 
     public readonly Dictionary<string, TEntityBase> BaseListableEntities;
-    private bool isDisposed;
+    private bool _isDisposed;
 
     protected ListableEntityListBase(JsObjectRef jsObjectRef, Dictionary<string, TEntityBase> baseListableEntities)
     {
@@ -217,10 +217,10 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
     //Create an empty result of the correct type in case of no matching keys
     protected virtual Task<Dictionary<string, T>> ComputeEmptyResult<T>()
     {
-        return Task<Dictionary<string, T>>.Factory.StartNew(() => { return new Dictionary<string, T>(); });
+        return Task<Dictionary<string, T>>.Factory.StartNew(() => new Dictionary<string, T>());
     }
 
-    public virtual Task<Dictionary<string, Map>> GetMaps(List<string> filterKeys = null)
+    public virtual Task<Dictionary<string, Map>> GetMaps(List<string>? filterKeys = null)
     {
         List<string> matchingKeys = ComputeMathingKeys(filterKeys);
 
@@ -240,7 +240,7 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
         }
     }
 
-    public virtual Task<Dictionary<string, bool>> GetDraggables(List<string> filterKeys = null)
+    public virtual Task<Dictionary<string, bool>> GetDraggables(List<string>? filterKeys = null)
     {
         List<string> matchingKeys = ComputeMathingKeys(filterKeys);
 
@@ -260,7 +260,7 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
         }
     }
 
-    public virtual Task<Dictionary<string, bool>> GetVisibles(List<string> filterKeys = null)
+    public virtual Task<Dictionary<string, bool>> GetVisibles(List<string>? filterKeys = null)
     {
         List<string> matchingKeys = ComputeMathingKeys(filterKeys);
 
@@ -284,9 +284,10 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
     /// Renders the listable entity on the specified map or panorama. 
     /// If map is set to null, the marker will be removed.
     /// </summary>
-    /// <param name="map"></param>
-    public virtual async Task SetMaps(Dictionary<string, Map> maps)
+    /// <param name="maps"></param>
+    public virtual async Task SetMaps(Dictionary<string, Map>? maps)
     {
+        maps ??= new Dictionary<string, Map>();
         Dictionary<Guid, object> dictArgs = maps.ToDictionary(e => BaseListableEntities[e.Key].Guid, e => (object)e.Value);
         await _jsObjectRef.InvokeMultipleAsync(
             "setMap",
@@ -342,15 +343,15 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
     {
         if (BaseListableEntities.Count > 0)
         {
-            await _jsObjectRef.DisposeMultipleAsync(BaseListableEntities.Select(e => e.Value.Guid).ToList());            
+            await _jsObjectRef.DisposeMultipleAsync(BaseListableEntities.Select(e => e.Value.Guid).ToList());
             BaseListableEntities.Clear();
         }
     }
 
     protected virtual void Dispose(bool disposing)
     {
-        
-        if (!isDisposed)
+
+        if (!_isDisposed)
         {
             if (disposing)
             {
@@ -359,7 +360,7 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
 
             // TODO: free unmanaged resources (unmanaged objects) and override finalizer
             // TODO: set large fields to null
-            isDisposed = true;
+            _isDisposed = true;
         }
     }
 

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GoogleMapsComponents.Maps;
+﻿namespace GoogleMapsComponents.Maps;
 
 /// <summary>
 /// A structure representing a Marker icon image.
@@ -43,25 +41,4 @@ public class Icon
     /// The URL of the image or sprite sheet.
     /// </summary>
     public string Url { get; set; }
-
-    [Obsolete("Not used. Will remove in future releases")]
-    public string FillColor { get; set; }
-
-    [Obsolete("Not used. Will remove in future releases")]
-    public int Rotation { get; set; }
-
-    [Obsolete("Not used. Will remove in future releases")]
-    public string Path { get; set; }
-
-    [Obsolete("Not used. Will remove in future releases")]
-    public double FillOpacity { get; set; }
-
-    [Obsolete("Not used. Will remove in future releases")]
-    public int StrokeWeight { get; set; }
-
-    [Obsolete("Not used. Will remove in future releases")]
-    public string StrokeColor { get; set; }
-
-    [Obsolete("Not used. Will remove in future releases")]
-    public double Scale { get; set; }
 }

@@ -6,7 +6,6 @@ namespace GoogleMapsComponents.Maps;
 
 public class Polygon : ListableEntityBase<PolygonOptions>
 {
-    private Map? _map;
 
     /// <summary>
     /// Create a polygon using the passed PolygonOptions, which specify the polygon's path, the stroke style for the polygon's edges, and the fill style for the polygon's interior regions. 
@@ -18,7 +17,7 @@ public class Polygon : ListableEntityBase<PolygonOptions>
     {
         var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Polygon", opts);
 
-        var obj = new Polygon(jsObjectRef, opts);
+        var obj = new Polygon(jsObjectRef);
 
         return obj;
     }
@@ -31,16 +30,6 @@ public class Polygon : ListableEntityBase<PolygonOptions>
     {
     }
 
-    /// <summary>
-    /// Create a polygon using the passed PolygonOptions, which specify the polygon's path, the stroke style for the polygon's edges, and the fill style for the polygon's interior regions. 
-    /// A polygon may contain one or more paths, where each path consists of an array of LatLngs.
-    /// </summary>
-    /// <param name="jsObjectRef"></param>
-    /// <param name="opts"></param>
-    internal Polygon(JsObjectRef jsObjectRef, PolygonOptions? opts = null) : this(jsObjectRef)
-    {
-        _map = opts?.Map;
-    }
 
     /// <summary>
     /// Returns whether this shape can be dragged by the user.

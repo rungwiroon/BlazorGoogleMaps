@@ -93,20 +93,6 @@ public class MarkerClustering : EventEntityBase, IJsObjectRef
         await _map.FitBounds(newBounds, padding);
     }
 
-
-    //[Obsolete("Deprecated in favor of Redraw() to match latest js-markerclusterer")]
-    //public virtual Task Repaint()
-    //{
-    //    return Render();
-    //}
-
-
-    //[Obsolete("Deprecated in favor of Render() to match latest js-markerclusterer")]
-    //public virtual Task Redraw()
-    //{
-    //    return Render();
-    //}
-
     /// <summary>
     /// https://googlemaps.github.io/js-markerclusterer/interfaces/Renderer.html#render
     /// </summary>
