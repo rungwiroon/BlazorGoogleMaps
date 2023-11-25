@@ -278,12 +278,12 @@ public partial class MapMarker
             //var before = marker.EventListeners;
             //await marker.ClearListeners("click");
             //var after = marker.EventListeners;
-
+            await e.Stop();
             var markerLabel = await marker.GetLabel();
             _events.Add("click on " + markerLabel);
             StateHasChanged();
 
-            await e.Stop();
+
         });
     }
 

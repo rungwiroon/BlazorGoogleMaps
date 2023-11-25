@@ -93,11 +93,12 @@
 
         await marker.AddListener<MouseEvent>("click", async e =>
         {
+            await e.Stop();
             string markerLabelText = await marker.GetLabelText();
             _events.Add("click on " + markerLabelText);
             StateHasChanged();
 
-            await e.Stop();
+            
         });
     }
 
