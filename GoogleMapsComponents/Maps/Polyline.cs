@@ -7,18 +7,19 @@ namespace GoogleMapsComponents.Maps;
 
 /// <summary>
 /// A polyline is a linear overlay of connected line segments on the map.
+/// https://developers.google.com/maps/documentation/javascript/reference/polygon#Polyline
 /// </summary>
-public class Polyline : ListableEntityBase<PolylineOptions>, IDisposable
+public class Polyline : ListableEntityBase<PolylineOptions>
 {
 
     /// <summary>
     /// Create a polyline using the passed PolylineOptions, which specify both the path of the polyline and the stroke style to use when drawing the polyline.
     /// </summary>
-    public static async Task<Polyline> CreateAsync(IJSRuntime jsRuntime, PolylineOptions opts = null)
+    public static async Task<Polyline> CreateAsync(IJSRuntime jsRuntime, PolylineOptions? opts = null)
     {
         var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Polyline", opts);
 
-        var obj = new Polyline(jsObjectRef, opts);
+        var obj = new Polyline(jsObjectRef);
 
         return obj;
     }
@@ -31,13 +32,6 @@ public class Polyline : ListableEntityBase<PolylineOptions>, IDisposable
     {
     }
 
-    /// <summary>
-    /// Create a polyline using the passed PolylineOptions, which specify both the path of the polyline and the stroke style to use when drawing the polyline.
-    /// </summary>
-    private Polyline(JsObjectRef jsObjectRef, PolylineOptions opts)
-        : this(jsObjectRef)
-    {
-    }
 
     /// <summary>
     /// Returns whether this shape can be dragged by the user.
