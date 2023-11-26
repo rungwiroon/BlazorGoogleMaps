@@ -4,6 +4,10 @@ using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps;
 
+/// <summary>
+/// A polygon (like a polyline) defines a series of connected coordinates in an ordered sequence. Additionally, polygons form a closed loop and define a filled region
+/// https://developers.google.com/maps/documentation/javascript/reference/polygon#Polygon
+/// </summary>
 public class Polygon : ListableEntityBase<PolygonOptions>
 {
 
