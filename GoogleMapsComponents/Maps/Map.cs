@@ -6,18 +6,16 @@ using OneOf;
 using System;
 using System.Threading.Tasks;
 
-#nullable enable
-
 namespace GoogleMapsComponents.Maps;
 
 /// <summary>
 /// google.maps.Map class
 /// </summary>
-//[JsonConverter(typeof(JsObjectRefConverter<Map>))]
-public class Map : EventEntityBase, IJsObjectRef, IDisposable, IAsyncDisposable
+public class Map : EventEntityBase, IJsObjectRef, IAsyncDisposable
 {
     public Guid Guid => _jsObjectRef.Guid;
-    bool isDisposed;
+
+    private bool _isDisposed;
     public MapData Data { get; private set; }
 
     public static async Task<Map> CreateAsync(
@@ -50,9 +48,9 @@ public class Map : EventEntityBase, IJsObjectRef, IDisposable, IAsyncDisposable
         await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("blazorGoogleMaps.objectManager.removeControl", this.Guid.ToString(), position, reference);
     }
 
-    public async Task RemoveAllControls(ControlPosition position)
+    public async Task RemoveControls(ControlPosition position)
     {
-        await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("blazorGoogleMaps.objectManager.clearControls", this.Guid.ToString(), position);
+        await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("blazorGoogleMaps.objectManager.removeControls", this.Guid.ToString(), position);
     }
 
     public async Task AddImageLayer(ImageMapType reference)
@@ -68,7 +66,7 @@ public class Map : EventEntityBase, IJsObjectRef, IDisposable, IAsyncDisposable
         await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("blazorGoogleMaps.objectManager.removeAllImageLayers", this.Guid.ToString());
     }
 
-   
+
 
     /// <summary>
     /// Sets the viewport to contain the given bounds.
@@ -232,7 +230,7 @@ public class Map : EventEntityBase, IJsObjectRef, IDisposable, IAsyncDisposable
         return _jsObjectRef.InvokeAsync("setOptions", mapOptions);
     }
 
-    
+
 
     public override async ValueTask DisposeAsync()
     {
@@ -256,7 +254,7 @@ public class Map : EventEntityBase, IJsObjectRef, IDisposable, IAsyncDisposable
     protected override void Dispose(bool disposing)
     {
 
-        if (!isDisposed)
+        if (!_isDisposed)
         {
             base.Dispose(disposing);
             //_jsObjectRef.Dispose();
@@ -268,7 +266,7 @@ public class Map : EventEntityBase, IJsObjectRef, IDisposable, IAsyncDisposable
 
             // TODO: free unmanaged resources (unmanaged objects) and override finalizer
             // TODO: set large fields to null
-            isDisposed = true;
+            _isDisposed = true;
         }
     }
 

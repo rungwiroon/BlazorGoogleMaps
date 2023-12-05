@@ -1,8 +1,8 @@
-﻿using System.Threading.Tasks;
-using GoogleMapsComponents;
+﻿using GoogleMapsComponents;
 using GoogleMapsComponents.Maps;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using System.Threading.Tasks;
 
 namespace ServerSideDemo.Pages;
 
@@ -40,7 +40,7 @@ public partial class MapLegendPage
 
     private async Task AfterMapInit()
     {
-        
+
     }
 
     private async Task RemoveLegend()
@@ -50,7 +50,7 @@ public partial class MapLegendPage
 
     private async Task RemoveAllControls()
     {
-        await map1.InteropObject.RemoveAllControls(ControlPosition.TopLeft);
+        await map1.InteropObject.RemoveControls(ControlPosition.TopLeft);
     }
 
     private async Task AddLegend()

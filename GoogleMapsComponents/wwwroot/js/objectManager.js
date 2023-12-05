@@ -392,6 +392,7 @@
             addControls(args) {
                 let map = mapObjects[args[0]];
                 let elem = args[2];
+                //Without this the original element is removed and can not be added again.
                 let clone = elem.cloneNode(true);
                 //I know i am lazy. Two quotes appear after serialization
                 let position = getGooglePositionFromString(args[1].replace("\"", "").replace("\"", ""));
@@ -411,7 +412,7 @@
                     }
                 }
             },
-            clearControls(args) {
+            removeControls(args) {
                 let map = mapObjects[args[0]];
                 let position = getGooglePositionFromString(args[1].replace("\"", "").replace("\"", ""));
 
