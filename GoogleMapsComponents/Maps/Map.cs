@@ -45,6 +45,16 @@ public class Map : EventEntityBase, IJsObjectRef, IDisposable, IAsyncDisposable
         await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("blazorGoogleMaps.objectManager.addControls", this.Guid.ToString(), position, reference);
     }
 
+    public async Task RemoveControl(ControlPosition position, ElementReference reference)
+    {
+        await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("blazorGoogleMaps.objectManager.removeControl", this.Guid.ToString(), position, reference);
+    }
+
+    public async Task RemoveAllControls(ControlPosition position)
+    {
+        await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("blazorGoogleMaps.objectManager.clearControls", this.Guid.ToString(), position);
+    }
+
     public async Task AddImageLayer(ImageMapType reference)
     {
         await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("blazorGoogleMaps.objectManager.addImageLayer", this.Guid.ToString(), reference.Guid.ToString());

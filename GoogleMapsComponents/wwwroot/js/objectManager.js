@@ -392,10 +392,30 @@
             addControls(args) {
                 let map = mapObjects[args[0]];
                 let elem = args[2];
+                let clone = elem.cloneNode(true);
                 //I know i am lazy. Two quotes appear after serialization
                 let position = getGooglePositionFromString(args[1].replace("\"", "").replace("\"", ""));
 
-                map.controls[position].push(elem);
+                map.controls[position].push(clone);
+            },
+            removeControl(args) {
+                let map = mapObjects[args[0]];
+                let elem = args[2];
+                let position = getGooglePositionFromString(args[1].replace("\"", "").replace("\"", ""));
+
+                var arr = map.controls[position].getArray();
+                for (var i = 0, len = arr.length; i < len; i++) {
+                    if (arr[i].id === elem.id) {
+                        map.controls[position].removeAt(i);
+                        return;
+                    }
+                }
+            },
+            clearControls(args) {
+                let map = mapObjects[args[0]];
+                let position = getGooglePositionFromString(args[1].replace("\"", "").replace("\"", ""));
+
+                map.controls[position].clear();
             },
             addImageLayer(args) {
                 let map = mapObjects[args[0]];

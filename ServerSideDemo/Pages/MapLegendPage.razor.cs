@@ -40,6 +40,21 @@ public partial class MapLegendPage
 
     private async Task AfterMapInit()
     {
+        
+    }
+
+    private async Task RemoveLegend()
+    {
+        await map1.InteropObject.RemoveControl(ControlPosition.TopLeft, legendReference);
+    }
+
+    private async Task RemoveAllControls()
+    {
+        await map1.InteropObject.RemoveAllControls(ControlPosition.TopLeft);
+    }
+
+    private async Task AddLegend()
+    {
         await map1.InteropObject.AddControl(ControlPosition.TopLeft, legendReference);
     }
 }
