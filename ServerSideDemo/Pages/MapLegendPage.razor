@@ -4,6 +4,9 @@
 <h1>Google Map Legend</h1>
 
 <GoogleMap @ref="@map1" Id="map1" Options="@mapOptions" OnAfterInit="@AfterMapInit"></GoogleMap>
+<button @onclick="AddLegend">Add Legend</button>
+<button @onclick="RemoveLegend">Remove Legend</button>
+<button @onclick="RemoveAllControls">Remove All Controls</button>
 
 <div id="legend" @ref="@legendReference" style="visibility: hidden"><h3>Legend</h3></div>
 
