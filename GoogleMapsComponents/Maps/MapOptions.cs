@@ -102,7 +102,6 @@ public class MapOptions
     /// The initial Map mapTypeId. Defaults to ROADMAP.
     /// </summary>
     //[JsonConverter(typeof(StringEnumConverter))]
-    [JsonConverter(typeof(EnumMemberConverter<MapTypeId>))]
     public MapTypeId MapTypeId { get; set; }
 
     /// <summary>

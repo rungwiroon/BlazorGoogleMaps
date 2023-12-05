@@ -8,7 +8,7 @@ namespace GoogleMapsComponents.Maps.Places;
 /// For example, 'OK' or google.maps.places.PlacesServiceStatus.OK.
 /// Requires the &libraries=places URL parameter.
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter))]
+[JsonConverter(typeof(Serialization.JsonStringEnumConverterEx))]
 public enum PlaceServiceStatus
 {
     /// <summary>

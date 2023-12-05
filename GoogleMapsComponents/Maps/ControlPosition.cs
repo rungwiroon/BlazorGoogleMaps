@@ -8,7 +8,7 @@ namespace GoogleMapsComponents.Maps;
 /// Controls are positioned relative to other controls in the same layout position. 
 /// Controls that are added first are positioned closer to the edge of the map. 
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter))]
+[JsonConverter(typeof(GoogleMapsComponents.Serialization.JsonStringEnumConverterEx))]
 public enum ControlPosition
 {
     /// <summary>

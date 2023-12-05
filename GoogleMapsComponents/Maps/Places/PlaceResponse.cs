@@ -6,6 +6,5 @@ public class PlaceResponse
 {
     public PlaceResult[] Results { get; set; } = new PlaceResult[] { };
 
-    [JsonConverter(typeof(EnumMemberConverter<PlaceServiceStatus>))]
     public PlaceServiceStatus Status { get; set; }
 }
