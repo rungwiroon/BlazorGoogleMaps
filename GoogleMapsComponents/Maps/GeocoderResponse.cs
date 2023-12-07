@@ -12,6 +12,5 @@ public class GeocoderResponse
     /// </summary>
     public GeocoderResult[] Results { get; set; } = new GeocoderResult[] { };
 
-    [JsonConverter(typeof(EnumMemberConverter<GeocoderStatus>))]
     public GeocoderStatus Status { get; set; }
 }

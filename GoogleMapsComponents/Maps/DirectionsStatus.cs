@@ -7,7 +7,7 @@ namespace GoogleMapsComponents.Maps;
 /// The status returned by the DirectionsService on the completion of a call to route(). 
 /// Specify these by value, or by using the constant's name. For example, 'OK' or google.maps.DirectionsStatus.OK.
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter))]
+[JsonConverter(typeof(Serialization.JsonStringEnumConverterEx))]
 public enum DirectionsStatus
 {
     /// <summary>

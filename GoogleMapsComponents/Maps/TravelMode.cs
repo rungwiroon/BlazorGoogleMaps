@@ -6,7 +6,7 @@ namespace GoogleMapsComponents.Maps;
 /// <summary>
 /// The valid travel modes that can be specified in a DirectionsRequest as well as the travel modes returned in a DirectionsStep. 
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter))]
+[JsonConverter(typeof(Serialization.JsonStringEnumConverterEx))]
 public enum TravelMode
 {
     /// <summary>

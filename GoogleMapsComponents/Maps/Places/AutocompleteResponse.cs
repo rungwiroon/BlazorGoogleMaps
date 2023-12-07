@@ -14,6 +14,5 @@ public class AutocompleteResponse
     /// </summary>
     public AutocompletePrediction[] Predictions { get; set; } = new AutocompletePrediction[] { };
 
-    [JsonConverter(typeof(EnumMemberConverter<PlaceServiceStatus>))]
     public PlaceServiceStatus Status { get; set; }
 }

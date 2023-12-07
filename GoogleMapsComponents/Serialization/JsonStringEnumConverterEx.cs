@@ -1,71 +1,63 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace GoogleMapsComponents.Serialization;
-
-/// <summary>
-/// TODO apply to all enum with EnumMember attribute
-/// </summary>
-/// <typeparam name="TEnum"></typeparam>
-public class JsonStringEnumConverterEx<TEnum> : JsonConverter<TEnum> where TEnum : struct, Enum
+public class JsonStringEnumConverterEx : JsonConverterFactory
 {
+    private readonly ConcurrentDictionary<Type, EnumConverter> _converters = new ConcurrentDictionary<Type, EnumConverter>();
 
-    private readonly Dictionary<TEnum, string> _enumToString = new Dictionary<TEnum, string>();
-    private readonly Dictionary<string, TEnum> _stringToEnum = new Dictionary<string, TEnum>();
-
-    public JsonStringEnumConverterEx()
+    public override bool CanConvert(Type typeToConvert)
     {
-        var type = typeof(TEnum);
-        var values = Enum.GetValues(typeof(TEnum));
+        return typeToConvert.IsEnum;
+    }
 
-        foreach (var value in values)
+    public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
+    {
+        return _converters.GetOrAdd(typeToConvert, (type) => new EnumConverter(type));
+    }
+
+    private class EnumConverter : JsonConverter<Enum>
+    {
+        private readonly Dictionary<string, Enum> _stringToEnum;
+        private readonly Dictionary<Enum, string> _enumToString;
+
+        public EnumConverter(Type enumType)
         {
-            var enumMember = type.GetMember(value.ToString())[0];
-            var attr = enumMember
-                .GetCustomAttributes(typeof(EnumMemberAttribute), false)
-                .Cast<EnumMemberAttribute>()
-                .FirstOrDefault();
+            _stringToEnum = new Dictionary<string, Enum>();
+            _enumToString = new Dictionary<Enum, string>();
 
-            _stringToEnum.Add(value.ToString(), (TEnum)value);
+            var enumValues = Enum.GetValues(enumType);
+            foreach (Enum value in enumValues)
+            {
+                var name = value.ToString();
+                var enumMemberAttr = enumType.GetField(name)
+                    .GetCustomAttribute<EnumMemberAttribute>();
 
-            if (attr?.Value != null)
-            {
-                _enumToString.Add((TEnum)value, attr.Value);
-                _stringToEnum.Add(attr.Value, (TEnum)value);
-            }
-            else
-            {
-                _enumToString.Add((TEnum)value, value.ToString());
+                var stringKey = enumMemberAttr?.Value ?? name;
+                _stringToEnum[stringKey] = value;
+                _enumToString[value] = stringKey;
             }
         }
-    }
 
-    public override TEnum Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-    {
-        var stringValue = reader.GetString();
-
-        if (_stringToEnum.TryGetValue(stringValue, out var enumValue))
+        public override Enum Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return enumValue;
+            var stringValue = reader.GetString();
+            if (_stringToEnum.TryGetValue(stringValue, out var enumValue))
+            {
+                return enumValue;
+            }
+
+            throw new JsonException($"Unable to convert \"{stringValue}\" to enum {typeToConvert}.");
         }
 
-        return default;
-    }
-
-    public override void Write(Utf8JsonWriter writer, TEnum value, JsonSerializerOptions options)
-    {
-        writer.WriteStringValue(_enumToString[value]);
-    }
-
-    public static string ToLowerFirstChar(string str)
-    {
-        if (String.IsNullOrEmpty(str) || Char.IsLower(str, 0))
-            return str;
-
-        return Char.ToLowerInvariant(str[0]) + str.Substring(1);
+        public override void Write(Utf8JsonWriter writer, Enum value, JsonSerializerOptions options)
+        {
+            writer.WriteStringValue(_enumToString[value]);
+        }
     }
 }

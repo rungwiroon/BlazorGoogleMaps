@@ -15,7 +15,7 @@ namespace GoogleMapsComponents.Maps
         /// Note: AdvancedMarkerElement to AdvancedMarkerElement collision works on both raster and vector maps, however, AdvancedMarkerElement to base map's label collision only works on vector maps.
         /// </summary>
 
-        [JsonConverter(typeof(GoogleMapsComponents.Serialization.JsonStringEnumConverterEx<CollisionBehavior>))]
+        [JsonConverter(typeof(GoogleMapsComponents.Serialization.JsonStringEnumConverterEx))]
         public CollisionBehavior? CollisionBehavior { get; set; }
 
         /// <summary>

@@ -1,10 +1,12 @@
 ﻿using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace GoogleMapsComponents.Maps;
 
 /// <summary>
 /// Built-in symbol paths.
 /// </summary>
+[JsonConverter(typeof(Serialization.JsonStringEnumConverterEx))]
 public enum SymbolPath
 {
     /// <summary>

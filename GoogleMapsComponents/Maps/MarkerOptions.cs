@@ -59,7 +59,7 @@ public class MarkerOptions : ListableEntityOptionsBase
     /// <summary>
     /// 2021-07 supported only in beta google maps version
     /// </summary>
-    [JsonConverter(typeof(GoogleMapsComponents.Serialization.JsonStringEnumConverterEx<CollisionBehavior>))]
+    [JsonConverter(typeof(GoogleMapsComponents.Serialization.JsonStringEnumConverterEx))]
     public CollisionBehavior? CollisionBehavior { get; set; }
 
     /// <summary>
