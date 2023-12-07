@@ -13,14 +13,14 @@ public partial class DrawingManagerPage
     private DrawingManager _drawingManager;
     private DrawingManagerOptions _managerOptions;
     private PolygonOptions _polygonOptions;
-    private GoogleMap _map1;
-    private MapOptions _mapOptions;
+    private GoogleMap map1;
+    private MapOptions mapOptions;
 
     [Inject]
     public IJSRuntime JsRuntime { get; set; }
     protected override void OnInitialized()
     {
-        _mapOptions = new MapOptions()
+        mapOptions = new MapOptions()
         {
             Zoom = 16,
             Center = new LatLngLiteral()
@@ -60,8 +60,9 @@ public partial class DrawingManagerPage
 
         _managerOptions = new DrawingManagerOptions()
         {
-            Map = _map1.InteropObject,
+            Map = map1.InteropObject,
             PolygonOptions = _polygonOptions,
+            //DrawingMode = OverlayType.Polygon,
             DrawingControl = true,
             DrawingControlOptions = drawingControlOptions
         };
@@ -73,7 +74,8 @@ public partial class DrawingManagerPage
         {
             if (overComplete.Type == OverlayType.Polygon)
             {
-                var poly = overComplete.Polygon!;
+                var poly = overComplete.Polygon;
+                var polyPath = await poly.GetPath();
                 await poly.SetOptions(new PolygonOptions()
                 {
                     FillColor = "blue",
