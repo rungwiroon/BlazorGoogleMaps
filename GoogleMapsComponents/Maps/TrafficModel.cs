@@ -6,7 +6,7 @@ namespace GoogleMapsComponents.Maps;
 /// The assumptions to use when predicting duration in traffic. 
 /// Specified as part of a DirectionsRequest or DistanceMatrixRequest. 
 /// </summary>
-[JsonConverter(typeof(Serialization.JsonStringEnumConverterEx))]
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum TrafficModel
 {
     /// <summary>

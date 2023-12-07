@@ -1,12 +1,10 @@
 ﻿using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
 
 namespace GoogleMapsComponents.Maps;
 
 /// <summary>
 /// Identifiers for common MapTypes
 /// </summary>
-[JsonConverter(typeof(Serialization.JsonStringEnumConverterEx))]
 public enum MapTypeId
 {
     /// <summary>

@@ -7,7 +7,7 @@ namespace GoogleMapsComponents.Maps;
 /// Animations that can be played on a marker. 
 /// Use the setAnimation method on Marker or the animation option to play an animation.
 /// </summary>
-[JsonConverter(typeof(Serialization.JsonStringEnumConverterEx))]
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum Animation
 {
     /// <summary>

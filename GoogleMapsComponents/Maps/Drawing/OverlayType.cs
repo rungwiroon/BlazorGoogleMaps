@@ -6,7 +6,7 @@ namespace GoogleMapsComponents.Maps.Drawing;
 /// <summary>
 /// The types of overlay that may be created by the DrawingManager. 
 /// </summary>
-[JsonConverter(typeof(Serialization.JsonStringEnumConverterEx))]
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum OverlayType
 {
     /// <summary>

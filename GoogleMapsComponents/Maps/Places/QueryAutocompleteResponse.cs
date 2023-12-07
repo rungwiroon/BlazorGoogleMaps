@@ -14,5 +14,6 @@ public class QueryAutocompleteResponse
     /// </summary>
     public QueryAutocompletePrediction[] Predictions { get; set; } = new QueryAutocompletePrediction[] { };
 
+    [JsonConverter(typeof(EnumMemberConverter<PlaceServiceStatus>))]
     public PlaceServiceStatus Status { get; set; }
 }

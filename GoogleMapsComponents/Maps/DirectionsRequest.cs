@@ -74,6 +74,7 @@ public class DirectionsRequest
     /// Type of routing requested. 
     /// Required.
     /// </summary>
+    [JsonConverter(typeof(EnumMemberConverter<TravelMode>))]
     public TravelMode TravelMode { get; set; }
 
     /// <summary>

@@ -1,9 +1,7 @@
 ﻿using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
 
 namespace GoogleMapsComponents.Maps;
 
-[JsonConverter(typeof(Serialization.JsonStringEnumConverterEx))]
 public enum StrokePosition
 {
     [EnumMember(Value = "0")]
