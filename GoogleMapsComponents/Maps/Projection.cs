@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.JSInterop;
+using System;
 using System.Threading.Tasks;
-using Microsoft.JSInterop;
 
 namespace GoogleMapsComponents.Maps;
 
@@ -15,7 +15,7 @@ public class Projection : IDisposable
         _jsObjectRef = new JsObjectRef(jsRuntime, id);
     }
 
-    public async Task<Point> FromLatLngToPoint(LatLngLiteral literal)
+    public async Task<Point?> FromLatLngToPoint(LatLngLiteral literal)
     {
         var result = await _jsObjectRef.InvokeAsync<Point>("fromLatLngToPoint", literal);
         return result;

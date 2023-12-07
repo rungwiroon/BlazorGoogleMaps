@@ -9,6 +9,7 @@ namespace GoogleMapsComponents.Maps.Drawing;
 /// Allows users to draw markers, polygons, polylines, rectangles, and circles on the map. 
 /// The DrawingManager's drawing mode defines the type of overlay that will be created by the user. 
 /// Adds a control to the map, allowing the user to switch drawing mode.
+/// https://developers.google.com/maps/documentation/javascript/drawinglayer
 /// </summary>
 public class DrawingManager : EventEntityBase
 {
@@ -73,12 +74,9 @@ public class DrawingManager : EventEntityBase
     /// https://developers.google.com/maps/documentation/javascript/reference/drawing#DrawingManager.setMap
     /// </summary>
     /// <param name="map"></param>
-    public async Task SetMap(Map map)
+    public async Task SetMap(Map? map)
     {
-        await _jsObjectRef.InvokeAsync(
-            "setMap",
-            map);
-
+        await _jsObjectRef.InvokeAsync("setMap", map);
         _map = map;
     }
 
