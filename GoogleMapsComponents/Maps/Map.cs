@@ -40,17 +40,17 @@ public class Map : EventEntityBase, IJsObjectRef, IAsyncDisposable
 
     public async Task AddControl(ControlPosition position, ElementReference reference)
     {
-        await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("blazorGoogleMaps.objectManager.addControls", this.Guid.ToString(), position, reference);
+        await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("blazorGoogleMaps.objectManager.addControls", this.Guid.ToString(), position.GetMemberAttr(), reference);
     }
 
     public async Task RemoveControl(ControlPosition position, ElementReference reference)
     {
-        await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("blazorGoogleMaps.objectManager.removeControl", this.Guid.ToString(), position, reference);
+        await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("blazorGoogleMaps.objectManager.removeControl", this.Guid.ToString(), position.GetMemberAttr(), reference);
     }
 
     public async Task RemoveControls(ControlPosition position)
     {
-        await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("blazorGoogleMaps.objectManager.removeControls", this.Guid.ToString(), position);
+        await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("blazorGoogleMaps.objectManager.removeControls", this.Guid.ToString(), position.GetMemberAttr());
     }
 
     public async Task AddImageLayer(ImageMapType reference)
@@ -65,8 +65,6 @@ public class Map : EventEntityBase, IJsObjectRef, IAsyncDisposable
     {
         await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("blazorGoogleMaps.objectManager.removeAllImageLayers", this.Guid.ToString());
     }
-
-
 
     /// <summary>
     /// Sets the viewport to contain the given bounds.

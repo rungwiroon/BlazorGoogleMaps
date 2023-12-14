@@ -12,6 +12,8 @@ public partial class MapLegendPage
 
     private MapOptions mapOptions;
 
+    private ControlPosition controlPosition = ControlPosition.TopLeft;
+
     [Inject] private IJSRuntime jsRuntime { get; set; }
 
     protected ElementReference legendReference { get; set; }
@@ -40,21 +42,20 @@ public partial class MapLegendPage
 
     private async Task AfterMapInit()
     {
-
     }
 
     private async Task RemoveLegend()
     {
-        await map1.InteropObject.RemoveControl(ControlPosition.TopLeft, legendReference);
+        await map1.InteropObject.RemoveControl(controlPosition, legendReference);
     }
 
     private async Task RemoveAllControls()
     {
-        await map1.InteropObject.RemoveControls(ControlPosition.TopLeft);
+        await map1.InteropObject.RemoveControls(controlPosition);
     }
 
     private async Task AddLegend()
     {
-        await map1.InteropObject.AddControl(ControlPosition.TopLeft, legendReference);
+        await map1.InteropObject.AddControl(controlPosition, legendReference);
     }
 }
