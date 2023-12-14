@@ -1,16 +1,9 @@
 ﻿@page "/map-legend"
 @using GoogleMapsComponents
-@using GoogleMapsComponents.Maps
 
 <h1>Google Map Legend</h1>
 
 <GoogleMap @ref="@map1" Id="map1" Options="@mapOptions" OnAfterInit="@AfterMapInit"></GoogleMap>
-<select @bind="@controlPosition">
-    @foreach(var pos in Enum.GetValues(typeof(ControlPosition)))
-    {
-        <option value="@pos">@pos.ToString()</option>
-    }
-</select> 
 <button @onclick="AddLegend">Add Legend</button>
 <button @onclick="RemoveLegend">Remove Legend</button>
 <button @onclick="RemoveAllControls">Remove All Controls</button>

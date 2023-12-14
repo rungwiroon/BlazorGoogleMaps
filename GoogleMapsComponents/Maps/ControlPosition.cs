@@ -4,9 +4,9 @@ using System.Text.Json.Serialization;
 namespace GoogleMapsComponents.Maps;
 
 /// <summary>
-/// Identifiers used to specify the placement of controls on the map.
-/// Controls are positioned relative to other controls in the same layout position.
-/// Controls that are added first are positioned closer to the edge of the map.
+/// Identifiers used to specify the placement of controls on the map. 
+/// Controls are positioned relative to other controls in the same layout position. 
+/// Controls that are added first are positioned closer to the edge of the map. 
 /// </summary>
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum ControlPosition
@@ -18,14 +18,14 @@ public enum ControlPosition
     BottomCenter,
 
     /// <summary>
-    /// Elements are positioned in the bottom left and flow towards the middle.
+    /// Elements are positioned in the bottom left and flow towards the middle. 
     /// Elements are positioned to the right of the Google logo.
     /// </summary>
     [EnumMember(Value = "BOTTOM_LEFT")]
     BottomLeft,
 
     /// <summary>
-    /// Elements are positioned in the bottom right and flow towards the middle.
+    /// Elements are positioned in the bottom right and flow towards the middle. 
     /// Elements are positioned to the left of the copyrights.
     /// </summary>
     [EnumMember(Value = "BOTTOM_RIGHT")]
