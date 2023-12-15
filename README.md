@@ -7,6 +7,9 @@ LatLngLiteral constructor's parameters order changed #173
 **Breaking change from 3.0.0**
 Migrate from Newtonsoft.Json to System.Text.Json.
 
+**Breaking change from 4.0.0**
+Migrate to .net 8 #286.
+
 [![NuGet version (BlazorGoogleMaps)](https://img.shields.io/nuget/v/BlazorGoogleMaps)](https://www.nuget.org/packages/BlazorGoogleMaps/)
 
 ## Usage
