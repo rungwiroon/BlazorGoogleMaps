@@ -11,7 +11,7 @@ public partial class MapLegendPage
     private GoogleMap _map1;
 
     private MapOptions _mapOptions;
-
+    private ControlPosition _controlPosition = ControlPosition.TopLeft;
     [Inject] private IJSRuntime JsRuntime { get; set; }
 
     protected ElementReference LegendReference { get; set; }
@@ -45,16 +45,16 @@ public partial class MapLegendPage
 
     private async Task RemoveLegend()
     {
-        await _map1.InteropObject.RemoveControl(ControlPosition.TopLeft, LegendReference);
+        await _map1.InteropObject.RemoveControl(_controlPosition, LegendReference);
     }
 
     private async Task RemoveAllControls()
     {
-        await _map1.InteropObject.RemoveControls(ControlPosition.TopLeft);
+        await _map1.InteropObject.RemoveControls(_controlPosition);
     }
 
     private async Task AddLegend()
     {
-        await _map1.InteropObject.AddControl(ControlPosition.TopLeft, LegendReference);
+        await _map1.InteropObject.AddControl(_controlPosition, LegendReference);
     }
 }
