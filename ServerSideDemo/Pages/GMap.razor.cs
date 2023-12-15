@@ -1,7 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
-using GoogleMapsComponents.Maps;
+﻿using GoogleMapsComponents.Maps;
 using Microsoft.AspNetCore.Components;
+using System;
+using System.Threading.Tasks;
 
 namespace ServerSideDemo.Pages;
 
@@ -85,16 +85,16 @@ public partial class GMap
     public async Task MapInitialized()
     {
 #if DEBUG
-            Console.WriteLine("GMap Initialized:");
-            Console.WriteLine($"\t Height: {Height}");
-            Console.WriteLine($"\t Zoom: {Options.Zoom}");
-            Console.WriteLine($"\t Center: ({Options.Center.Lat}, {Options.Center.Lng})");
+        Console.WriteLine("GMap Initialized:");
+        Console.WriteLine($"\t Height: {Height}");
+        Console.WriteLine($"\t Zoom: {Options.Zoom}");
+        Console.WriteLine($"\t Center: ({Options.Center.Lat}, {Options.Center.Lng})");
 #endif
         if (MeMarker != null)
         {
 #if DEBUG
-                var pos = await MeMarker.GetPosition();
-                Console.WriteLine($"\t Me: ({pos.Lat}, {pos.Lng})");
+            var pos = await MeMarker.GetPosition();
+            Console.WriteLine($"\t Me: ({pos.Lat}, {pos.Lng})");
 #endif
             await AddMeMarker();
         }
