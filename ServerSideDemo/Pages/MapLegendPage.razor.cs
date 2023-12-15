@@ -8,17 +8,17 @@ namespace ServerSideDemo.Pages;
 
 public partial class MapLegendPage
 {
-    private GoogleMap map1;
+    private GoogleMap _map1;
 
-    private MapOptions mapOptions;
+    private MapOptions _mapOptions;
 
-    [Inject] private IJSRuntime jsRuntime { get; set; }
+    [Inject] private IJSRuntime JsRuntime { get; set; }
 
-    protected ElementReference legendReference { get; set; }
+    protected ElementReference LegendReference { get; set; }
 
     protected override void OnInitialized()
     {
-        mapOptions = new MapOptions()
+        _mapOptions = new MapOptions()
         {
             Zoom = 13,
             Center = new LatLngLiteral()
@@ -34,27 +34,27 @@ public partial class MapLegendPage
     {
         if (firstRender)
         {
-            await jsRuntime.InvokeAsync<object>("initMapLegend");
+            await JsRuntime.InvokeAsync<object>("initMapLegend");
         }
     }
 
-    private async Task AfterMapInit()
+    private Task AfterMapInit()
     {
-
+        return Task.CompletedTask;
     }
 
     private async Task RemoveLegend()
     {
-        await map1.InteropObject.RemoveControl(ControlPosition.TopLeft, legendReference);
+        await _map1.InteropObject.RemoveControl(ControlPosition.TopLeft, LegendReference);
     }
 
     private async Task RemoveAllControls()
     {
-        await map1.InteropObject.RemoveControls(ControlPosition.TopLeft);
+        await _map1.InteropObject.RemoveControls(ControlPosition.TopLeft);
     }
 
     private async Task AddLegend()
     {
-        await map1.InteropObject.AddControl(ControlPosition.TopLeft, legendReference);
+        await _map1.InteropObject.AddControl(ControlPosition.TopLeft, LegendReference);
     }
 }
