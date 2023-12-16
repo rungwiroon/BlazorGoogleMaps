@@ -13,9 +13,13 @@
 </select>
 <button @onclick="AddLegend">Add Legend</button>
 <button @onclick="RemoveLegend">Remove Legend</button>
+<button @onclick="AddLegend2">Add Legend 2</button>
+<button @onclick="RemoveLegend2">Remove Legend 2</button>
 <button @onclick="RemoveAllControls">Remove All Controls</button>
 
-<div id="legend" @ref="@LegendReference" style="visibility: hidden"><h3>Legend</h3></div>
+<div id="legend" @ref="@LegendReference" style="display: none"><h3>Legend  </h3><button @onclick="() => HandleClick()">Alert from blazor</button></div>
+<div id="legend2" @ref="@LegendReference2" style="display: none"><h3>Legend 2 </h3><button @onclick="() => HandleClick()">Alert from blazor</button></div>
+
 
 <style>
     html, body {
@@ -29,7 +33,7 @@
         height: 400px;
         width: 100%;
     }
-
+    #legend2, 
     #legend {
         font-family: Arial, sans-serif;
         background: #fff;

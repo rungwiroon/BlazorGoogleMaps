@@ -15,6 +15,7 @@ public partial class MapLegendPage
     [Inject] private IJSRuntime JsRuntime { get; set; }
 
     protected ElementReference LegendReference { get; set; }
+    protected ElementReference LegendReference2 { get; set; }
 
     protected override void OnInitialized()
     {
@@ -43,9 +44,24 @@ public partial class MapLegendPage
         return Task.CompletedTask;
     }
 
+    private async Task AddLegend()
+    {
+        await _map1.InteropObject.AddControl(_controlPosition, LegendReference);
+    }
+
+    private async Task AddLegend2()
+    {
+        await _map1.InteropObject.AddControl(_controlPosition, LegendReference2);
+    }
+
     private async Task RemoveLegend()
     {
         await _map1.InteropObject.RemoveControl(_controlPosition, LegendReference);
+    }
+
+    private async Task RemoveLegend2()
+    {
+        await _map1.InteropObject.RemoveControl(_controlPosition, LegendReference2);
     }
 
     private async Task RemoveAllControls()
@@ -53,8 +69,8 @@ public partial class MapLegendPage
         await _map1.InteropObject.RemoveControls(_controlPosition);
     }
 
-    private async Task AddLegend()
+    private async Task HandleClick()
     {
-        await _map1.InteropObject.AddControl(_controlPosition, LegendReference);
+        await JsRuntime.InvokeVoidAsync("alert", "Hello from Blazor");
     }
 }

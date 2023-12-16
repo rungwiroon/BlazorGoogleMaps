@@ -15,6 +15,7 @@
     }
 
     let mapObjects = {};
+    let controlParents = {}
     const dateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
 
     //Strip circular dependencies, map object and functions
@@ -329,6 +330,7 @@
             get mapObjects() { return mapObjects; },
             createObject: function (args) {
                 mapObjects = mapObjects || [];
+                
 
                 let args2 = args.slice(2).map(arg => tryParseJson(arg));
                 //console.log(args2);
@@ -390,33 +392,68 @@
             },
 
             addControls(args) {
-                let map = mapObjects[args[0]];
+                let mapGuid = args[0];
+                let map = mapObjects[mapGuid];
                 let elem = args[2];
-                //Without this the original element is removed and can not be added again.
-                let clone = elem.cloneNode(true);
+                if(!elem) return
                 //I know i am lazy. Two quotes appear after serialization
                 let position = getGooglePositionFromString(args[1].replace("\"", "").replace("\"", ""));
 
-                map.controls[position].push(clone);
-            },
-            removeControl(args) {
-                let map = mapObjects[args[0]];
-                let elem = args[2];
-                let position = getGooglePositionFromString(args[1].replace("\"", "").replace("\"", ""));
-
-                var arr = map.controls[position].getArray();
-                for (var i = 0, len = arr.length; i < len; i++) {
-                    if (arr[i].id === elem.id) {
-                        map.controls[position].removeAt(i);
+                // check if the control already exists
+                var controls = map.controls[position].getArray();
+                for (var i = 0; i < controls.length; i++) {
+                    if (controls[i].id === elem.id) {
                         return;
                     }
                 }
+
+                if (controlParents.hasOwnProperty(mapGuid) == false) {
+                    controlParents[mapGuid] = {}
+                }
+                if (controlParents[mapGuid].hasOwnProperty(elem.id) == false && !controlParents[mapGuid][elem.id]) {
+                    let parentElement = elem.parentElement
+                    controlParents[mapGuid][elem.id] = parentElement;
+                }
+                
+                elem.style.display = "block";
+                map.controls[position].push(elem);
             },
-            removeControls(args) {
-                let map = mapObjects[args[0]];
+            removeControl(args) {
+                let mapGuid = args[0];
+                let map = mapObjects[mapGuid];
+                let elem = args[2];
                 let position = getGooglePositionFromString(args[1].replace("\"", "").replace("\"", ""));
 
-                map.controls[position].clear();
+                var controls = map.controls[position].getArray();
+                for (var i = 0; i < controls.length; i++) {
+                    if (controls[i].id === elem.id) {
+                        let control = map.controls[position].removeAt(i);
+                        let parent = controlParents[mapGuid][control.id];
+                        if (parent) {
+                            parent.appendChild(control);
+                            control.style.display = "none";
+                        }
+                        delete controlParents[mapGuid][control.id]
+                        return;
+                    }
+                }
+
+            },
+            removeControls(args) {
+                let mapGuid = args[0];
+                let map = mapObjects[mapGuid];
+                let position = getGooglePositionFromString(args[1].replace("\"", "").replace("\"", ""));
+
+                while (map.controls[position].length > 0) {
+                    let control = map.controls[position].pop();
+                    let parent = controlParents[mapGuid][control.id];
+                    if (parent) {
+                        parent.appendChild(control);
+                        control.style.display = "none";
+                    }
+                    delete controlParents[mapGuid][control.id];
+                }
+                console.log(controlParents);
             },
             addImageLayer(args) {
                 let map = mapObjects[args[0]];
@@ -462,6 +499,20 @@
                         var elementToRemove = keysToRemove[keyToRemove];
                         delete mapObjects[elementToRemove];
                     }
+                }
+
+                if(controlParents.hasOwnProperty(mapGuid)){
+                    for (var key in controlParents[mapGuid]) {
+                        if (controlParents[mapGuid].hasOwnProperty(key)) {
+                            var parent = controlParents[mapGuid][key];
+                            if(!parent) continue
+                            var elem = document.getElementById(key);
+                            if(!elem) continue
+                            parent.appendChild(elem);
+                            elem.style.display = "none";
+                        }
+                    }
+                    delete controlParents[mapGuid];
                 }
             },
 
