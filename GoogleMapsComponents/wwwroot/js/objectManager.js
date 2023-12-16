@@ -407,6 +407,9 @@
                     }
                 }
 
+                if (controlParents == null) {
+                    controlParents = {}
+                }
                 if (controlParents.hasOwnProperty(mapGuid) == false) {
                     controlParents[mapGuid] = {}
                 }
@@ -418,42 +421,41 @@
                 elem.style.display = "block";
                 map.controls[position].push(elem);
             },
-            removeControl(args) {
-                let mapGuid = args[0];
-                let map = mapObjects[mapGuid];
-                let elem = args[2];
-                let position = getGooglePositionFromString(args[1].replace("\"", "").replace("\"", ""));
-
-                var controls = map.controls[position].getArray();
-                for (var i = 0; i < controls.length; i++) {
-                    if (controls[i].id === elem.id) {
-                        let control = map.controls[position].removeAt(i);
-                        let parent = controlParents[mapGuid][control.id];
-                        if (parent) {
-                            parent.appendChild(control);
-                            control.style.display = "none";
-                        }
-                        delete controlParents[mapGuid][control.id]
-                        return;
-                    }
+            appendControlElementToOriginalParent(mapGuid, control) {
+                const parent = controlParents[mapGuid][control.id];
+                if (parent) {
+                    parent.appendChild(control);
+                    control.style.display = "none";
                 }
+                delete controlParents[mapGuid][control.id];
+            },
+            internalRemoveControlAt(mapGuid, position, controlIndex) {
+                const map = mapObjects[mapGuid];
+                if (controlIndex !== -1) {
+                    let control = map.controls[position].removeAt(controlIndex);
+                    this.appendControlElementToOriginalParent(mapGuid, control);
+                }
+            },
+            internalRemoveControls(mapGuid, position) {
+                const map = mapObjects[mapGuid];
+                for (let i = map.controls[position].length - 1; i >= 0; i--) {
+                    this.internalRemoveControlAt(mapGuid, position, i);
+                }
+            },
+            removeControl(args) {
+                const mapGuid = args[0];
+                const map = mapObjects[mapGuid];
+                const position = getGooglePositionFromString(args[1].replace(/"/g, ""));
 
+                const elemId = args[2].id;
+                const controlIndex = map.controls[position].getArray().findIndex(control => control.id === elemId);
+
+                this.internalRemoveControlAt(mapGuid, position, controlIndex);
             },
             removeControls(args) {
-                let mapGuid = args[0];
-                let map = mapObjects[mapGuid];
-                let position = getGooglePositionFromString(args[1].replace("\"", "").replace("\"", ""));
-
-                while (map.controls[position].length > 0) {
-                    let control = map.controls[position].pop();
-                    let parent = controlParents[mapGuid][control.id];
-                    if (parent) {
-                        parent.appendChild(control);
-                        control.style.display = "none";
-                    }
-                    delete controlParents[mapGuid][control.id];
-                }
-                console.log(controlParents);
+                const mapGuid = args[0];
+                const position = getGooglePositionFromString(args[1].replace(/"/g, ""));
+                this.internalRemoveControls(mapGuid, position);
             },
             addImageLayer(args) {
                 let map = mapObjects[args[0]];
@@ -493,7 +495,6 @@
                         }
                     }
                 }
-
                 for (var keyToRemove in keysToRemove) {
                     if (keysToRemove.hasOwnProperty(keyToRemove)) {
                         var elementToRemove = keysToRemove[keyToRemove];
@@ -501,18 +502,15 @@
                     }
                 }
 
-                if(controlParents.hasOwnProperty(mapGuid)){
-                    for (var key in controlParents[mapGuid]) {
-                        if (controlParents[mapGuid].hasOwnProperty(key)) {
-                            var parent = controlParents[mapGuid][key];
-                            if(!parent) continue
-                            var elem = document.getElementById(key);
-                            if(!elem) continue
-                            parent.appendChild(elem);
-                            elem.style.display = "none";
-                        }
+                if (controlParents.hasOwnProperty(mapGuid)) {
+                    const map = mapObjects[mapGuid];
+                    for (let position in map.controls) {
+                        this.internalRemoveControls(mapGuid, position);
                     }
                     delete controlParents[mapGuid];
+                }
+                if (Object.keys(controlParents) == 0) {
+                    controlParents = null;
                 }
             },
 
