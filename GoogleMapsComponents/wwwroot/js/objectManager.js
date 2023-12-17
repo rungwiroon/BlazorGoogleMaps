@@ -15,6 +15,7 @@
     }
 
     let mapObjects = {};
+    let controlParents = {}
     const dateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
 
     //Strip circular dependencies, map object and functions
@@ -329,6 +330,7 @@
             get mapObjects() { return mapObjects; },
             createObject: function (args) {
                 mapObjects = mapObjects || [];
+                
 
                 let args2 = args.slice(2).map(arg => tryParseJson(arg));
                 //console.log(args2);
@@ -390,33 +392,70 @@
             },
 
             addControls(args) {
-                let map = mapObjects[args[0]];
+                let mapGuid = args[0];
+                let map = mapObjects[mapGuid];
                 let elem = args[2];
-                //Without this the original element is removed and can not be added again.
-                let clone = elem.cloneNode(true);
+                if(!elem) return
                 //I know i am lazy. Two quotes appear after serialization
                 let position = getGooglePositionFromString(args[1].replace("\"", "").replace("\"", ""));
 
-                map.controls[position].push(clone);
-            },
-            removeControl(args) {
-                let map = mapObjects[args[0]];
-                let elem = args[2];
-                let position = getGooglePositionFromString(args[1].replace("\"", "").replace("\"", ""));
-
-                var arr = map.controls[position].getArray();
-                for (var i = 0, len = arr.length; i < len; i++) {
-                    if (arr[i].id === elem.id) {
-                        map.controls[position].removeAt(i);
+                // check if the control already exists
+                var controls = map.controls[position].getArray();
+                for (var i = 0; i < controls.length; i++) {
+                    if (controls[i].id === elem.id) {
                         return;
                     }
                 }
+
+                if (controlParents == null) {
+                    controlParents = {}
+                }
+                if (controlParents.hasOwnProperty(mapGuid) == false) {
+                    controlParents[mapGuid] = {}
+                }
+                if (controlParents[mapGuid].hasOwnProperty(elem.id) == false && !controlParents[mapGuid][elem.id]) {
+                    let parentElement = elem.parentElement
+                    controlParents[mapGuid][elem.id] = parentElement;
+                }
+                
+                elem.style.display = "block";
+                map.controls[position].push(elem);
+            },
+            appendControlElementToOriginalParent(mapGuid, control) {
+                const parent = controlParents[mapGuid][control.id];
+                if (parent) {
+                    parent.appendChild(control);
+                    control.style.display = "none";
+                }
+                delete controlParents[mapGuid][control.id];
+            },
+            internalRemoveControlAt(mapGuid, position, controlIndex) {
+                const map = mapObjects[mapGuid];
+                if (controlIndex !== -1) {
+                    let control = map.controls[position].removeAt(controlIndex);
+                    this.appendControlElementToOriginalParent(mapGuid, control);
+                }
+            },
+            internalRemoveControls(mapGuid, position) {
+                const map = mapObjects[mapGuid];
+                for (let i = map.controls[position].length - 1; i >= 0; i--) {
+                    this.internalRemoveControlAt(mapGuid, position, i);
+                }
+            },
+            removeControl(args) {
+                const mapGuid = args[0];
+                const map = mapObjects[mapGuid];
+                const position = getGooglePositionFromString(args[1].replace(/"/g, ""));
+
+                const elemId = args[2].id;
+                const controlIndex = map.controls[position].getArray().findIndex(control => control.id === elemId);
+
+                this.internalRemoveControlAt(mapGuid, position, controlIndex);
             },
             removeControls(args) {
-                let map = mapObjects[args[0]];
-                let position = getGooglePositionFromString(args[1].replace("\"", "").replace("\"", ""));
-
-                map.controls[position].clear();
+                const mapGuid = args[0];
+                const position = getGooglePositionFromString(args[1].replace(/"/g, ""));
+                this.internalRemoveControls(mapGuid, position);
             },
             addImageLayer(args) {
                 let map = mapObjects[args[0]];
@@ -456,12 +495,22 @@
                         }
                     }
                 }
-
                 for (var keyToRemove in keysToRemove) {
                     if (keysToRemove.hasOwnProperty(keyToRemove)) {
                         var elementToRemove = keysToRemove[keyToRemove];
                         delete mapObjects[elementToRemove];
                     }
+                }
+
+                if (controlParents.hasOwnProperty(mapGuid)) {
+                    const map = mapObjects[mapGuid];
+                    for (let position in map.controls) {
+                        this.internalRemoveControls(mapGuid, position);
+                    }
+                    delete controlParents[mapGuid];
+                }
+                if (Object.keys(controlParents) == 0) {
+                    controlParents = null;
                 }
             },
 
