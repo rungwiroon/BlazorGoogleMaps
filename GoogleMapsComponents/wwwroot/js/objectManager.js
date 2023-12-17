@@ -502,14 +502,15 @@
                     }
                 }
 
-                if (controlParents.hasOwnProperty(mapGuid)) {
+                if (controlParents !== null && controlParents.hasOwnProperty(mapGuid)) {
                     const map = mapObjects[mapGuid];
                     for (let position in map.controls) {
                         this.internalRemoveControls(mapGuid, position);
                     }
                     delete controlParents[mapGuid];
                 }
-                if (Object.keys(controlParents) == 0) {
+
+                if (controlParents !== null && Object.keys(controlParents) == 0) {
                     controlParents = null;
                 }
             },
