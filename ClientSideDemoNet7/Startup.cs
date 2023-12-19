@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+﻿using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using System.Threading.Tasks;
 
-namespace ClientSideDemoNet7
+namespace ClientSideDemo
 {
     public class Startup
     {

@@ -1,0 +1,149 @@
+﻿@page "/maps-legend"
+@using GoogleMapsComponents.Maps
+@inject IJSRuntime JsRuntime
+@implements IAsyncDisposable
+
+<h1>Maps legend</h1>
+
+<button @onclick="AddMap1">Add Map1</button>
+<button @onclick="RemoveMap1">Remove Map1</button>
+<button @onclick="AddMap2">Add Map2</button>
+<button @onclick="RemoveMap2">Remove Map2</button>
+
+<button @onclick="AddLegendMap1">Add Legend (Map1)</button>
+<button @onclick="RemoveLegendMap1">Remove Legend (Map1)</button>
+<button @onclick="AddLegendMap2">Add Legend (Map2)</button>
+<button @onclick="RemoveLegendMap2">Remove Legend (Map2)</button>
+<button @onclick="RemoveAllControls">Remove All Controls (Both maps)</button>
+
+<div @ref="@_map1ElementRef" id="map1" style="height: 450px; display: @(_map1 is null ? "none" : "block")"></div>
+<div id="legendMap1" @ref="@legendReferenceMap1" style="display: none"><h3>Legend  </h3><button @onclick="() => HandleClick()">Alert from blazor</button></div>
+<div id="legendMap2" @ref="@legendReferenceMap2" style="display: none"><h3>Legend  </h3><button @onclick="() => HandleClick()">Alert from blazor</button></div>
+
+<div @ref="@_map2ElementRef" id="map2" style="height: 450px; display: @(_map2 is null ? "none" : "block")"></div>
+
+
+@code {
+    private Map _map1, _map2;
+
+    private ElementReference _map1ElementRef, _map2ElementRef;
+
+    protected ElementReference legendReferenceMap1 { get; set; }
+    protected ElementReference legendReferenceMap2 { get; set; }
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            await AddMap1();
+            await AddMap2();
+            StateHasChanged();
+        }
+    }
+
+    private async Task AfterMapInit()
+    {
+
+    }
+
+    private async Task<Map> CreateMap(ElementReference elementReference)
+    {
+
+        var mapOptions = new MapOptions()
+            {
+                Zoom = 13,
+                Center = new LatLngLiteral()
+                {
+                    Lat = 13.505892,
+                    Lng = 100.8162
+                },
+                MapTypeId = MapTypeId.Roadmap
+            };
+        return await Map.CreateAsync(JsRuntime, elementReference, mapOptions);
+    }
+
+    private async Task AddMap1()
+    {
+        if (_map1 == null)
+        {
+            _map1 = await CreateMap(_map1ElementRef);
+        }
+    }
+
+    private async Task AddMap2()
+    {
+        if (_map2 == null)
+        {
+            _map2 = await CreateMap(_map2ElementRef);
+        }
+    }
+
+    private async Task RemoveMap1()
+    {
+        if (_map1 != null)
+        {
+            await _map1.DisposeAsync();
+            _map1 = null;
+        }
+    }
+
+    private async Task RemoveMap2()
+    {
+        if (_map2 != null)
+        {
+            await _map2.DisposeAsync();
+            _map2 = null;
+        }
+    }
+
+    private async Task AddLegendMap1()
+    {
+        await _map1.AddControl(ControlPosition.BottomCenter, legendReferenceMap1);
+    }
+
+    private async Task RemoveLegendMap1()
+    {
+        await _map1.RemoveControl(ControlPosition.BottomCenter, legendReferenceMap1);
+    }
+
+    private async Task AddLegendMap2()
+    {
+        await _map2.AddControl(ControlPosition.BottomCenter, legendReferenceMap2);
+    }
+
+    private async Task RemoveLegendMap2()
+    {
+        await _map2.RemoveControl(ControlPosition.BottomCenter, legendReferenceMap2);
+    }
+
+    private async Task RemoveAllControls()
+    {
+        if(_map1 is not null) 
+        {
+            await _map1.RemoveControls(ControlPosition.BottomCenter);
+        }
+        if(_map2 is not null) 
+        {
+            await _map2.RemoveControls(ControlPosition.BottomCenter);
+        }   
+    }
+
+    private async Task HandleClick()
+    {
+        await JsRuntime.InvokeVoidAsync("alert", "Hello from Blazor");
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_map1 != null)
+        {
+            await _map1.DisposeAsync();
+        }
+
+        if (_map2 != null)
+        {
+            await _map2.DisposeAsync();
+        }
+    }
+}

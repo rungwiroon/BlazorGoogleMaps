@@ -117,6 +117,7 @@ internal static class Helper
 
                 switch (arg)
                 {
+                    case Enum: return GetEnumValue(arg);
                     case ElementReference _:
                     case string _:
                     case int _:
@@ -160,6 +161,40 @@ internal static class Helper
             });
 
         return jsFriendlyArgs;
+    }
+
+    private static string? GetEnumValue(object? enumItem)
+    {
+        //what happens if enumItem is null.
+        //Shouldnt we take 0 value of enum
+        //Also is it even possible to have null enumItem
+        //So far looks like only MapLegend Add controll reach here
+        if (enumItem == null)
+        {
+            return null;
+        }
+
+        if (enumItem is not Enum enumItem2)
+        {
+            return enumItem.ToString();
+        }
+
+
+        var memberInfo = enumItem2.GetType().GetMember(enumItem2.ToString());
+        if (memberInfo.Length == 0)
+        {
+            return null;
+        }
+
+        foreach (var attr in memberInfo[0].GetCustomAttributes(false))
+        {
+            if (attr is EnumMemberAttribute val)
+            {
+                return val.Value;
+            }
+        }
+
+        return null;
     }
 
     internal static async Task<TRes?> MyInvokeAsync<TRes>(

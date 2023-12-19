@@ -8,17 +8,18 @@ namespace ServerSideDemo.Pages;
 
 public partial class MapLegendPage
 {
-    private GoogleMap map1;
+    private GoogleMap _map1;
 
-    private MapOptions mapOptions;
+    private MapOptions _mapOptions;
+    private ControlPosition _controlPosition = ControlPosition.TopLeft;
+    [Inject] private IJSRuntime JsRuntime { get; set; }
 
-    [Inject] private IJSRuntime jsRuntime { get; set; }
-
-    protected ElementReference legendReference { get; set; }
+    protected ElementReference LegendReference { get; set; }
+    protected ElementReference LegendReference2 { get; set; }
 
     protected override void OnInitialized()
     {
-        mapOptions = new MapOptions()
+        _mapOptions = new MapOptions()
         {
             Zoom = 13,
             Center = new LatLngLiteral()
@@ -34,27 +35,42 @@ public partial class MapLegendPage
     {
         if (firstRender)
         {
-            await jsRuntime.InvokeAsync<object>("initMapLegend");
+            await JsRuntime.InvokeAsync<object>("initMapLegend");
         }
     }
 
-    private async Task AfterMapInit()
+    private Task AfterMapInit()
     {
-
-    }
-
-    private async Task RemoveLegend()
-    {
-        await map1.InteropObject.RemoveControl(ControlPosition.TopLeft, legendReference);
-    }
-
-    private async Task RemoveAllControls()
-    {
-        await map1.InteropObject.RemoveControls(ControlPosition.TopLeft);
+        return Task.CompletedTask;
     }
 
     private async Task AddLegend()
     {
-        await map1.InteropObject.AddControl(ControlPosition.TopLeft, legendReference);
+        await _map1.InteropObject.AddControl(_controlPosition, LegendReference);
+    }
+
+    private async Task AddLegend2()
+    {
+        await _map1.InteropObject.AddControl(_controlPosition, LegendReference2);
+    }
+
+    private async Task RemoveLegend()
+    {
+        await _map1.InteropObject.RemoveControl(_controlPosition, LegendReference);
+    }
+
+    private async Task RemoveLegend2()
+    {
+        await _map1.InteropObject.RemoveControl(_controlPosition, LegendReference2);
+    }
+
+    private async Task RemoveAllControls()
+    {
+        await _map1.InteropObject.RemoveControls(_controlPosition);
+    }
+
+    private async Task HandleClick()
+    {
+        await JsRuntime.InvokeVoidAsync("alert", "Hello from Blazor");
     }
 }

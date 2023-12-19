@@ -1,10 +1,11 @@
 ﻿@page "/mapEvents"
 @using GoogleMapsComponents
 @using GoogleMapsComponents.Maps
+@using ClientSideDemo.Shared
 
 <h1>Map Events</h1>
 
-<GoogleMap  @ref="@map1" Id="map1" Options="@mapOptions" OnAfterInit="@(async () => await OnAfterInitAsync())">
+<GoogleMap  @ref="@_map1" Id="map1" Options="@_mapOptions" OnAfterInit="@(async () => await OnAfterInitAsync())">
 </GoogleMap>
 
 <button @onclick="AddMarker">Add marker</button>&nbsp;
@@ -13,24 +14,24 @@
 <input type="checkbox" bind="@DisablePoiInfoWindow" />Disable POI's popup info window
 <br>
 
-<MapEventList  @ref="@eventList" Events="@_events"></MapEventList>
+<MapEventList  @ref="@_eventList" Events="@_events"></MapEventList>
 
 @code {
-    private GoogleMap map1 = default!;
-    private MapEventList eventList = default!;
+    private GoogleMap _map1 = default!;
+    private MapEventList _eventList = default!;
 
-    private MapOptions mapOptions = default!;
+    private MapOptions _mapOptions = default!;
 
     private List<String> _events = new List<String>();
 
     private bool DisablePoiInfoWindow { get; set; } = false;
 
-	private Stack<Marker> markers = new Stack<Marker>();
-	private string labelText = "";
+	private Stack<Marker> _markers = new Stack<Marker>();
+	private string _labelText = "";
 
     protected override void OnInitialized()
     {
-        mapOptions = new MapOptions()
+        _mapOptions = new MapOptions()
         {
             Zoom = 13,
             Center = new LatLngLiteral()
@@ -46,41 +47,41 @@
     {
         //Debug.WriteLine("Start OnAfterRenderAsync");
 
-        await map1.InteropObject.AddListener("bounds_changed", OnBoundsChanged);
+        await _map1.InteropObject.AddListener("bounds_changed", OnBoundsChanged);
 
-        await map1.InteropObject.AddListener("center_changed", OnCenterChanged);
+        await _map1.InteropObject.AddListener("center_changed", OnCenterChanged);
 
-        await map1.InteropObject.AddListener<MouseEvent>("click", async (e) => await OnClick(e));
+        await _map1.InteropObject.AddListener<MouseEvent>("click", async (e) => await OnClick(e));
 
-        await map1.InteropObject.AddListener("dblclick", OnDoubleClick);
+        await _map1.InteropObject.AddListener("dblclick", OnDoubleClick);
 
-        await map1.InteropObject.AddListener("drag", OnDrag);
+        await _map1.InteropObject.AddListener("drag", OnDrag);
 
-        await map1.InteropObject.AddListener("dragend", OnDragEnd);
+        await _map1.InteropObject.AddListener("dragend", OnDragEnd);
 
-        await map1.InteropObject.AddListener("dragstart", OnDragStart);
+        await _map1.InteropObject.AddListener("dragstart", OnDragStart);
 
-        await map1.InteropObject.AddListener("heading_changed", OnHeadingChanged);
+        await _map1.InteropObject.AddListener("heading_changed", OnHeadingChanged);
 
-        await map1.InteropObject.AddListener("idle", OnIdle);
+        await _map1.InteropObject.AddListener("idle", OnIdle);
 
-        await map1.InteropObject.AddListener("maptypeid_changed", OnMapTypeIdChanged);
+        await _map1.InteropObject.AddListener("maptypeid_changed", OnMapTypeIdChanged);
 
-        await map1.InteropObject.AddListener<MouseEvent>("mousemove", OnMouseMove);
+        await _map1.InteropObject.AddListener<MouseEvent>("mousemove", OnMouseMove);
 
-        await map1.InteropObject.AddListener("mouseout", OnMouseOut);
+        await _map1.InteropObject.AddListener("mouseout", OnMouseOut);
 
-        await map1.InteropObject.AddListener("mouseover", OnMouseOver);
+        await _map1.InteropObject.AddListener("mouseover", OnMouseOver);
 
-        await map1.InteropObject.AddListener("projection_changed", OnProjectionChanged);
+        await _map1.InteropObject.AddListener("projection_changed", OnProjectionChanged);
 
-        await map1.InteropObject.AddListener("rightclick", OnRightClick);
+        await _map1.InteropObject.AddListener("rightclick", OnRightClick);
 
-        await map1.InteropObject.AddListener("tilesloaded", OnTilesLoaded);
+        await _map1.InteropObject.AddListener("tilesloaded", OnTilesLoaded);
 
-        await map1.InteropObject.AddListener("tilt_changed", OnTiltChanged);
+        await _map1.InteropObject.AddListener("tilt_changed", OnTiltChanged);
 
-        await map1.InteropObject.AddListener("zoom_changed", OnZoomChanged);
+        await _map1.InteropObject.AddListener("zoom_changed", OnZoomChanged);
     }
 
     private void OnBoundsChanged()
@@ -263,12 +264,12 @@
 
 	private async Task AddMarker()
 		{
-		var marker = await Marker.CreateAsync(map1.JsRuntime,
+		var marker = await Marker.CreateAsync(_map1.JsRuntime,
 			new MarkerOptions()
 				{
-				Position = await map1.InteropObject.GetCenter(),
-				Map = map1.InteropObject,
-				Label = new MarkerLabel { Text = $"Test {markers.Count()}", FontWeight = "bold" },
+				Position = await _map1.InteropObject.GetCenter(),
+				Map = _map1.InteropObject,
+				Label = new MarkerLabel { Text = $"Test {_markers.Count()}", FontWeight = "bold" },
 				Draggable=true,
 				Icon = new Icon()
 					{
@@ -299,8 +300,8 @@
 		//    Console.WriteLine("Nooo");
 		//}
 
-		markers.Push(marker);
-		labelText = await marker.GetLabelText();
+		_markers.Push(marker);
+		_labelText = await marker.GetLabelText();
 
 		await marker.AddListener<MouseEvent>("click", async e =>
 		{
@@ -312,9 +313,9 @@
 		await marker.AddListener<MouseEvent>("dragend", async e => await OnMakerDragEnd(marker, e));
 		}
 
-	private async Task OnMakerDragEnd(Marker M, MouseEvent e)
+	private async Task OnMakerDragEnd(Marker m, MouseEvent e)
 		{
-		string markerLabelText = await M.GetLabelText();
+		string markerLabelText = await m.GetLabelText();
 		_events.Insert(0, $"OnMakerDragEnd ({markerLabelText}): ({e.LatLng}).");
 		StateHasChanged();
 		await e.Stop();
@@ -322,14 +323,14 @@
 
 	private async Task RemoveMarker()
 		{
-		if(!markers.Any())
+		if(!_markers.Any())
 			{
 			return;
 			}
 
-		var lastMarker = markers.Pop();
+		var lastMarker = _markers.Pop();
 		await lastMarker.SetMap(null);
-		labelText = markers.Any() ? await markers.Peek().GetLabelText() : "";
+		_labelText = _markers.Any() ? await _markers.Peek().GetLabelText() : "";
 		}
 
 }
