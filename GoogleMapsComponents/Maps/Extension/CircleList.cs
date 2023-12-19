@@ -7,12 +7,11 @@ using System.Threading.Tasks;
 namespace GoogleMapsComponents.Maps.Extension;
 
 /// <summary>
-/// A class able to manage a lot of Circle objects and get / set their
-/// properties at the same time, eventually with different values
-/// Main concept is that each Circle to can be distinguished by other ones need
-/// to have a "unique key" with a "external world mean", so not necessary it's GUID
-///
-/// All properties should be called With a Dictionary<string, {property type}> indicating for each Circle(related to that key) the corresponding related property value
+/// <para>A class able to manage a lot of Circle objects and get / set their
+/// properties at the same time, eventually with different values.<br/>
+/// Main concept is that for each Circle to be distinguished from other ones, it needs
+/// to have a "unique key" with an "external world meaning", so not necessarily a GUID</para>
+/// <para>All properties should be called With a <c>Dictionary&lt;string, {property type}&gt;</c> indicating for each Circle (related to that key) the corresponding related property value</para>
 /// </summary>
 public class CircleList : ListableEntityListBase<Circle, CircleOptions>
 {
@@ -22,8 +21,8 @@ public class CircleList : ListableEntityListBase<Circle, CircleOptions>
     /// Create circles list
     /// </summary>
     /// <param name="jsRuntime"></param>
-    /// <param name="opts">Dictionary of desired Circle keys and CircleOptions values. Key as any type unique key. Not nessary Guid</param>
-    /// <returns>new instance of CircleList class will be returned with its Circles dictionary member populated with the corresponding results</returns>
+    /// <param name="opts">Dictionary of desired Circle keys and CircleOptions values. Key as any type unique key. Not necessarily Guid</param>
+    /// <returns>New instance of CircleList class will be returned with its Circles dictionary member populated with the corresponding results</returns>
     public static async Task<CircleList> CreateAsync(IJSRuntime jsRuntime, Dictionary<string, CircleOptions> opts)
     {
         var jsObjectRef = new JsObjectRef(jsRuntime, Guid.NewGuid());
@@ -40,7 +39,7 @@ public class CircleList : ListableEntityListBase<Circle, CircleOptions>
     }
 
     /// <summary>
-    /// Sync list over lifetime: Create and remove list depending on entity count; 
+    /// Sync list over lifetime: Create and remove list depending on entity count;
     /// entities will be removed, added or changed to mirror the given set.
     /// </summary>
     /// <param name="list">
@@ -110,7 +109,7 @@ public class CircleList : ListableEntityListBase<Circle, CircleOptions>
 
     public Task<Dictionary<string, LatLngBoundsLiteral>> GetBounds(List<string>? filterKeys = null)
     {
-        var matchingKeys = ComputeMathingKeys(filterKeys);
+        var matchingKeys = ComputeMatchingKeys(filterKeys);
 
         if (matchingKeys.Any())
         {
@@ -129,7 +128,7 @@ public class CircleList : ListableEntityListBase<Circle, CircleOptions>
 
     public Task<Dictionary<string, LatLngLiteral>> GetCenters(List<string>? filterKeys = null)
     {
-        var matchingKeys = ComputeMathingKeys(filterKeys);
+        var matchingKeys = ComputeMatchingKeys(filterKeys);
 
         if (matchingKeys.Any())
         {
@@ -148,7 +147,7 @@ public class CircleList : ListableEntityListBase<Circle, CircleOptions>
 
     public Task<Dictionary<string, bool>> GetEditables(List<string>? filterKeys = null)
     {
-        var matchingKeys = ComputeMathingKeys(filterKeys);
+        var matchingKeys = ComputeMatchingKeys(filterKeys);
 
         if (matchingKeys.Any())
         {
@@ -167,7 +166,7 @@ public class CircleList : ListableEntityListBase<Circle, CircleOptions>
 
     public Task<Dictionary<string, double>> GetRadiuses(List<string>? filterKeys = null)
     {
-        var matchingKeys = ComputeMathingKeys(filterKeys);
+        var matchingKeys = ComputeMatchingKeys(filterKeys);
 
         if (matchingKeys.Any())
         {

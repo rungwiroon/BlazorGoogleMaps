@@ -16,7 +16,7 @@ public class MarkerOptions : ListableEntityOptionsBase
     public Animation? Animation { get; set; }
 
     /// <summary>
-    /// If false, disables cross that appears beneath the marker when dragging. 
+    /// If false, disables cross that appears beneath the marker when dragging.<br/>
     /// This option is true by default.
     /// </summary>
     public bool? CrossOnDrag { get; set; }
@@ -27,7 +27,7 @@ public class MarkerOptions : ListableEntityOptionsBase
     public string Cursor { get; set; }
 
     /// <summary>
-    /// Icon for the foreground. 
+    /// Icon for the foreground.<br/>
     /// If a string is provided, it is treated as though it were an Icon with the string as url.
     /// </summary>
     //[JsonConverter(typeof(OneOfConverter))]
@@ -45,8 +45,8 @@ public class MarkerOptions : ListableEntityOptionsBase
     public float? Opacity { get; set; }
 
     /// <summary>
-    /// Optimization renders many markers as a single static element. 
-    /// Optimized rendering is enabled by default. 
+    /// Optimization renders many markers as a single static element.<br/>
+    /// Optimized rendering is enabled by default.<br/>
     /// Disable optimized rendering for animated GIFs or PNGs, or when each marker must be rendered as a separate DOM element (advanced usage only)
     /// </summary>
     public bool? Optimized { get; set; }

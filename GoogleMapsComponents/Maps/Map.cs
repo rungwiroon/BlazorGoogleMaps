@@ -66,8 +66,6 @@ public class Map : EventEntityBase, IJsObjectRef, IAsyncDisposable
         await _jsObjectRef.JSRuntime.MyInvokeAsync<object>("blazorGoogleMaps.objectManager.removeAllImageLayers", this.Guid.ToString());
     }
 
-
-
     /// <summary>
     /// Sets the viewport to contain the given bounds.
     /// </summary>
@@ -230,8 +228,6 @@ public class Map : EventEntityBase, IJsObjectRef, IAsyncDisposable
         return _jsObjectRef.InvokeAsync("setOptions", mapOptions);
     }
 
-
-
     public override async ValueTask DisposeAsync()
     {
         // Perform async cleanup.
@@ -253,7 +249,6 @@ public class Map : EventEntityBase, IJsObjectRef, IAsyncDisposable
 
     protected override void Dispose(bool disposing)
     {
-
         if (!_isDisposed)
         {
             base.Dispose(disposing);

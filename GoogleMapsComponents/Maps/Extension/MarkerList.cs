@@ -8,12 +8,41 @@ using System.Threading.Tasks;
 namespace GoogleMapsComponents.Maps.Extension;
 
 /// <summary>
-/// A class able to manage a lot of Marker objects and get / set their
-/// properties at the same time, eventually with different values
-/// Main concept is that each Marker to can be distinguished by other ones need
-/// to have a "unique key" with a "external world mean", so not necessary it's GUID
-///
-/// All properties should be called with a Dictionary<string, {property type}> indicating for each Marker(related to that key) the corresponding related property value
+/// <para>
+/// A class able to manage a lot of Marker objects and get / set their properties at the same time, eventually with different values
+/// </para>
+/// <para>
+/// Main concept is that for each Marker to be distinguished from other ones, it needs
+/// to have a "unique key" with an "external world meaning", so not necessarily a GUID.
+/// </para>
+/// <para>
+/// In real cases Markers are likely to be linked to places, activities, transit stops and so on -> So, what better way to choose as Marker "unique key" the "id" of the object each marker is related to?
+/// A string key has been selected as type due to its implicit versatility.
+/// </para>
+/// <para>
+/// To create Markers, simply call <c>MarkerList.CreateAsync</c> with a Dictionary of desired Marker keys and MarkerOptions values.
+/// After that, a new instance of MarkerList class will be returned with its Markers dictionary member populated with the corresponding results
+/// </para>
+/// <para>
+/// At run-time is possible to:<br/>
+/// <list type="number">
+/// <item><description>add Marker to the same MarkerList class using <c>AddMultipleAsync</c> method (only keys not matching with existent Marker keys will be created)<br/>
+/// Markers dictionary will contain "union distinct" of existent Marker's keys and new keys</description>
+/// </item>
+/// <item><description>remove Marker from the MarkerList class (only Marker having keys matching with existent keys will be removed)<br/>
+/// Markers dictionary will contain "original - required and found" Marker's keys (eventually any is all Marker are removed)</description>
+/// </item>
+/// </list>
+/// </para>
+/// <para>
+/// Each definer getter properties can be used as follows:<br/>
+/// a) without parameter -> all eventually defined markers related property will be returned (if any)<br/>
+/// b) with a <c>List&lt;string&gt;</c> of keys -> all eventually matching keys with Markers Dictionary keys produces related markers property extraction (if any defined)
+/// </para>
+/// <para>
+/// Each setter properties can be used as follows:<br/>
+/// With a <c>Dictionary&lt;string, {property type}&gt;</c> indicating for each Marker (related to that key) the corresponding related property value.
+/// </para>
 /// </summary>
 public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
 {
@@ -23,8 +52,8 @@ public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
     /// Create markers list
     /// </summary>
     /// <param name="jsRuntime"></param>
-    /// <param name="opts">Dictionary of desired Marker keys and MarkerOptions values. Key as any type unique key. Not nessary Guid</param>
-    /// <returns>new instance of MarkerList class will be returned with its Markers dictionary member populated with the corresponding results</returns>
+    /// <param name="opts">Dictionary of desired Marker keys and MarkerOptions values. Key as any type unique key. Not necessarily Guid</param>
+    /// <returns>New instance of MarkerList class will be returned with its Markers dictionary member populated with the corresponding results</returns>
     public static async Task<MarkerList> CreateAsync(IJSRuntime jsRuntime, Dictionary<string, MarkerOptions> opts)
     {
         var jsObjectRef = new JsObjectRef(jsRuntime, Guid.NewGuid());
@@ -100,9 +129,8 @@ public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
     }
 
     /// <summary>
-    /// only keys not matching with existent Marker keys will be created
+    /// Only keys not matching with existent Marker keys will be created
     /// </summary>
-    /// <param name="opts"></param>
     /// <returns></returns>
     public async Task AddMultipleAsync(Dictionary<string, MarkerOptions> opts)
     {
@@ -111,7 +139,7 @@ public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
 
     public Task<Dictionary<string, Animation>> GetAnimations(List<string>? filterKeys = null)
     {
-        var matchingKeys = ComputeMathingKeys(filterKeys);
+        var matchingKeys = ComputeMatchingKeys(filterKeys);
 
         if (matchingKeys.Any())
         {
@@ -130,7 +158,7 @@ public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
 
     public Task<Dictionary<string, bool>> GetClickables(List<string>? filterKeys = null)
     {
-        var matchingKeys = ComputeMathingKeys(filterKeys);
+        var matchingKeys = ComputeMatchingKeys(filterKeys);
 
         if (matchingKeys.Any())
         {
@@ -149,7 +177,7 @@ public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
 
     public Task<Dictionary<string, string>> GetCursors(List<string>? filterKeys = null)
     {
-        var matchingKeys = ComputeMathingKeys(filterKeys);
+        var matchingKeys = ComputeMatchingKeys(filterKeys);
 
         if (matchingKeys.Any())
         {
@@ -168,7 +196,7 @@ public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
 
     public Task<Dictionary<string, OneOf<string, Icon, Symbol>>> GetIcons(List<string>? filterKeys = null)
     {
-        var matchingKeys = ComputeMathingKeys(filterKeys);
+        var matchingKeys = ComputeMatchingKeys(filterKeys);
 
         if (matchingKeys.Any())
         {
@@ -187,7 +215,7 @@ public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
 
     public Task<Dictionary<string, string>> GetLabels(List<string>? filterKeys = null)
     {
-        var matchingKeys = ComputeMathingKeys(filterKeys);
+        var matchingKeys = ComputeMatchingKeys(filterKeys);
 
         if (matchingKeys.Any())
         {
@@ -206,7 +234,7 @@ public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
 
     public Task<Dictionary<string, LatLngLiteral>> GetPositions(List<string>? filterKeys = null)
     {
-        var matchingKeys = ComputeMathingKeys(filterKeys);
+        var matchingKeys = ComputeMatchingKeys(filterKeys);
 
         if (matchingKeys.Any())
         {
@@ -225,7 +253,7 @@ public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
 
     public Task<Dictionary<string, MarkerShape>> GetShapes(List<string>? filterKeys = null)
     {
-        var matchingKeys = ComputeMathingKeys(filterKeys);
+        var matchingKeys = ComputeMatchingKeys(filterKeys);
 
         if (matchingKeys.Any())
         {
@@ -244,7 +272,7 @@ public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
 
     public Task<Dictionary<string, string>> GetTitles(List<string>? filterKeys = null)
     {
-        var matchingKeys = ComputeMathingKeys(filterKeys);
+        var matchingKeys = ComputeMatchingKeys(filterKeys);
 
         if (matchingKeys.Any())
         {
@@ -263,7 +291,7 @@ public class MarkerList : ListableEntityListBase<Marker, MarkerOptions>
 
     public Task<Dictionary<string, int>> GetZIndexes(List<string>? filterKeys = null)
     {
-        var matchingKeys = ComputeMathingKeys(filterKeys);
+        var matchingKeys = ComputeMatchingKeys(filterKeys);
 
         if (matchingKeys.Any())
         {

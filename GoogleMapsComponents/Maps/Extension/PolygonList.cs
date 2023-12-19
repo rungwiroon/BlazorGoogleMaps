@@ -7,12 +7,11 @@ using System.Threading.Tasks;
 namespace GoogleMapsComponents.Maps.Extension;
 
 /// <summary>
-/// A class able to manage a lot of Polygon objects and get / set their
-/// properties at the same time, eventually with different values
-/// Main concept is that each Polygon to can be distinguished by other ones need
-/// to have a "unique key" with a "external world mean", so not necessary it's GUID
-///
-/// All properties should be called With a Dictionary<string, {property type}> indicating for each Polygon(related to that key) the corresponding related property value
+/// <para>A class able to manage a lot of Polygon objects and get / set their
+/// properties at the same time, eventually with different values.<br/>
+/// Main concept is that for each Polygon to be distinguished from other ones, it needs
+/// to have a "unique key" with an "external world meaning", so not necessarily a GUID</para>
+/// <para>All properties should be called With a <c>Dictionary&lt;string, {property type}&gt;</c> indicating for each Polygon (related to that key) the corresponding related property value</para>
 /// </summary>
 public class PolygonList : ListableEntityListBase<Polygon, PolygonOptions>
 {
@@ -22,8 +21,8 @@ public class PolygonList : ListableEntityListBase<Polygon, PolygonOptions>
     /// Create polygons list
     /// </summary>
     /// <param name="jsRuntime"></param>
-    /// <param name="opts">Dictionary of desired Polygon keys and PolygonOptions values. Key as any type unique key. Not nessary Guid</param>
-    /// <returns>new instance of PolygonList class will be returned with its Polygons dictionary member populated with the corresponding results</returns>
+    /// <param name="opts">Dictionary of desired Polygon keys and PolygonOptions values. Key as any type unique key. Not necessarily Guid</param>
+    /// <returns>New instance of PolygonList class will be returned with its Polygons dictionary member populated with the corresponding results</returns>
     public static async Task<PolygonList> CreateAsync(IJSRuntime jsRuntime, Dictionary<string, PolygonOptions> opts)
     {
         JsObjectRef jsObjectRef = new JsObjectRef(jsRuntime, Guid.NewGuid());
@@ -106,7 +105,7 @@ public class PolygonList : ListableEntityListBase<Polygon, PolygonOptions>
 
     public Task<Dictionary<string, bool>> GetEditables(List<string> filterKeys = null)
     {
-        List<string> matchingKeys = ComputeMathingKeys(filterKeys);
+        List<string> matchingKeys = ComputeMatchingKeys(filterKeys);
 
         if (matchingKeys.Any())
         {

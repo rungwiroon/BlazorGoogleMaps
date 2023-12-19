@@ -8,14 +8,14 @@ namespace GoogleMapsComponents.Maps;
 public class PolylineOptions : ListableEntityOptionsBase
 {
     /// <summary>
-    /// If set to true, the user can edit this shape by dragging the control points shown at the vertices and on each segment. 
+    /// If set to true, the user can edit this shape by dragging the control points shown at the vertices and on each segment.<br/>
     /// Defaults to false.
     /// </summary>
     public bool? Editable { get; set; }
 
     /// <summary>
-    /// When true, edges of the polygon are interpreted as geodesic and will follow the curvature of the Earth. When false, edges of the polygon are rendered as straight lines in screen space. 
-    /// Note that the shape of a geodesic polygon may appear to change when dragged, as the dimensions are maintained relative to the surface of the earth. 
+    /// When true, edges of the polygon are interpreted as geodesic and will follow the curvature of the Earth. When false, edges of the polygon are rendered as straight lines in screen space.<br/>
+    /// Note that the shape of a geodesic polygon may appear to change when dragged, as the dimensions are maintained relative to the surface of the earth.<br/>
     /// Defaults to false.
     /// </summary>
     public bool? Geodesic { get; set; }
@@ -45,11 +45,10 @@ public class PolylineOptions : ListableEntityOptionsBase
     /// </summary>
     public int? StrokeWeight { get; set; }
 
-    /// <summary>    
+    /// <summary>
     /// Hide the undo button
-    /// Undocuments property.
+    /// Undocumented property.
     /// https://issuetracker.google.com/issues/35821607
     /// </summary>
     public bool? SuppressUndo { get; set; }
-
 }
