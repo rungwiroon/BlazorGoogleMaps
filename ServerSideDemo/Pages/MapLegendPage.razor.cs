@@ -24,19 +24,19 @@ public partial class MapLegendPage
             Zoom = 13,
             ZoomControlOptions = new ZoomControlOptions
             {
-                Position = ControlPosition.RightTop
+                Position = ControlPosition.BottomCenter
             },
             Center = new LatLngLiteral
             {
                 Lat = 13.505892,
                 Lng = 100.8162
             },
-            MapTypeId = MapTypeId.Roadmap,
+            MapTypeId = MapTypeId.Terrain,
             MapTypeControlOptions = new MapTypeControlOptions
             {
                 Position = ControlPosition.TopLeft,
                 Style = MapTypeControlStyle.DropdownMenu,
-                MapTypeIds = [MapTypeId.Roadmap, MapTypeId.Terrain, MapTypeId.Satellite, MapTypeId.Hybrid]
+                MapTypeIds = new[] { MapTypeId.Roadmap, MapTypeId.Terrain, MapTypeId.Satellite, MapTypeId.Hybrid }
             }
         };
     }
