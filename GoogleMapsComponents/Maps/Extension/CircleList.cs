@@ -79,6 +79,7 @@ public class CircleList : ListableEntityListBase<Circle, CircleOptions>
             }
             await list.SetMultipleAsync(opts);
         }
+
         return list;
     }
 

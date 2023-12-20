@@ -25,6 +25,7 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
     /// Set the set of entities; entities will be removed, added or changed to mirror the given set.
     /// </summary>
     /// <param name="opts"></param>
+    /// <param name="googleMapListableEntityTypeName"></param>
     /// <returns></returns>
     public async Task SetMultipleAsync(Dictionary<string, TEntityOptionsBase> opts, string googleMapListableEntityTypeName)
     {
@@ -76,7 +77,7 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
     /// </summary>
     public event EventHandler<EntityMouseEvent> EntityClicked;
 
-    private void FireEvent<TEvent>(EventHandler<TEvent> eventHandler, TEvent ea)
+    private void FireEvent<TEvent>(EventHandler<TEvent>? eventHandler, TEvent ea)
     {
         if (eventHandler != null)
         {
@@ -88,6 +89,7 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
     /// only keys not matching with existent listable entity keys will be created
     /// </summary>
     /// <param name="opts"></param>
+    /// <param name="googleMapListableEntityTypeName"></param>
     /// <returns></returns>
     public virtual async Task AddMultipleAsync(Dictionary<string, TEntityOptionsBase> opts, string googleMapListableEntityTypeName)
     {
@@ -181,9 +183,14 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
         }
     }
 
-    //Find the eventual match between required keys (if any) and yet stored markers key (if any)
-    //If filterKeys is null or empty all keys are returned
-    //Otherwise only eventually yet stored marker keys that matches with filterKeys
+
+    /// <summary>
+    /// Find the eventual match between required keys (if any) and yet stored markers key (if any)
+    /// If filterKeys is null or empty all keys are returned
+    /// Otherwise only eventually yet stored marker keys that matches with filterKeys
+    /// </summary>
+    /// <param name="filterKeys"></param>
+    /// <returns></returns>
     protected virtual List<string> ComputeMatchingKeys(List<string>? filterKeys = null)
     {
         List<string> matchingKeys;
@@ -200,19 +207,33 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
         return matchingKeys;
     }
 
+    [Obsolete("Use ComputeMatchingKeys instead. This one mistyped will be removed in future")]
+    protected virtual List<string> ComputeMathingKeys(List<string>? filterKeys = null)
+    {
+        return ComputeMatchingKeys(filterKeys);
+    }
+
     //Creates mapping between matching keys and markers Guid
     protected virtual Dictionary<Guid, string> ComputeInternalMapping(List<string> matchingKeys)
     {
         return BaseListableEntities.Where(e => matchingKeys.Contains(e.Key)).ToDictionary(e => BaseListableEntities[e.Key].Guid, e => e.Key);
     }
 
-    //Creates mapping between markers Guid and empty array of parameters (getter has no parameter)
+    /// <summary>
+    /// Creates mapping between markers Guid and empty array of parameters (getter has no parameter)
+    /// </summary>
+    /// <param name="matchingKeys"></param>
+    /// <returns></returns>
     protected virtual Dictionary<Guid, object> ComputeDictArgs(List<string> matchingKeys)
     {
-        return BaseListableEntities.Where(e => matchingKeys.Contains(e.Key)).ToDictionary(e => e.Value.Guid, e => (object)(new object[] { }));
+        return BaseListableEntities.Where(e => matchingKeys.Contains(e.Key)).ToDictionary(e => e.Value.Guid, _ => (object)(new object[] { }));
     }
 
-    //Create an empty result of the correct type in case of no matching keys
+    /// <summary>
+    /// Create an empty result of the correct type in case of no matching keys
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
     protected virtual Task<Dictionary<string, T>> ComputeEmptyResult<T>()
     {
         return Task<Dictionary<string, T>>.Factory.StartNew(() => new Dictionary<string, T>());
