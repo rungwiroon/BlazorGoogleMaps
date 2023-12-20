@@ -40,11 +40,10 @@ internal static class Helper
     {
         var enumType = typeof(T);
 
-        if (int.TryParse(str, out var enumintValue))
+        if (int.TryParse(str, out var enumIntValue))
         {
-            return (T)Enum.Parse(enumType, enumintValue.ToString());
+            return (T)Enum.Parse(enumType, enumIntValue.ToString());
         }
-
 
         if (str == "null")
         {
@@ -179,7 +178,6 @@ internal static class Helper
             return enumItem.ToString();
         }
 
-
         var memberInfo = enumItem2.GetType().GetMember(enumItem2.ToString());
         if (memberInfo.Length == 0)
         {
@@ -250,7 +248,6 @@ internal static class Helper
         string identifier,
         params object[] args)
     {
-
         var jsFriendlyArgs = MakeArgJsFriendly(jsRuntime, args);
 
         return await jsRuntime.InvokeAsync<object>(identifier, jsFriendlyArgs);
@@ -279,7 +276,6 @@ internal static class Helper
             if (jsonElement.ValueKind == JsonValueKind.Number)
             {
                 json = jsonElement.GetRawText();
-
             }
             else if (jsonElement.ValueKind == JsonValueKind.String)
             {
@@ -297,13 +293,11 @@ internal static class Helper
                     result = json ?? "";
                     return (T)result;
                 }
-
             }
             else
             {
                 json = jsonElement.GetString();
             }
-
 
             var propArray = Helper.DeSerializeObject<Dictionary<string, object>>(json);
             if (propArray?.TryGetValue("dotnetTypeName", out var typeName) ?? false)

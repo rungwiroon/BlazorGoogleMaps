@@ -19,15 +19,25 @@ public partial class MapLegendPage
 
     protected override void OnInitialized()
     {
-        _mapOptions = new MapOptions()
+        _mapOptions = new MapOptions
         {
             Zoom = 13,
-            Center = new LatLngLiteral()
+            ZoomControlOptions = new ZoomControlOptions
+            {
+                Position = ControlPosition.RightTop
+            },
+            Center = new LatLngLiteral
             {
                 Lat = 13.505892,
                 Lng = 100.8162
             },
-            MapTypeId = MapTypeId.Roadmap
+            MapTypeId = MapTypeId.Roadmap,
+            MapTypeControlOptions = new MapTypeControlOptions
+            {
+                Position = ControlPosition.TopLeft,
+                Style = MapTypeControlStyle.DropdownMenu,
+                MapTypeIds = [MapTypeId.Roadmap, MapTypeId.Terrain, MapTypeId.Satellite, MapTypeId.Hybrid]
+            }
         };
     }
 

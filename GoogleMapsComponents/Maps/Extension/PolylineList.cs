@@ -7,23 +7,22 @@ using System.Threading.Tasks;
 namespace GoogleMapsComponents.Maps.Extension;
 
 /// <summary>
-/// A class able to manage a lot of Polyline objects and get / set their
-/// properties at the same time, eventually with different values
-/// Main concept is that each Polyline to can be distinguished by other ones need
-/// to have a "unique key" with a "external world mean", so not necessary it's GUID
-///
-/// All properties should be called With a Dictionary<string, {property type}> indicating for each Polyline(related to that key) the corresponding related property value
+/// <para>A class able to manage a lot of Polyline objects and get / set their
+/// properties at the same time, eventually with different values.<br/>
+/// Main concept is that for each Polyline to be distinguished from other ones, it needs
+/// to have a "unique key" with an "external world meaning", so not necessarily a GUID</para>
+/// <para>All properties should be called With a <c>Dictionary&lt;string, {property type}&gt;</c> indicating for each Polyline (related to that key) the corresponding related property value</para>
 /// </summary>
 public class PolylineList : ListableEntityListBase<Polyline, PolylineOptions>
 {
     public Dictionary<string, Polyline> Polylines => base.BaseListableEntities;
 
     /// <summary>
-    /// Create circles list
+    /// Create polylines list
     /// </summary>
     /// <param name="jsRuntime"></param>
-    /// <param name="opts">Dictionary of desired Polyline keys and PolylineOptions values. Key as any type unique key. Not nessary Guid</param>
-    /// <returns>new instance of PolylineList class will be returned with its Polylines dictionary member populated with the corresponding results</returns>
+    /// <param name="opts">Dictionary of desired Polyline keys and PolylineOptions values. Key as any type unique key. Not necessarily Guid</param>
+    /// <returns>New instance of PolylineList class will be returned with its Polylines dictionary member populated with the corresponding results</returns>
     public static async Task<PolylineList> CreateAsync(IJSRuntime jsRuntime, Dictionary<string, PolylineOptions> opts)
     {
         JsObjectRef jsObjectRef = new JsObjectRef(jsRuntime, Guid.NewGuid());
@@ -40,7 +39,7 @@ public class PolylineList : ListableEntityListBase<Polyline, PolylineOptions>
     }
 
     /// <summary>
-    /// Sync list over lifetime: Create and remove list depending on entity count; 
+    /// Sync list over lifetime: Create and remove list depending on entity count;
     /// entities will be removed, added or changed to mirror the given set.
     /// </summary>
     /// <param name="list">
@@ -51,19 +50,26 @@ public class PolylineList : ListableEntityListBase<Polyline, PolylineOptions>
     /// <returns>
     /// The managed list. Assign to the variable you used as parameter.
     /// </returns>
-    public static async Task<PolylineList> SyncAsync(PolylineList list,IJSRuntime jsRuntime, Dictionary<string, PolylineOptions> opts,Action<MouseEvent,string,Polyline> clickCallback=null)
+    public static async Task<PolylineList> SyncAsync(PolylineList list, IJSRuntime jsRuntime, Dictionary<string, PolylineOptions> opts, Action<MouseEvent, string, Polyline> clickCallback = null)
     {
-        if (opts.Count==0) {
-            if (list!=null) {
+        if (opts.Count == 0)
+        {
+            if (list != null)
+            {
                 await list.SetMultipleAsync(opts);
-                list=null;
+                list = null;
             }
-        } else {
-            if (list==null) {
-                list = await PolylineList.CreateAsync(jsRuntime,new Dictionary<string, PolylineOptions>());
-                if (clickCallback!=null) {
-                    list.EntityClicked+=(sender,e)=>{
-                        clickCallback(e.MouseEvent,e.Key,e.Entity);
+        }
+        else
+        {
+            if (list == null)
+            {
+                list = await PolylineList.CreateAsync(jsRuntime, new Dictionary<string, PolylineOptions>());
+                if (clickCallback != null)
+                {
+                    list.EntityClicked += (sender, e) =>
+                    {
+                        clickCallback(e.MouseEvent, e.Key, e.Entity);
                     };
                 }
             }
@@ -99,7 +105,7 @@ public class PolylineList : ListableEntityListBase<Polyline, PolylineOptions>
 
     public Task<Dictionary<string, LatLngBoundsLiteral>> GetBounds(List<string> filterKeys = null)
     {
-        List<string> matchingKeys = ComputeMathingKeys(filterKeys);
+        List<string> matchingKeys = ComputeMatchingKeys(filterKeys);
 
         if (matchingKeys.Any())
         {
@@ -118,7 +124,7 @@ public class PolylineList : ListableEntityListBase<Polyline, PolylineOptions>
 
     public Task<Dictionary<string, LatLngLiteral>> GetCenters(List<string> filterKeys = null)
     {
-        List<string> matchingKeys = ComputeMathingKeys(filterKeys);
+        List<string> matchingKeys = ComputeMatchingKeys(filterKeys);
 
         if (matchingKeys.Any())
         {
@@ -137,7 +143,7 @@ public class PolylineList : ListableEntityListBase<Polyline, PolylineOptions>
 
     public Task<Dictionary<string, bool>> GetEditables(List<string> filterKeys = null)
     {
-        List<string> matchingKeys = ComputeMathingKeys(filterKeys);
+        List<string> matchingKeys = ComputeMatchingKeys(filterKeys);
 
         if (matchingKeys.Any())
         {
@@ -156,7 +162,7 @@ public class PolylineList : ListableEntityListBase<Polyline, PolylineOptions>
 
     public Task<Dictionary<string, double>> GetRadiuses(List<string> filterKeys = null)
     {
-        List<string> matchingKeys = ComputeMathingKeys(filterKeys);
+        List<string> matchingKeys = ComputeMatchingKeys(filterKeys);
 
         if (matchingKeys.Any())
         {

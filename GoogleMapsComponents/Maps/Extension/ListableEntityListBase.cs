@@ -21,8 +21,6 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
         BaseListableEntities = baseListableEntities;
     }
 
-
-
     /// <summary>
     /// Set the set of entities; entities will be removed, added or changed to mirror the given set.
     /// </summary>
@@ -186,7 +184,7 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
     //Find the eventual match between required keys (if any) and yet stored markers key (if any)
     //If filterKeys is null or empty all keys are returned
     //Otherwise only eventually yet stored marker keys that matches with filterKeys
-    protected virtual List<string> ComputeMathingKeys(List<string>? filterKeys = null)
+    protected virtual List<string> ComputeMatchingKeys(List<string>? filterKeys = null)
     {
         List<string> matchingKeys;
 
@@ -222,7 +220,7 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
 
     public virtual Task<Dictionary<string, Map>> GetMaps(List<string>? filterKeys = null)
     {
-        List<string> matchingKeys = ComputeMathingKeys(filterKeys);
+        List<string> matchingKeys = ComputeMatchingKeys(filterKeys);
 
         if (matchingKeys.Any())
         {
@@ -242,7 +240,7 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
 
     public virtual Task<Dictionary<string, bool>> GetDraggables(List<string>? filterKeys = null)
     {
-        List<string> matchingKeys = ComputeMathingKeys(filterKeys);
+        List<string> matchingKeys = ComputeMatchingKeys(filterKeys);
 
         if (matchingKeys.Any())
         {
@@ -262,7 +260,7 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
 
     public virtual Task<Dictionary<string, bool>> GetVisibles(List<string>? filterKeys = null)
     {
-        List<string> matchingKeys = ComputeMathingKeys(filterKeys);
+        List<string> matchingKeys = ComputeMatchingKeys(filterKeys);
 
         if (matchingKeys.Any())
         {
