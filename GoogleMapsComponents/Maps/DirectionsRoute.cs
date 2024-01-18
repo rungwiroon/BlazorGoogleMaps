@@ -12,7 +12,7 @@ public class DirectionsRoute
     /// A single route containing a set of legs in a DirectionsResult. 
     /// Note that though this object is "JSON-like," it is not strictly JSON, as it directly and indirectly includes LatLng objects.
     /// </summary>
-    public LatLngBoundsLiteral Bounds { get; set; }
+    public LatLngBoundsLiteral? Bounds { get; set; }
 
     /// <summary>
     /// Copyrights text to be displayed for this route.
@@ -68,5 +68,5 @@ public class DirectionsRoute
     /// <summary>
     /// The total fare for the whole transit trip. Only applicable to transit requests.
     /// </summary>
-    public TransitFare Fare { get; set; }
+    public TransitFare? Fare { get; set; }
 }
