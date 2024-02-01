@@ -14,6 +14,13 @@
         return fn;
     }
 
+    const extendableStringify = function (obj, replacer, space) {
+        if (window.blazorGoogleMapsBeforeStringify) {
+            obj = window.blazorGoogleMapsBeforeStringify(obj);
+        }
+        return JSON.stringify(obj, replacer, space);
+    };
+
     let mapObjects = {};
     let controlParents = {}
     const dateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
@@ -73,11 +80,11 @@
                 if (args.length == 1 && typeof args[0].marker !== "undefined") {
                     var n = args[0].marker;
                     args[0].marker = null;
-                    await item.invokeMethodAsync("Invoke", JSON.stringify(args, getCircularReplacer()), guid);
+                    await item.invokeMethodAsync("Invoke", extendableStringify(args, getCircularReplacer()), guid);
                     args[0].marker = n;
                 }
                 else {
-                    await item.invokeMethodAsync("Invoke", JSON.stringify(args, getCircularReplacer()), guid);
+                    await item.invokeMethodAsync("Invoke", extendableStringify(args, getCircularReplacer()), guid);
                 }
 
                 blazorGoogleMaps.objectManager.disposeObject(guid);
@@ -229,7 +236,7 @@
     //ServerSide (Client Side have no issues) reach MaximumReceiveMessageSize (32kb) and crash if we return all data
     //Workaround is to increase limit MaximumReceiveMessageSize
     function cleanDirectionResult(dirResponse, dirRequestOptions) {
-        let tmpdirobj = JSON.parse(JSON.stringify(dirResponse));
+        let tmpdirobj = JSON.parse(extendableStringify(dirResponse));
 
         tmpdirobj.routes.forEach((r) => {
             if (dirRequestOptions == undefined || dirRequestOptions.stripOverviewPath) {
@@ -315,8 +322,8 @@
                     renderer.setDirections(result);
                 }
 
-                let jsonRest = JSON.stringify(cleanDirectionResult(result, options));
-                //console.log(JSON.stringify(jsonRest));
+                let jsonRest = extendableStringify(cleanDirectionResult(result, options));
+                //console.log(extendableStringify(jsonRest));
                 return jsonRest;
             } catch (error) {
                 console.log(error);
@@ -581,7 +588,7 @@
                         console.log(e);
                     }
 
-                    let jsonRest = JSON.stringify(cleanDirectionResult(result, dirRequestOptions));
+                    let jsonRest = extendableStringify(cleanDirectionResult(result, dirRequestOptions));
                     return jsonRest;
                 }
                 else if (functionToInvoke == "getProjection") {
@@ -705,7 +712,7 @@
                         && typeof result === "object") {
                         if (result.hasOwnProperty("geocoded_waypoints") && result.hasOwnProperty("routes")) {
 
-                            let jsonRest = JSON.stringify(cleanDirectionResult(result));
+                            let jsonRest = extendableStringify(cleanDirectionResult(result));
                             return jsonRest;
                         }
                         if ("getArray" in result) {
@@ -729,9 +736,9 @@
                         if ("get" in result) {
                             return result.get("guidString");
                         } else if ("dotnetTypeName" in result) {
-                            return JSON.stringify(result, getCircularReplacer());
+                            return extendableStringify(result, getCircularReplacer());
                         } else {
-                            return JSON.parse(JSON.stringify(result, getCircularReplacer()));
+                            return JSON.parse(extendableStringify(result, getCircularReplacer()));
                         }
                     } else if (functionToInvoke === "remove") {
                         this.disposeObject(args[0]);
@@ -789,7 +796,7 @@
                 google.maps.event.addListener(drawingManager, "overlaycomplete", function (event) {
                     let overlayUuid = uuidv4();
                     mapObjects[overlayUuid] = event.overlay;
-                    let returnObj = JSON.stringify([{ type: event.type, uuid: overlayUuid.toString() }]);
+                    let returnObj = extendableStringify([{ type: event.type, uuid: overlayUuid.toString() }]);
                     act.invokeMethodAsync("Invoke", returnObj, uuid);
                 });
             },
