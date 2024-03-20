@@ -10,7 +10,7 @@ public class DomEvent
 /// </summary>
 public class DragEndEvent
 {
-    public LatLngLiteral LatLng { get; set; }
-    public Point Pixel { get; set; }
-    public DomEvent DomEvent { get; set; }
+    public LatLngLiteral? LatLng { get; set; }
+    public Point? Pixel { get; set; }
+    public DomEvent? DomEvent { get; set; }
 }
