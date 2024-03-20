@@ -121,9 +121,9 @@
             }
         }
 
-        if (typeof item2 === "string" && item2 !== null) {
-            if (item2.startsWith("google.maps.drawing.OverlayType")) {
-                switch (item2) {
+        if (item2 === "polyline" && item2 !== null) {
+            if (item.startsWith("google.maps.drawing.OverlayType")) {
+                switch (item) {
                     case "google.maps.drawing.OverlayType.CIRCLE":
                         item2 = google.maps.drawing.OverlayType.CIRCLE;
                         break;
