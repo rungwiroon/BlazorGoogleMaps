@@ -73,7 +73,7 @@ public class DrawingManager : EventEntityBase
     /// https://developers.google.com/maps/documentation/javascript/reference/drawing#DrawingManager.setMap
     /// </summary>
     /// <param name="map"></param>
-    public async Task SetMap(Map map)
+    public async Task SetMap(Map? map)
     {
         await _jsObjectRef.InvokeAsync(
             "setMap",

@@ -121,30 +121,29 @@
             }
         }
 
-        if (item2 === "polyline" && item2 !== null) {
-            if (item.startsWith("google.maps.drawing.OverlayType")) {
-                switch (item) {
-                    case "google.maps.drawing.OverlayType.CIRCLE":
-                        item2 = google.maps.drawing.OverlayType.CIRCLE;
-                        break;
-                    case "google.maps.drawing.OverlayType.MARKER":
-                        item2 = google.maps.drawing.OverlayType.MARKER;
-                        break;
-                    case "google.maps.drawing.OverlayType.POLYGON":
-                        item2 = google.maps.drawing.OverlayType.POLYGON;
-                        break;
-                    case "google.maps.drawing.OverlayType.POLYLINE":
-                        item2 = google.maps.drawing.OverlayType.POLYLINE;
-                        break;
-                    case "google.maps.drawing.OverlayType.RECTANGLE":
-                        item2 = google.maps.drawing.OverlayType.RECTANGLE;
-                        break;
-                    default:
-                }
-
-                return item2;
+        if (item !== null && item.startsWith("google.maps.drawing.OverlayType")) {
+            switch (item) {
+                case "google.maps.drawing.OverlayType.CIRCLE":
+                    item2 = google.maps.drawing.OverlayType.CIRCLE;
+                    break;
+                case "google.maps.drawing.OverlayType.MARKER":
+                    item2 = google.maps.drawing.OverlayType.MARKER;
+                    break;
+                case "google.maps.drawing.OverlayType.POLYGON":
+                    item2 = google.maps.drawing.OverlayType.POLYGON;
+                    break;
+                case "google.maps.drawing.OverlayType.POLYLINE":
+                    item2 = google.maps.drawing.OverlayType.POLYLINE;
+                    break;
+                case "google.maps.drawing.OverlayType.RECTANGLE":
+                    item2 = google.maps.drawing.OverlayType.RECTANGLE;
+                    break;
+                default:
             }
+
+            return item2;
         }
+        
 
         if (typeof item2 === "object" && item2 !== null) {
             if ("guidString" in item2) {

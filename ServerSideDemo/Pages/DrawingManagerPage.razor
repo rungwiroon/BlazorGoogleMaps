@@ -3,8 +3,9 @@
 
 <h1>Google Map Markers</h1>
 
-<GoogleMap @ref="@map1" Id="map1" Options="@mapOptions" OnAfterInit="@(async () => await OnAfterInitAsync())"></GoogleMap>
+<GoogleMap @ref="@_map" Id="map1" Options="@_mapOptions" OnAfterInit="@(async () => await OnAfterInitAsync())"></GoogleMap>
 <button @onclick="ChangeDrawingModeToLine">Change mode to line</button>
+<button @onclick="ChangeDrawingModeToPolygon">Change mode to polygon</button>
 <button @onclick="StopDrawingMode">Stop drawing mode</button>
 <button @onclick="SetMap">Set Map</button>
 @*<div id="map" @ref="@map1ElementRef" style="height: 450px"></div>*@
