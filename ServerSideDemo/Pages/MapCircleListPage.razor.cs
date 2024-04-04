@@ -4,23 +4,24 @@ using GoogleMapsComponents.Maps.Extension;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ServerSideDemo.Pages;
 
 public partial class MapCircleListPage : ComponentBase
 {
-    private GoogleMap map1;
-    private MapOptions mapOptions;
-    int bunchsize = 10;
+    private GoogleMap _map1;
+    private MapOptions _mapOptions;
+    private int _bunchsize = 10;
 
-    private CircleList circleList = null;
-    private Dictionary<string, CircleOptions> circleOptionsByRef = new Dictionary<string, CircleOptions>();
-    private int lastId = 0;
+    private CircleList _circleList = null;
+    private Dictionary<string, CircleOptions> _circleOptionsByRef = new Dictionary<string, CircleOptions>();
+    private int _lastId = 0;
 
     protected override void OnInitialized()
     {
-        mapOptions = new MapOptions()
+        _mapOptions = new MapOptions()
         {
             Zoom = 13,
             Center = new LatLngLiteral()
@@ -35,20 +36,59 @@ public partial class MapCircleListPage : ComponentBase
     /// <summary>
     /// Create a bunch of circles, put them into a dictionary with reference ids and display them on the map.
     /// </summary>
+    private async void CreateBunchOfPolygon()
+    {
+        var outerCoords = new List<LatLngLiteral>()
+        {
+            new LatLngLiteral(13.501908279929077, 100.69801114196777),
+            new LatLngLiteral(13.491392275719202, 100.74933789367675),
+            new LatLngLiteral(13.465851481053091, 100.71637890930175),
+        };
+
+        var innerCoords = new List<LatLngLiteral>()
+        {
+            new LatLngLiteral(13.487386057049033, 100.72633526916503),
+            new LatLngLiteral(13.48137660307361, 100.719125491333),
+            new LatLngLiteral(13.478705686132331, 100.72959683532714),
+        };
+
+        var createedPolygons = await PolygonList.CreateAsync(_map1.JsRuntime, new Dictionary<string, PolygonOptions>()
+        {
+            { Guid.NewGuid().ToString(), new PolygonOptions()
+            {
+                Paths = new[] { outerCoords, innerCoords },
+                Draggable = true,
+                Editable = false,
+                FillColor = "blue",
+                ZIndex = 999,
+                Visible = true,
+                StrokeWeight = 5,
+                Map = _map1.InteropObject
+            }}
+        });
+        var first = createedPolygons.Polygons.First().Value;
+        var path = await first.GetPath();
+        await _map1.InteropObject.SetCenter(path.First());
+    }
+
     private async void CreateBunchOfCircles()
     {
-        int howMany = bunchsize;
-        var bounds = await map1.InteropObject.GetBounds();
+        int howMany = _bunchsize;
+        var bounds = await _map1.InteropObject.GetBounds();
         double maxRadius = (bounds.North - bounds.South) * 111111.0 / (10 + Math.Sqrt(howMany));
-        var colors = new string[] { "#FFFFFF", "#9132D1", "#FFD800", "#846A00", "#AAC643", "#C96A00", "#B200FF", "#CD6A00", "#00A321", "#7F6420" };
+        var colors = new[] { "#FFFFFF", "#9132D1", "#FFD800", "#846A00", "#AAC643", "#C96A00", "#B200FF", "#CD6A00", "#00A321", "#7F6420" };
         var rnd = new Random();
         for (int i = 0; i < howMany; i++)
         {
             var color = colors[rnd.Next(0, colors.Length)];
             var circleOptions = new CircleOptions
             {
-                Map = map1.InteropObject,
-                Center = new LatLngLiteral { Lat = bounds.South + rnd.NextDouble() * (bounds.North - bounds.South), Lng = bounds.West + rnd.NextDouble() * (bounds.East - bounds.West) },
+                Map = _map1.InteropObject,
+                Center = new LatLngLiteral
+                {
+                    Lat = bounds.South + rnd.NextDouble() * (bounds.North - bounds.South),
+                    Lng = bounds.West + rnd.NextDouble() * (bounds.East - bounds.West)
+                },
                 Radius = (rnd.NextDouble() + 0.2) / 1.2 * maxRadius,
                 StrokeColor = color,
                 StrokeOpacity = 0.60f,
@@ -58,17 +98,18 @@ public partial class MapCircleListPage : ComponentBase
                 Visible = true,
                 ZIndex = 1000000,
             };
-            circleOptionsByRef[(++lastId).ToString()] = circleOptions;
+            _circleOptionsByRef[(++_lastId).ToString()] = circleOptions;
         }
+
         await RefreshCircleList();
     }
 
     private async Task RefreshCircleList()
     {
-        circleList = await CircleList.SyncAsync(circleList, map1.JsRuntime, circleOptionsByRef, async (ev, sKey, entity) =>
+        _circleList = await CircleList.SyncAsync(_circleList, _map1.JsRuntime, _circleOptionsByRef, async (ev, sKey, entity) =>
         {
             // Circle has been clicked --> delete it.
-            circleOptionsByRef.Remove(sKey);
+            _circleOptionsByRef.Remove(sKey);
             await RefreshCircleList();
         });
     }

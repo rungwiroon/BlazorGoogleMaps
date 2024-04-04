@@ -50,7 +50,7 @@ public class PolygonList : ListableEntityListBase<Polygon, PolygonOptions>
     /// <returns>
     /// The managed list. Assign to the variable you used as parameter.
     /// </returns>
-    public static async Task<PolygonList> SyncAsync(PolygonList list, IJSRuntime jsRuntime, Dictionary<string, PolygonOptions> opts, Action<MouseEvent, string, Polygon> clickCallback = null)
+    public static async Task<PolygonList> SyncAsync(PolygonList? list, IJSRuntime jsRuntime, Dictionary<string, PolygonOptions> opts, Action<MouseEvent, string, Polygon>? clickCallback = null)
     {
         if (opts.Count == 0)
         {
@@ -75,6 +75,7 @@ public class PolygonList : ListableEntityListBase<Polygon, PolygonOptions>
             }
             await list.SetMultipleAsync(opts);
         }
+
         return list;
     }
 

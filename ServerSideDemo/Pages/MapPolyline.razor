@@ -4,7 +4,7 @@
 
 <h1>Polylines</h1>
 
-<GoogleMap @ref="@map1" Id="map1" Options="@mapOptions" OnAfterInit="async () => await OnAfterMapInit()"></GoogleMap>
+<GoogleMap @ref="@_map1" Id="map1" Options="@_mapOptions" OnAfterInit="async () => await OnAfterMapInit()"></GoogleMap>
 <button @onclick="StartDrawingPolyline">Start drawing polyline</button>
 <button @onclick="EndDrawingPolyline">End drawing polyline</button>
 <button @onclick="AppendToPolylinePath">Append to last polyline path</button>
@@ -22,32 +22,32 @@
 <br />
 <button @onclick="DrawingCircle">Drawing circle</button>
 
-<MapEventList @ref="@eventList" Events="@_events"></MapEventList>
+<MapEventList @ref="@_eventList" Events="@_events"></MapEventList>
 
 @functions {
-    private GoogleMap map1;
+    private GoogleMap _map1;
 
-    private MapOptions mapOptions;
+    private MapOptions _mapOptions;
 
-    private List<LatLngLiteral> path = new List<LatLngLiteral>();
+    private List<LatLngLiteral> _path = new List<LatLngLiteral>();
 
-    private List<Polyline> polylines = new List<Polyline>();
-    private Polyline polyline;
+    private List<Polyline> _polylines = new List<Polyline>();
+    private Polyline _polyline;
 
-    private List<Polygon> polygons = new List<Polygon>();
-    private Polygon polygon;
+    private List<Polygon> _polygons = new List<Polygon>();
+    private Polygon _polygon;
 
-    private Rectangle rectangle;
-    private Circle circle;
+    private Rectangle _rectangle;
+    private Circle _circle;
 
-    private MapEventList eventList;
+    private MapEventList _eventList;
 
     private List<String> _events = new List<String>();
 
 
     protected override void OnInitialized()
     {
-        mapOptions = new MapOptions()
+        _mapOptions = new MapOptions()
             {
                 Zoom = 13,
                 Center = new LatLngLiteral()
@@ -61,47 +61,47 @@
 
     private async Task OnAfterMapInit()
     {
-        await map1.InteropObject.AddListener<MouseEvent>("click", async (e) => await OnClick(e));
+        await _map1.InteropObject.AddListener<MouseEvent>("click", async (e) => await OnClick(e));
     }
 
     private async Task StartDrawingPolyline()
     {
-        polyline = await Polyline.CreateAsync(map1.JsRuntime, new PolylineOptions()
+        _polyline = await Polyline.CreateAsync(_map1.JsRuntime, new PolylineOptions()
             {
                 Draggable = true,
                 Editable = true,
-                Map = map1.InteropObject
+                Map = _map1.InteropObject
             });
 
-        path.Clear();
+        _path.Clear();
 
         // Add Listener to Paths from Polyline
-        await polyline.InvokeAsync("AddListeners").ConfigureAwait(true);
+        await _polyline.InvokeAsync("AddListeners").ConfigureAwait(true);
 
-        await polyline.AddListener("insert_at", async () =>
+        await _polyline.AddListener("insert_at", async () =>
         {
-            if (polyline != null)
+            if (_polyline != null)
             {
-                path = (await polyline.GetPath().ConfigureAwait(true)).ToList();
+                _path = (await _polyline.GetPath().ConfigureAwait(true)).ToList();
             }
         });
-        await polyline.AddListener("set_at", async () =>
+        await _polyline.AddListener("set_at", async () =>
       {
-          if (polyline != null)
+          if (_polyline != null)
           {
-              path = (await polyline.GetPath().ConfigureAwait(true)).ToList();
+              _path = (await _polyline.GetPath().ConfigureAwait(true)).ToList();
           }
       });
-        await polyline.AddListener("remove_at", async () =>
+        await _polyline.AddListener("remove_at", async () =>
         {
-            if (polyline != null)
+            if (_polyline != null)
             {
-                path = (await polyline.GetPath().ConfigureAwait(true)).ToList();
+                _path = (await _polyline.GetPath().ConfigureAwait(true)).ToList();
             }
 
         });
 
-        await polyline.AddListener("click", () =>
+        await _polyline.AddListener("click", () =>
         {
             _events.Insert(0, "click polyline");
             _events = _events.Take(100).ToList();
@@ -110,7 +110,7 @@
 
     private async Task ClearPolylinePath()
     {
-        var line = polylines.LastOrDefault();
+        var line = _polylines.LastOrDefault();
         if (line == null) return;
 
         var polylinePath = await line.CreatePath();
@@ -119,24 +119,24 @@
     }
     private async Task AppendToPolylinePath()
     {
-        var line = polylines.LastOrDefault();
+        var line = _polylines.LastOrDefault();
         if (line == null) return;
 
-        polyline = line;
-        path = (await polyline.GetPath().ConfigureAwait(true)).ToList();
+        _polyline = line;
+        _path = (await _polyline.GetPath().ConfigureAwait(true)).ToList();
     }
     private Task EndDrawingPolyline()
     {
-        polylines.Add(polyline);
+        _polylines.Add(_polyline);
 
-        polyline = null;
-        path.Clear();
+        _polyline = null;
+        _path.Clear();
         return Task.CompletedTask;
     }
 
     private void AddArrowsToPolyline()
     {
-        foreach (var polyline in polylines)
+        foreach (var polyline in _polylines)
         {
             polyline.SetOptions(new PolylineOptions
                 {
@@ -153,7 +153,7 @@
 
     private void RemoveArrowsFromPolyline()
     {
-        foreach (var polyline in polylines)
+        foreach (var polyline in _polylines)
         {
             polyline.SetOptions(new PolylineOptions
                 {
@@ -165,124 +165,124 @@
 
     private async Task StartDrawingPolygon()
     {
-        polygon = await Polygon.CreateAsync(map1.JsRuntime, new PolygonOptions()
+        _polygon = await Polygon.CreateAsync(_map1.JsRuntime, new PolygonOptions()
             {
                 Draggable = false,
                 Editable = true,
-                Map = map1.InteropObject
+                Map = _map1.InteropObject
             });
 
         // Add Listener to Paths from Polyline
-        await polygon.InvokeAsync("AddListeners").ConfigureAwait(true);
+        await _polygon.InvokeAsync("AddListeners").ConfigureAwait(true);
 
-        await polygon.AddListener("insert_at", async () =>
+        await _polygon.AddListener("insert_at", async () =>
         {
-            path = (await polygon.GetPath().ConfigureAwait(true)).ToList();
+            _path = (await _polygon.GetPath().ConfigureAwait(true)).ToList();
         });
-        await polygon.AddListener("set_at", async () =>
+        await _polygon.AddListener("set_at", async () =>
         {
-            path = (await polygon.GetPath().ConfigureAwait(true)).ToList();
+            _path = (await _polygon.GetPath().ConfigureAwait(true)).ToList();
         });
-        await polygon.AddListener("remove_at", async () =>
+        await _polygon.AddListener("remove_at", async () =>
         {
-            path = (await polygon.GetPath().ConfigureAwait(true)).ToList();
+            _path = (await _polygon.GetPath().ConfigureAwait(true)).ToList();
         });
 
-        path.Clear();
+        _path.Clear();
     }
 
     private async Task EndDrawingPolygon()
     {
-        polygons.Add(polygon);
-        await polygon.AddListener("click", () =>
+        _polygons.Add(_polygon);
+        await _polygon.AddListener("click", () =>
         {
             Console.WriteLine($"polygon clicked");
         });
 
 
-        polygon = null;
-        path.Clear();
+        _polygon = null;
+        _path.Clear();
     }
 
     private async Task DrawingRectangle()
     {
-        rectangle = await Rectangle.CreateAsync(map1.JsRuntime, new RectangleOptions()
+        _rectangle = await Rectangle.CreateAsync(_map1.JsRuntime, new RectangleOptions()
             {
                 Draggable = true,
                 Editable = true,
-                Map = map1.InteropObject
+                Map = _map1.InteropObject
             });
 
-        path.Clear();
+        _path.Clear();
     }
 
     private async Task DrawingCircle()
     {
-        circle = await Circle.CreateAsync(map1.JsRuntime, new CircleOptions()
+        _circle = await Circle.CreateAsync(_map1.JsRuntime, new CircleOptions()
             {
                 Draggable = true,
                 Editable = true,
-                Map = map1.InteropObject,
+                Map = _map1.InteropObject,
                 Radius = 1000
             });
 
-        path.Clear();
+        _path.Clear();
     }
 
     private async Task OnClick(MouseEvent e)
     {
         //Debug.WriteLine($"Onclick : {mouseEvent.LatLng}");
 
-        path.Add(e.LatLng);
+        _path.Add(e.LatLng);
 
-        if (polyline != null)
+        if (_polyline != null)
         {
             //Debug.WriteLine($"Path length : {path.Count()}");
 
-            await polyline.SetPath(path);
+            await _polyline.SetPath(_path);
 
             // Add Listener to Paths from Polyline
-            await polyline.InvokeAsync("AddListeners").ConfigureAwait(true);
+            await _polyline.InvokeAsync("AddListeners").ConfigureAwait(true);
         }
-        else if (polygon != null)
+        else if (_polygon != null)
         {
-            await polygon.SetPath(path);
+            await _polygon.SetPath(_path);
         }
-        else if (rectangle != null)
+        else if (_rectangle != null)
         {
-            if (path.Count < 2)
+            if (_path.Count < 2)
             {
                 return;
             }
 
             var bounds = new LatLngBoundsLiteral()
                 {
-                    East = path[1].Lng,
-                    North = path[0].Lat,
-                    South = path[1].Lat,
-                    West = path[0].Lng
+                    East = _path[1].Lng,
+                    North = _path[0].Lat,
+                    South = _path[1].Lat,
+                    West = _path[0].Lng
                 };
 
-            await rectangle.SetBounds(bounds);
+            await _rectangle.SetBounds(bounds);
 
             //path.Clear();
-            rectangle = null;
+            _rectangle = null;
         }
-        else if (circle != null)
+        else if (_circle != null)
         {
-            await circle.SetCenter(path.First());
-            circle = null;
+            await _circle.SetCenter(_path.First());
+            _circle = null;
         }
     }
 
     private async Task SetAndGetPathPolygon()
     {
 
-        var polygonForPath = await Polygon.CreateAsync(map1.JsRuntime, new PolygonOptions()
+        var polygonForPath = await Polygon.CreateAsync(_map1.JsRuntime, new PolygonOptions()
             {
                 Draggable = true,
                 Editable = false,
-                Map = map1.InteropObject,
+                Map = _map1.InteropObject,
                 FillColor = "red",
                 ZIndex = 999
             });
@@ -294,7 +294,7 @@
             new LatLngLiteral( 100.87301991577148,13.533864141748618 ),
         };
 
-        polygons.Add(polygonForPath);
+        _polygons.Add(polygonForPath);
         await polygonForPath.SetPath(pathLocal);
 
         var polygonPath = await polygonForPath.GetPath();
@@ -321,7 +321,7 @@
             new LatLngLiteral(13.478705686132331, 100.72959683532714),
         };
 
-        var polygonForPaths = await Polygon.CreateAsync(map1.JsRuntime, new PolygonOptions()
+        var polygonForPaths = await Polygon.CreateAsync(_map1.JsRuntime, new PolygonOptions()
         {
             Paths = new[] { outerCoords, innerCoords },
             Draggable = true,
@@ -330,8 +330,8 @@
             ZIndex = 999,
         });
 
-        polygons.Add(polygonForPaths);
-        await polygonForPaths.SetMap(map1.InteropObject);
+        _polygons.Add(polygonForPaths);
+        await polygonForPaths.SetMap(_map1.InteropObject);
 
         var polygonPaths = await polygonForPaths.GetPaths();
         var polygonPathsList = polygonPaths.ToList();
