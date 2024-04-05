@@ -18,6 +18,7 @@ public partial class MapCircleListPage : ComponentBase
     private CircleList _circleList = null;
     private Dictionary<string, CircleOptions> _circleOptionsByRef = new Dictionary<string, CircleOptions>();
     private int _lastId = 0;
+    private PolygonList? _createedPolygons;
 
     protected override void OnInitialized()
     {
@@ -52,7 +53,7 @@ public partial class MapCircleListPage : ComponentBase
             new LatLngLiteral(13.478705686132331, 100.72959683532714),
         };
 
-        var createedPolygons = await PolygonList.CreateAsync(_map1.JsRuntime, new Dictionary<string, PolygonOptions>()
+        _createedPolygons = await PolygonList.CreateAsync(_map1.JsRuntime, new Dictionary<string, PolygonOptions>()
         {
             { Guid.NewGuid().ToString(), new PolygonOptions()
             {
@@ -66,7 +67,7 @@ public partial class MapCircleListPage : ComponentBase
                 Map = _map1.InteropObject
             }}
         });
-        var first = createedPolygons.Polygons.First().Value;
+        var first = _createedPolygons.Polygons.First().Value;
         var path = await first.GetPath();
         await _map1.InteropObject.SetCenter(path.First());
     }
@@ -112,5 +113,18 @@ public partial class MapCircleListPage : ComponentBase
             _circleOptionsByRef.Remove(sKey);
             await RefreshCircleList();
         });
+    }
+
+    private async Task RemoveBunchOfPolygon()
+    {
+        if (_createedPolygons != null)
+        {
+            foreach (var markerListMarker in _createedPolygons.Polygons)
+            {
+                await markerListMarker.Value.SetMap(null);
+            }
+
+            await _createedPolygons.RemoveAllAsync();
+        }
     }
 }
