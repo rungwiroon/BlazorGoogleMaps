@@ -11,13 +11,13 @@ namespace ServerSideDemo.Pages;
 
 public partial class MapCircleListPage : ComponentBase
 {
-    private GoogleMap _map1;
-    private MapOptions _mapOptions;
+    private GoogleMap _map = null!;
+    private MapOptions _mapOptions = null!;
     private int _bunchsize = 10;
 
-    private CircleList _circleList = null;
-    private Dictionary<string, CircleOptions> _circleOptionsByRef = new Dictionary<string, CircleOptions>();
-    private int _lastId = 0;
+    private CircleList? _circleList;
+    private readonly Dictionary<string, CircleOptions> _circleOptionsByRef = new Dictionary<string, CircleOptions>();
+    private int _lastId;
     private PolygonList? _createedPolygons;
 
     protected override void OnInitialized()
@@ -53,7 +53,7 @@ public partial class MapCircleListPage : ComponentBase
             new LatLngLiteral(13.478705686132331, 100.72959683532714),
         };
 
-        _createedPolygons = await PolygonList.CreateAsync(_map1.JsRuntime, new Dictionary<string, PolygonOptions>()
+        _createedPolygons = await PolygonList.CreateAsync(_map.JsRuntime, new Dictionary<string, PolygonOptions>()
         {
             { Guid.NewGuid().ToString(), new PolygonOptions()
             {
@@ -64,18 +64,18 @@ public partial class MapCircleListPage : ComponentBase
                 ZIndex = 999,
                 Visible = true,
                 StrokeWeight = 5,
-                Map = _map1.InteropObject
+                Map = _map.InteropObject
             }}
         });
         var first = _createedPolygons.Polygons.First().Value;
         var path = await first.GetPath();
-        await _map1.InteropObject.SetCenter(path.First());
+        await _map.InteropObject.SetCenter(path.First());
     }
 
     private async void CreateBunchOfCircles()
     {
         int howMany = _bunchsize;
-        var bounds = await _map1.InteropObject.GetBounds();
+        var bounds = await _map.InteropObject.GetBounds();
         double maxRadius = (bounds.North - bounds.South) * 111111.0 / (10 + Math.Sqrt(howMany));
         var colors = new[] { "#FFFFFF", "#9132D1", "#FFD800", "#846A00", "#AAC643", "#C96A00", "#B200FF", "#CD6A00", "#00A321", "#7F6420" };
         var rnd = new Random();
@@ -84,7 +84,7 @@ public partial class MapCircleListPage : ComponentBase
             var color = colors[rnd.Next(0, colors.Length)];
             var circleOptions = new CircleOptions
             {
-                Map = _map1.InteropObject,
+                Map = _map.InteropObject,
                 Center = new LatLngLiteral
                 {
                     Lat = bounds.South + rnd.NextDouble() * (bounds.North - bounds.South),
@@ -107,7 +107,7 @@ public partial class MapCircleListPage : ComponentBase
 
     private async Task RefreshCircleList()
     {
-        _circleList = await CircleList.SyncAsync(_circleList, _map1.JsRuntime, _circleOptionsByRef, async (ev, sKey, entity) =>
+        _circleList = await CircleList.SyncAsync(_circleList, _map.JsRuntime, _circleOptionsByRef, async (ev, sKey, entity) =>
         {
             // Circle has been clicked --> delete it.
             _circleOptionsByRef.Remove(sKey);
