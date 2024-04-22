@@ -1,3 +1,4 @@
+using GoogleMapsComponents;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -21,6 +22,13 @@ public class Startup
     {
         services.AddRazorPages();
         services.AddServerSideBlazor().AddHubOptions(config => config.MaximumReceiveMessageSize = 1048576);
+        services.AddBlazorGoogleMaps(opt =>
+        {
+            opt.KeyProvider = () => "AIzaSyBdkgvniMdyFPAcTlcZivr8f30iU-kn1T0";
+            opt.UseBootstrapLoader = true;
+            opt.Version = "beta";
+            opt.Libraries = "places,visualization,drawing,marker";
+        });
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
