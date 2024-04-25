@@ -14,7 +14,7 @@ To use Google recommended way by using bootstrap loader use
 ```
 services.AddBlazorGoogleMaps(opt =>
     {
-        opt.KeyProvider = () => "XXXXXXXXXXXXXXXXXXXXXXX";
+        opt.KeyProvider = () => "YOUR_KEY_GOES_HERE";
         opt.UseBootstrapLoader = true;
         opt.Version = "beta";
         opt.Libraries = "places,visualization,drawing,marker";
