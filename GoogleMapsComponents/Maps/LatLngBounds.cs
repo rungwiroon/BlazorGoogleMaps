@@ -15,7 +15,7 @@ public class LatLngBounds : IDisposable
     /// <summary>
     /// Constructs a new empty bounds
     /// </summary>
-    public async static Task<LatLngBounds> CreateAsync(IJSRuntime jsRuntime)
+    public static async Task<LatLngBounds> CreateAsync(IJSRuntime jsRuntime)
     {
         var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.LatLngBounds");
 

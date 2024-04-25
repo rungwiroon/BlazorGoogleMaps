@@ -44,12 +44,9 @@ public partial class MapMarker
         };
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    private async Task AfterMapRender()
     {
-        if (firstRender)
-        {
-            _bounds = await LatLngBounds.CreateAsync(_map1.JsRuntime);
-        }
+        _bounds = await LatLngBounds.CreateAsync(_map1.JsRuntime);
     }
 
     private async Task ClearClustering()
@@ -348,4 +345,6 @@ public partial class MapMarker
         var boundsLiteral = await _bounds.ToJson();
         await _map1.InteropObject.FitBounds(boundsLiteral, OneOf.OneOf<int, Padding>.FromT0(5));
     }
+
+
 }

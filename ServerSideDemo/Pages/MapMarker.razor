@@ -3,7 +3,7 @@
 
 <h1>Google Map Markers</h1>
 
-<GoogleMap @ref="@_map1" Id="map1" Options="@_mapOptions"></GoogleMap>
+<GoogleMap @ref="@_map1" Id="map1" Options="@_mapOptions" OnAfterInit="AfterMapRender" ></GoogleMap>
 <button @onclick="@AddMarker">Add marker</button>
 <button @onclick="@AddMarkerStyled">Add styled font marker</button>
 <button @onclick="@RemoveMarker">Remove marker</button>
