@@ -4,7 +4,7 @@
 
 <h1>Google Map Advanced Markers</h1>
 <smallNotice: Available only in the v=beta channel.></smallNotice:>
-<GoogleMap @ref="@_map1" Id="map1" Options="@_mapOptions"></GoogleMap>
+<GoogleMap @ref="@_map1" Id="map1" Options="@_mapOptions" OnAfterInit="OnAfterRenderAsync"></GoogleMap>
 <button @onclick="@AddMarker">Add marker</button>
 
 @code {
@@ -34,12 +34,9 @@
         };
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected async Task OnAfterRenderAsync()
     {
-        if (firstRender)
-        {
-            _bounds = await LatLngBounds.CreateAsync(_map1.JsRuntime);
-        }
+        _bounds = await LatLngBounds.CreateAsync(_map1.JsRuntime);
     }
 
     private async Task AddMarker()
@@ -54,5 +51,8 @@
         });
 
         await _bounds.Extend(mapCenter);
+
+        var position = await marker.GetPosition();
+        var latitude = position.Lat;
     }
 }
