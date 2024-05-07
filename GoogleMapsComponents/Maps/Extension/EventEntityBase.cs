@@ -9,7 +9,7 @@ public abstract class EventEntityBase : IDisposable
 {
     protected readonly JsObjectRef _jsObjectRef;
     private readonly Dictionary<string, List<MapEventListener>> EventListeners;
-    private bool isDisposed;
+    private bool _isDisposed;
 
     private void AddEvent(string eventName, MapEventListener listener)
     {
@@ -84,7 +84,7 @@ public abstract class EventEntityBase : IDisposable
         }
     }
 
-    
+
     public virtual async ValueTask DisposeAsync()
     {
         // Perform async cleanup.
@@ -107,8 +107,9 @@ public abstract class EventEntityBase : IDisposable
         foreach (var eventListener in EventListeners.SelectMany(listener => listener.Value))
         {
             if (eventListener.IsRemoved)
+            {
                 continue;
-            
+            }
 
             await eventListener.DisposeAsync();
         }
@@ -120,8 +121,8 @@ public abstract class EventEntityBase : IDisposable
     protected virtual void Dispose(bool disposing)
     {
 
-        if (!isDisposed)
-        {            
+        if (!_isDisposed)
+        {
             //_jsObjectRef.Dispose();
 
             if (disposing)
@@ -131,7 +132,7 @@ public abstract class EventEntityBase : IDisposable
 
             // TODO: free unmanaged resources (unmanaged objects) and override finalizer
             // TODO: set large fields to null
-            isDisposed = true;
+            _isDisposed = true;
         }
     }
 

@@ -17,33 +17,31 @@
 <button @onclick="EndDrawingPolygon">End drawing polygon</button>
 <button @onclick="SetAndGetPathPolygon">Set and Get path polygon</button>
 <button @onclick="SetAndGetPolygonPaths">Set and Get polygon paths</button>
+<button @onclick="RemovePolygonFromMap">Remove last polygon from map</button>
 <br />
 <button @onclick="DrawingRectangle">Drawing rectangle</button>
 <br />
 <button @onclick="DrawingCircle">Drawing circle</button>
 
-<MapEventList @ref="@_eventList" Events="@_events"></MapEventList>
+<MapEventList Events="@_events"></MapEventList>
 
 @functions {
-    private GoogleMap _map1;
+    private GoogleMap _map1 = null!;
 
-    private MapOptions _mapOptions;
+    private MapOptions _mapOptions = null!;
 
     private List<LatLngLiteral> _path = new List<LatLngLiteral>();
 
     private List<Polyline> _polylines = new List<Polyline>();
-    private Polyline _polyline;
+    private Polyline? _polyline;
 
     private List<Polygon> _polygons = new List<Polygon>();
-    private Polygon _polygon;
+    private Polygon? _polygon;
 
-    private Rectangle _rectangle;
-    private Circle _circle;
-
-    private MapEventList _eventList;
+    private Rectangle? _rectangle;
+    private Circle? _circle;
 
     private List<String> _events = new List<String>();
-
 
     protected override void OnInitialized()
     {
@@ -345,6 +343,15 @@
             }
         }
 
+    }
+
+    private async Task RemovePolygonFromMap()
+    {
+        var polygon = _polygons.LastOrDefault();
+        if (polygon != null)
+        {
+            await polygon.SetMap(null);
+        }
     }
 
 }
