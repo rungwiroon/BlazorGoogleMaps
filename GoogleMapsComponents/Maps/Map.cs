@@ -23,13 +23,13 @@ public class Map : EventEntityBase, IJsObjectRef, IAsyncDisposable
         ElementReference mapDiv,
         MapOptions? opts = null)
     {
-        if (DependencyInjectionExtensions.MapOptions.UseBootstrapLoader)
+        if (opts?.ApiLoadOptions != null)
         {
-            var mapOpts = DependencyInjectionExtensions.MapOptions;
+            MapApiLoadOptions apiOpts = opts.ApiLoadOptions;
             await jsRuntime.InvokeVoidAsync("blazorGoogleMaps.objectManager.initMap",
-                mapOpts.KeyProvider?.Invoke(),
-                mapOpts.Version,
-                mapOpts.Libraries);
+                apiOpts.Key,
+                apiOpts.Version,
+                apiOpts.Libraries);
         }
         var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Map", mapDiv, opts);
         var dataObjectRef = await jsObjectRef.GetObjectReference("data");

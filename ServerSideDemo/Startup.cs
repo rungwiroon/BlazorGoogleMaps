@@ -22,13 +22,15 @@ public class Startup
     {
         services.AddRazorPages();
         services.AddServerSideBlazor().AddHubOptions(config => config.MaximumReceiveMessageSize = 1048576);
-        services.AddBlazorGoogleMaps(opt =>
-        {
-            opt.KeyProvider = () => "AIzaSyBdkgvniMdyFPAcTlcZivr8f30iU-kn1T0";
-            opt.UseBootstrapLoader = true;
-            opt.Version = "beta";
-            opt.Libraries = "places,visualization,drawing,marker";
-        });
+
+        // Adds the service to use bootstrap loader for Google API JS. 
+        services.AddBlazorGoogleMaps("AIzaSyBdkgvniMdyFPAcTlcZivr8f30iU-kn1T0");
+        // Or manually set version and libraries for entire app:
+        //services.AddBlazorGoogleMaps(new GoogleMapsComponents.Maps.MapApiLoadOptions("AIzaSyBdkgvniMdyFPAcTlcZivr8f30iU-kn1T0")
+        //{
+        //    Version = "beta",
+        //    Libraries = "places,visualization,drawing,marker"
+        //});
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -5,46 +5,23 @@ namespace GoogleMapsComponents;
 
 public static class DependencyInjectionExtensions
 {
-    internal static BlazorGoogleMapsOptions MapOptions { get; set; } = new BlazorGoogleMapsOptions();
-    public static IServiceCollection AddBlazorGoogleMaps(this IServiceCollection service, Action<BlazorGoogleMapsOptions>? opts = null)
+    /// <summary>
+    /// Adds a basic service to provide a google api key for the application when using bootstrap loader method for Google API <para/>
+    /// 
+    /// If implementing your own key service, be sure to register the service as the implementation of <see cref="IBlazorGoogleMapsKeyService"/>,
+    /// so that the <see cref="GoogleMap"/> component can find it. For example instead of this function you might use:
+    /// <code>services.AddScoped&lt;<see cref="IBlazorGoogleMapsKeyService"/>, YourServiceImplmentation&gt;();</code>
+    /// </summary>
+    public static IServiceCollection AddBlazorGoogleMaps(this IServiceCollection services, string key)
     {
-        MapOptions = new BlazorGoogleMapsOptions();
-        opts?.Invoke(MapOptions);
-
-        if (MapOptions.UseBootstrapLoader)
-        {
-            if (MapOptions.KeyProvider is null)
-            {
-                throw new ArgumentNullException(nameof(MapOptions.KeyProvider), "Key is required when using bootstrap loader.");
-            }
-
-        }
-
-        return service;
+        services.AddScoped<IBlazorGoogleMapsKeyService>(serviceProvider => new BlazorGoogleMapsKeyService(key));
+        return services;
     }
-}
 
-//All options
-//https://developers.google.com/maps/documentation/javascript/load-maps-js-api#required_parameters
-public class BlazorGoogleMapsOptions
-{
-    /// <summary>
-    /// Is selected option then it uses the bootstrap loader to load the google maps script.
-    /// https://developers.google.com/maps/documentation/javascript/overview#Loading_the_Maps_API
-    /// </summary>
-    public bool UseBootstrapLoader { get; set; }
-
-    /// <summary>
-    /// Default is weekly.
-    /// https://developers.google.com/maps/documentation/javascript/versions
-    /// </summary>
-    public string Version { get; set; } = "weekly";
-
-    /// <summary>
-    /// Comma separated list of libraries to load.
-    /// https://developers.google.com/maps/documentation/javascript/libraries
-    /// </summary>
-    public string? Libraries { get; set; }
-
-    public Func<string>? KeyProvider { get; set; }
+    /// <inheritdoc cref="AddBlazorGoogleMaps(IServiceCollection, string)"/>
+    public static IServiceCollection AddBlazorGoogleMaps(this IServiceCollection services, Maps.MapApiLoadOptions opts)
+    {
+        services.AddScoped<IBlazorGoogleMapsKeyService>(serviceProvider => new BlazorGoogleMapsKeyService(opts));
+        return services;
+    }
 }

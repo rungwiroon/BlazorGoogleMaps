@@ -8,6 +8,17 @@ namespace GoogleMapsComponents.Maps;
 public class MapOptions
 {
     /// <summary>
+    /// Leave null when initializing Google Maps API normally, for example:<br/>
+    /// <list type="bullet">
+    /// <item>when relying on <see cref="IBlazorGoogleMapsKeyService"/> scoped service</item>
+    /// <item>when loading google API JS through _Host.cshtml or _HostLayout.cshtml</item>
+    /// </list>
+    /// When not null, MapComponent will load Google API using the bootstrap method.<br/>
+    /// <seealso href="https://developers.google.com/maps/documentation/javascript/overview#Loading_the_Maps_API"/> 
+    /// </summary>
+    public MapApiLoadOptions? ApiLoadOptions { get; set; }
+
+    /// <summary>
     /// Color used for the background of the Map div.<br/>
     /// This color will be visible when tiles have not yet loaded as the user pans.<br/>
     /// This option can only be set when the map is initialized.
