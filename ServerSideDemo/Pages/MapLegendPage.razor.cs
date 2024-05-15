@@ -45,7 +45,8 @@ public partial class MapLegendPage
     {
         if (firstRender)
         {
-            await JsRuntime.InvokeAsync<object>("initMapLegend");
+            IJSObjectReference serverSideScripts = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "/js/serverSideScripts.js");
+            await serverSideScripts.InvokeVoidAsync("initMapLegend");
         }
     }
 

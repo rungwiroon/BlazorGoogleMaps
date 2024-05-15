@@ -1,5 +1,6 @@
 ﻿using GoogleMapsComponents.Maps;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using System;
 using System.Threading.Tasks;
@@ -12,11 +13,29 @@ public class MapComponent : ComponentBase, IDisposable, IAsyncDisposable
 
     [Inject]
     public IJSRuntime JsRuntime { get; protected set; } = default!;
+    [Inject]
+    public IServiceProvider ServiceProvider { get; protected set; } = default!;
+
+    private IBlazorGoogleMapsKeyService? KeyService;
+
+    protected override void OnInitialized()
+    {
+        // get the service from the provider instead of with [Inject] in case no 
+        // service was registered. e.g. when the user loads the api with a script tag.
+        KeyService = ServiceProvider.GetService<IBlazorGoogleMapsKeyService>();
+        base.OnInitialized();
+    }
 
     public Map InteropObject { get; private set; } = default!;
 
     public async Task InitAsync(ElementReference element, MapOptions? options = null)
     {
+        if (options?.ApiLoadOptions == null && KeyService != null && !KeyService.IsApiInitialized)
+        {
+            KeyService.IsApiInitialized = true;
+            options ??= new MapOptions();
+            options.ApiLoadOptions = await KeyService.GetApiOptions();
+        }
         InteropObject = await Map.CreateAsync(JsRuntime, element, options);
     }
 
