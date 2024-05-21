@@ -26,6 +26,51 @@
     }
 }
 
+export function createBunchOfCirclesInJs(mapId, numberOfCircles) {
+
+    var map = window.blazorGoogleMaps.objectManager.mapObjects[mapId];
+    for (let i = 0; i < numberOfCircles; i++) {
+        const circle = new google.maps.Circle({
+            strokColor: getRandomColor(),
+            strokeOpacity: 0.6,
+            strokeWeight: 2,
+            fillColor: getRandomColor(),
+            fillOpacity: 0.35,
+            map: map,
+            center: getRandomLocation(map.getCenter(), 10000), // 10km radius from the center
+            radius: 2,
+        });
+    }
+    function getRandomColor() {
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
+    function getRandomLocation(center, radius) {
+        const x0 = center.lng();
+        const y0 = center.lat();
+        const rd = radius / 111300; // Convert radius to degrees
+
+        const u = Math.random();
+        const v = Math.random();
+
+        const w = rd * Math.sqrt(u);
+        const t = 2 * Math.PI * v;
+        const x = w * Math.cos(t);
+        const y = w * Math.sin(t);
+
+        const newX = x / Math.cos(y0);
+
+        return {
+            lat: y0 + y,
+            lng: x0 + newX
+        };
+    }
+}
 export function initServerSideScript() {
     google.maps.Polyline.prototype.AddListeners = function () {
         // getpath

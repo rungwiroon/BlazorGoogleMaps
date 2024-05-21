@@ -2,6 +2,7 @@
 using GoogleMapsComponents.Maps;
 using GoogleMapsComponents.Maps.Extension;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -38,6 +39,22 @@ public partial class DisposeMapCircleListPage : ComponentBase, IDisposable, IAsy
     /// <summary>
     /// Create a bunch of circles, put them into a dictionary with reference ids and display them on the map.
     /// </summary>
+    private async Task CreateBunchOfCirclesInJs()
+    {
+        int howMany = _bunchsize;
+        _descriptionText = $"Creating {howMany} circles with random positions...";
+        //Time the creation of the circles.
+        var sw = Stopwatch.StartNew();
+
+        IJSObjectReference serverSideScripts = await _map1!.JsRuntime.InvokeAsync<IJSObjectReference>("import", "/js/serverSideScripts.js");
+        await serverSideScripts.InvokeVoidAsync("createBunchOfCirclesInJs", _map1.InteropObject.Guid, howMany);
+
+        sw.Stop();
+        _descriptionText = $"Created {howMany} circles in {sw.Elapsed.TotalSeconds} seconds\n" +
+                           $"Disposing will take place upon navigating to another tab";
+        await InvokeAsync(StateHasChanged);
+    }
+
     private async Task CreateBunchOfCircles()
     {
         int howMany = _bunchsize;
@@ -56,7 +73,11 @@ public partial class DisposeMapCircleListPage : ComponentBase, IDisposable, IAsy
             var circleOptions = new CircleOptions
             {
                 Map = _map1.InteropObject,
-                Center = new LatLngLiteral { Lat = bounds.South + rnd.NextDouble() * (bounds.North - bounds.South), Lng = bounds.West + rnd.NextDouble() * (bounds.East - bounds.West) },
+                Center = new LatLngLiteral
+                {
+                    Lat = bounds.South + rnd.NextDouble() * (bounds.North - bounds.South),
+                    Lng = bounds.West + rnd.NextDouble() * (bounds.East - bounds.West)
+                },
                 Radius = 2,
                 StrokeColor = color,
                 StrokeOpacity = 0.60f,
@@ -70,9 +91,9 @@ public partial class DisposeMapCircleListPage : ComponentBase, IDisposable, IAsy
         }
         //Time the creation of the circles.
         var sw = Stopwatch.StartNew();
-
         await RefreshCircleList();
         sw.Stop();
+
         _descriptionText = $"Created {howMany} circles in {sw.Elapsed.TotalSeconds} seconds\n" +
             $"Disposing will take place upon navigating to another tab";
         await InvokeAsync(StateHasChanged);

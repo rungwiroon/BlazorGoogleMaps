@@ -8,6 +8,7 @@
 <EditForm Model="new object()">
     Bunch size: <InputNumber TValue="int" @bind-Value="_bunchsize" /><br />
     <button @onclick="async (_)=> await CreateBunchOfCircles()">Add a bunch of circles</button><br />
+    <button @onclick="async (_)=> await CreateBunchOfCirclesInJs()">Add a bunch of circles in Js</button><br />
     <p>
         Click on a circle to remove it.
         <br />
