@@ -11,19 +11,19 @@ namespace ServerSideDemo.Pages;
 
 public partial class DisposeMapCircleListPage : ComponentBase, IDisposable, IAsyncDisposable
 {
-    private GoogleMap map1;
-    private MapOptions mapOptions;
-    int bunchsize = 6000;
+    private GoogleMap? _map1;
+    private MapOptions? _mapOptions;
+    private int _bunchsize = 6000;
 
-    private CircleList circleList = null;
-    private Dictionary<string, CircleOptions> circleOptionsByRef = new Dictionary<string, CircleOptions>();
-    private int lastId = 0;
-    private string descriptionText = "";
-    bool isDisposed = false;
+    private CircleList? _circleList;
+    private readonly Dictionary<string, CircleOptions> _circleOptionsByRef = new Dictionary<string, CircleOptions>();
+    private int _lastId;
+    private string _descriptionText = "";
+    private bool _isDisposed;
 
     protected override void OnInitialized()
     {
-        mapOptions = new MapOptions()
+        _mapOptions = new MapOptions()
         {
             Zoom = 13,
             Center = new LatLngLiteral()
@@ -40,22 +40,22 @@ public partial class DisposeMapCircleListPage : ComponentBase, IDisposable, IAsy
     /// </summary>
     private async Task CreateBunchOfCircles()
     {
-        int howMany = this.bunchsize;
-        var bounds = await map1.InteropObject.GetBounds();
-        double maxRadius = (bounds.North - bounds.South) * 111111.0 / (10 + Math.Sqrt(howMany));
-        var colors = new string[] { "#FFFFFF", "#9132D1", "#FFD800", "#846A00", "#AAC643", "#C96A00", "#B200FF", "#CD6A00", "#00A321", "#7F6420" };
+        int howMany = _bunchsize;
+        var bounds = await _map1!.InteropObject.GetBounds();
+        //double maxRadius = (bounds.North - bounds.South) * 111111.0 / (10 + Math.Sqrt(howMany));
+        var colors = new[] { "#FFFFFF", "#9132D1", "#FFD800", "#846A00", "#AAC643", "#C96A00", "#B200FF", "#CD6A00", "#00A321", "#7F6420" };
         var rnd = new Random();
 
-        this.descriptionText = $"Creating {howMany} circles with random positions...";
-        await this.InvokeAsync(this.StateHasChanged);
+        _descriptionText = $"Creating {howMany} circles with random positions...";
+        await InvokeAsync(StateHasChanged);
 
 
         for (int i = 0; i < howMany; i++)
-        {            
+        {
             var color = colors[rnd.Next(0, colors.Length)];
             var circleOptions = new CircleOptions
             {
-                Map = map1.InteropObject,
+                Map = _map1.InteropObject,
                 Center = new LatLngLiteral { Lat = bounds.South + rnd.NextDouble() * (bounds.North - bounds.South), Lng = bounds.West + rnd.NextDouble() * (bounds.East - bounds.West) },
                 Radius = 2,
                 StrokeColor = color,
@@ -66,24 +66,24 @@ public partial class DisposeMapCircleListPage : ComponentBase, IDisposable, IAsy
                 Visible = true,
                 ZIndex = 1000000,
             };
-            circleOptionsByRef[(++lastId).ToString()] = circleOptions;
+            _circleOptionsByRef[(++_lastId).ToString()] = circleOptions;
         }
         //Time the creation of the circles.
         var sw = Stopwatch.StartNew();
-        
+
         await RefreshCircleList();
         sw.Stop();
-        this.descriptionText = $"Created {howMany} circles in {sw.Elapsed.TotalSeconds} seconds\n" +
+        _descriptionText = $"Created {howMany} circles in {sw.Elapsed.TotalSeconds} seconds\n" +
             $"Disposing will take place upon navigating to another tab";
-        await this.InvokeAsync(this.StateHasChanged);
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task RefreshCircleList()
     {
-        circleList = await CircleList.SyncAsync(circleList, map1.JsRuntime, circleOptionsByRef, async (ev, sKey, entity) =>
+        _circleList = await CircleList.SyncAsync(_circleList, _map1!.JsRuntime, _circleOptionsByRef, async (ev, sKey, entity) =>
         {
             // Circle has been clicked --> delete it.
-            circleOptionsByRef.Remove(sKey);
+            _circleOptionsByRef.Remove(sKey);
             await RefreshCircleList();
         });
     }
@@ -103,29 +103,33 @@ public partial class DisposeMapCircleListPage : ComponentBase, IDisposable, IAsy
 
     protected virtual async ValueTask DisposeAsyncCore()
     {
-            try
+        try
+        {
+            if (_map1 is not null)
             {
-            if (this.map1 is not null)
-                await this.map1.DisposeAsync();
-            if (this.circleList is not null)
-                await this.circleList.DisposeAsync();
+                await _map1.DisposeAsync();
+            }
 
-            }
-            catch (Microsoft.JSInterop.JSDisconnectedException)
+            if (_circleList is not null)
             {
-                //Most probably page was refreshed
+                await _circleList.DisposeAsync();
             }
-            finally
-            {
-                this.circleList = null;
-                this.map1 = null;
-            }
+        }
+        catch (Microsoft.JSInterop.JSDisconnectedException)
+        {
+            //Most probably page was refreshed
+        }
+        finally
+        {
+            _circleList = null;
+            _map1 = null;
+        }
     }
 
     protected virtual void Dispose(bool disposing)
     {
 
-        if (!isDisposed)
+        if (!_isDisposed)
         {
             if (disposing)
             {
@@ -134,7 +138,7 @@ public partial class DisposeMapCircleListPage : ComponentBase, IDisposable, IAsy
 
             // TODO: free unmanaged resources (unmanaged objects) and override finalizer
             // TODO: set large fields to null
-            isDisposed = true;
+            _isDisposed = true;
         }
     }
 

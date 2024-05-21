@@ -1,6 +1,5 @@
 ﻿using GoogleMapsComponents.Maps;
 using Microsoft.AspNetCore.Components;
-using System;
 using System.Threading.Tasks;
 
 namespace ServerSideDemo.Pages;
@@ -42,7 +41,10 @@ public partial class GMap
             meMarker = await AddMarker(MeMarkerOptions);
         }
         if (Draggable)
+        {
             await meMarker.AddListener<MouseEvent>("dragend", async e => await OnMakerDragEnd(meMarker, e));
+        }
+
         return meMarker;
     }
 
@@ -115,7 +117,9 @@ public partial class GMap
     {
         Options.Center = TheCenter;
         if (InteropObject != null)
+        {
             await InteropObject.SetCenter(TheCenter);
+        }
     }
 
     /// <summary>

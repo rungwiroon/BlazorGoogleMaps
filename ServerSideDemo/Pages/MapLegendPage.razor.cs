@@ -41,18 +41,10 @@ public partial class MapLegendPage
         };
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    private async Task AfterMapInit()
     {
-        if (firstRender)
-        {
-            IJSObjectReference serverSideScripts = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "/js/serverSideScripts.js");
-            await serverSideScripts.InvokeVoidAsync("initMapLegend");
-        }
-    }
-
-    private Task AfterMapInit()
-    {
-        return Task.CompletedTask;
+        IJSObjectReference serverSideScripts = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "/js/serverSideScripts.js");
+        await serverSideScripts.InvokeVoidAsync("initMapLegend");
     }
 
     private async Task AddLegend()

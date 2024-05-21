@@ -52,7 +52,9 @@ public partial class MapMarker
     private async Task ClearClustering()
     {
         if (_markerClustering != null)
+        {
             await _markerClustering.ClearMarkers();
+        }
     }
 
     private async Task InvokeClustering()
@@ -87,7 +89,9 @@ public partial class MapMarker
     private async Task SetMarkerListeners()
     {
         if (_listeningLoneMarkerKeys == null)
+        {
             _listeningLoneMarkerKeys = new List<string>();
+        }
 
         //use GetMappedValue<T> to map and extract the array of guid keys of unclustered markers
         JsObjectRef jsRef = new GoogleMapsComponents.JsObjectRef(JsObjectRef, _markerClustering.Guid);
@@ -95,7 +99,9 @@ public partial class MapMarker
             .Where((x) => { return x != null; });
 
         if (!guidStrings.Any())
+        {
             return;
+        }
 
         // Among markers not in clusters, find those which don't yet have a listener
         MarkerList deafLoneMarkersList = await MarkerList.CreateAsync(JsObjectRef, new Dictionary<string, MarkerOptions>());
@@ -103,13 +109,18 @@ public partial class MapMarker
         {
             var markr = _markers.First(x => key == x.Guid.ToString());
             if (_listeningLoneMarkerKeys.Contains(key))
+            {
                 continue;
+            }
+
             deafLoneMarkersList.BaseListableEntities.Add(key, markr);
             _listeningLoneMarkerKeys.Add(key);
         }
 
         if (!deafLoneMarkersList.BaseListableEntities.Any())
+        {
             return;
+        }
 
         await deafLoneMarkersList.AddListeners<MouseEvent>(deafLoneMarkersList.Markers.Keys.ToList(), "click", async (o, e) =>
         {

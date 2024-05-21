@@ -109,7 +109,10 @@
     private async Task ClearPolylinePath()
     {
         var line = _polylines.LastOrDefault();
-        if (line == null) return;
+        if (line == null)
+        {
+            return;
+        }
 
         var polylinePath = await line.CreatePath();
         await polylinePath.Clear();
@@ -118,7 +121,10 @@
     private async Task AppendToPolylinePath()
     {
         var line = _polylines.LastOrDefault();
-        if (line == null) return;
+        if (line == null)
+        {
+            return;
+        }
 
         _polyline = line;
         _path = (await _polyline.GetPath().ConfigureAwait(true)).ToList();

@@ -123,7 +123,10 @@
         //This can be executed on every key stroke with 300ms debounce, but I decided to use the search button
         //These requests will be bundled together via the session token until it either expires or placesService.GetDetails is executed.
         //Every session is charged (billed). If session token is omitted/invalid/expired, every request is charged (billed).
-        if (autocompleteService is null || !IsValidInput()) return;
+        if (autocompleteService is null || !IsValidInput())
+        {
+            return;
+        }
 
         var request = new AutocompletionRequest
             {
@@ -132,13 +135,22 @@
             };
 
         var response = await autocompleteService.GetPlacePredictions(request);
-        if (response.Status == PlaceServiceStatus.Ok) this.suggestions = response.Predictions;
-        else this.message = $"Your request failed with status code: {response.Status}";
+        if (response.Status == PlaceServiceStatus.Ok)
+        {
+            this.suggestions = response.Predictions;
+        }
+        else
+        {
+            this.message = $"Your request failed with status code: {response.Status}";
+        }
     }
 
     private async Task GeocodeAsync()
     {
-        if (geocoder is null || !IsValidInput()) return;
+        if (geocoder is null || !IsValidInput())
+        {
+            return;
+        }
 
         var response = await geocoder.Geocode(new GeocoderRequest
             {
@@ -159,7 +171,10 @@
 
             await this.map1.InteropObject.FitBounds(await bounds.ToJson(), 5);
         }
-        else this.message = $"Your request failed with status code: {response.Status}";
+        else
+        {
+            this.message = $"Your request failed with status code: {response.Status}";
+        }
     }
 
     private async Task GetPlaceDetailAsync(string placeId)
@@ -177,7 +192,10 @@
             {
                 await RenderPlaceAsync(place.Results.FirstOrDefault());
             }
-            else this.message = $"Your request failed with status code: {place.Status}";
+            else
+            {
+                this.message = $"Your request failed with status code: {place.Status}";
+            }
         }
         finally
         {

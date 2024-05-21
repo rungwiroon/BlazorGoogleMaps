@@ -35,7 +35,10 @@
 
     private async Task AddEvent()
     {
-        if (_mapClickEvent != null) return;
+        if (_mapClickEvent != null)
+        {
+            return;
+        }
 
         _mapClickEvent = await _map.InteropObject.AddListener<MouseEvent>("click", MapClicked);
     }
