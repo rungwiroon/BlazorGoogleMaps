@@ -13,7 +13,6 @@ namespace GoogleMapsComponents.Serialization;
 /// <typeparam name="TEnum"></typeparam>
 public class JsonStringEnumConverterEx<TEnum> : JsonConverter<TEnum> where TEnum : struct, Enum
 {
-
     private readonly Dictionary<TEnum, string> _enumToString = new Dictionary<TEnum, string>();
     private readonly Dictionary<string, TEnum> _stringToEnum = new Dictionary<string, TEnum>();
 
@@ -24,13 +23,13 @@ public class JsonStringEnumConverterEx<TEnum> : JsonConverter<TEnum> where TEnum
 
         foreach (var value in values)
         {
-            var enumMember = type.GetMember(value.ToString())[0];
+            var enumMember = type.GetMember(value.ToString() ?? "")[0];
             var attr = enumMember
                 .GetCustomAttributes(typeof(EnumMemberAttribute), false)
                 .Cast<EnumMemberAttribute>()
                 .FirstOrDefault();
 
-            _stringToEnum.Add(value.ToString(), (TEnum)value);
+            _stringToEnum.Add(value.ToString() ?? "", (TEnum)value);
 
             if (attr?.Value != null)
             {
@@ -39,7 +38,7 @@ public class JsonStringEnumConverterEx<TEnum> : JsonConverter<TEnum> where TEnum
             }
             else
             {
-                _enumToString.Add((TEnum)value, value.ToString());
+                _enumToString.Add((TEnum)value, value.ToString() ?? "");
             }
         }
     }
@@ -48,12 +47,7 @@ public class JsonStringEnumConverterEx<TEnum> : JsonConverter<TEnum> where TEnum
     {
         var stringValue = reader.GetString();
 
-        if (_stringToEnum.TryGetValue(stringValue, out var enumValue))
-        {
-            return enumValue;
-        }
-
-        return default;
+        return _stringToEnum.GetValueOrDefault(stringValue ?? "");
     }
 
     public override void Write(Utf8JsonWriter writer, TEnum value, JsonSerializerOptions options)
@@ -63,9 +57,11 @@ public class JsonStringEnumConverterEx<TEnum> : JsonConverter<TEnum> where TEnum
 
     public static string ToLowerFirstChar(string str)
     {
-        if (String.IsNullOrEmpty(str) || Char.IsLower(str, 0))
+        if (string.IsNullOrEmpty(str) || char.IsLower(str, 0))
+        {
             return str;
+        }
 
-        return Char.ToLowerInvariant(str[0]) + str.Substring(1);
+        return char.ToLowerInvariant(str[0]) + str.Substring(1);
     }
 }

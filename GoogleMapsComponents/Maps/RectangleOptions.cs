@@ -1,5 +1,5 @@
-﻿using System.Text.Json.Serialization;
-using GoogleMapsComponents.Serialization;
+﻿using GoogleMapsComponents.Serialization;
+using System.Text.Json.Serialization;
 
 namespace GoogleMapsComponents.Maps;
 
@@ -11,7 +11,7 @@ public class RectangleOptions
     /// <summary>
     /// The bounds.
     /// </summary>
-    public LatLngBoundsLiteral Bounds { get; set; }
+    public LatLngBoundsLiteral? Bounds { get; set; }
 
     /// <summary>
     /// Indicates whether this Rectangle handles mouse events. Defaults to true.
@@ -32,7 +32,7 @@ public class RectangleOptions
     /// <summary>
     /// The fill color. All CSS3 colors are supported except for extended named colors.
     /// </summary>
-    public string FillColor { get; set; }
+    public string? FillColor { get; set; }
 
     /// <summary>
     /// The fill opacity between 0.0 and 1.0
@@ -48,7 +48,7 @@ public class RectangleOptions
     /// <summary>
     /// The stroke color. All CSS3 colors are supported except for extended named colors.
     /// </summary>
-    public string StrokeColor { get; set; }
+    public string? StrokeColor { get; set; }
 
     /// <summary>
     /// The stroke opacity between 0.0 and 1.0

@@ -10,7 +10,7 @@ namespace GoogleMapsComponents.Maps.Visualization;
 /// </summary>
 public class HeatmapLayer : IDisposable
 {
-    private Map _map;
+    private Map? _map;
 
     //private readonly string jsObjectName = "googleMapHeatmapLayerJsFunctions";
 
@@ -32,6 +32,7 @@ public class HeatmapLayer : IDisposable
     /// <summary>
     /// Creates a new instance of HeatmapLayer.
     /// </summary>
+    /// <param name="jsObjectRef"></param>
     /// <param name="opts"></param>
     private HeatmapLayer(JsObjectRef jsObjectRef, HeatmapLayerOptions? opts = null)
     {
@@ -54,7 +55,7 @@ public class HeatmapLayer : IDisposable
             "getData");
     }
 
-    public Map GetMap()
+    public Map? GetMap()
     {
         return _map;
     }

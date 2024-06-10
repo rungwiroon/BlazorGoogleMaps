@@ -8,10 +8,10 @@ public class TransitStop
     /// <summary>
     /// The location of this stop.
     /// </summary>
-    public LatLngLiteral Location { get; set; }
+    public LatLngLiteral? Location { get; set; }
 
     /// <summary>
     /// The name of this transit stop.
     /// </summary>
-    public string Name { get; set; }
+    public string? Name { get; set; }
 }
