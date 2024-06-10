@@ -11,28 +11,28 @@ namespace GoogleMapsComponents.Maps.Extension;
 
 /// <summary>
 /// <para>
-/// A class able to manage a lot of AdvancedMarkerView objects and get / set their properties at the same time, eventually with different values
+/// A class able to manage a lot of AdvancedMarkerElement objects and get / set their properties at the same time, eventually with different values
 /// </para>
 /// <para>
-/// Main concept is that for each AdvancedMarkerView to be distinguished from other ones, it needs
+/// Main concept is that for each AdvancedMarkerElement to be distinguished from other ones, it needs
 /// to have a "unique key" with an "external world meaning", so not necessarily a GUID.
 /// </para>
 /// <para>
-/// In real cases Markers are likely to be linked to places, activities, transit stops and so on -> So, what better way to choose as AdvancedMarkerView "unique key" the "id" of the object each marker is related to?
+/// In real cases Markers are likely to be linked to places, activities, transit stops and so on -> So, what better way to choose as AdvancedMarkerElement "unique key" the "id" of the object each marker is related to?
 /// A string key has been selected as type due to its implicit versatility.
 /// </para>
 /// <para>
-/// To create Markers, simply call <c>AdvancedMarkerList.CreateAsync</c> with a Dictionary of desired AdvancedMarkerView keys and AdvancedMarkerViewOptions values.
+/// To create Markers, simply call <c>AdvancedMarkerList.CreateAsync</c> with a Dictionary of desired AdvancedMarkerElement keys and AdvancedMarkerElementOptions values.
 /// After that, a new instance of AdvancedMarkerList class will be returned with its Markers dictionary member populated with the corresponding results
 /// </para>
 /// <para>
 /// At run-time is possible to:<br/>
 /// <list type="number">
-/// <item><description>add AdvancedMarkerView to the same AdvancedMarkerList class using <c>AddMultipleAsync</c> method (only keys not matching with existent AdvancedMarkerView keys will be created)<br/>
-/// Markers dictionary will contain "union distinct" of existent AdvancedMarkerView's keys and new keys</description>
+/// <item><description>add AdvancedMarkerElement to the same AdvancedMarkerList class using <c>AddMultipleAsync</c> method (only keys not matching with existent AdvancedMarkerElement keys will be created)<br/>
+/// Markers dictionary will contain "union distinct" of existent AdvancedMarkerElement's keys and new keys</description>
 /// </item>
-/// <item><description>remove AdvancedMarkerView from the AdvancedMarkerList class (only AdvancedMarkerView having keys matching with existent keys will be removed)<br/>
-/// Markers dictionary will contain "original - required and found" AdvancedMarkerView's keys (eventually any is all AdvancedMarkerView are removed)</description>
+/// <item><description>remove AdvancedMarkerElement from the AdvancedMarkerList class (only AdvancedMarkerElement having keys matching with existent keys will be removed)<br/>
+/// Markers dictionary will contain "original - required and found" AdvancedMarkerElement's keys (eventually any is all AdvancedMarkerElement are removed)</description>
 /// </item>
 /// </list>
 /// </para>
@@ -43,30 +43,30 @@ namespace GoogleMapsComponents.Maps.Extension;
 /// </para>
 /// <para>
 /// Each setter properties can be used as follows:<br/>
-/// With a <c>Dictionary&lt;string, {property type}&gt;</c> indicating for each AdvancedMarkerView (related to that key) the corresponding related property value.
+/// With a <c>Dictionary&lt;string, {property type}&gt;</c> indicating for each AdvancedMarkerElement (related to that key) the corresponding related property value.
 /// </para>
 /// </summary>
-public class AdvancedMarkerList : ListableEntityListBase<AdvancedMarkerView, AdvancedMarkerViewOptions>
+public class AdvancedMarkerElementList : ListableEntityListBase<AdvancedMarkerElement, AdvancedMarkerElementOptions>
 {
-    public Dictionary<string, AdvancedMarkerView> Markers => BaseListableEntities;
+    public Dictionary<string, AdvancedMarkerElement> Markers => BaseListableEntities;
 
     /// <summary>
     /// Create markers list
     /// </summary>
     /// <param name="jsRuntime"></param>
-    /// <param name="opts">Dictionary of desired AdvancedMarkerView keys and AdvancedMarkerViewOptions values. Key as any type unique key. Not necessarily Guid</param>
+    /// <param name="opts">Dictionary of desired AdvancedMarkerElement keys and AdvancedMarkerElementOptions values. Key as any type unique key. Not necessarily Guid</param>
     /// <returns>New instance of AdvancedMarkerList class will be returned with its Markers dictionary member populated with the corresponding results</returns>
-    public static async Task<AdvancedMarkerList> CreateAsync(IJSRuntime jsRuntime, Dictionary<string, AdvancedMarkerViewOptions> opts)
+    public static async Task<AdvancedMarkerElementList> CreateAsync(IJSRuntime jsRuntime, Dictionary<string, AdvancedMarkerElementOptions> opts)
     {
         var jsObjectRef = new JsObjectRef(jsRuntime, Guid.NewGuid());
 
         Dictionary<string, JsObjectRef> jsObjectRefs = await JsObjectRef.CreateMultipleAsync(
             jsRuntime,
-            AdvancedMarkerView.GoogleMapAdvancedMarkerName,
+            AdvancedMarkerElement.GoogleMapAdvancedMarkerName,
             opts.ToDictionary(e => e.Key, e => (object)e.Value));
 
-        Dictionary<string, AdvancedMarkerView> objs = jsObjectRefs.ToDictionary(e => e.Key, e => new AdvancedMarkerView(e.Value));
-        var obj = new AdvancedMarkerList(jsObjectRef, objs);
+        Dictionary<string, AdvancedMarkerElement> objs = jsObjectRefs.ToDictionary(e => e.Key, e => new AdvancedMarkerElement(e.Value));
+        var obj = new AdvancedMarkerElementList(jsObjectRef, objs);
 
         return obj;
     }
@@ -84,10 +84,10 @@ public class AdvancedMarkerList : ListableEntityListBase<AdvancedMarkerView, Adv
     /// <returns>
     /// The managed list. Assign to the variable you used as parameter.
     /// </returns>
-    public static async Task<AdvancedMarkerList> SyncAsync(AdvancedMarkerList? list,
+    public static async Task<AdvancedMarkerElementList> SyncAsync(AdvancedMarkerElementList? list,
         IJSRuntime jsRuntime,
-        Dictionary<string, AdvancedMarkerViewOptions> opts,
-        Action<MouseEvent, string, AdvancedMarkerView>? clickCallback = null)
+        Dictionary<string, AdvancedMarkerElementOptions> opts,
+        Action<MouseEvent, string, AdvancedMarkerElement>? clickCallback = null)
     {
         if (opts.Count == 0)
         {
@@ -101,7 +101,7 @@ public class AdvancedMarkerList : ListableEntityListBase<AdvancedMarkerView, Adv
         {
             if (list == null)
             {
-                list = await AdvancedMarkerList.CreateAsync(jsRuntime, new Dictionary<string, AdvancedMarkerViewOptions>());
+                list = await AdvancedMarkerElementList.CreateAsync(jsRuntime, new Dictionary<string, AdvancedMarkerElementOptions>());
                 if (clickCallback != null)
                 {
                     list.EntityClicked += (_, e) =>
@@ -115,7 +115,7 @@ public class AdvancedMarkerList : ListableEntityListBase<AdvancedMarkerView, Adv
         return list;
     }
 
-    private AdvancedMarkerList(JsObjectRef jsObjectRef, Dictionary<string, AdvancedMarkerView> markers)
+    private AdvancedMarkerElementList(JsObjectRef jsObjectRef, Dictionary<string, AdvancedMarkerElement> markers)
         : base(jsObjectRef, markers)
     {
     }
@@ -125,18 +125,18 @@ public class AdvancedMarkerList : ListableEntityListBase<AdvancedMarkerView, Adv
     /// </summary>
     /// <param name="opts"></param>
     /// <returns></returns>
-    public async Task SetMultipleAsync(Dictionary<string, AdvancedMarkerViewOptions> opts)
+    public async Task SetMultipleAsync(Dictionary<string, AdvancedMarkerElementOptions> opts)
     {
-        await base.SetMultipleAsync(opts, AdvancedMarkerView.GoogleMapAdvancedMarkerName);
+        await base.SetMultipleAsync(opts, AdvancedMarkerElement.GoogleMapAdvancedMarkerName);
     }
 
     /// <summary>
-    /// Only keys not matching with existent AdvancedMarkerView keys will be created
+    /// Only keys not matching with existent AdvancedMarkerElement keys will be created
     /// </summary>
     /// <returns></returns>
-    public async Task AddMultipleAsync(Dictionary<string, AdvancedMarkerViewOptions> opts)
+    public async Task AddMultipleAsync(Dictionary<string, AdvancedMarkerElementOptions> opts)
     {
-        await base.AddMultipleAsync(opts, AdvancedMarkerView.GoogleMapAdvancedMarkerName);
+        await base.AddMultipleAsync(opts, AdvancedMarkerElement.GoogleMapAdvancedMarkerName);
     }
 
     public Task<Dictionary<string, Animation>> GetAnimations(List<string>? filterKeys = null)
@@ -352,7 +352,7 @@ public class AdvancedMarkerList : ListableEntityListBase<AdvancedMarkerView, Adv
     }
 
     /// <summary>
-    /// Set Icon on each AdvancedMarkerView matching a param dictionary key to the param value with single JSInterop call.
+    /// Set Icon on each AdvancedMarkerElement matching a param dictionary key to the param value with single JSInterop call.
     /// </summary>
     /// <param name="icons"></param>
     /// <returns></returns>
@@ -379,7 +379,7 @@ public class AdvancedMarkerList : ListableEntityListBase<AdvancedMarkerView, Adv
     }
 
     /// <summary>
-    /// Set Label on each AdvancedMarkerView matching a param dictionary key to the param value with single JSInterop call.
+    /// Set Label on each AdvancedMarkerElement matching a param dictionary key to the param value with single JSInterop call.
     /// </summary>
     /// <param name="labels"></param>
     /// <returns></returns>

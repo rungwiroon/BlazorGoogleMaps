@@ -10,14 +10,11 @@
 @code {
     private GoogleMap _map1;
     private MapOptions _mapOptions;
-
-    private readonly List<String> _events = new List<String>();
-
     private ElementReference memberRef;
     private LatLngBounds _bounds;
 
     [Inject]
-    public IJSRuntime JsObjectRef { get; set; }
+    public IJSRuntime JsObjectRef { get; set; } = null!;
 
     protected override void OnInitialized()
     {
@@ -43,7 +40,7 @@
     {
         var mapCenter = await _map1.InteropObject.GetCenter();
 
-        var marker = await AdvancedMarkerView.CreateAsync(_map1.JsRuntime, new AdvancedMarkerViewOptions()
+        var marker = await AdvancedMarkerElement.CreateAsync(_map1.JsRuntime, new AdvancedMarkerElementOptions()
         {
             Position = mapCenter,
             Map = _map1.InteropObject,
