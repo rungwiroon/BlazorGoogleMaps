@@ -1,5 +1,10 @@
 ﻿using GoogleMapsComponents.Maps;
 using Microsoft.AspNetCore.Components;
+
+#if DEBUG
+using System;
+#endif
+
 using System.Threading.Tasks;
 
 namespace ServerSideDemo.Pages;

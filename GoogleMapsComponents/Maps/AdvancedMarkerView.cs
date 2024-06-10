@@ -1,4 +1,5 @@
 ﻿using Microsoft.JSInterop;
+
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps;
@@ -9,9 +10,12 @@ namespace GoogleMapsComponents.Maps;
 /// </summary>
 public class AdvancedMarkerView : ListableEntityBase<AdvancedMarkerViewOptions>
 {
+    // https://developers.google.com/maps/documentation/javascript/reference/3.55/advanced-markers
+    public const string GoogleMapAdvancedMarkerName = "google.maps.marker.AdvancedMarkerElement";
+
     public static async Task<Marker> CreateAsync(IJSRuntime jsRuntime, AdvancedMarkerViewOptions? opts = null)
     {
-        var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.marker.AdvancedMarkerView", opts);
+        var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, GoogleMapAdvancedMarkerName, opts);
         var obj = new Marker(jsObjectRef);
         return obj;
     }
