@@ -7,11 +7,13 @@
 <GoogleMap @ref="@_map1" Id="map1" Options="@_mapOptions" OnAfterInit="OnAfterRenderAsync"></GoogleMap>
 <button @onclick="@AddMarker">Add marker</button>
 
+<MapEventList Events="@_events"></MapEventList>
+
 @code {
-    private GoogleMap _map1;
-    private MapOptions _mapOptions;
-    private ElementReference memberRef;
-    private LatLngBounds _bounds;
+    private GoogleMap _map1 = null!;
+    private MapOptions _mapOptions = null!;
+    private LatLngBounds _bounds = null!;
+    private readonly List<String> _events = new List<String>();
 
     [Inject]
     public IJSRuntime JsObjectRef { get; set; } = null!;
@@ -49,7 +51,11 @@
 
         await _bounds.Extend(mapCenter);
 
-        var position = await marker.GetPosition();
-        var latitude = position.Lat;
+        await marker.AddListener<MouseEvent>("click", async e =>
+        {
+            _events.Add($"Clicked {e.LatLng.Lat} {e.LatLng.Lng}");
+            StateHasChanged();
+            await e.Stop();
+        });
     }
 }

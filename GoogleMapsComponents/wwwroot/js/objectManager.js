@@ -353,7 +353,7 @@
                 let args2 = args.slice(2).map(arg => tryParseJson(arg));
                 //console.log(args2);
                 let functionName = args[1];
-                if (functionName == "google.maps.marker.AdvancedMarkerView") {
+                if (functionName == "google.maps.marker.AdvancedMarkerView" || functionName == "google.maps.marker.AdvancedMarkerElement") {
                     var content = args2[0].content;
                     if (content != null && content !== undefined) {
                         var template = document.createElement('template');

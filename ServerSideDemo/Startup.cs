@@ -1,4 +1,5 @@
 using GoogleMapsComponents;
+using GoogleMapsComponents.Maps;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -24,7 +25,10 @@ public class Startup
         services.AddServerSideBlazor().AddHubOptions(config => config.MaximumReceiveMessageSize = 1048576);
 
         // Adds the service to use bootstrap loader for Google API JS. 
-        services.AddBlazorGoogleMaps("AIzaSyBdkgvniMdyFPAcTlcZivr8f30iU-kn1T0");
+        services.AddBlazorGoogleMaps(new MapApiLoadOptions("AIzaSyBdkgvniMdyFPAcTlcZivr8f30iU-kn1T0")
+        {
+            Version = "beta"
+        });
         // Or manually set version and libraries for entire app:
         //services.AddBlazorGoogleMaps(new GoogleMapsComponents.Maps.MapApiLoadOptions("AIzaSyBdkgvniMdyFPAcTlcZivr8f30iU-kn1T0")
         //{

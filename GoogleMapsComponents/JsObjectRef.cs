@@ -33,7 +33,7 @@ internal class JsObjectRef1 : IJsObjectRef
         _guid = new Guid(guidString);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         var other = obj as JsObjectRef;
 
@@ -89,9 +89,9 @@ public class JsObjectRef : IJsObjectRef, IDisposable
         string constructorFunctionName,
         Dictionary<string, object> args)
     {
-        Dictionary<string, Guid> internalMapping = args.ToDictionary(e => e.Key, e => Guid.NewGuid());
-        Dictionary<Guid, object> dictArgs = internalMapping.ToDictionary(e => e.Value, e => args[e.Key]);
-        Dictionary<Guid, JsObjectRef> result = await CreateMultipleAsync(
+        var internalMapping = args.ToDictionary(e => e.Key, e => Guid.NewGuid());
+        var dictArgs = internalMapping.ToDictionary(e => e.Value, e => args[e.Key]);
+        var result = await CreateMultipleAsync(
             jsRuntime,
             constructorFunctionName,
             dictArgs);
@@ -103,8 +103,8 @@ public class JsObjectRef : IJsObjectRef, IDisposable
         string constructorFunctionName,
         Dictionary<string, object> args)
     {
-        Dictionary<string, Guid> internalMapping = args.ToDictionary(e => e.Key, e => Guid.NewGuid());
-        Dictionary<Guid, object> dictArgs = internalMapping.ToDictionary(e => e.Value, e => args[e.Key]);
+        var internalMapping = args.ToDictionary(e => e.Key, _ => Guid.NewGuid());
+        var dictArgs = internalMapping.ToDictionary(e => e.Value, e => args[e.Key]);
         Dictionary<Guid, JsObjectRef> result = await CreateMultipleAsync(
             _jsRuntime,
             constructorFunctionName,
@@ -135,7 +135,7 @@ public class JsObjectRef : IJsObjectRef, IDisposable
         string functionName,
         Dictionary<Guid, object> dictArgs)
     {
-        Dictionary<Guid, JsObjectRef> jsObjectRefs = dictArgs.ToDictionary(e => e.Key, e => new JsObjectRef(jsRuntime, e.Key));
+        var jsObjectRefs = dictArgs.ToDictionary(e => e.Key, e => new JsObjectRef(jsRuntime, e.Key));
 
         await jsRuntime.MyInvokeAsync<object>(
             "blazorGoogleMaps.objectManager.createMultipleObject",

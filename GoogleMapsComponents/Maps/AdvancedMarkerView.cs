@@ -13,10 +13,10 @@ public class AdvancedMarkerElement : ListableEntityBase<AdvancedMarkerElementOpt
     // https://developers.google.com/maps/documentation/javascript/reference/3.55/advanced-markers
     public const string GoogleMapAdvancedMarkerName = "google.maps.marker.AdvancedMarkerElement";
 
-    public static async Task<Marker> CreateAsync(IJSRuntime jsRuntime, AdvancedMarkerElementOptions? opts = null)
+    public static async Task<AdvancedMarkerElement> CreateAsync(IJSRuntime jsRuntime, AdvancedMarkerElementOptions? opts = null)
     {
         var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, GoogleMapAdvancedMarkerName, opts);
-        var obj = new Marker(jsObjectRef);
+        var obj = new AdvancedMarkerElement(jsObjectRef);
         return obj;
     }
 

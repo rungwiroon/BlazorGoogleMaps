@@ -106,9 +106,8 @@ public partial class MapAdvancedMarkerElementListPage
                     Position = new LatLngLiteral() { Lng = y.Lng, Lat = y.Lat },
                     Map = _map1.InteropObject,
                     //Icon = new Icon() { Url = s.MarkerIconPath, ScaledSize = iconSize, Anchor = iconAnchor },
-                    Clickable = true,
+                    GmpDraggable = true,
                     Title = Guid.NewGuid().ToString(),
-                    Visible = true
                 })
             );
         }
@@ -119,9 +118,8 @@ public partial class MapAdvancedMarkerElementListPage
                 Position = new LatLngLiteral() { Lng = y.Lng, Lat = y.Lat },
                 Map = _map1.InteropObject,
                 //Icon = new Icon() { Url = s.MarkerIconPath, ScaledSize = iconSize, Anchor = iconAnchor },
-                Clickable = true,
+                GmpDraggable = true,
                 Title = Guid.NewGuid().ToString(),
-                Visible = true
             });
 
             await _markerElementList.AddMultipleAsync(cordDic);

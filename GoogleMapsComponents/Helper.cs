@@ -204,7 +204,7 @@ internal static class Helper
 
         if (typeof(IJsObjectRef).IsAssignableFrom(typeof(TRes)))
         {
-            var guid = await jsRuntime.InvokeAsync<string>(identifier, jsFriendlyArgs);
+            var guid = await jsRuntime.InvokeAsync<string?>(identifier, jsFriendlyArgs);
 
             return guid == null ? default : (TRes)JsObjectRefInstances.GetInstance(guid);
         }
