@@ -36,16 +36,14 @@ public partial class MapAdvancedMarkerElementListPage
                 Lat = 13.505892,
                 Lng = 100.8162
             },
-            MapTypeId = MapTypeId.Roadmap
+            MapTypeId = MapTypeId.Roadmap,
+            MapId = "map1",
         };
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected async Task OnAfterInit()
     {
-        if (firstRender)
-        {
-            _bounds = await LatLngBounds.CreateAsync(_map1.JsRuntime);
-        }
+        _bounds = await LatLngBounds.CreateAsync(_map1.JsRuntime);
     }
 
     private async Task AddMarker2()
