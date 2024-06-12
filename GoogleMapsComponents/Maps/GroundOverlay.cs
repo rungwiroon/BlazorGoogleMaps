@@ -44,7 +44,7 @@ public class GroundOverlay : EventEntityBase, IJsObjectRef
         await SetOpacity(Convert.ToDouble(opacity));
     }
 
-    public async Task SetMap(Map map)
+    public async Task SetMap(Map? map)
     {
         await _jsObjectRef.InvokeAsync(
             "setMap",

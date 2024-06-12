@@ -1,30 +1,23 @@
-﻿using System;
+﻿using GoogleMapsComponents;
+using GoogleMapsComponents.Maps;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using GoogleMapsComponents;
-using GoogleMapsComponents.Maps;
-using ServerSideDemo.Shared;
 
 namespace ServerSideDemo.Pages;
 
 public partial class MapGroundOverlayPage
 {
-    private GoogleMap map1;
+    private GoogleMap _map1;
+    private MapOptions _mapOptions;
 
-    private MapOptions mapOptions;
+    private readonly List<String> _events = new List<String>();
 
-    private Stack<Marker> markers = new Stack<Marker>();
-
-    private List<String> _events = new List<String>();
-
-    private MapEventList eventList;
-
-    private LatLngBounds bounds;
     private GroundOverlay _mapoverlay;
 
     protected override void OnInitialized()
     {
-        mapOptions = new MapOptions()
+        _mapOptions = new MapOptions()
         {
             Zoom = 13,
             Center = new LatLngLiteral()
@@ -36,21 +29,13 @@ public partial class MapGroundOverlayPage
         };
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            bounds = await LatLngBounds.CreateAsync(map1.JsRuntime);
-        }
-    }
-
     private async Task RemoveOverlay()
     {
         await _mapoverlay.SetMap(null);
     }
     private async Task AddOverlay()
     {
-        _mapoverlay = await GroundOverlay.CreateAsync(map1.JsRuntime, "https://www.lib.utexas.edu/maps/historical/newark_nj_1922.jpg", new LatLngBoundsLiteral()
+        _mapoverlay = await GroundOverlay.CreateAsync(_map1.JsRuntime, "https://www.lib.utexas.edu/maps/historical/newark_nj_1922.jpg", new LatLngBoundsLiteral()
         {
             North = 40.773941,
             South = 40.712216,
@@ -61,10 +46,6 @@ public partial class MapGroundOverlayPage
             Opacity = 0.5
         });
 
-        await _mapoverlay.SetMap(map1.InteropObject);
-
-
+        await _mapoverlay.SetMap(_map1.InteropObject);
     }
-
-
 }

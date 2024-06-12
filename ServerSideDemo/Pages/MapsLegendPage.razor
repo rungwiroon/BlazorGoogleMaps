@@ -17,19 +17,19 @@
 <button @onclick="RemoveAllControls">Remove All Controls (Both maps)</button>
 
 <div @ref="@_map1ElementRef" id="map1" style="height: 450px; display: @(_map1 is null ? "none" : "block")"></div>
-<div id="legendMap1" @ref="@legendReferenceMap1" style="display: none"><h3>Legend  </h3><button @onclick="() => HandleClick()">Alert from blazor</button></div>
-<div id="legendMap2" @ref="@legendReferenceMap2" style="display: none"><h3>Legend  </h3><button @onclick="() => HandleClick()">Alert from blazor</button></div>
+<div id="legendMap1" @ref="@_legendReferenceMap1" style="display: none"><h3>Legend  </h3><button @onclick="() => HandleClick()">Alert from blazor</button></div>
+<div id="legendMap2" @ref="@_legendReferenceMap2" style="display: none"><h3>Legend  </h3><button @onclick="() => HandleClick()">Alert from blazor</button></div>
 
 <div @ref="@_map2ElementRef" id="map2" style="height: 450px; display: @(_map2 is null ? "none" : "block")"></div>
 
 
 @code {
-    private Map _map1, _map2;
+    private Map? _map1, _map2;
 
     private ElementReference _map1ElementRef, _map2ElementRef;
 
-    protected ElementReference legendReferenceMap1 { get; set; }
-    protected ElementReference legendReferenceMap2 { get; set; }
+    private ElementReference _legendReferenceMap1;
+    private ElementReference _legendReferenceMap2;
 
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -40,11 +40,6 @@
             await AddMap2();
             StateHasChanged();
         }
-    }
-
-    private async Task AfterMapInit()
-    {
-
     }
 
     private async Task<Map> CreateMap(ElementReference elementReference)
@@ -99,22 +94,22 @@
 
     private async Task AddLegendMap1()
     {
-        await _map1.AddControl(ControlPosition.BottomCenter, legendReferenceMap1);
+        await _map1.AddControl(ControlPosition.BottomCenter, _legendReferenceMap1);
     }
 
     private async Task RemoveLegendMap1()
     {
-        await _map1.RemoveControl(ControlPosition.BottomCenter, legendReferenceMap1);
+        await _map1.RemoveControl(ControlPosition.BottomCenter, _legendReferenceMap1);
     }
 
     private async Task AddLegendMap2()
     {
-        await _map2.AddControl(ControlPosition.BottomCenter, legendReferenceMap2);
+        await _map2.AddControl(ControlPosition.BottomCenter, _legendReferenceMap2);
     }
 
     private async Task RemoveLegendMap2()
     {
-        await _map2.RemoveControl(ControlPosition.BottomCenter, legendReferenceMap2);
+        await _map2.RemoveControl(ControlPosition.BottomCenter, _legendReferenceMap2);
     }
 
     private async Task RemoveAllControls()

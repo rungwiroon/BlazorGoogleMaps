@@ -3,9 +3,8 @@
 
 <h1>Google Map Ground Overlay</h1>
 
-<GoogleMap @ref="@map1" Id="map1" Options="@mapOptions"></GoogleMap>
+<GoogleMap @ref="@_map1" Id="map1" Options="@_mapOptions"></GoogleMap>
 <button @onclick="@AddOverlay">Add Overlay</button>
 <button @onclick="@RemoveOverlay">Remove Overlay</button>
 
-
-<MapEventList @ref="@eventList" Events="@_events"></MapEventList>
+<MapEventList Events="@_events"></MapEventList>
