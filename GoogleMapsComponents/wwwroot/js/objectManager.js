@@ -388,7 +388,17 @@
                 let guids = JSON.parse(args[0]);
 
                 for (var i = 0, len = args2.length; i < len; i++) {
-                    let obj = new constructor(args2[i]);
+                    var constructorArgs = args2[i];
+                    if (functionName == "google.maps.marker.AdvancedMarkerView" || functionName == "google.maps.marker.AdvancedMarkerElement") {
+                        if(constructorArgs.content != null && constructorArgs.content !== undefined) {
+                            var template = document.createElement('template');
+                            constructorArgs.content = constructorArgs.content.trim();
+                            template.innerHTML = constructorArgs.content;
+                            constructorArgs.content = template.content.firstChild;
+                        }
+                    }
+
+                    let obj = new constructor(constructorArgs);
 
                     if ("set" in obj) {
                         obj.set("guidString", guids[i]);
