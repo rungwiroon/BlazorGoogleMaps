@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using GoogleMapsComponents;
+﻿using GoogleMapsComponents;
 using GoogleMapsComponents.Maps;
 using GoogleMapsComponents.Maps.Coordinates;
 using GoogleMapsComponents.Maps.Extension;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using ServerSideDemo.Shared;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ServerSideDemo.Pages;
 
@@ -44,12 +44,9 @@ public partial class MapMarkerListPage
         };
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected async Task OnAfterInit()
     {
-        if (firstRender)
-        {
-            bounds = await LatLngBounds.CreateAsync(map1.JsRuntime);
-        }
+        bounds = await LatLngBounds.CreateAsync(map1.JsRuntime);
     }
 
     private async Task InvokeClustering()

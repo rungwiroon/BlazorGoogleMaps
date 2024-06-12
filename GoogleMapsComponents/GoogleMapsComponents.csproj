@@ -50,10 +50,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.3" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.3" />
-		<PackageReference Include="Microsoft.JSInterop" Version="8.0.3" />
-		<PackageReference Include="OneOf" Version="3.0.263" />
+		<PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.6" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.6" />
+		<PackageReference Include="Microsoft.JSInterop" Version="8.0.6" />
+		<PackageReference Include="OneOf" Version="3.0.271" />
 		<PackageReference Include="System.Text.Json" Version="8.0.3" />
 	</ItemGroup>
 
