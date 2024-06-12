@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace GoogleMapsComponents;
 
@@ -14,14 +13,14 @@ public static class DependencyInjectionExtensions
     /// </summary>
     public static IServiceCollection AddBlazorGoogleMaps(this IServiceCollection services, string key)
     {
-        services.AddScoped<IBlazorGoogleMapsKeyService>(serviceProvider => new BlazorGoogleMapsKeyService(key));
+        services.AddScoped<IBlazorGoogleMapsKeyService>(_ => new BlazorGoogleMapsKeyService(key));
         return services;
     }
 
     /// <inheritdoc cref="AddBlazorGoogleMaps(IServiceCollection, string)"/>
     public static IServiceCollection AddBlazorGoogleMaps(this IServiceCollection services, Maps.MapApiLoadOptions opts)
     {
-        services.AddScoped<IBlazorGoogleMapsKeyService>(serviceProvider => new BlazorGoogleMapsKeyService(opts));
+        services.AddScoped<IBlazorGoogleMapsKeyService>(_ => new BlazorGoogleMapsKeyService(opts));
         return services;
     }
 }

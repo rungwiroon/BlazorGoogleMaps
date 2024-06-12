@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Microsoft.JSInterop;
+using System;
 using System.Threading.Tasks;
-using Microsoft.JSInterop;
 
 namespace GoogleMapsComponents.Maps.Places;
 
-public class AutocompleteService: IDisposable
+public class AutocompleteService : IDisposable
 {
     private readonly JsObjectRef _jsObjectRef;
 
-    public async static Task<AutocompleteService> CreateAsync(IJSRuntime jsRuntime)
+    public static async Task<AutocompleteService> CreateAsync(IJSRuntime jsRuntime)
     {
         var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.places.AutocompleteService");
         var obj = new AutocompleteService(jsObjectRef);

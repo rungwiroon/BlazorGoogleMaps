@@ -12,7 +12,7 @@ public class AutocompleteSessionToken : IDisposable, IJsObjectRef
     [JsonPropertyName("GuidString")]
     public Guid Guid => _jsObjectRef.Guid;
 
-    public async static Task<AutocompleteSessionToken> CreateAsync(IJSRuntime jsRuntime)
+    public static async Task<AutocompleteSessionToken> CreateAsync(IJSRuntime jsRuntime)
     {
         var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.places.AutocompleteSessionToken");
         var obj = new AutocompleteSessionToken(jsObjectRef);

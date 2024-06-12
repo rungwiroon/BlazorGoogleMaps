@@ -1,7 +1,6 @@
-﻿using System;
-using Microsoft.JSInterop;
+﻿using Microsoft.JSInterop;
+using System;
 using System.Threading.Tasks;
-using GoogleMapsComponents.Maps.Places;
 
 namespace GoogleMapsComponents.Maps;
 
@@ -17,7 +16,7 @@ public class Geocoder : IDisposable
     /// </summary>
     /// <param name="jsRuntime"></param>
     /// <returns></returns>
-    public async static Task<Geocoder> CreateAsync(IJSRuntime jsRuntime)
+    public static async Task<Geocoder> CreateAsync(IJSRuntime jsRuntime)
     {
         var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Geocoder");
         var obj = new Geocoder(jsObjectRef);

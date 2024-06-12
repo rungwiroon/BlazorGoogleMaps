@@ -13,14 +13,11 @@ namespace ServerSideDemo.Pages;
 
 public partial class MapAdvancedMarkerElementListPage
 {
-    private GoogleMap _map1;
+    private GoogleMap _map1 = null!;
+    private MapOptions _mapOptions = null!;
 
-    private MapOptions _mapOptions;
-
-    private Stack<Marker> _markers = new Stack<Marker>();
-
-    private LatLngBounds _bounds;
-
+    private readonly Stack<Marker> _markers = new Stack<Marker>();
+    private LatLngBounds _bounds = null!;
     private AdvancedMarkerElementList? _markerElementList;
 
     [Inject]
@@ -103,9 +100,9 @@ public partial class MapAdvancedMarkerElementListPage
                 {
                     Position = new LatLngLiteral() { Lng = y.Lng, Lat = y.Lat },
                     Map = _map1.InteropObject,
-                    //Icon = new Icon() { Url = s.MarkerIconPath, ScaledSize = iconSize, Anchor = iconAnchor },
                     GmpDraggable = true,
                     Title = Guid.NewGuid().ToString(),
+                    Content = "<div style='background-color:blue'>My pin</div>",
                 })
             );
         }
@@ -115,9 +112,9 @@ public partial class MapAdvancedMarkerElementListPage
             {
                 Position = new LatLngLiteral() { Lng = y.Lng, Lat = y.Lat },
                 Map = _map1.InteropObject,
-                //Icon = new Icon() { Url = s.MarkerIconPath, ScaledSize = iconSize, Anchor = iconAnchor },
                 GmpDraggable = true,
                 Title = Guid.NewGuid().ToString(),
+                Content = "<div style='background-color:blue'>My pin</div>",
             });
 
             await _markerElementList.AddMultipleAsync(cordDic);

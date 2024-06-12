@@ -19,20 +19,20 @@ public interface IBlazorGoogleMapsKeyService
 /// </summary>
 public class BlazorGoogleMapsKeyService : IBlazorGoogleMapsKeyService
 {
-    private readonly Maps.MapApiLoadOptions initOptions;
+    private readonly Maps.MapApiLoadOptions _initOptions;
     public bool IsApiInitialized { get; set; } = false;
 
     public BlazorGoogleMapsKeyService(string key)
     {
-        initOptions = new Maps.MapApiLoadOptions(key);
+        _initOptions = new Maps.MapApiLoadOptions(key);
     }
     public BlazorGoogleMapsKeyService(Maps.MapApiLoadOptions opts)
     {
-        initOptions = opts;
+        _initOptions = opts;
     }
     public Task<Maps.MapApiLoadOptions> GetApiOptions()
     {
         // Can do async things to get the API key if needed here.
-        return Task.FromResult(initOptions);
+        return Task.FromResult(_initOptions);
     }
 }

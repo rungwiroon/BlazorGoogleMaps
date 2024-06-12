@@ -16,13 +16,13 @@ public class MapComponent : ComponentBase, IDisposable, IAsyncDisposable
     [Inject]
     public IServiceProvider ServiceProvider { get; protected set; } = default!;
 
-    private IBlazorGoogleMapsKeyService? KeyService;
+    private IBlazorGoogleMapsKeyService? _keyService;
 
     protected override void OnInitialized()
     {
         // get the service from the provider instead of with [Inject] in case no 
         // service was registered. e.g. when the user loads the api with a script tag.
-        KeyService = ServiceProvider.GetService<IBlazorGoogleMapsKeyService>();
+        _keyService = ServiceProvider.GetService<IBlazorGoogleMapsKeyService>();
         base.OnInitialized();
     }
 
@@ -30,16 +30,15 @@ public class MapComponent : ComponentBase, IDisposable, IAsyncDisposable
 
     public async Task InitAsync(ElementReference element, MapOptions? options = null)
     {
-        if (options?.ApiLoadOptions == null && KeyService != null && !KeyService.IsApiInitialized)
+        if (options?.ApiLoadOptions == null && _keyService != null && !_keyService.IsApiInitialized)
         {
-            KeyService.IsApiInitialized = true;
+            _keyService.IsApiInitialized = true;
             options ??= new MapOptions();
-            options.ApiLoadOptions = await KeyService.GetApiOptions();
+            options.ApiLoadOptions = await _keyService.GetApiOptions();
         }
+
         InteropObject = await Map.CreateAsync(JsRuntime, element, options);
     }
-
-
 
     public async ValueTask DisposeAsync()
     {
@@ -66,7 +65,7 @@ public class MapComponent : ComponentBase, IDisposable, IAsyncDisposable
             {
                 var isPossibleRefreshError = ex.HasInnerExceptionsOfType<TaskCanceledException>();
                 isPossibleRefreshError |= ex.HasInnerExceptionsOfType<ObjectDisposedException>();
-                //Unfortenatly, JSDisconnectedException is available in dotnet >= 6.0, and not in dotnet standard.
+                //Unfortunately, JSDisconnectedException is available in dotnet >= 6.0, and not in dotnet standard.
                 isPossibleRefreshError |= true;
                 //If we get an exception here, we can assume that the page was refreshed. So assentialy, we swallow all exception here...
                 //isPossibleRefreshError = isPossibleRefreshError || ex.HasInnerExceptionsOfType<JSDisconnectedException>();

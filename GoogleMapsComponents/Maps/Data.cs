@@ -15,7 +15,7 @@ namespace GoogleMapsComponents.Maps;
 /// Every Map has a Data object by default, so most of the time there is no need to construct one.
 /// The Data object is a collection of Features.
 /// </summary>
-public class MapData : EventEntityBase, IEnumerable<Feature>, IDisposable
+public class MapData : EventEntityBase, IEnumerable<Feature>
 {
     private Map? _map;
 
@@ -41,7 +41,7 @@ public class MapData : EventEntityBase, IEnumerable<Feature>, IDisposable
         //_jsObjectRef = jsObjectRef;
     }
 
-    public IEnumerator<Data.Feature> GetEnumerator()
+    public IEnumerator<Feature> GetEnumerator()
     {
         throw new NotImplementedException();
     }
@@ -58,9 +58,9 @@ public class MapData : EventEntityBase, IEnumerable<Feature>, IDisposable
     /// </summary>
     /// <param name="feature"></param>
     /// <returns></returns>
-    public Task<Data.Feature> Add(OneOf<Data.Feature, Data.FeatureOptions> feature)
+    public Task<Feature> Add(OneOf<Feature, FeatureOptions> feature)
     {
-        return _jsObjectRef.InvokeAsync<Data.Feature>(
+        return _jsObjectRef.InvokeAsync<Feature>(
             "add",
             feature);
     }
@@ -72,7 +72,7 @@ public class MapData : EventEntityBase, IEnumerable<Feature>, IDisposable
     /// <param name="geoJson"></param>
     /// <param name="options"></param>
     /// <returns></returns>
-    public Task<object> AddGeoJson(Feature geoJson, Maps.Data.GeoJsonOptions? options = null)
+    public Task<object> AddGeoJson(Feature geoJson, GeoJsonOptions? options = null)
     {
         return _jsObjectRef.InvokeAsync<object>(
             "addGeoJson", geoJson.Properties.First(), options);
@@ -85,7 +85,7 @@ public class MapData : EventEntityBase, IEnumerable<Feature>, IDisposable
     /// <param name="geoJson"></param>
     /// <param name="options"></param>
     /// <returns></returns>
-    public async Task<IReadOnlyCollection<Feature>> AddGeoJson(string geoJson, Maps.Data.GeoJsonOptions? options = null)
+    public async Task<IReadOnlyCollection<Feature>> AddGeoJson(string geoJson, GeoJsonOptions? options = null)
     {
         //https://developers.google.com/maps/documentation/javascript/reference/data#Data.addGeoJson
         //addGeoJson returns features array right away, so i add them explicitly to mapObjects and return just guids
@@ -105,7 +105,7 @@ public class MapData : EventEntityBase, IEnumerable<Feature>, IDisposable
     /// </summary>
     /// <param name="feature"></param>
     /// <returns></returns>
-    public Task<bool> Contains(Data.Feature feature)
+    public Task<bool> Contains(Feature feature)
     {
         return _jsObjectRef.InvokeAsync<bool>(
             "contains",
@@ -151,9 +151,9 @@ public class MapData : EventEntityBase, IEnumerable<Feature>, IDisposable
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public Task<Data.Feature> GetFeatureById(OneOf<int, string> id)
+    public Task<Feature> GetFeatureById(OneOf<int, string> id)
     {
-        return _jsObjectRef.InvokeAsync<Data.Feature>(
+        return _jsObjectRef.InvokeAsync<Feature>(
             "getFeatureById",
             id.Value);
     }
@@ -171,9 +171,9 @@ public class MapData : EventEntityBase, IEnumerable<Feature>, IDisposable
     /// Gets the style for all features in the collection.
     /// </summary>
     /// <returns></returns>
-    public Task<Data.StyleOptions> GetStyle()
+    public Task<StyleOptions> GetStyle()
     {
-        return _jsObjectRef.InvokeAsync<Data.StyleOptions>(
+        return _jsObjectRef.InvokeAsync<StyleOptions>(
             "getStyle");
     }
 
@@ -185,7 +185,7 @@ public class MapData : EventEntityBase, IEnumerable<Feature>, IDisposable
     /// <param name="url"></param>
     /// <param name="options"></param>
     /// <returns></returns>
-    public Task<Data.Feature> LoadGeoJson(string url, Data.GeoJsonOptions? options = null)
+    public Task<Feature> LoadGeoJson(string url, GeoJsonOptions? options = null)
     {
         throw new NotImplementedException();
     }
@@ -197,7 +197,7 @@ public class MapData : EventEntityBase, IEnumerable<Feature>, IDisposable
     /// <param name="feature"></param>
     /// <param name="style"></param>
     /// <returns></returns>
-    public Task OverrideStyle(Data.Feature feature, Data.StyleOptions style)
+    public Task OverrideStyle(Feature feature, StyleOptions style)
     {
         return _jsObjectRef.InvokeAsync(
             "overrideStyle",
@@ -210,7 +210,7 @@ public class MapData : EventEntityBase, IEnumerable<Feature>, IDisposable
     /// </summary>
     /// <param name="feature"></param>
     /// <returns></returns>
-    public Task Remove(Data.Feature feature)
+    public Task Remove(Feature feature)
     {
         return _jsObjectRef.InvokeAsync(
             "remove",
@@ -233,7 +233,7 @@ public class MapData : EventEntityBase, IEnumerable<Feature>, IDisposable
     /// </summary>
     /// <param name="feature"></param>
     /// <returns></returns>
-    public Task RevertStyle(Data.Feature feature = null)
+    public Task RevertStyle(Feature feature = null)
     {
         return _jsObjectRef.InvokeAsync(
             "revertStyle",
@@ -304,7 +304,7 @@ public class MapData : EventEntityBase, IEnumerable<Feature>, IDisposable
     /// </summary>
     /// <param name="style"></param>
     /// <returns></returns>
-    public Task SetStyle(OneOf<Func<Data.Feature, Data.StyleOptions>, Data.StyleOptions> style)
+    public Task SetStyle(OneOf<Func<Feature, StyleOptions>, StyleOptions> style)
     {
         return _jsObjectRef.InvokeAsync(
             "setStyle",
