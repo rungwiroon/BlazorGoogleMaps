@@ -4,20 +4,20 @@
 
 <h1>Google Map Info Window</h1>
 
-<GoogleMap @ref="@map1" Id="map1" Options="@mapOptions"></GoogleMap>
+<GoogleMap @ref="@_map1" Id="map1" Options="@_mapOptions"></GoogleMap>
 <button @onclick="AddMarker">Add marker</button>
 
 @functions {
-    private GoogleMap map1 = default!;
+    private GoogleMap _map1 = default!;
 
-    private MapOptions mapOptions = default!;
+    private MapOptions _mapOptions = default!;
 
     //private List<Marker> markers = new List<Marker>();
-    private int markerCount;
+    private int _markerCount;
 
     protected override void OnInitialized()
     {
-        mapOptions = new MapOptions()
+        _mapOptions = new MapOptions()
         {
             Zoom = 13,
             Center = new LatLngLiteral()
@@ -31,16 +31,16 @@
 
     private async Task AddMarker()
     {
-        var position = await map1.InteropObject.GetCenter();
+        var position = await _map1.InteropObject.GetCenter();
 
-        var marker = await Marker.CreateAsync(map1.JsRuntime, new MarkerOptions()
+        var marker = await Marker.CreateAsync(_map1.JsRuntime, new MarkerOptions()
         {
             Position = position,
-            Map = map1.InteropObject,
-            Label = $"Test {markerCount}"
+            Map = _map1.InteropObject,
+            Label = $"Test {_markerCount}"
         });
 
-        var infoWindow = await InfoWindow.CreateAsync(map1.JsRuntime, new InfoWindowOptions()
+        var infoWindow = await InfoWindow.CreateAsync(_map1.JsRuntime, new InfoWindowOptions()
         {
             Position = new LatLngLiteral()
             {
@@ -50,15 +50,15 @@
             //Content = "Test"
         });
 
-        var infoWindowContent = $"Test {markerCount}";
+        var infoWindowContent = $"Test {_markerCount}";
 
         await marker.AddListener("click", async () =>
         {
             await infoWindow.SetContent(infoWindowContent);
             await infoWindow.SetPosition(position);
-            await infoWindow.Open(map1.InteropObject);
+            await infoWindow.Open(_map1.InteropObject);
         });
 
-        markerCount++;
+        _markerCount++;
     }
 }

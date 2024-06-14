@@ -4,7 +4,7 @@
 
 <h1>Polylines</h1>
 
-<GoogleMap  @ref="@map1" Id="map1" Options="@mapOptions" OnAfterInit="async () => await OnAfterMapInit()"></GoogleMap>
+<GoogleMap  @ref="@_map1" Id="map1" Options="@_mapOptions" OnAfterInit="async () => await OnAfterMapInit()"></GoogleMap>
 <button @onclick="StartDrawingPolyline">Start drawing polyline</button>
 <button @onclick="EndDrawingPolyline">End drawing polyline</button>
 <br />
@@ -16,24 +16,24 @@
 <button @onclick="DrawingCircle">Drawing circle</button>
 
 @functions {
-    private GoogleMap map1 = default!;
+    private GoogleMap _map1 = default!;
 
-    private MapOptions mapOptions = default!;
+    private MapOptions _mapOptions = default!;
 
-    private List<LatLngLiteral> path = new List<LatLngLiteral>();
+    private List<LatLngLiteral> _path = new List<LatLngLiteral>();
 
-    private List<Polyline> polylines = new List<Polyline>();
-    private Polyline? polyline;
+    private List<Polyline> _polylines = new List<Polyline>();
+    private Polyline? _polyline;
 
-    private List<Polygon> polygons = new List<Polygon>();
-    private Polygon? polygon;
+    private List<Polygon> _polygons = new List<Polygon>();
+    private Polygon? _polygon;
 
-    private Rectangle? rectangle;
-    private Circle? circle;
+    private Rectangle? _rectangle;
+    private Circle? _circle;
 
     protected override void OnInitialized()
     {
-        mapOptions = new MapOptions()
+        _mapOptions = new MapOptions()
         {
             Zoom = 13,
             Center = new LatLngLiteral()
@@ -47,119 +47,119 @@
 
     private async Task OnAfterMapInit()
     {
-        await map1.InteropObject.AddListener<MouseEvent>("click", async (e) => await OnClick(e));
+        await _map1.InteropObject.AddListener<MouseEvent>("click", async (e) => await OnClick(e));
     }
 
     private async Task StartDrawingPolyline()
     {
-        polyline = await Polyline.CreateAsync(map1.JsRuntime, new PolylineOptions()
+        _polyline = await Polyline.CreateAsync(_map1.JsRuntime, new PolylineOptions()
         {
             Draggable = true,
             Editable = true,
-            Map = map1.InteropObject
+            Map = _map1.InteropObject
         });
 
-        path.Clear();
+        _path.Clear();
     }
 
     private void EndDrawingPolyline()
     {
 
-        if (polyline is { }) {
-            polylines.Add(polyline);
+        if (_polyline is { }) {
+            _polylines.Add(_polyline);
         }
 
-        polyline = null;
-        path.Clear();
+        _polyline = null;
+        _path.Clear();
     }
 
     private async Task StartDrawingPolygon()
     {
-        polygon = await Polygon.CreateAsync(map1.JsRuntime, new PolygonOptions()
+        _polygon = await Polygon.CreateAsync(_map1.JsRuntime, new PolygonOptions()
         {
             Draggable = true,
             Editable = true,
-            Map = map1.InteropObject
+            Map = _map1.InteropObject
         });
 
-        path.Clear();
+        _path.Clear();
     }
 
     private void EndDrawingPolygon()
     {
-        if (polygon is { }) {
-            polygons.Add(polygon);
+        if (_polygon is { }) {
+            _polygons.Add(_polygon);
         }
 
-        polygon = null;
-        path.Clear();
+        _polygon = null;
+        _path.Clear();
     }
 
     private async Task DrawingRectangle()
     {
-        rectangle = await Rectangle.CreateAsync(map1.JsRuntime, new RectangleOptions()
+        _rectangle = await Rectangle.CreateAsync(_map1.JsRuntime, new RectangleOptions()
         {
             Draggable = true,
             Editable = true,
-            Map = map1.InteropObject
+            Map = _map1.InteropObject
         });
 
-        path.Clear();
+        _path.Clear();
     }
 
     private async Task DrawingCircle()
     {
-        circle = await Circle.CreateAsync(map1.JsRuntime, new CircleOptions()
+        _circle = await Circle.CreateAsync(_map1.JsRuntime, new CircleOptions()
         {
             Draggable = true,
             Editable = true,
-            Map = map1.InteropObject,
+            Map = _map1.InteropObject,
             Radius = 1000
         });
 
-        path.Clear();
+        _path.Clear();
     }
 
     private async Task OnClick(MouseEvent e)
     {
         //Debug.WriteLine($"Onclick : {mouseEvent.LatLng}");
 
-        path.Add(e.LatLng);
+        _path.Add(e.LatLng);
 
-        if (polyline != null)
+        if (_polyline != null)
         {
             //Debug.WriteLine($"Path length : {path.Count()}");
 
-            await polyline.SetPath(path);
+            await _polyline.SetPath(_path);
         }
-        else if (polygon != null)
+        else if (_polygon != null)
         {
-            await polygon.SetPath(path);
+            await _polygon.SetPath(_path);
         }
-        else if (rectangle != null)
+        else if (_rectangle != null)
         {
-            if (path.Count < 2)
+            if (_path.Count < 2)
             {
                 return;
             }
 
             var bounds = new LatLngBoundsLiteral()
             {
-                East = path[1].Lng,
-                North = path[0].Lat,
-                South = path[1].Lat,
-                West = path[0].Lng
+                East = _path[1].Lng,
+                North = _path[0].Lat,
+                South = _path[1].Lat,
+                West = _path[0].Lng
             };
 
-            await rectangle.SetBounds(bounds);
+            await _rectangle.SetBounds(bounds);
 
             //path.Clear();
-            rectangle = null;
+            _rectangle = null;
         }
-        else if (circle != null)
+        else if (_circle != null)
         {
-            await circle.SetCenter(path.First());
-            circle = null;
+            await _circle.SetCenter(_path.First());
+            _circle = null;
         }
     }
 
