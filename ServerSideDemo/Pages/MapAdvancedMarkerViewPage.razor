@@ -1,27 +1,34 @@
-﻿using GoogleMapsComponents;
-using GoogleMapsComponents.Maps;
-using GoogleMapsComponents.Maps.Coordinates;
-using GoogleMapsComponents.Maps.Extension;
-using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿@page "/map-advanced-marker"
+@using GoogleMapsComponents
+@using GoogleMapsComponents.Maps
+@using GoogleMapsComponents.Maps.Coordinates
+@using GoogleMapsComponents.Maps.Extension
 
-namespace ServerSideDemo.Pages;
+<h1>Google Map Advanced Markers</h1>
+<smallNotice: Available only in the v=beta channel.></smallNotice:>
+<GoogleMap @ref="@_map1" Id="map1" Options="@_mapOptions" OnAfterInit="OnAfterRenderAsync"></GoogleMap>
+<button @onclick="@AddMarker">Add marker</button>
+<br/>
+<p>Marker list</p>
+<button @onclick="AddMarker1">Add advanced markers part 1</button>
+<button @onclick="AddMarker2">Add advanced markers part 2</button>
+<button @onclick="RemoveMarker">Remove advanced marker</button>
+<button @onclick="RemoveMarkers">Remove all advanced markers</button>
+<button @onclick="Recenter">Re-center advanced marker</button>
+<button @onclick="FitBounds">Fit to advanced markers</button>
 
-public partial class MapAdvancedMarkerElementListPage
-{
+<MapEventList Events="@_events"></MapEventList>
+
+@code {
     private GoogleMap _map1 = null!;
     private MapOptions _mapOptions = null!;
-
-    private readonly Stack<Marker> _markers = new Stack<Marker>();
     private LatLngBounds _bounds = null!;
+    private readonly List<String> _events = new List<String>();
+    private readonly Stack<Marker> _markers = new Stack<Marker>();
     private AdvancedMarkerElementList? _markerElementList;
 
     [Inject]
-    public IJSRuntime JsObjectRef { get; set; } = default!;
+    public IJSRuntime JsObjectRef { get; set; } = null!;
 
     protected override void OnInitialized()
     {
@@ -34,13 +41,34 @@ public partial class MapAdvancedMarkerElementListPage
                 Lng = 100.8162
             },
             MapTypeId = MapTypeId.Roadmap,
-            MapId = "map1",
+            MapId = "e5asd595q2121"
         };
     }
 
-    protected async Task OnAfterInit()
+    protected async Task OnAfterRenderAsync()
     {
         _bounds = await LatLngBounds.CreateAsync(_map1.JsRuntime);
+    }
+
+    private async Task AddMarker()
+    {
+        var mapCenter = await _map1.InteropObject.GetCenter();
+
+        var marker = await AdvancedMarkerElement.CreateAsync(_map1.JsRuntime, new AdvancedMarkerElementOptions()
+        {
+            Position = mapCenter,
+            Map = _map1.InteropObject,
+            Content = "<div style='background-color:blue'>My pin</div>",
+        });
+
+        await _bounds.Extend(mapCenter);
+
+        await marker.AddListener<MouseEvent>("click", async e =>
+        {
+            _events.Add($"Clicked {e.LatLng.Lat} {e.LatLng.Lng}");
+            StateHasChanged();
+            await e.Stop();
+        });
     }
 
     private async Task AddMarker2()
@@ -90,6 +118,8 @@ public partial class MapAdvancedMarkerElementListPage
         await AddMarkersGroup(coordinates);
     }
 
+
+
     private async Task AddMarkersGroup(ICollection<LatLngLiteral> coordinates)
     {
         if (_markerElementList == null)
@@ -97,25 +127,25 @@ public partial class MapAdvancedMarkerElementListPage
             _markerElementList = await AdvancedMarkerElementList.CreateAsync(
                 _map1.JsRuntime,
                 coordinates.ToDictionary(_ => Guid.NewGuid().ToString(), y => new AdvancedMarkerElementOptions()
+                    {
+                        Position = new LatLngLiteral() { Lng = y.Lng, Lat = y.Lat },
+                        Map = _map1.InteropObject,
+                        GmpDraggable = true,
+                        Title = Guid.NewGuid().ToString(),
+                        Content = "<div style='background-color:blue'>My pin</div>",
+                    })
+            );
+        }
+        else
+        {
+            var cordDic = coordinates.ToDictionary(_ => Guid.NewGuid().ToString(), y => new AdvancedMarkerElementOptions()
                 {
                     Position = new LatLngLiteral() { Lng = y.Lng, Lat = y.Lat },
                     Map = _map1.InteropObject,
                     GmpDraggable = true,
                     Title = Guid.NewGuid().ToString(),
                     Content = "<div style='background-color:blue'>My pin</div>",
-                })
-            );
-        }
-        else
-        {
-            var cordDic = coordinates.ToDictionary(_ => Guid.NewGuid().ToString(), y => new AdvancedMarkerElementOptions()
-            {
-                Position = new LatLngLiteral() { Lng = y.Lng, Lat = y.Lat },
-                Map = _map1.InteropObject,
-                GmpDraggable = true,
-                Title = Guid.NewGuid().ToString(),
-                Content = "<div style='background-color:blue'>My pin</div>",
-            });
+                });
 
             await _markerElementList.AddMultipleAsync(cordDic);
         }
