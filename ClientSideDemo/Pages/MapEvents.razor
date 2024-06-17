@@ -189,8 +189,6 @@
 
     private void OnMouseMove(MouseEvent e)
     {
-        //Console.WriteLine("OnMouseMove.");
-
         _events.Insert(0, $"OnMouseMove {e.LatLng}.");
         _events = _events.Take(100).ToList();
 
