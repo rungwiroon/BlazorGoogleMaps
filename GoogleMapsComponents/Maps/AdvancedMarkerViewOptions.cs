@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Components;
+using System;
 using System.Text.Json.Serialization;
 
 namespace GoogleMapsComponents.Maps;
@@ -35,6 +36,8 @@ public class AdvancedMarkerElementOptions : ListableEntityOptionsBase
     /// Rollover text. If provided, an accessibility text (e.g. for use with screen readers) will be added to the
     /// </summary>
     public string? Title { get; set; }
+
+    public ElementReference? Element { get; set; }
 }
 
 [Obsolete("Use AdvancedMarkerElementOptions")]

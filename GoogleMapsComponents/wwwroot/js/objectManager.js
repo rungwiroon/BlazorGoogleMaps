@@ -638,6 +638,14 @@
                         console.log(e);
                     }
                 }
+                else if (functionToInvoke == "google.maps.marker.PinElement") {
+                    try {
+                        var pinElement = new google.maps.marker.PinElement(args2[0]);
+                        return pinElement;
+                    } catch (e) {
+                        console.log(e);
+                    }
+                }
                 else if (functionToInvoke === "addListenerOnce") {
                     const eventId = new google.maps.event.addListenerOnce(obj, args2[0], args2[1]);
                     return eventId;
