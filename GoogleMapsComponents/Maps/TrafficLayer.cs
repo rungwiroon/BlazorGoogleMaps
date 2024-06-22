@@ -33,11 +33,6 @@ public class TrafficLayer : EventEntityBase, IJsObjectRef
         return _jsObjectRef.InvokeAsync<Map>("getMap");
     }
 
-    /// <summary>
-    /// Renders the map entity on the specified map or panorama. 
-    /// If map is set to null, the map entity will be removed.
-    /// </summary>
-    /// <param name="map"></param>
     public virtual async Task SetMap(Map? map)
     {
         await _jsObjectRef.InvokeAsync("setMap", map);
