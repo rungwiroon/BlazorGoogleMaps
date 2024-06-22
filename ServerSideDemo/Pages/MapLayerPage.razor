@@ -1,0 +1,66 @@
+﻿@page "/map-layer"
+@using GoogleMapsComponents
+@using GoogleMapsComponents.Maps
+
+<h1>Map Layers. Traffic, Transit and Bicycle</h1>
+
+<GoogleMap @ref="@_map1" Id="map1" Options="@_mapOptions"></GoogleMap>
+
+<button @onclick="AddTrafficLayer">Add Traffic Layer</button> 
+<button @onclick="RemoveTrafficLayer">Remove Traffic Layer</button> 
+<br/>
+<button @onclick="AddTransitLayer">Add TransitLayer Layer</button>
+<br/>
+<button @onclick="AddBicyclingLayer">Add Bicycling Layer</button>
+
+@code {
+    private GoogleMap _map1 = null!;
+    private TrafficLayer? _trafficLayer;
+    private TransitLayer? _transitLayer;
+    private BicyclingLayer? _bicyclingLayer;
+    private MapOptions _mapOptions = null!;
+
+    protected override void OnInitialized()
+    {
+        _mapOptions = new MapOptions
+        {
+            Zoom = 13,
+            Center = new LatLngLiteral
+            {
+                Lat = -33.8688,
+                Lng = 151.2195
+            },
+            MapTypeId = MapTypeId.Roadmap
+        };
+    }
+
+    private async Task AddTrafficLayer()
+    {
+        _trafficLayer = await TrafficLayer.CreateAsync(_map1.JsRuntime, new TrafficLayerOptions()
+        {
+            Map = _map1.InteropObject
+        });
+    }
+
+    private async Task RemoveTrafficLayer()
+    {
+        if (_trafficLayer != null)
+        {
+            await _trafficLayer.SetMap(null);
+        }
+    }
+
+    private async Task AddTransitLayer()
+    {
+        _transitLayer = await TransitLayer.CreateAsync(_map1.JsRuntime);
+        await _transitLayer.SetMap(_map1.InteropObject);
+    }
+
+    private async Task AddBicyclingLayer()
+    {
+        _bicyclingLayer = await BicyclingLayer.CreateAsync(_map1.JsRuntime);
+        await _bicyclingLayer.SetMap(_map1.InteropObject);
+
+    }
+
+}
