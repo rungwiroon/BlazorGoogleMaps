@@ -1,0 +1,9 @@
+﻿@page "/test-all"
+@using GoogleMapsComponents
+@using GoogleMapsComponents.Maps
+
+<h1>Test all functionality</h1>
+
+<GoogleMap @ref="@_map1" Id="map1" Options="@_mapOptions" OnAfterInit="AfterMapRender"></GoogleMap>
+<button @onclick="StartTesting">Start testing</button>
+<MapEventList Events="@_events"></MapEventList>

@@ -1,6 +1,7 @@
 ﻿@page "/mapPolyline"
 @using GoogleMapsComponents
 @using GoogleMapsComponents.Maps
+@inject IJSRuntime JsRuntime
 
 <h1>Polylines</h1>
 
@@ -32,16 +33,16 @@
 
     private List<LatLngLiteral> _path = new List<LatLngLiteral>();
 
-    private List<Polyline> _polylines = new List<Polyline>();
+    private readonly List<Polyline> _polylines = new List<Polyline>();
     private Polyline? _polyline;
 
-    private List<Polygon> _polygons = new List<Polygon>();
+    private readonly List<Polygon> _polygons = new List<Polygon>();
     private Polygon? _polygon;
 
     private Rectangle? _rectangle;
     private Circle? _circle;
 
-    private List<String> _events = new List<String>();
+    private List<string> _events = new List<string>();
 
     protected override void OnInitialized()
     {
@@ -60,6 +61,9 @@
     private async Task OnAfterMapInit()
     {
         await _map1.InteropObject.AddListener<MouseEvent>("click", async (e) => await OnClick(e));
+
+        IJSObjectReference serverSideScripts = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "/js/serverSideScripts.js");
+        await serverSideScripts.InvokeVoidAsync("initServerSideScript");
     }
 
     private async Task StartDrawingPolyline()

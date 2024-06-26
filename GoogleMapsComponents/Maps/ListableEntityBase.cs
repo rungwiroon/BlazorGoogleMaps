@@ -27,8 +27,6 @@ public class ListableEntityBase<TEntityOptions> : EventEntityBase, IJsObjectRef
     public virtual async Task SetMap(Map? map)
     {
         await _jsObjectRef.InvokeAsync("setMap", map);
-
-        //_map = map;
     }
 
     public Task InvokeAsync(string functionName, params object[] args)

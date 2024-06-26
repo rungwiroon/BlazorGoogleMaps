@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using OneOf;
 using System;
 using System.Text.Json.Serialization;
 
@@ -24,7 +25,7 @@ public class AdvancedMarkerElementOptions : ListableEntityOptionsBase
     /// 2023-10-29 Currently only html content is supported
     /// Svg, images url could not work
     /// </summary>
-    public string? Content { get; set; }
+    public OneOf<string, PinElement> Content { get; set; }
 
     /// <summary>
     /// If true, the AdvancedMarkerElement can be dragged.

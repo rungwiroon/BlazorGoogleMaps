@@ -331,6 +331,39 @@
         }
     };
 
+    //It is impossible to pass to pass HTMLElement from blazor to google maps
+    //Due to this we need to create it in js side.
+    function getAdvancedMarkerElementContent(functionName, content) {
+        if (functionName == "google.maps.marker.AdvancedMarkerView" || functionName == "google.maps.marker.AdvancedMarkerElement") {
+            if (content) {
+                var isPinElement = content.dotnetTypeName === "GoogleMapsComponents.Maps.PinElement";
+
+                if (isPinElement) {
+                    let pin = new google.maps.marker.PinElement({
+                        background: content.background,
+                        borderColor: content.borderColor,
+                        glyphColor: content.glyphColor,
+                        scale: content.scale,
+                    });
+
+                    let glyph = content.glyph;
+                    if (glyph) {
+                        pin.glyph = glyph.startsWith("http") ? new URL(glyph) : glyph;
+                    }
+
+                    return pin.element;
+                }
+                else {
+                    let template = document.createElement('template');
+                    template.innerHTML = content.trim();
+                    return template.content.firstChild;
+                }
+            }
+        }
+
+        return null;
+    };
+
     return {
         objectManager: {
             get mapObjects() { return mapObjects; },
@@ -351,17 +384,13 @@
                 mapObjects = mapObjects || [];                
 
                 let args2 = args.slice(2).map(arg => tryParseJson(arg));
-                //console.log(args2);
+
                 let functionName = args[1];
-                if (functionName == "google.maps.marker.AdvancedMarkerView" || functionName == "google.maps.marker.AdvancedMarkerElement") {
-                    var content = args2[0].content;
-                    if (content != null && content !== undefined) {
-                        var template = document.createElement('template');
-                        content = content.trim();
-                        template.innerHTML = content;
-                        args2[0].content = template.content.firstChild;
-                    }
+                let advancedMarkerElementContent = getAdvancedMarkerElementContent(functionName, args2.length > 0 ? args2[0].content : null);
+                if (advancedMarkerElementContent !== null) {
+                    args2[0].content = advancedMarkerElementContent;
                 }
+
                 let constructor = stringToFunction(functionName);
                 let obj = new constructor(...args2);
                 let guid = args[0];
@@ -389,13 +418,9 @@
 
                 for (var i = 0, len = args2.length; i < len; i++) {
                     var constructorArgs = args2[i];
-                    if (functionName == "google.maps.marker.AdvancedMarkerView" || functionName == "google.maps.marker.AdvancedMarkerElement") {
-                        if(constructorArgs.content != null && constructorArgs.content !== undefined) {
-                            var template = document.createElement('template');
-                            constructorArgs.content = constructorArgs.content.trim();
-                            template.innerHTML = constructorArgs.content;
-                            constructorArgs.content = template.content.firstChild;
-                        }
+                    let advancedMarkerElementContent = getAdvancedMarkerElementContent(functionName, constructorArgs.content);
+                    if (advancedMarkerElementContent !== null) {
+                        constructorArgs.content = advancedMarkerElementContent;
                     }
 
                     let obj = new constructor(constructorArgs);
@@ -407,6 +432,8 @@
                     mapObjects[guids[i]] = obj;
                 }
             },
+
+           
 
             addObject: function (obj, guid) {
                 if (guid === null || typeof guid === "undefined") {

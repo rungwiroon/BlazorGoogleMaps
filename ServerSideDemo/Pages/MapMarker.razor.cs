@@ -23,7 +23,7 @@ public partial class MapMarker
     private MapEventList _eventList;
 
     private LatLngBounds _bounds;
-    private MarkerClustering _markerClustering;
+    private MarkerClustering? _markerClustering;
     public int ZIndex { get; set; } = 0;
 
     [Inject]
@@ -78,9 +78,12 @@ public partial class MapMarker
         }
         await _markerClustering.AddMarkers(markers);
 
-        LatLngBoundsLiteral boundsLiteral = new LatLngBoundsLiteral(new LatLngLiteral() { Lat = coordinates.First().Lat, Lng = coordinates.First().Lng });
+        var boundsLiteral = new LatLngBoundsLiteral(new LatLngLiteral() { Lat = coordinates.First().Lat, Lng = coordinates.First().Lng });
         foreach (var literal in coordinates)
+        {
             LatLngBoundsLiteral.CreateOrExtend(ref boundsLiteral, literal);
+        }
+
         await _map1.InteropObject.FitBounds(boundsLiteral, OneOf.OneOf<int, GoogleMapsComponents.Maps.Coordinates.Padding>.FromT0(1));
 
     }
@@ -183,7 +186,7 @@ public partial class MapMarker
         };
     }
 
-    private async Task<IEnumerable<Marker>> GetMarkers(IEnumerable<LatLngLiteral> coords, Map map)
+    private async Task<IEnumerable<Marker>> GetMarkers(ICollection<LatLngLiteral> coords, Map map)
     {
         var result = new List<Marker>(coords.Count());
         var index = 1;
@@ -219,13 +222,6 @@ public partial class MapMarker
             Position = mapCenter,
             Map = _map1.InteropObject,
             ZIndex = ZIndex,
-            //Icon = new Symbol()
-            //{
-            //    Path = "M10.453 14.016l6.563-6.609-1.406-1.406-5.156 5.203-2.063-2.109-1.406 1.406zM12 2.016q2.906 0 4.945 2.039t2.039 4.945q0 1.453-0.727 3.328t-1.758 3.516-2.039 3.070-1.711 2.273l-0.75 0.797q-0.281-0.328-0.75-0.867t-1.688-2.156-2.133-3.141-1.664-3.445-0.75-3.375q0-2.906 2.039-4.945t4.945-2.039z"
-            //},
-            //Note that font properties are overriden in class
-            //Please be cautious about versioning issues and some issues when using other tools
-            //https://developers.google.com/maps/documentation/javascript/reference/marker#MarkerLabel.className
             Label = new MarkerLabel
             {
                 Text = $"Test {_markers.Count()}",

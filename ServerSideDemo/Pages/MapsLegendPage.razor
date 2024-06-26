@@ -44,7 +44,6 @@
 
     private async Task<Map> CreateMap(ElementReference elementReference)
     {
-
         var mapOptions = new MapOptions()
             {
                 Zoom = 13,
@@ -55,6 +54,7 @@
                 },
                 MapTypeId = MapTypeId.Roadmap
             };
+
         return await Map.CreateAsync(JsRuntime, elementReference, mapOptions);
     }
 

@@ -107,7 +107,7 @@ public partial class MapCircleListPage : ComponentBase
 
     private async Task RefreshCircleList()
     {
-        _circleList = await CircleList.SyncAsync(_circleList, _map.JsRuntime, _circleOptionsByRef, async (ev, sKey, entity) =>
+        _circleList = await CircleList.SyncAsync(_circleList, _map.JsRuntime, _circleOptionsByRef, async (_, sKey, _) =>
         {
             // Circle has been clicked --> delete it.
             _circleOptionsByRef.Remove(sKey);
