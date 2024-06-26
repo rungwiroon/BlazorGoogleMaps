@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
-using OneOf;
+﻿using OneOf;
 using System;
 using System.Text.Json.Serialization;
 
@@ -22,8 +21,8 @@ public class AdvancedMarkerElementOptions : ListableEntityOptionsBase
     public CollisionBehavior? CollisionBehavior { get; set; }
 
     /// <summary>
-    /// 2023-10-29 Currently only html content is supported
-    /// Svg, images url could not work
+    /// string to set up HTMLELement like svg, img, div, etc.
+    /// PinElement to set up a pin element with url or text.
     /// </summary>
     public OneOf<string, PinElement> Content { get; set; }
 
@@ -37,8 +36,6 @@ public class AdvancedMarkerElementOptions : ListableEntityOptionsBase
     /// Rollover text. If provided, an accessibility text (e.g. for use with screen readers) will be added to the
     /// </summary>
     public string? Title { get; set; }
-
-    public ElementReference? Element { get; set; }
 }
 
 [Obsolete("Use AdvancedMarkerElementOptions")]
