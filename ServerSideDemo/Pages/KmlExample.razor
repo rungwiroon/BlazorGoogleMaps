@@ -14,8 +14,8 @@
 <div id="capture">@((MarkupString)(_capture))</div>
 
 @code {
-    private GoogleMap _map1;
-    private MapOptions _mapOptions = new MapOptions()
+    private GoogleMap _map1 = null!;
+    private readonly MapOptions _mapOptions = new MapOptions()
     {
         Zoom = 2,
         Center = new LatLngLiteral()

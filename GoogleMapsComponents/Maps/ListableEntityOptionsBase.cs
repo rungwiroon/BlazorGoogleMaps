@@ -1,5 +1,5 @@
-﻿using System.Text.Json.Serialization;
-using GoogleMapsComponents.Serialization;
+﻿using GoogleMapsComponents.Serialization;
+using System.Text.Json.Serialization;
 
 namespace GoogleMapsComponents.Maps;
 
@@ -21,7 +21,7 @@ public abstract class ListableEntityOptionsBase
     /// Map on which to display the Entity.
     /// </summary>
     [JsonConverter(typeof(JsObjectRefConverter<Map>))]
-    public Map Map { get; set; }
+    public Map? Map { get; set; }
 
     /// <summary>
     /// If true, the Entity is visible
