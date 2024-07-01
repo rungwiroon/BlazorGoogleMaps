@@ -8,6 +8,7 @@
 <smallNotice: Available only in the v=beta channel.></smallNotice:>
 <GoogleMap @ref="@_map1" Id="map1" Options="@_mapOptions" OnAfterInit="OnAfterRenderAsync"></GoogleMap>
 <button @onclick="@AddMarker">Add marker</button>
+<button @onclick="@UpdatePosition">Recenter last</button>
 <button @onclick="@AddMarkerWithPinElement">Add marker with pin element</button>
 <br/>
 <p>Marker list</p>
@@ -249,11 +250,26 @@
             });
         }
 
-        await marker.AddListener<MouseEvent>("click",  e =>
+        _markers.Push(marker);
+
+        await marker.AddListener<MouseEvent>("gmp-click", e =>
         {
             _events.Add($"Clicked Pin Marker {e.LatLng.Lat} {e.LatLng.Lng}");
             StateHasChanged();
             e.Stop();
         });
+    }
+
+    private async  Task UpdatePosition()
+    {
+        if (!_markers.Any())
+        {
+            return;
+        }
+
+        var lastMarker = _markers.Peek();
+        var mapCenter = await _map1.InteropObject.GetCenter();
+        await lastMarker.SetPosition(mapCenter);
+        await _bounds.Extend(mapCenter);
     }
 }

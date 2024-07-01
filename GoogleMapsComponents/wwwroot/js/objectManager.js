@@ -580,6 +580,32 @@
                 }
             },
 
+            invokeProperty: async function (args) {
+                let args2 = args.slice(2).map(arg => tryParseJson(arg));
+
+                let obj = mapObjects[args[0]];
+                let functionToInvoke = args[1];
+
+                if (Array.isArray(args2) && args2.length > 0) {
+                    var cloneArgs = args2;
+                    args2 = new Array();
+                    for (let i = 0, len = cloneArgs.length; i < len; i++) {
+                        var element = cloneArgs[i];
+                        if (element != null && element !== undefined && element.hasOwnProperty("lat") && element.hasOwnProperty("lng")) {
+                            args2.push(new google.maps.LatLng(element.lat, element.lng));
+                        } else {
+                            args2.push(element);
+                        }
+                    }
+                }
+
+                try {
+                    obj[functionToInvoke] = args2[0];
+                } catch (e) {
+                    console.log(e);
+                    console.log("\nfunctionToInvoke: " + functionToInvoke + "\nargs: " + args2 + "\n");
+                }
+            },
             invoke: async function (args) {
                 let args2 = args.slice(2).map(arg => tryParseJson(arg));
 
