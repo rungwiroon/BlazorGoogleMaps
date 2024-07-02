@@ -34,6 +34,11 @@ public class AdvancedMarkerElement : ListableEntityBase<AdvancedMarkerElementOpt
     {
         await _jsObjectRef.InvokePropertyAsync("position", newPosition);
     }
+
+    public async Task SetContent(string newContent)
+    {
+        await _jsObjectRef.InvokePropertyAsync("content", newContent);
+    }
 }
 
 [Obsolete("Use AdvancedMarkerElement")]

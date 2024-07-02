@@ -599,6 +599,12 @@
                     }
                 }
 
+                //Could be issue in future. Currently now it is used by AdvancedMarkerElement
+                let advancedMarkerElementContent = getAdvancedMarkerElementContent("google.maps.marker.AdvancedMarkerElement", functionToInvoke == "content" ? args2[0] : null);
+                if (advancedMarkerElementContent !== null) {
+                    args2[0] = advancedMarkerElementContent;
+                }
+
                 try {
                     obj[functionToInvoke] = args2[0];
                 } catch (e) {
