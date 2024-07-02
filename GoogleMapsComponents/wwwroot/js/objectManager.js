@@ -581,37 +581,33 @@
             },
 
             invokeProperty: async function (args) {
-                let args2 = args.slice(2).map(arg => tryParseJson(arg));
+                const args2 = args.slice(2).map(arg => tryParseJson(arg));
+                const obj = mapObjects[args[0]];
+                const functionToInvoke = args[1];
 
-                let obj = mapObjects[args[0]];
-                let functionToInvoke = args[1];
-
-                if (Array.isArray(args2) && args2.length > 0) {
-                    var cloneArgs = args2;
-                    args2 = new Array();
-                    for (let i = 0, len = cloneArgs.length; i < len; i++) {
-                        var element = cloneArgs[i];
-                        if (element != null && element !== undefined && element.hasOwnProperty("lat") && element.hasOwnProperty("lng")) {
-                            args2.push(new google.maps.LatLng(element.lat, element.lng));
-                        } else {
-                            args2.push(element);
-                        }
+                const processedArgs = args2.map(element => {
+                    if (element && element.hasOwnProperty("lat") && element.hasOwnProperty("lng")) {
+                        return new google.maps.LatLng(element.lat, element.lng);
                     }
-                }
+                    return element;
+                });
 
-                //Could be issue in future. Currently now it is used by AdvancedMarkerElement
-                let advancedMarkerElementContent = getAdvancedMarkerElementContent("google.maps.marker.AdvancedMarkerElement", functionToInvoke == "content" ? args2[0] : null);
+                // Could be an issue in future. Currently, it is used by AdvancedMarkerElement
+                const advancedMarkerElementContent = getAdvancedMarkerElementContent(
+                    "google.maps.marker.AdvancedMarkerElement",
+                    functionToInvoke === "content" ? processedArgs[0] : null
+                );
                 if (advancedMarkerElementContent !== null) {
-                    args2[0] = advancedMarkerElementContent;
+                    processedArgs[0] = advancedMarkerElementContent;
                 }
 
                 try {
-                    obj[functionToInvoke] = args2[0];
+                    obj[functionToInvoke] = processedArgs[0];
                 } catch (e) {
-                    console.log(e);
-                    console.log("\nfunctionToInvoke: " + functionToInvoke + "\nargs: " + args2 + "\n");
+                    console.error(`Error invoking property: Function: ${functionToInvoke} Arguments: ${JSON.stringify(processedArgs)} Error: ${e}`);
                 }
             },
+
             invoke: async function (args) {
                 let args2 = args.slice(2).map(arg => tryParseJson(arg));
 
