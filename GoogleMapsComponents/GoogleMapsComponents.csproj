@@ -15,7 +15,7 @@
 		<RazorLangVersion>3.0</RazorLangVersion>
 		<AddRazorSupportForMvc>true</AddRazorSupportForMvc>
 		<PackageId>BlazorGoogleMaps</PackageId>
-		<Version>4.6.2</Version>
+		<Version>4.7.0</Version>
 		<Authors>Rungwiroon</Authors>
 		<Company>QueueStack Solution</Company>
 		<Product>BlazorGoogleMaps</Product>

@@ -1,28 +1,33 @@
 ﻿window.blazorGoogleMaps = window.blazorGoogleMaps || function () {
     function stringToFunction(str) {
-        let arr = str.split(".");
-
+        const arr = str.split(".");
         let fn = window || this;
-        for (let i = 0, len = arr.length; i < len; i++) {
-            fn = fn[arr[i]];
+
+        for (const key of arr) {
+            if (fn[key] === undefined) {
+                throw new Error(`Property '${key}' not found`);
+            }
+            fn = fn[key];
         }
 
         if (typeof fn !== "function") {
-            throw new Error("function not found");
+            throw new TypeError("Function not found");
         }
 
         return fn;
     }
 
-    const extendableStringify = function (obj, replacer, space) {
-        if (window.blazorGoogleMapsBeforeStringify) {
-            obj = window.blazorGoogleMapsBeforeStringify(obj);
+
+    const extendableStringify = (obj, replacer, space) => {
+        const beforeStringify = window?.blazorGoogleMapsBeforeStringify || this?.blazorGoogleMapsBeforeStringify;
+        if (typeof beforeStringify === 'function') {
+            obj = beforeStringify(obj);
         }
         return JSON.stringify(obj, replacer, space);
     };
 
     let mapObjects = {};
-    let controlParents = {}
+    let controlParents = {};
     const dateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
 
     //Strip circular dependencies, map object and functions
@@ -31,7 +36,7 @@
         const seen = new WeakSet();
         return (key, value) => {
             if (key == "map") return undefined;
-            if (typeof (value) == 'function') return undefined;
+            if (typeof value == 'function') return undefined;
 
             if (typeof value === "object" && value !== null) {
                 if (seen.has(value)) {
@@ -50,40 +55,23 @@
         return value;
     }
 
+
     function tryParseJson(item) {
-        //console.log(item);
-
-        if (item !== null
-            && typeof item === "object"
-            && "invokeMethodAsync" in item) {
-            //console.log("wrap dotnet object ref");
-
+        // Check if the item is a DotNet object reference with the "invokeMethodAsync" method
+        if (item !== null && typeof item === "object" && "invokeMethodAsync" in item) {
             return async function (...args) {
-                if (args === null || typeof args === "undefined")
+                if (args === null || typeof args === "undefined") {
                     await item.invokeMethodAsync("Invoke");
+                }
 
-                //console.log(args);
+                const guid = blazorGoogleMaps.objectManager.addObject(args[0]);
 
-                //let args2 = args.map(arg => {
-                //    if (typeof arg === "object" && "toJson" in arg) {
-                //        console.log("toJson");
-                //        return arg.toJson();
-                //    } else {
-                //        return arg;
-                //    }
-                //});
-
-                //console.log(args);
-
-                var guid = blazorGoogleMaps.objectManager.addObject(args[0]);
-
-                if (args.length == 1 && typeof args[0].marker !== "undefined") {
-                    var n = args[0].marker;
+                if (args.length === 1 && typeof args[0].marker !== "undefined") {
+                    const markerBackup = args[0].marker;
                     args[0].marker = null;
                     await item.invokeMethodAsync("Invoke", extendableStringify(args, getCircularReplacer()), guid);
-                    args[0].marker = n;
-                }
-                else {
+                    args[0].marker = markerBackup;
+                } else {
                     await item.invokeMethodAsync("Invoke", extendableStringify(args, getCircularReplacer()), guid);
                 }
 
@@ -91,145 +79,98 @@
             };
         }
 
-        if (typeof item !== "string")
+        if (typeof item !== "string") {
             return item;
+        }
 
-        let item2 = null;
+        let parsedItem;
 
         try {
-            item2 = JSON.parse(item, dateObjectReviver);
+            parsedItem = JSON.parse(item, dateObjectReviver);
         } catch (e) {
             try {
-                // added to be able to include js functions in a json object (for ImageMapType).  JSON.parse(...) doesn't do that
-                // example json string:
-                // "{
-                //    'getTileUrl': (coord, zoom) => {
-                //                return '" + baseUrl + @"' + zoom + '/' + coord.x + '/' + coord.y;
-                //            },
-                //    'tileSize': new google.maps.Size(256, 256),
-                //    'maxZoom': 23,
-                //    'minZoom': 0,
-                //    'opacity': 0.5,
-                //    'name': 'myLayer'
-                // }"
-                item2 = eval("(" + item + ")");
+                // Fallback to using eval to handle cases with functions in the JSON string
+                parsedItem = eval(`(${item})`);
             } catch (e2) {
-                //Hm. Not sure why this one was here. 
-                //Everything looks like working without it
-                //return item.replace(/['"]+/g, '');
+                // Return the item as is if parsing fails
                 return item;
             }
         }
 
-        if (item !== null && item.startsWith("google.maps.drawing.OverlayType")) {
-            switch (item) {
-                case "google.maps.drawing.OverlayType.CIRCLE":
-                    item2 = google.maps.drawing.OverlayType.CIRCLE;
-                    break;
-                case "google.maps.drawing.OverlayType.MARKER":
-                    item2 = google.maps.drawing.OverlayType.MARKER;
-                    break;
-                case "google.maps.drawing.OverlayType.POLYGON":
-                    item2 = google.maps.drawing.OverlayType.POLYGON;
-                    break;
-                case "google.maps.drawing.OverlayType.POLYLINE":
-                    item2 = google.maps.drawing.OverlayType.POLYLINE;
-                    break;
-                case "google.maps.drawing.OverlayType.RECTANGLE":
-                    item2 = google.maps.drawing.OverlayType.RECTANGLE;
-                    break;
-                default:
-            }
-
-            return item2;
+        if (typeof item === "string" && item.startsWith("google.maps.drawing.OverlayType")) {
+            const overlayTypeMapping = {
+                "google.maps.drawing.OverlayType.CIRCLE": google.maps.drawing.OverlayType.CIRCLE,
+                "google.maps.drawing.OverlayType.MARKER": google.maps.drawing.OverlayType.MARKER,
+                "google.maps.drawing.OverlayType.POLYGON": google.maps.drawing.OverlayType.POLYGON,
+                "google.maps.drawing.OverlayType.POLYLINE": google.maps.drawing.OverlayType.POLYLINE,
+                "google.maps.drawing.OverlayType.RECTANGLE": google.maps.drawing.OverlayType.RECTANGLE
+            };
+            return overlayTypeMapping[item] || item;
         }
-        
 
-        if (typeof item2 === "object" && item2 !== null) {
-            if ("guidString" in item2) {
-                //console.log("Found object has Guid property.");
-                return mapObjects[item2.guidString];
+        if (typeof parsedItem === "object" && parsedItem !== null) {
+            if ("guidString" in parsedItem) {
+                return mapObjects[parsedItem.guidString];
             } else {
-                for (var propertyName in item2) {
-                    let propertyValue = item2[propertyName];
-                    if (propertyValue !== null && typeof propertyValue === "string" && propertyValue.indexOf("google.maps.Animation") == 0) {
-                        switch (propertyValue) {
-                            case "google.maps.Animation.DROP":
-                                item2[propertyName] = google.maps.Animation.DROP;
-                                break;
-                            case "google.maps.Animation.BOUNCE":
-                                item2[propertyName] = google.maps.Animation.BOUNCE;
-                                break;
-                            default:
-                        }
+                for (let propertyName in parsedItem) {
+                    let propertyValue = parsedItem[propertyName];
+
+                    // Convert specific Google Maps Animation strings to their corresponding objects
+                    if (typeof propertyValue === "string" && propertyValue.startsWith("google.maps.Animation")) {
+                        const animationMapping = {
+                            "google.maps.Animation.DROP": google.maps.Animation.DROP,
+                            "google.maps.Animation.BOUNCE": google.maps.Animation.BOUNCE
+                        };
+                        parsedItem[propertyName] = animationMapping[propertyValue] || propertyValue;
                     }
 
-                    if (propertyValue !== null && typeof propertyValue === "string" && propertyValue.indexOf("google.maps.CollisionBehavior") == 0) {
-                        switch (propertyValue) {
-                            case "google.maps.CollisionBehavior.REQUIRED":
-                                item2[propertyName] = google.maps.CollisionBehavior.REQUIRED;
-                                break;
-                            case "google.maps.CollisionBehavior.REQUIRED_AND_HIDES_OPTIONAL":
-                                item2[propertyName] = google.maps.CollisionBehavior.REQUIRED_AND_HIDES_OPTIONAL;
-                                break;
-                            case "google.maps.CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY":
-                                item2[propertyName] = google.maps.CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY;
-                                break;
-                            default:
-                        }
+                    // Convert specific Google Maps CollisionBehavior strings to their corresponding objects
+                    if (typeof propertyValue === "string" && propertyValue.startsWith("google.maps.CollisionBehavior")) {
+                        const collisionBehaviorMapping = {
+                            "google.maps.CollisionBehavior.REQUIRED": google.maps.CollisionBehavior.REQUIRED,
+                            "google.maps.CollisionBehavior.REQUIRED_AND_HIDES_OPTIONAL": google.maps.CollisionBehavior.REQUIRED_AND_HIDES_OPTIONAL,
+                            "google.maps.CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY": google.maps.CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY
+                        };
+                        parsedItem[propertyName] = collisionBehaviorMapping[propertyValue] || propertyValue;
                     }
 
-                    if (propertyValue !== null && typeof propertyValue === "object" && propertyValue.position !== undefined) {
+                    // Convert position strings to Google Maps positions
+                    if (typeof propertyValue === "object" && propertyValue !== null && propertyValue.position !== undefined) {
                         propertyValue.position = getGooglePositionFromString(propertyValue.position);
                     }
 
-                    if (propertyValue !== null
-                        && typeof propertyValue === "object"
-                        && "drawingModes" in propertyValue
-                        && propertyValue.drawingModes !== undefined) {
-                        for (var drawingMode in propertyValue.drawingModes) {
-                            let drawingModeValue = propertyValue.drawingModes[drawingMode];
-                            switch (drawingModeValue) {
-                                case "google.maps.drawing.OverlayType.CIRCLE":
-                                    propertyValue.drawingModes[drawingMode] = google.maps.drawing.OverlayType.CIRCLE;
-                                    break;
-                                case "google.maps.drawing.OverlayType.MARKER":
-                                    propertyValue.drawingModes[drawingMode] = google.maps.drawing.OverlayType.MARKER;
-                                    break;
-                                case "google.maps.drawing.OverlayType.POLYGON":
-                                    propertyValue.drawingModes[drawingMode] = google.maps.drawing.OverlayType.POLYGON;
-                                    break;
-                                case "google.maps.drawing.OverlayType.POLYLINE":
-                                    propertyValue.drawingModes[drawingMode] = google.maps.drawing.OverlayType.POLYLINE;
-                                    break;
-                                case "google.maps.drawing.OverlayType.RECTANGLE":
-                                    propertyValue.drawingModes[drawingMode] = google.maps.drawing.OverlayType.RECTANGLE;
-                                    break;
-                                default:
-                            }
-                        }
+                    // Handle nested drawingModes property
+                    if (typeof propertyValue === "object" && propertyValue !== null && "drawingModes" in propertyValue) {
+                        const drawingModeMapping = {
+                            "google.maps.drawing.OverlayType.CIRCLE": google.maps.drawing.OverlayType.CIRCLE,
+                            "google.maps.drawing.OverlayType.MARKER": google.maps.drawing.OverlayType.MARKER,
+                            "google.maps.drawing.OverlayType.POLYGON": google.maps.drawing.OverlayType.POLYGON,
+                            "google.maps.drawing.OverlayType.POLYLINE": google.maps.drawing.OverlayType.POLYLINE,
+                            "google.maps.drawing.OverlayType.RECTANGLE": google.maps.drawing.OverlayType.RECTANGLE
+                        };
+
+                        propertyValue.drawingModes = propertyValue.drawingModes.map(drawingMode => drawingModeMapping[drawingMode] || drawingMode);
                     }
 
-                    if (typeof propertyValue === "object"
-                        && propertyValue !== null
-                        && "guidString" in propertyValue) {
-                        //console.log("Found object has Guid property.");
-                        item2[propertyName] = mapObjects[propertyValue.guidString];
+                    // Handle nested objects with a guidString property
+                    if (typeof propertyValue === "object" && propertyValue !== null && "guidString" in propertyValue) {
+                        parsedItem[propertyName] = mapObjects[propertyValue.guidString];
                     }
                 }
-
-                return item2;
+                return parsedItem;
             }
         }
 
         return item.replace(/['"]+/g, '');
     }
 
+
     function uuidv4() {
         return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
             (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
         );
     }
+
 
     //Strips the DirectionResult from some of the heaviest collections.
     //ServerSide (Client Side have no issues) reach MaximumReceiveMessageSize (32kb) and crash if we return all data
@@ -243,7 +184,7 @@
             }
 
             if (dirRequestOptions == undefined || dirRequestOptions.stripOverviewPolyline) {
-                r.overview_polyline = '';//Previously was []. Why??? it is a string
+                r.overview_polyline = ''; // overview_polyline is a string, not an array
             }
 
             r.legs.forEach((l) => {
@@ -266,36 +207,26 @@
         return tmpdirobj;
     }
 
+
     function getGooglePositionFromString(positionString) {
         //https://developers.google.com/maps/documentation/javascript/reference/control#ControlPosition
-        switch (positionString) {
-            case "BOTTOM_CENTER":
-                return google.maps.ControlPosition.BOTTOM_CENTER;
-            case "BOTTOM_LEFT":
-                return google.maps.ControlPosition.BOTTOM_LEFT;
-            case "BOTTOM_RIGHT":
-                return google.maps.ControlPosition.BOTTOM_RIGHT;
-            case "LEFT_BOTTOM":
-                return google.maps.ControlPosition.LEFT_BOTTOM;
-            case "LEFT_CENTER":
-                return google.maps.ControlPosition.LEFT_CENTER;
-            case "LEFT_TOP":
-                return google.maps.ControlPosition.LEFT_TOP;
-            case "RIGHT_BOTTOM":
-                return google.maps.ControlPosition.RIGHT_BOTTOM;
-            case "RIGHT_CENTER":
-                return google.maps.ControlPosition.RIGHT_CENTER;
-            case "RIGHT_TOP":
-                return google.maps.ControlPosition.RIGHT_TOP;
-            case "TOP_CENTER":
-                return google.maps.ControlPosition.TOP_CENTER;
-            case "TOP_LEFT":
-                return google.maps.ControlPosition.TOP_LEFT;
-            case "TOP_RIGHT":
-                return google.maps.ControlPosition.TOP_RIGHT;
-            default:
-                return google.maps.ControlPosition.BOTTOM_CENTER;
-        }
+        const positionMap = {
+            "BOTTOM_CENTER": google.maps.ControlPosition.BOTTOM_CENTER,
+            "BOTTOM_LEFT": google.maps.ControlPosition.BOTTOM_LEFT,
+            "BOTTOM_RIGHT": google.maps.ControlPosition.BOTTOM_RIGHT,
+            "LEFT_BOTTOM": google.maps.ControlPosition.LEFT_BOTTOM,
+            "LEFT_CENTER": google.maps.ControlPosition.LEFT_CENTER,
+            "LEFT_TOP": google.maps.ControlPosition.LEFT_TOP,
+            "RIGHT_BOTTOM": google.maps.ControlPosition.RIGHT_BOTTOM,
+            "RIGHT_CENTER": google.maps.ControlPosition.RIGHT_CENTER,
+            "RIGHT_TOP": google.maps.ControlPosition.RIGHT_TOP,
+            "TOP_CENTER": google.maps.ControlPosition.TOP_CENTER,
+            "TOP_LEFT": google.maps.ControlPosition.TOP_LEFT,
+            "TOP_RIGHT": google.maps.ControlPosition.TOP_RIGHT
+        };
+
+        // Return the corresponding ControlPosition or default to BOTTOM_CENTER if not found
+        return positionMap[positionString] || google.maps.ControlPosition.BOTTOM_CENTER;
     }
 
     let directionService = {
@@ -306,37 +237,36 @@
                 let directionsService = new google.maps.DirectionsService();
                 directionsService.route(request, (result, status) => {
                     if (status == 'OK') {
-                        resolve(result);
-                    }
-                    else {
-                        reject(status);
+                        resolve(result); 
+                    } else {
+                        reject(status); 
                     }
                 });
             });
 
-            //Wait for promise
             try {
                 let result = await promise;
+
                 if (typeof renderer.setDirections === "function") {
                     renderer.setDirections(result);
                 }
 
                 let jsonRest = extendableStringify(cleanDirectionResult(result, options));
-                //console.log(extendableStringify(jsonRest));
-                return jsonRest;
+                return jsonRest; 
             } catch (error) {
                 console.log(error);
-                return error;
+                return error; 
             }
         }
     };
 
+
     //It is impossible to pass to pass HTMLElement from blazor to google maps
     //Due to this we need to create it in js side.
     function getAdvancedMarkerElementContent(functionName, content) {
-        if (functionName == "google.maps.marker.AdvancedMarkerView" || functionName == "google.maps.marker.AdvancedMarkerElement") {
+        if (functionName === "google.maps.marker.AdvancedMarkerView" || functionName === "google.maps.marker.AdvancedMarkerElement") {
             if (content) {
-                var isPinElement = content.dotnetTypeName === "GoogleMapsComponents.Maps.PinElement";
+                let isPinElement = content.dotnetTypeName === "GoogleMapsComponents.Maps.PinElement";
 
                 if (isPinElement) {
                     let pin = new google.maps.marker.PinElement({
@@ -352,8 +282,7 @@
                     }
 
                     return pin.element;
-                }
-                else {
+                } else {
                     let template = document.createElement('template');
                     template.innerHTML = content.trim();
                     return template.content.firstChild;
@@ -362,7 +291,8 @@
         }
 
         return null;
-    };
+    }
+
 
     return {
         objectManager: {
@@ -609,294 +539,183 @@
             },
 
             invoke: async function (args) {
-                let args2 = args.slice(2).map(arg => tryParseJson(arg));
+                const [objectId, functionToInvoke, ...restArgs] = args;
+                const obj = mapObjects[objectId];
+                const args2 = restArgs.map(arg => tryParseJson(arg));
 
-                let obj = mapObjects[args[0]];
-                let functionToInvoke = args[1];
-
-                //We make check if element is LatLng and cast it.
-                //It could be bug here.
-                if (Array.isArray(args2) && args2.length > 0) {
-                    var cloneArgs = args2;
-                    args2 = new Array();
-                    for (let i = 0, len = cloneArgs.length; i < len; i++) {
-                        var element = cloneArgs[i];
-                        if (element != null && element !== undefined && element.hasOwnProperty("lat") && element.hasOwnProperty("lng")) {
-                            args2.push(new google.maps.LatLng(element.lat, element.lng));
-                        } else {
-                            args2.push(element);
-                        }
+                // Handle LatLng objects
+                const formattedArgs = args2.map(arg => {
+                    if (arg && arg.hasOwnProperty("lat") && arg.hasOwnProperty("lng")) {
+                        return new google.maps.LatLng(arg.lat, arg.lng);
                     }
-                }
+                    return arg;
+                });
 
-                //If function is route, then handle callback in promise.
-                if (functionToInvoke == "blazorGoogleMaps.directionService.route") {
-                    var responseOrError = await directionService.route.call(obj, args2[0], args2[1]);
-                    return responseOrError;
-                }
-                //Used in HeatampLayer. We must use LatLng since LatLngLiteral doesnt work
-                else if (functionToInvoke == "setData") {
-                    var pointArray = new google.maps.MVCArray();
-                    for (i = 0, len = args2[0].length; i < len; i++) {
-                        var cord = args2[0][i];
+                try {
+                    switch (functionToInvoke) {
+                        case "blazorGoogleMaps.directionService.route":
+                            const responseOrError = await directionService.route.call(obj, formattedArgs[0], formattedArgs[1]);
+                            return responseOrError;
 
-                        if (cord.hasOwnProperty("weight")) {
-                            var cordLocation = new google.maps.LatLng(cord.location.lat, cord.location.lng);
-                            var location = { location: cordLocation, weight: cord.weight };
-                            pointArray.push(location);
-                        } else {
-                            pointArray.push(new google.maps.LatLng(cord.lat, cord.lng));
-                        }
-                    }
-
-                    try {
-                        result = obj.setData(pointArray);
-                    } catch (e) {
-                        console.log(e);
-                    }
-                }
-                else if (functionToInvoke == "getDirections") {
-                    let dirRequestOptions = args2[0];
-
-                    try {
-                        var result = obj[functionToInvoke]();
-                    } catch (e) {
-                        console.log(e);
-                    }
-
-                    let jsonRest = extendableStringify(cleanDirectionResult(result, dirRequestOptions));
-                    return jsonRest;
-                }
-                else if (functionToInvoke == "getProjection") {
-
-                    try {
-                        var projection = obj[functionToInvoke](...args2);
-                        mapObjects[args[2]] = projection;
-                    } catch (e) {
-                        console.log(e);
-                    }
-                }
-                else if (functionToInvoke == "createPath") {
-
-                    try {
-                        var projection = mapObjects[args[0]].getPath();
-                        mapObjects[args[2]] = projection;
-                    } catch (e) {
-                        console.log(e);
-                    }
-                }
-                else if (functionToInvoke == "fromLatLngToPoint") {
-                    try {
-                        var point = obj[functionToInvoke](args2[0]);
-                        return point;
-                    } catch (e) {
-                        console.log(e);
-                    }
-                }
-                else if (functionToInvoke == "google.maps.marker.PinElement") {
-                    try {
-                        var pinElement = new google.maps.marker.PinElement(args2[0]);
-                        return pinElement;
-                    } catch (e) {
-                        console.log(e);
-                    }
-                }
-                else if (functionToInvoke === "addListenerOnce") {
-                    const eventId = new google.maps.event.addListenerOnce(obj, args2[0], args2[1]);
-                    return eventId;
-                }
-                else if (google.maps.places !== undefined && obj instanceof google.maps.places.AutocompleteService) {
-                    //AutocompleteService predictions to handle callbacks in the promise
-                    return new Promise(function (resolve, reject) {
-                        try {
-                            obj[functionToInvoke](args2[0], function (result, status) {
-                                resolve({ predictions: result, status: status });
+                        case "setData":
+                            const pointArray = new google.maps.MVCArray();
+                            formattedArgs[0].forEach(cord => {
+                                const location = cord.hasOwnProperty("weight")
+                                    ? { location: new google.maps.LatLng(cord.location.lat, cord.location.lng), weight: cord.weight }
+                                    : new google.maps.LatLng(cord.lat, cord.lng);
+                                pointArray.push(location);
                             });
-                        } catch (e) {
-                            console.log(e);
-                            reject(e);
-                        }
-                    });
-                }
-                else if (google.maps.places !== undefined && obj instanceof google.maps.places.PlacesService) {
-                    //PlacesService results to handle callbacks in the promise
-                    return new Promise(function (resolve, reject) {
-                        try {
-                            obj[functionToInvoke](args2[0], function (result, status) {
-                                var results = (result == null || result instanceof Array) ? result : [result];
-                                resolve({ results: results, status: status });
-                            });
-                        } catch (e) {
-                            console.log(e);
-                            reject(e);
-                        }
-                    });
-                }
-                else if (obj instanceof google.maps.Geocoder) {
-                    //Geocoder results to handle callback in the promise
-                    return new Promise(function (resolve, reject) {
-                        try {
-                            obj[functionToInvoke](args2[0], function (result, status) {
-                                resolve({ results: result, status: status });
-                            });
-                        } catch (e) {
-                            console.log(e);
-                            reject(e);
-                        }
-                    });
-                }
-                else if (functionToInvoke == "getPaths") {
-                    // Polygon.getPaths returns nested MVCArray
-                    // https://developers.google.com/maps/documentation/javascript/reference/polygon#Polygon.getPaths
-                    try {
-                        var paths = obj[functionToInvoke](...args2);
-                        var nestedCoords = [];
-                        // MVC array
-                        paths.forEach(coords => {
-                            nestedCoords.push(coords.getArray());
-                        });
-                        return nestedCoords;
-                    } catch (e) {
-                        console.log(e);
-                    }
-                }
-                else if (functionToInvoke == "removeAllFeatures") {
-                    //Artificial function to remove all features from the data layer
-                    try {
-                        obj.forEach(function (feature) {
-                            obj.remove(feature);
-                        });
-                        return null;
-                    } catch (e) {
-                        console.log(e);
-                    }
-                }
-                else if (functionToInvoke == "overrideStyle") {
+                            return obj.setData(pointArray);
 
-                    try {
-                        var featureId = args[2].replace('"', "").replace('"', "");
-                        var feature = mapObjects[featureId];
-                        var data = mapObjects[args[0]];
-                        var request = tryParseJson(args[3]);
-                        data.overrideStyle(feature, request);
-                    } catch (e) {
-                        console.log(e);
-                    }
-                }
-                else {
-                    var result = null;
-                    try {
-                        result = obj[functionToInvoke](...args2);
-                    } catch (e) {
-                        console.log(e);
-                        console.log("\nfunctionToInvoke: " + functionToInvoke + "\nargs: " + args2 + "\n");
-                    }
-
-                    if (result !== null
-                        && typeof result === "object") {
-                        if (result.hasOwnProperty("geocoded_waypoints") && result.hasOwnProperty("routes")) {
-
-                            let jsonRest = extendableStringify(cleanDirectionResult(result));
+                        case "getDirections":
+                            const dirRequestOptions = formattedArgs[0];
+                            const result = obj[functionToInvoke]();
+                            const jsonRest = extendableStringify(cleanDirectionResult(result, dirRequestOptions));
                             return jsonRest;
-                        }
-                        if ("getArray" in result) {
-                            return result.getArray();
-                        }
-                        //It is event handler. Dont serialize it
-                        if ("addListener" == functionToInvoke) {
-                            return result;
-                        }
 
-                        if ("addGeoJson" == functionToInvoke) {
-                            var resultGuids = [];
-                            result.forEach(coords => {
-                                var addedObjGuid = this.addObject(coords);
-                                resultGuids.push(addedObjGuid);
-                            });
+                        case "getProjection":
+                            const projection = obj[functionToInvoke](...formattedArgs);
+                            mapObjects[restArgs[0]] = projection;
+                            return;
 
-                            return resultGuids;
-                        }
+                        case "createPath":
+                            const pathProjection = obj.getPath();
+                            mapObjects[restArgs[0]] = pathProjection;
+                            return;
 
-                        if ("get" in result) {
-                            return result.get("guidString");
-                        } else if ("dotnetTypeName" in result) {
-                            return extendableStringify(result, getCircularReplacer());
-                        } else {
-                            return JSON.parse(extendableStringify(result, getCircularReplacer()));
-                        }
-                    } else if (functionToInvoke === "remove") {
-                        this.disposeObject(args[0]);
-                    } else {
-                        return result;
+                        case "fromLatLngToPoint":
+                            return obj[functionToInvoke](formattedArgs[0]);
+
+                        case "google.maps.marker.PinElement":
+                            return new google.maps.marker.PinElement(formattedArgs[0]);
+
+                        case "addListenerOnce":
+                            return new google.maps.event.addListenerOnce(obj, formattedArgs[0], formattedArgs[1]);
+
+                        case "getPaths":
+                            const paths = obj[functionToInvoke](...formattedArgs);
+                            return paths.map(coords => coords.getArray());
+
+                        case "removeAllFeatures":
+                            obj.forEach(feature => obj.remove(feature));
+                            return null;
+
+                        case "overrideStyle":
+                            const featureId = restArgs[0].replace(/"/g, "");
+                            const feature = mapObjects[featureId];
+                            const data = mapObjects[objectId];
+                            const request = tryParseJson(restArgs[1]);
+                            return data.overrideStyle(feature, request);
+
+                        default:
+                            if (obj instanceof google.maps.places.AutocompleteService ||
+                                obj instanceof google.maps.places.PlacesService ||
+                                obj instanceof google.maps.Geocoder) {
+                                return new Promise((resolve, reject) => {
+                                    obj[functionToInvoke](formattedArgs[0], (result, status) => {
+                                        if (obj instanceof google.maps.places.AutocompleteService) {
+                                            resolve({ predictions: result, status: status });
+                                        } else {
+                                            resolve({ results: result, status: status });
+                                        }
+                                    });
+                                });
+                            } else {
+                                const result = obj[functionToInvoke](...formattedArgs);
+                                if (result && typeof result === "object") {
+                                    if (result.hasOwnProperty("geocoded_waypoints") && result.hasOwnProperty("routes")) {
+                                        return extendableStringify(cleanDirectionResult(result));
+                                    }
+                                    if ("getArray" in result) {
+                                        return result.getArray();
+                                    }
+                                    if (functionToInvoke === "addListener") {
+                                        return result;
+                                    }
+                                    if (functionToInvoke === "addGeoJson") {
+                                        return result.map(coords => this.addObject(coords));
+                                    }
+                                    if ("get" in result) {
+                                        return result.get("guidString");
+                                    } else if ("dotnetTypeName" in result) {
+                                        return extendableStringify(result, getCircularReplacer());
+                                    } else {
+                                        return JSON.parse(extendableStringify(result, getCircularReplacer()));
+                                    }
+                                } else if (functionToInvoke === "remove") {
+                                    this.disposeObject(objectId);
+                                } else {
+                                    return result;
+                                }
+                            }
                     }
+                } catch (e) {
+                    console.log(e);
+                    console.log(`\nfunctionToInvoke: ${functionToInvoke}\nargs: ${JSON.stringify(args2)}\n`);
                 }
             },
 
             //Function could be extended in future: at the moment it is scoped for 
             //simple "Get" and "Set" properties of multiple objects of the same type
             invokeMultiple: async function (args) {
-                let args2 = args.slice(2).map(arg => tryParseJson(arg));
+                const guids = JSON.parse(args[0]);
+                const otherArg = args[1];
+                const args2 = args.slice(2).map(arg => tryParseJson(arg));
 
-                var results = {};
-                let objs = [];
-                let guids = JSON.parse(args[0]);
+                const results = {};
+                const objs = guids.map(guid => mapObjects[guid]);
 
-                for (var i = 0, len = guids.length; i < len; i++) {
-                    objs[i] = mapObjects[guids[i]];
-                    let args3 = [];
-                    args3 = args3.concat(guids[i]).concat(args[1]).concat(args2[i]);
+                // Collect promises
+                const promises = guids.map((guid, index) => {
+                    const args3 = [guid, otherArg, args2[index]];
+                    const result = blazorGoogleMaps.objectManager.invoke(args3);
 
-                    let result = blazorGoogleMaps.objectManager.invoke(args3);
+                    // Return a promise that resolves to the result
+                    return Promise.resolve(result).then(resolvedResult => {
+                        results[guid] = resolvedResult;
+                    });
+                });
 
-                    if (Promise.resolve(result)) {
-                        results[guids[i]] = await result;
-                    }
-                    else {
-                        results[guids[i]] = result;
-                    }
-                }
-
-                //console.log(results);
+                // Await all promises concurrently
+                await Promise.all(promises);
 
                 return results;
             },
 
-            invokeWithReturnedObjectRef: async function (args) {
-                let result = blazorGoogleMaps.objectManager.invoke(args);
-                let uuid = uuidv4();
+                        invokeWithReturnedObjectRef: async function (args) {
+                const result = await blazorGoogleMaps.objectManager.invoke(args);
+                const uuid = uuidv4();
 
-                //console.log("invokeWithReturnedObjectRef " + uuid);
-                //This is needed to be able to remove events from map
-                mapObjects[uuid] = await result;
+                // This is needed to be able to remove events from map
+                mapObjects[uuid] = result;
 
                 return uuid;
             },
-
             drawingManagerOverlaycomplete: function (args) {
-                var uuid = args[0];
-                var act = args[1];
+                const [uuid, act] = args;
+                const drawingManager = mapObjects[uuid];
 
-                let drawingManager = mapObjects[uuid];
-                google.maps.event.addListener(drawingManager, "overlaycomplete", function (event) {
-                    let overlayUuid = uuidv4();
+                google.maps.event.addListener(drawingManager, "overlaycomplete", event => {
+                    const overlayUuid = uuidv4();
                     mapObjects[overlayUuid] = event.overlay;
-                    let returnObj = extendableStringify([{ type: event.type, uuid: overlayUuid.toString() }]);
+
+                    const returnObj = extendableStringify([{ type: event.type, uuid: overlayUuid.toString() }]);
+
                     act.invokeMethodAsync("Invoke", returnObj, uuid);
                 });
             },
 
             invokeMultipleWithReturnedObjectRef: function (args) {
 
-                let guids = args[0];
-                let otherArgs = args.slice(1, args.length - 1);
-                let what = args[args.length - 1];
+                const guids = args[0];
+                const otherArgs = args.slice(1, -1);
+                const what = args[args.length - 1];
 
-                let results = {};
+                const results = {};
 
-                for (var i = 0, len = guids.length; i < len; i++) {
-                    let uuid = uuidv4();
-                    let args2 = [];
-                    args2 = args2.concat(guids[i]).concat(otherArgs).concat(what[i]);
+                for (let i = 0; i < guids.length; i++) {
+                    const uuid = uuidv4();
+                    const args2 = [...guids[i], ...otherArgs, what[i]];
 
                     results[uuid] = blazorGoogleMaps.objectManager.invoke(args2);
                 }
@@ -906,37 +725,35 @@
 
             //add event listeners to multiple objects of the same type
             addMultipleListeners: async function (args) {
-                let args2 = args.slice(2).map(arg => tryParseJson(arg));
+                const guids = JSON.parse(args[0]);
+                const eventName = args[1];
+                const args2 = args.slice(2).map(arg => tryParseJson(arg));
 
-                var results = {};
-                let objs = [];
-                let guids = JSON.parse(args[0]);
+                // Using Promise.all to handle multiple async operations if needed
+                await Promise.all(guids.map((guid, index) => {
+                    const obj = mapObjects[guid];
+                    const additionalArgs = Array.isArray(args2[index]) ? args2[index] : [args2[index]];
+                    const args3 = [guid, "addListener", eventName, ...additionalArgs];
 
-                for (var i = 0, len = guids.length; i < len; i++) {
-                    objs[i] = mapObjects[guids[i]];
-                    let args3 = [];
-                    args3 = args3.concat(guids[i]).concat("addListener").concat(args[1]).concat(args2[i]);
+                    return blazorGoogleMaps.objectManager.invoke(args3);
+                }));
 
-                    let result = blazorGoogleMaps.objectManager.invoke(args3);
-                }
-
-                //console.log(results);
-
-                return !0;
+                return true;
             },
 
             readObjectPropertyValue: function (args) {
-                let obj = mapObjects[args[0]];
+                const [objectId, property] = args;
+                const obj = mapObjects[objectId];
 
-                return obj[args[1]];
+                return obj?.[property];
             },
 
             readObjectPropertyValueWithReturnedObjectRef: function (args) {
 
-                let obj = mapObjects[args[0]];
-
-                let result = obj[args[1]];
-                let uuid = uuidv4();
+                const [objectId, property] = args;
+                const obj = mapObjects[objectId];
+                const result = obj?.[property];
+                const uuid = uuidv4();
 
                 mapObjects[uuid] = result;
 
@@ -944,12 +761,17 @@
             },
 
             readObjectPropertyValueAndMapToArray: function (args) {
-                let obj = mapObjects[args[0]];
-                let result = obj[args[1]];
-                let props = tryParseJson(args[2]);
-                for (var i = 0, len = props.length; i < len; i++) {
-                    result = result.map((x) => x[props[i]]);
+                const [objectId, property, propsJson] = args;
+                const obj = mapObjects[objectId];
+                let result = obj?.[property];
+                const props = tryParseJson(propsJson);
+
+                if (result && Array.isArray(result)) {
+                    props.forEach(prop => {
+                        result = result.map(item => item?.[prop]);
+                    });
                 }
+
                 return result;
             },
 

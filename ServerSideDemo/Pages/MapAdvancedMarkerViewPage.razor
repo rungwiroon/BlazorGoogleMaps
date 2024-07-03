@@ -253,7 +253,7 @@
 
         _markers.Push(marker);
 
-        await marker.AddListener<MouseEvent>("gmp-click", e =>
+        await marker.AddListener<MouseEvent>("click", e =>
         {
             _events.Add($"Clicked Pin Marker {e.LatLng.Lat} {e.LatLng.Lng}");
             StateHasChanged();
