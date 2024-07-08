@@ -608,8 +608,8 @@
                             return data.overrideStyle(feature, request);
 
                         default:
-                            if (obj instanceof google.maps.places.AutocompleteService ||
-                                obj instanceof google.maps.places.PlacesService ||
+                            if (google.maps.places !== undefined && obj instanceof google.maps.places.AutocompleteService ||
+                                (google.maps.places !== undefined && obj instanceof google.maps.places.PlacesService) ||
                                 obj instanceof google.maps.Geocoder) {
                                 return new Promise((resolve, reject) => {
                                     obj[functionToInvoke](formattedArgs[0], (result, status) => {
