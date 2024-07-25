@@ -11,6 +11,7 @@
 <button @onclick="@UpdatePosition">Recenter last</button>
 <button @onclick="@UpdateContent">Update content</button>
 <button @onclick="@AddMarkerWithPinElement">Add marker with pin element</button>
+<button @onclick="GetMarkerPosition">Get advanced markers position</button>
 <br/>
 <p>Marker list</p>
 <button @onclick="AddMarker1">Add advanced markers part 1</button>
@@ -284,5 +285,18 @@
         const string newContent = "<svg width=\"200\" height=\"200\" xmlns=\"http://www.w3.org/2000/svg\">\r\n  <!-- Body -->\r\n  <ellipse cx=\"100\" cy=\"130\" rx=\"50\" ry=\"30\" fill=\"blue\"/>\r\n  \r\n  <!-- Wing -->\r\n  <ellipse cx=\"80\" cy=\"120\" rx=\"30\" ry=\"20\" fill=\"lightblue\"/>\r\n  \r\n  <!-- Head -->\r\n  <circle cx=\"100\" cy=\"80\" r=\"25\" fill=\"blue\"/>\r\n  \r\n  <!-- Eye -->\r\n  <circle cx=\"110\" cy=\"75\" r=\"5\" fill=\"black\"/>\r\n  \r\n  <!-- Beak -->\r\n  <polygon points=\"125,80 135,75 125,70\" fill=\"orange\"/>\r\n  \r\n  <!-- Tail -->\r\n  <polygon points=\"60,130 50,140 70,140\" fill=\"blue\"/>\r\n  \r\n  <!-- Legs -->\r\n  <line x1=\"90\" y1=\"160\" x2=\"90\" y2=\"180\" stroke=\"orange\" stroke-width=\"3\"/>\r\n  <line x1=\"110\" y1=\"160\" x2=\"110\" y2=\"180\" stroke=\"orange\" stroke-width=\"3\"/>\r\n</svg>\r\n";
         var lastMarker = _markers.Peek();
         await lastMarker.SetContent(newContent);
+    }
+
+    private async Task GetMarkerPosition()
+    {
+        if (!_markers.Any())
+        {
+            return;
+        }
+
+        var lastMarker = _markers.Peek();
+        var position = await lastMarker.GetPosition();
+        _events.Add($"Marker position {position.Lat} {position.Lng}");
+        StateHasChanged();
     }
 }

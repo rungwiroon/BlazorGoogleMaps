@@ -532,7 +532,16 @@
                 }
 
                 try {
-                    obj[functionToInvoke] = processedArgs[0];
+                    if (processedArgs.length > 0) {
+                        obj[functionToInvoke] = processedArgs[0]
+                    } else {
+                        const result = obj[functionToInvoke];
+                        if (result && typeof result === "object") {
+                            return JSON.parse(extendableStringify(result, getCircularReplacer()));
+                        } else {
+                            return result;
+                        }
+                    }
                 } catch (e) {
                     console.error(`Error invoking property: Function: ${functionToInvoke} Arguments: ${JSON.stringify(processedArgs)} Error: ${e}`);
                 }
