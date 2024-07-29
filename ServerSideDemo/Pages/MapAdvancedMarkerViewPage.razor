@@ -12,6 +12,7 @@
 <button @onclick="@UpdateContent">Update content</button>
 <button @onclick="@AddMarkerWithPinElement">Add marker with pin element</button>
 <button @onclick="GetMarkerPosition">Get advanced markers position</button>
+<button @onclick="InvokeClustering">Invoke Clustering</button>
 <br/>
 <p>Marker list</p>
 <button @onclick="AddMarker1">Add advanced markers part 1</button>
@@ -298,5 +299,70 @@
         var position = await lastMarker.GetPosition();
         _events.Add($"Marker position {position.Lat} {position.Lng}");
         StateHasChanged();
+    }
+
+    private async Task InvokeClustering()
+    {
+        var coordinates = GetClusterCoordinates();
+
+        var markers = await GetMarkers(coordinates, _map1.InteropObject);
+
+        var markerClustering = await MarkerClustering.CreateAsync(_map1.JsRuntime, _map1.InteropObject, markers, new()
+            {
+                //RendererObjectName = "customRendererLib.interpolatedRenderer",
+                ZoomOnClick = true,
+            });
+
+        //await markerClustering.FitMapToMarkers(1);
+    }
+
+    private async Task<IEnumerable<AdvancedMarkerElement>> GetMarkers(ICollection<LatLngLiteral> coords, Map map)
+    {
+        var result = new List<AdvancedMarkerElement>(coords.Count());
+        var index = 1;
+        foreach (var latLngLiteral in coords)
+        {
+            var marker = await AdvancedMarkerElement.CreateAsync(_map1.JsRuntime, new AdvancedMarkerElementOptions()
+                {
+                    Position = latLngLiteral,
+                    Map = _map1.InteropObject,
+                    Content = index.ToString()
+                });
+
+            result.Add(marker);
+        }
+
+
+        return result;
+    }
+
+    private static List<LatLngLiteral> GetClusterCoordinates()
+    {
+        return new List<LatLngLiteral>()
+        {
+            new() { Lng = 147.154312, Lat = -31.56391},
+            new() { Lng = 150.363181, Lat = -33.718234},
+            new() { Lng = 150.371124, Lat = -33.727111},
+            new() { Lng = 151.209834, Lat = -33.848588},
+            new() { Lng = 151.216968, Lat = -33.851702},
+            new() { Lng = 150.863657, Lat = -34.671264},
+            new() { Lng = 148.662905, Lat = -35.304724},
+            new() { Lng = 175.699196, Lat = -36.817685},
+            new() { Lng = 175.790222, Lat = -36.828611},
+            new() { Lng = 145.116667, Lat = -37.75},
+            new() { Lng = 145.128708, Lat = -37.759859},
+            new() { Lng = 145.133858, Lat = -37.765015},
+            new() { Lng = 145.143299, Lat = -37.770104},
+            new() { Lng = 145.145187, Lat = -37.7737},
+            new() { Lng = 145.137978, Lat = -37.774785},
+            new() { Lng = 144.968119, Lat = -37.819616},
+            new() { Lng = 144.695692, Lat = -38.330766},
+            new() { Lng = 175.053218, Lat = -39.927193},
+            new() { Lng = 174.865694, Lat = -41.330162},
+            new() { Lng = 147.439506, Lat = -42.734358},
+            new() { Lng = 147.501315, Lat = -42.734358},
+            new() { Lng = 147.438, Lat = -42.735258},
+            new() { Lng = 170.463352, Lat = -43.999792},
+        };
     }
 }

@@ -2,7 +2,6 @@
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 // ReSharper disable UnusedMember.Global
@@ -15,8 +14,6 @@ namespace GoogleMapsComponents.Maps;
 public class MarkerClustering : EventEntityBase, IJsObjectRef
 {
     public Guid Guid => _jsObjectRef.Guid;
-    private Map _map;
-    private readonly IEnumerable<Marker> _originalMarkers;
 
     public static async Task<MarkerClustering> CreateAsync(
         IJSRuntime jsRuntime,
@@ -30,14 +27,28 @@ public class MarkerClustering : EventEntityBase, IJsObjectRef
         var guid = Guid.NewGuid();
         var jsObjectRef = new JsObjectRef(jsRuntime, guid);
         await jsRuntime.InvokeVoidAsync("blazorGoogleMaps.objectManager.createClusteringMarkers", guid.ToString(), map.Guid.ToString(), markers, options);
-        var obj = new MarkerClustering(jsObjectRef, map, markers);
+        var obj = new MarkerClustering(jsObjectRef);
         return obj;
     }
 
-    internal MarkerClustering(JsObjectRef jsObjectRef, Map map, IEnumerable<Marker> markers) : base(jsObjectRef)
+    public static async Task<MarkerClustering> CreateAsync(
+        IJSRuntime jsRuntime,
+        Map map,
+        IEnumerable<AdvancedMarkerElement> advancedMarkerElements,
+        MarkerClustererOptions? options = null
+    )
     {
-        _map = map;
-        _originalMarkers = markers;
+        options ??= new MarkerClustererOptions();
+
+        var guid = Guid.NewGuid();
+        var jsObjectRef = new JsObjectRef(jsRuntime, guid);
+        await jsRuntime.InvokeVoidAsync("blazorGoogleMaps.objectManager.createClusteringMarkers", guid.ToString(), map.Guid.ToString(), advancedMarkerElements, options);
+        var obj = new MarkerClustering(jsObjectRef);
+        return obj;
+    }
+
+    internal MarkerClustering(JsObjectRef jsObjectRef) : base(jsObjectRef)
+    {
     }
 
     /// <summary>
@@ -57,7 +68,6 @@ public class MarkerClustering : EventEntityBase, IJsObjectRef
 
     public virtual async Task SetMap(Map map)
     {
-        _map = map;
         await _jsObjectRef.InvokeAsync("setMap", map);
     }
 
@@ -75,22 +85,6 @@ public class MarkerClustering : EventEntityBase, IJsObjectRef
     public virtual async Task ClearMarkers(bool noDraw = false)
     {
         await _jsObjectRef.InvokeAsync("clearMarkers", noDraw);
-    }
-
-    /// <summary>
-    /// Fits the map to the bounds of the markers managed by the clusterer.
-    /// </summary>
-    /// <param name="padding"></param>
-    [Obsolete("Deprecated: Center map based on unclustered Markers before clustering. Latest js-markerclusterer lib doesn't support this. Workaround is slow. ")]
-    public virtual async Task FitMapToMarkers(int padding)
-    {
-        var newBounds = new LatLngBoundsLiteral(await _originalMarkers.First().GetPosition());
-        foreach (var marker in _originalMarkers)
-        {
-            newBounds.Extend(await marker.GetPosition());
-        }
-
-        await _map.FitBounds(newBounds, padding);
     }
 
     /// <summary>

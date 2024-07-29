@@ -150,10 +150,6 @@ public partial class MapMarker
             RendererObjectName = "customRendererLib.interpolatedRenderer",
             ZoomOnClick = true,
         });
-
-        await _markerClustering.FitMapToMarkers(1);
-        //initMap
-        //await JsObjectRef.InvokeAsync<object>("initMap", map1.InteropObject.Guid.ToString(), markers);
     }
 
     private static List<LatLngLiteral> GetClusterCoordinates()
