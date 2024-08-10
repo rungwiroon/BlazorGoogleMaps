@@ -3,7 +3,12 @@ using System.Text.Json.Serialization;
 
 namespace GoogleMapsComponents.Maps;
 
-public abstract class ListableEntityOptionsBase
+public interface IListableEntityOptionsBase
+{
+    Map? Map { get; set; }
+}
+
+public abstract class ListableEntityOptionsBase : IListableEntityOptionsBase
 {
     /// <summary>
     /// Indicates whether Entity handles mouse events.

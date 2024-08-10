@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace GoogleMapsComponents.Maps;
 
 public class ListableEntityBase<TEntityOptions> : EventEntityBase, IJsObjectRef
-    where TEntityOptions : ListableEntityOptionsBase
+    where TEntityOptions : IListableEntityOptionsBase
 {
     public Guid Guid => _jsObjectRef.Guid;
 

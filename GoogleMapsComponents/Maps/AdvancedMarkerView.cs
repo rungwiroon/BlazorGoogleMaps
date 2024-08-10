@@ -1,4 +1,5 @@
 ﻿using Microsoft.JSInterop;
+using OneOf;
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps;
@@ -34,9 +35,29 @@ public class AdvancedMarkerElement : ListableEntityBase<AdvancedMarkerElementOpt
         await _jsObjectRef.InvokePropertyAsync("position", newPosition);
     }
 
-    public async Task SetContent(string newContent)
+    public async Task SetContent(OneOf<string, PinElement> newContent)
     {
         await _jsObjectRef.InvokePropertyAsync("content", newContent);
+    }
+
+    public async Task SetGmpClickable(bool newValue)
+    {
+        await _jsObjectRef.InvokePropertyAsync("gmpClickable", newValue);
+    }
+
+    public async Task<bool> GetGmpClickable()
+    {
+        return await _jsObjectRef.InvokePropertyAsync<bool>("gmpClickable");
+    }
+
+    public async Task SetGmpDraggable(bool newValue)
+    {
+        await _jsObjectRef.InvokePropertyAsync("gmpDraggable", newValue);
+    }
+
+    public async Task<bool> GetGmpDraggable()
+    {
+        return await _jsObjectRef.InvokePropertyAsync<bool>("gmpDraggable");
     }
 
     public async Task<LatLngLiteral> GetPosition()

@@ -8,7 +8,7 @@ namespace GoogleMapsComponents.Maps.Extension;
 
 public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposable, IAsyncDisposable
     where TEntityBase : ListableEntityBase<TEntityOptionsBase>
-    where TEntityOptionsBase : ListableEntityOptionsBase
+    where TEntityOptionsBase : IListableEntityOptionsBase
 {
     protected readonly JsObjectRef _jsObjectRef;
 

@@ -266,9 +266,15 @@
     function getAdvancedMarkerElementContent(functionName, content) {
         if (functionName === "google.maps.marker.AdvancedMarkerView" || functionName === "google.maps.marker.AdvancedMarkerElement") {
             if (content) {
-                let isPinElement = content.dotnetTypeName === "GoogleMapsComponents.Maps.PinElement";
+                //Old code. It work when creating with options but not when SetContent
+                //let isPinElement = content.dotnetTypeName === "GoogleMapsComponents.Maps.PinElement";
+                const isHtmlContent= typeof content === 'string' && content.startsWith("<");
 
-                if (isPinElement) {
+                if (isHtmlContent) {
+                    let template = document.createElement('template');
+                    template.innerHTML = content.trim();
+                    return template.content.firstChild;
+                } else {
                     let pin = new google.maps.marker.PinElement({
                         background: content.background,
                         borderColor: content.borderColor,
@@ -282,10 +288,6 @@
                     }
 
                     return pin.element;
-                } else {
-                    let template = document.createElement('template');
-                    template.innerHTML = content.trim();
-                    return template.content.firstChild;
                 }
             }
         }
