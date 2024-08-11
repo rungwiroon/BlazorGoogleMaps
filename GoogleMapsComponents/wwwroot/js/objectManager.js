@@ -284,7 +284,14 @@
 
                     let glyph = content.glyph;
                     if (glyph) {
-                        pin.glyph = glyph.startsWith("http") ? new URL(glyph) : glyph;
+                        const isGlyphHtmlContent = typeof glyph === 'string' && glyph.startsWith("<");
+                        if (isGlyphHtmlContent) {
+                            let template = document.createElement('div');
+                            template.innerHTML = glyph.trim();
+                            pin.glyph = template;
+                        } else {
+                            pin.glyph = glyph.startsWith("http") ? new URL(glyph) : glyph;
+                        }
                     }
 
                     return pin.element;
