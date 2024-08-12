@@ -16,15 +16,12 @@ public class EnvVariableBlazorGoogleMapsKeyService : IBlazorGoogleMapsKeyService
             key = "AIzaSyBdkgvniMdyFPAcTlcZivr8f30iU-kn1T0";
         }
 
-        key = "AIzaSyBabXxMdOrVBdIPXZuZObAgrP4inwDAk98";
-
         return Task.FromResult(new MapApiLoadOptions(key)
         {
             Version = "beta"
         });
 
         IsApiInitialized = true;
-
     }
 
     public bool IsApiInitialized { get; set; }
