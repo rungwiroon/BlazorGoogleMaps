@@ -23,4 +23,10 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IBlazorGoogleMapsKeyService>(_ => new BlazorGoogleMapsKeyService(opts));
         return services;
     }
+
+    public static IServiceCollection AddBlazorGoogleMaps(this IServiceCollection services, IBlazorGoogleMapsKeyService blazorGoogleMapsKeyService)
+    {
+        services.AddScoped(_ => blazorGoogleMapsKeyService);
+        return services;
+    }
 }
