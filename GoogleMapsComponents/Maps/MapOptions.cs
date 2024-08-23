@@ -23,12 +23,37 @@ public class MapOptions
     /// This color will be visible when tiles have not yet loaded as the user pans.<br/>
     /// This option can only be set when the map is initialized.
     /// </summary>
-    public string BackgroundColor { get; set; }
+    public string? BackgroundColor { get; set; }
+    
+    /// <summary>
+    /// The enabled/disabled state of the Camera control.
+    /// </summary>
+    public bool? CameraControl { get; set; }
+    
+    /// <summary>
+    /// The display options for the Camera control.
+    /// </summary>
+    public CameraControlOptions? CameraControlOptions { get; set; }
 
     /// <summary>
     /// The initial Map center. Required.
     /// </summary>
     public LatLngLiteral? Center { get; set; }
+    
+    
+    /// <summary>
+    /// The initial Map color scheme. This option can only be set when the map is initialized.
+    /// </summary>
+    [JsonConverter(typeof(EnumMemberConverter<ColorScheme>))]
+    public ColorScheme? ColorScheme { get; set; }
+    
+    /// <summary>
+    /// Size in pixels of the controls appearing on the map.
+    /// This value must be supplied directly when creating the Map, updating this value later may bring
+    /// the controls into an undefined state. Only governs the controls made by
+    /// the Maps API itself. Does not scale developer created custom controls.
+    /// </summary>
+    public int? ControlSize { get; set; }
 
     /// <summary>
     /// When false, map icons are not clickable.<br/>
@@ -44,6 +69,7 @@ public class MapOptions
 
     /// <summary>
     /// Enables/disables zoom and center on double click. Enabled by default.
+    /// Note: This property is not recommended. To disable zooming on double click, you can use the gestureHandling property, and set it to "none".
     /// </summary>
     public bool? DisableDoubleClickZoom { get; set; }
 
@@ -58,7 +84,7 @@ public class MapOptions
     /// As with the css property, you must specify at least one fallback cursor that is not a URL.<br/>
     /// For example: <c>draggableCursor: 'url(http://www.example.com/icon.png), auto;'</c>.
     /// </summary>
-    public string DraggableCursor { get; set; }
+    public string? DraggableCursor { get; set; }
 
     /// <summary>
     /// The name or url of the cursor to display when the map is being dragged.<br/>
@@ -66,7 +92,7 @@ public class MapOptions
     /// As with the css property, you must specify at least one fallback cursor that is not a URL.<br/>
     /// For example: <c>draggingCursor: 'url(http://www.example.com/icon.png), auto;'</c>.
     /// </summary>
-    public string DraggingCursor { get; set; }
+    public string? DraggingCursor { get; set; }
 
     /// <summary>
     /// The enabled/disabled state of the Fullscreen control.
@@ -87,14 +113,26 @@ public class MapOptions
     /// <item><term>"auto"</term><description> (default) Gesture handling is either cooperative or greedy, depending on whether the page is scrollable or in an iframe.</description></item>
     /// </list>
     /// </summary>
-    public string GestureHandling { get; set; }
+    public string? GestureHandling { get; set; }
 
     /// <summary>
     /// The heading for aerial imagery in degrees measured clockwise from cardinal direction North.<br/>
     /// Headings are snapped to the nearest available angle for which imagery is available.
     /// </summary>
     public int? Heading { get; set; }
+    
+    /// <summary>
+    /// Whether the map should allow user control of the camera heading (rotation). This option is only in
+    /// effect when the map is a vector map. If not set in code, then the cloud configuration for the map ID will be used (if available).
+    /// </summary>
+    public bool? HeadingInteractionEnabled { get; set; }
 
+    /// <summary>
+    /// Whether the map should allow fractional zoom levels. Listen to isfractionalzoomenabled_changed to know when the default has been set.
+    /// Default: true for vector maps and false for raster maps
+    /// </summary>
+    public bool? IsFractionalZoomEnabled { get; set; }
+    
     /// <summary>
     /// The heading for aerial imagery in degrees measured clockwise from cardinal direction North.<br/>
     /// Headings are snapped to the nearest available angle for which imagery is available.
@@ -145,6 +183,16 @@ public class MapOptions
     /// The display options for the Pan control.
     /// </summary>
     public PanControlOptions? PanControlOptions { get; set; }
+    
+    // TODO: These have to be bound to JS in someway: https://developers.google.com/maps/documentation/javascript/reference/map#RenderingType
+    // <summary>
+    // Whether the map should be a raster or vector map. This parameter cannot be set or
+    // changed after a map is instantiated. If not set, then the cloud configuration for the map ID
+    // will determine the rendering type (if available). Please note that vector maps may not
+    // be available for all devices and browsers and the map will fall back to a raster map as needed.
+    // </summary>
+    // [JsonConverter(typeof(EnumMemberConverter<RenderingType>))]
+    // public RenderingType RenderingType { get; set; }
 
     /// <summary>
     /// Defines a boundary that restricts the area of the map accessible to users.<br/>
@@ -199,7 +247,7 @@ public class MapOptions
     /// Styles to apply to each of the default map types.<br/>
     /// Note that for satellite/hybrid and terrain modes, these styles will only apply to labels and geometry.
     /// </summary>
-    public MapTypeStyle[] Styles { get; set; }
+    public MapTypeStyle[]? Styles { get; set; }
 
     /// <summary>
     /// Controls the automatic switching behavior for the angle of incidence of the map.<br/>
