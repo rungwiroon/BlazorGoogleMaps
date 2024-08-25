@@ -24,12 +24,12 @@ public class MapOptions
     /// This option can only be set when the map is initialized.
     /// </summary>
     public string? BackgroundColor { get; set; }
-    
+
     /// <summary>
     /// The enabled/disabled state of the Camera control.
     /// </summary>
     public bool? CameraControl { get; set; }
-    
+
     /// <summary>
     /// The display options for the Camera control.
     /// </summary>
@@ -39,14 +39,14 @@ public class MapOptions
     /// The initial Map center. Required.
     /// </summary>
     public LatLngLiteral? Center { get; set; }
-    
-    
+
+
     /// <summary>
     /// The initial Map color scheme. This option can only be set when the map is initialized.
     /// </summary>
     [JsonConverter(typeof(EnumMemberConverter<ColorScheme>))]
     public ColorScheme? ColorScheme { get; set; }
-    
+
     /// <summary>
     /// Size in pixels of the controls appearing on the map.
     /// This value must be supplied directly when creating the Map, updating this value later may bring
@@ -120,7 +120,7 @@ public class MapOptions
     /// Headings are snapped to the nearest available angle for which imagery is available.
     /// </summary>
     public int? Heading { get; set; }
-    
+
     /// <summary>
     /// Whether the map should allow user control of the camera heading (rotation). This option is only in
     /// effect when the map is a vector map. If not set in code, then the cloud configuration for the map ID will be used (if available).
@@ -132,7 +132,7 @@ public class MapOptions
     /// Default: true for vector maps and false for raster maps
     /// </summary>
     public bool? IsFractionalZoomEnabled { get; set; }
-    
+
     /// <summary>
     /// The heading for aerial imagery in degrees measured clockwise from cardinal direction North.<br/>
     /// Headings are snapped to the nearest available angle for which imagery is available.
@@ -183,16 +183,16 @@ public class MapOptions
     /// The display options for the Pan control.
     /// </summary>
     public PanControlOptions? PanControlOptions { get; set; }
-    
-    // TODO: These have to be bound to JS in someway: https://developers.google.com/maps/documentation/javascript/reference/map#RenderingType
-    // <summary>
-    // Whether the map should be a raster or vector map. This parameter cannot be set or
-    // changed after a map is instantiated. If not set, then the cloud configuration for the map ID
-    // will determine the rendering type (if available). Please note that vector maps may not
-    // be available for all devices and browsers and the map will fall back to a raster map as needed.
-    // </summary>
-    // [JsonConverter(typeof(EnumMemberConverter<RenderingType>))]
-    // public RenderingType RenderingType { get; set; }
+
+    /// <summary>
+    /// Whether the map should be a raster or vector map. This parameter cannot be set or
+    /// changed after a map is instantiated. If not set, then the cloud configuration for the map ID
+    /// will determine the rendering type (if available). Please note that vector maps may notsummary>
+    /// https://developers.google.com/maps/documentation/javascript/reference/map#RenderingType
+    ///  be available for all devices and browsers and the map will fall back to a raster map as needed.
+    /// </summary>
+    [JsonConverter(typeof(EnumMemberConverter<RenderingType>))]
+    public RenderingType? RenderingType { get; set; }
 
     /// <summary>
     /// Defines a boundary that restricts the area of the map accessible to users.<br/>

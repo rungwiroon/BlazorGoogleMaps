@@ -37,11 +37,17 @@
             Lng = 100.8162
         },
         IsFractionalZoomEnabled = false,
-        HeadingInteractionEnabled = true,
+        HeadingInteractionEnabled = false,
         CameraControl = true,
         MapTypeId = MapTypeId.Roadmap,
         // ColorScheme = ColorScheme.Dark,
-        MapId = "e5asd595q2121"
+        MapId = "e5asd595q2121",
+        RenderingType = RenderingType.Vector,
+        ZoomControl = true,
+        ZoomControlOptions = new ZoomControlOptions()
+        {
+            Position = ControlPosition.BottomCenter,
+        },
     };
     private LatLngBounds _bounds = null!;
     private readonly List<String> _events = new List<String>();

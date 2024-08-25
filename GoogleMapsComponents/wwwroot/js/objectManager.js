@@ -139,6 +139,16 @@
                         propertyValue.position = getGooglePositionFromString(propertyValue.position);
                     }
 
+                    if (propertyName === "renderingType" && propertyValue !== null) {
+                        const renderingTypeMap = {
+                            "google.maps.RenderingType.RASTER": google.maps.RenderingType.RASTER,
+                            "google.maps.RenderingType.UNINITIALIZED": google.maps.RenderingType.UNINITIALIZED,
+                            "google.maps.RenderingType.VECTOR": google.maps.RenderingType.VECTOR
+                        };
+
+                        parsedItem[propertyName] = renderingTypeMap[propertyValue] || google.maps.RenderingType.RASTER;
+                    }
+
                     // Handle nested drawingModes property
                     if (typeof propertyValue === "object" && propertyValue !== null && "drawingModes" in propertyValue) {
                         const drawingModeMapping = {
