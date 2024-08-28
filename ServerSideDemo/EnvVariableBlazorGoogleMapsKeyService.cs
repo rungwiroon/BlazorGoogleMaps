@@ -20,7 +20,8 @@ public class EnvVariableBlazorGoogleMapsKeyService : IBlazorGoogleMapsKeyService
 
         return Task.FromResult(new MapApiLoadOptions(key)
         {
-            Version = "beta"
+            Version = "beta",
+            // Language = "ja"
         });
     }
 
