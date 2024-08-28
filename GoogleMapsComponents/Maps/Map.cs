@@ -27,9 +27,7 @@ public class Map : EventEntityBase, IJsObjectRef, IAsyncDisposable
         {
             MapApiLoadOptions apiOpts = opts.ApiLoadOptions;
             await jsRuntime.InvokeVoidAsync("blazorGoogleMaps.objectManager.initMap",
-                apiOpts.Key,
-                apiOpts.Version,
-                apiOpts.Libraries);
+                apiOpts);
         }
         var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.Map", mapDiv, opts);
         var dataObjectRef = await jsObjectRef.GetObjectReference("data");
