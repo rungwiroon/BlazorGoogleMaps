@@ -68,27 +68,7 @@
 
         await _map1.InteropObject.AddListener("idle", OnIdle);
 
-        await _map1.InteropObject.AddListener("maptypeid_changed", OnMapTypeIdChanged);
-
-        await _map1.InteropObject.AddListener<MouseEvent>("mousemove", OnMouseMove);
         
-        await _map1.InteropObject.AddListenerOnce<MouseEvent>("mousemove", OnMouseMoveOnce);
-        
-        await _map1.InteropObject.AddListener<MouseEvent>("mousedown", OnMouseMove);
-
-        await _map1.InteropObject.AddListener("mouseout", OnMouseOut);
-
-        await _map1.InteropObject.AddListener("mouseover", OnMouseOver);
-
-        await _map1.InteropObject.AddListener("projection_changed", OnProjectionChanged);
-
-        await _map1.InteropObject.AddListener("rightclick", OnRightClick);
-
-        await _map1.InteropObject.AddListener("tilesloaded", OnTilesLoaded);
-
-        await _map1.InteropObject.AddListener("tilt_changed", OnTiltChanged);
-
-        await _map1.InteropObject.AddListener("zoom_changed", OnZoomChanged);
     }
 
     private void OnBoundsChanged()

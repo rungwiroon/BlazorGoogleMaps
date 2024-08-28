@@ -30,16 +30,6 @@
     let controlParents = {};
     const dateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
 
-
-    // Add the object to the map for "managed" objects, tries to set the guidString to 
-    // be able to dispose of them later on
-    function addMapObject(uuid, obj) {
-        if ("set" in obj) {
-            obj.set("guidString", uuid);
-        }
-        mapObjects[uuid] = obj;
-    }
-    
     //Strip circular dependencies, map object and functions
     //https://stackoverflow.com/questions/11616630/how-can-i-print-a-circular-structure-in-a-json-like-format
     const getCircularReplacer = () => {
@@ -257,9 +247,9 @@
                 let directionsService = new google.maps.DirectionsService();
                 directionsService.route(request, (result, status) => {
                     if (status == 'OK') {
-                        resolve(result); 
+                        resolve(result);
                     } else {
-                        reject(status); 
+                        reject(status);
                     }
                 });
             });
@@ -272,10 +262,10 @@
                 }
 
                 let jsonRest = extendableStringify(cleanDirectionResult(result, options));
-                return jsonRest; 
+                return jsonRest;
             } catch (error) {
                 console.log(error);
-                return error; 
+                return error;
             }
         }
     };
@@ -288,7 +278,7 @@
             if (content) {
                 //Old code. It work when creating with options but not when SetContent
                 //let isPinElement = content.dotnetTypeName === "GoogleMapsComponents.Maps.PinElement";
-                const isHtmlContent= typeof content === 'string' && content.startsWith("<");
+                const isHtmlContent = typeof content === 'string' && content.startsWith("<");
 
                 if (isHtmlContent) {
                     let template = document.createElement('template');
@@ -329,7 +319,7 @@
             initMap: async function (apiOptions) {
                 const librariesToLoad = apiOptions["libraries"];
                 delete apiOptions["libraries"];
-                
+
                 (g => { var h, a, k, p = "The Google Maps JavaScript API", c = "google", l = "importLibrary", q = "__ib__", m = document, b = window; b = b[c] || (b[c] = {}); var d = b.maps || (b.maps = {}), r = new Set, e = new URLSearchParams, u = () => h || (h = new Promise(async (f, n) => { await (a = m.createElement("script")); e.set("libraries", [...r] + ""); for (k in g) e.set(k.replace(/[A-Z]/g, t => "_" + t[0].toLowerCase()), g[k]); e.set("callback", c + ".maps." + q); a.src = `https://maps.${c}apis.com/maps/api/js?` + e; d[q] = f; a.onerror = () => h = n(Error(p + " could not load.")); a.nonce = m.querySelector("script[nonce]")?.nonce || ""; m.head.append(a) })); d[l] ? console.warn(p + " only loads once. Ignoring:", g) : d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n)) })(
                     apiOptions
                 );
@@ -338,11 +328,11 @@
                 for (var i = 0; i < libArray.length; i++) {
                     var library = libArray[i];
                     await google.maps.importLibrary(library);
-                }                
+                }
             },
 
             createObject: function (args) {
-                mapObjects = mapObjects || [];                
+                mapObjects = mapObjects || [];
 
                 let args2 = args.slice(2).map(arg => tryParseJson(arg));
 
@@ -355,7 +345,12 @@
                 let constructor = stringToFunction(functionName);
                 let obj = new constructor(...args2);
                 let guid = args[0];
-                addMapObject(guid, obj)
+
+                if ("set" in obj) {
+                    obj.set("guidString", guid);
+                }
+
+                mapObjects[guid] = obj;
             },
 
             //Used to create multiple objects of the same type passing a set of creation parameters coherent 
@@ -380,11 +375,16 @@
                     }
 
                     let obj = new constructor(constructorArgs);
-                    addMapObject(guids[i], obj);
+
+                    if ("set" in obj) {
+                        obj.set("guidString", guids[i]);
+                    }
+
+                    mapObjects[guids[i]] = obj;
                 }
             },
 
-           
+
 
             addObject: function (obj, guid) {
                 if (guid === null || typeof guid === "undefined") {
@@ -392,7 +392,7 @@
                 }
 
                 mapObjects = mapObjects || [];
-                addMapObject(guid, obj);
+                mapObjects[guid] = obj;
 
                 return guid;
             },
@@ -401,7 +401,7 @@
                 let mapGuid = args[0];
                 let map = mapObjects[mapGuid];
                 let elem = args[2];
-                if(!elem) return
+                if (!elem) return
                 //I know i am lazy. Two quotes appear after serialization
                 let position = getGooglePositionFromString(args[1].replace("\"", "").replace("\"", ""));
 
@@ -423,7 +423,7 @@
                     let parentElement = elem.parentElement
                     controlParents[mapGuid][elem.id] = parentElement;
                 }
-                
+
                 elem.style.display = "block";
                 map.controls[position].push(elem);
             },
@@ -605,12 +605,12 @@
 
                         case "getProjection":
                             const projection = obj[functionToInvoke](...formattedArgs);
-                            addMapObject(restArgs[0], projection);
+                            mapObjects[restArgs[0]] = projection;
                             return;
 
                         case "createPath":
                             const pathProjection = obj.getPath();
-                            addMapObject(restArgs[0], pathProjection);
+                            mapObjects[restArgs[0]] = pathProjection;
                             return;
 
                         case "fromLatLngToPoint":
@@ -711,11 +711,13 @@
 
                 return results;
             },
+
             invokeWithReturnedObjectRef: async function (args) {
                 const result = await blazorGoogleMaps.objectManager.invoke(args);
                 const uuid = uuidv4();
+
                 // This is needed to be able to remove events from map
-                addMapObject(uuid, result)
+                mapObjects[uuid] = result;
 
                 return uuid;
             },
@@ -725,7 +727,7 @@
 
                 google.maps.event.addListener(drawingManager, "overlaycomplete", event => {
                     const overlayUuid = uuidv4();
-                    addMapObject(overlayUuid, event.overlay)
+                    mapObjects[overlayUuid] = event.overlay;
 
                     const returnObj = extendableStringify([{ type: event.type, uuid: overlayUuid.toString() }]);
 
@@ -782,8 +784,8 @@
                 const obj = mapObjects[objectId];
                 const result = obj?.[property];
                 const uuid = uuidv4();
-                
-                addMapObject(uuid, result)
+
+                mapObjects[uuid] = result;
 
                 return uuid;
             },
@@ -861,7 +863,12 @@
                             markers: newMarkers
                         });
                 */
-                addMapObject(guid, markerCluster)
+
+                if ("set" in markerCluster) {
+                    markerCluster.set("guidString", guid);
+                }
+
+                mapObjects[guid] = markerCluster;
             },
 
             removeClusteringMarkers(guid, markers, noDraw) {
