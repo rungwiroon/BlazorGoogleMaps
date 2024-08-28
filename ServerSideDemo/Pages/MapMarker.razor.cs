@@ -349,5 +349,9 @@ public partial class MapMarker
         await _map1.InteropObject.FitBounds(boundsLiteral, OneOf.OneOf<int, Padding>.FromT0(5));
     }
 
-
+    public void Dispose()
+    {
+        // Just to show that _bounds can be removed, but has be done manually since it doesn't relate to the map
+        _map1.Dispose();
+    }
 }

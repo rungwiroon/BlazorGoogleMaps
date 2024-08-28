@@ -30,6 +30,16 @@
     let controlParents = {};
     const dateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
 
+
+    // Add the object to the map for "managed" objects, tries to set the guidString to 
+    // be able to dispose of them later on
+    function addMapObject(uuid, obj) {
+        if ("set" in obj) {
+            obj.set("guidString", uuid);
+        }
+        mapObjects[uuid] = obj;
+    }
+    
     //Strip circular dependencies, map object and functions
     //https://stackoverflow.com/questions/11616630/how-can-i-print-a-circular-structure-in-a-json-like-format
     const getCircularReplacer = () => {
@@ -345,12 +355,7 @@
                 let constructor = stringToFunction(functionName);
                 let obj = new constructor(...args2);
                 let guid = args[0];
-
-                if ("set" in obj) {
-                    obj.set("guidString", guid);
-                }
-
-                mapObjects[guid] = obj;
+                addMapObject(guid, obj)
             },
 
             //Used to create multiple objects of the same type passing a set of creation parameters coherent 
@@ -375,12 +380,7 @@
                     }
 
                     let obj = new constructor(constructorArgs);
-
-                    if ("set" in obj) {
-                        obj.set("guidString", guids[i]);
-                    }
-
-                    mapObjects[guids[i]] = obj;
+                    addMapObject(guids[i], obj);
                 }
             },
 
@@ -392,7 +392,7 @@
                 }
 
                 mapObjects = mapObjects || [];
-                mapObjects[guid] = obj;
+                addMapObject(guid, obj);
 
                 return guid;
             },
@@ -605,12 +605,12 @@
 
                         case "getProjection":
                             const projection = obj[functionToInvoke](...formattedArgs);
-                            mapObjects[restArgs[0]] = projection;
+                            addMapObject(restArgs[0], projection);
                             return;
 
                         case "createPath":
                             const pathProjection = obj.getPath();
-                            mapObjects[restArgs[0]] = pathProjection;
+                            addMapObject(restArgs[0], pathProjection);
                             return;
 
                         case "fromLatLngToPoint":
@@ -711,13 +711,11 @@
 
                 return results;
             },
-
-                        invokeWithReturnedObjectRef: async function (args) {
+            invokeWithReturnedObjectRef: async function (args) {
                 const result = await blazorGoogleMaps.objectManager.invoke(args);
                 const uuid = uuidv4();
-
                 // This is needed to be able to remove events from map
-                mapObjects[uuid] = result;
+                addMapObject(uuid, result)
 
                 return uuid;
             },
@@ -727,7 +725,7 @@
 
                 google.maps.event.addListener(drawingManager, "overlaycomplete", event => {
                     const overlayUuid = uuidv4();
-                    mapObjects[overlayUuid] = event.overlay;
+                    addMapObject(overlayUuid, event.overlay)
 
                     const returnObj = extendableStringify([{ type: event.type, uuid: overlayUuid.toString() }]);
 
@@ -784,8 +782,8 @@
                 const obj = mapObjects[objectId];
                 const result = obj?.[property];
                 const uuid = uuidv4();
-
-                mapObjects[uuid] = result;
+                
+                addMapObject(uuid, result)
 
                 return uuid;
             },
@@ -863,12 +861,7 @@
                             markers: newMarkers
                         });
                 */
-
-                if ("set" in markerCluster) {
-                    markerCluster.set("guidString", guid);
-                }
-
-                mapObjects[guid] = markerCluster;
+                addMapObject(guid, markerCluster)
             },
 
             removeClusteringMarkers(guid, markers, noDraw) {
