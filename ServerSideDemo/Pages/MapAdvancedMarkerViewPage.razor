@@ -12,7 +12,10 @@
 <button @onclick="@UpdateContent">Update content</button>
 <button @onclick="@AddMarkerWithPinElement">Add marker with pin element</button>
 <button @onclick="GetMarkerPosition">Get advanced markers position</button>
+<br />
+<p>Clustering list</p>
 <button @onclick="InvokeClustering">Invoke Clustering</button>
+<button @onclick="ClearClustering">Clear Clustering</button>
 <br/>
 <p>Marker list</p>
 <button @onclick="AddMarker1">Add advanced markers part 1</button>
@@ -53,6 +56,8 @@
     private readonly List<String> _events = new List<String>();
     private readonly Stack<AdvancedMarkerElement> _markers = new Stack<AdvancedMarkerElement>();
     private AdvancedMarkerElementList? _markerElementList;
+    private MarkerClustering? _markerClustering;
+    private IEnumerable<AdvancedMarkerElement>? _clusteringMarkers;
 
     [Inject]
     // ReSharper disable once UnusedAutoPropertyAccessor.Global
@@ -292,7 +297,7 @@
         {
             return;
         }
-        
+
         const string newContent = "<svg width=\"200\" height=\"200\" xmlns=\"http://www.w3.org/2000/svg\">\r\n  <!-- Body -->\r\n  <ellipse cx=\"100\" cy=\"130\" rx=\"50\" ry=\"30\" fill=\"blue\"/>\r\n  \r\n  <!-- Wing -->\r\n  <ellipse cx=\"80\" cy=\"120\" rx=\"30\" ry=\"20\" fill=\"lightblue\"/>\r\n  \r\n  <!-- Head -->\r\n  <circle cx=\"100\" cy=\"80\" r=\"25\" fill=\"blue\"/>\r\n  \r\n  <!-- Eye -->\r\n  <circle cx=\"110\" cy=\"75\" r=\"5\" fill=\"black\"/>\r\n  \r\n  <!-- Beak -->\r\n  <polygon points=\"125,80 135,75 125,70\" fill=\"orange\"/>\r\n  \r\n  <!-- Tail -->\r\n  <polygon points=\"60,130 50,140 70,140\" fill=\"blue\"/>\r\n  \r\n  <!-- Legs -->\r\n  <line x1=\"90\" y1=\"160\" x2=\"90\" y2=\"180\" stroke=\"orange\" stroke-width=\"3\"/>\r\n  <line x1=\"110\" y1=\"160\" x2=\"110\" y2=\"180\" stroke=\"orange\" stroke-width=\"3\"/>\r\n</svg>\r\n";
         var isPin = _counter % 2 == 0;
         if (isPin)
@@ -343,15 +348,22 @@
     {
         var coordinates = GetClusterCoordinates();
 
-        var markers = await GetMarkers(coordinates);
+        _clusteringMarkers = await GetMarkers(coordinates);
 
-        var markerClustering = await MarkerClustering.CreateAsync(_map1.JsRuntime, _map1.InteropObject, markers, new()
+        _markerClustering = await MarkerClustering.CreateAsync(_map1.JsRuntime, _map1.InteropObject, _clusteringMarkers, new()
             {
                 //RendererObjectName = "customRendererLib.interpolatedRenderer",
                 ZoomOnClick = true,
             });
 
-        //await markerClustering.FitMapToMarkers(1);
+
+        foreach (var latLngLiteral in coordinates)
+        {
+            await _bounds.Extend(latLngLiteral);
+        }
+
+        var boundsLiteral = await _bounds.ToJson();
+        await _map1.InteropObject.FitBounds(boundsLiteral, OneOf.OneOf<int, Padding>.FromT0(5));
     }
 
     private async Task<IEnumerable<AdvancedMarkerElement>> GetMarkers(ICollection<LatLngLiteral> coords)
@@ -402,5 +414,15 @@
             new() { Lng = 147.438, Lat = -42.735258},
             new() { Lng = 170.463352, Lat = -43.999792},
         };
+    }
+
+    private async Task ClearClustering()
+    {
+        if (_markerClustering == null || _clusteringMarkers == null)
+        {
+            return;
+        }
+        
+        await _markerClustering.RemoveMarkers(_clusteringMarkers);
     }
 }

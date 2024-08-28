@@ -79,6 +79,11 @@ public class MarkerClustering : EventEntityBase, IJsObjectRef
         await _jsObjectRef.JSRuntime.InvokeVoidAsync("blazorGoogleMaps.objectManager.removeClusteringMarkers", _jsObjectRef.Guid.ToString(), markers, noDraw);
     }
 
+    public async Task RemoveMarkers(IEnumerable<AdvancedMarkerElement> markers, bool noDraw = false)
+    {
+        await _jsObjectRef.JSRuntime.InvokeVoidAsync("blazorGoogleMaps.objectManager.removeClusteringMarkers", _jsObjectRef.Guid.ToString(), markers, noDraw);
+    }
+
     /// <summary>
     /// Removes all clusters and markers from the map and also removes all markers managed by the clusterer.
     /// </summary>
@@ -95,4 +100,6 @@ public class MarkerClustering : EventEntityBase, IJsObjectRef
     {
         return _jsObjectRef.InvokeAsync("render");
     }
+
+
 }
