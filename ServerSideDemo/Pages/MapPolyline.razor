@@ -3,6 +3,8 @@
 @using GoogleMapsComponents.Maps
 @inject IJSRuntime JsRuntime
 
+@implements IAsyncDisposable
+
 <h1>Polylines</h1>
 
 <GoogleMap @ref="@_map1" Id="map1" Options="@_mapOptions" OnAfterInit="async () => await OnAfterMapInit()"></GoogleMap>
@@ -362,6 +364,15 @@
         {
             await polygon.SetMap(null);
         }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _map1.DisposeAsync();
+        if (_polyline != null) await _polyline.DisposeAsync();
+        if (_polygon != null) await _polygon.DisposeAsync();
+        if (_rectangle != null) await _rectangle.DisposeAsync();
+        if (_circle != null) await _circle.DisposeAsync();
     }
 
 }

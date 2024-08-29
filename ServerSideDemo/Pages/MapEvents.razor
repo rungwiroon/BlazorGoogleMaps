@@ -2,6 +2,8 @@
 @using GoogleMapsComponents
 @using GoogleMapsComponents.Maps
 
+@implements IAsyncDisposable
+
 <h1>Map Events</h1>
 
 <GoogleMap @ref="@_map1" Id="map1" Options="@_mapOptions" OnAfterInit="@OnAfterInitAsync">
@@ -338,5 +340,13 @@
         _labelText = _markers.Any() ? await _markers.Peek().GetLabelText() : "";
     }
 
+    public async ValueTask DisposeAsync()
+    {
+        foreach (var marker in _markers)
+        {
+            await marker.DisposeAsync();
+        }
+        await _map1.DisposeAsync();
+    }
 
 }
