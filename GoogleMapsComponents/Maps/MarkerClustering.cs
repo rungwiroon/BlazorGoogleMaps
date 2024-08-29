@@ -66,6 +66,16 @@ public class MarkerClustering : EventEntityBase, IJsObjectRef
         await _jsObjectRef.JSRuntime.InvokeVoidAsync("blazorGoogleMaps.objectManager.addClusteringMarkers", _jsObjectRef.Guid.ToString(), markers, noDraw);
     }
 
+    public virtual async Task AddMarkers(IEnumerable<AdvancedMarkerElement>? advancedMarkerElements, bool noDraw = false)
+    {
+        if (advancedMarkerElements == null)
+        {
+            return;
+        }
+
+        await _jsObjectRef.JSRuntime.InvokeVoidAsync("blazorGoogleMaps.objectManager.addClusteringMarkers", _jsObjectRef.Guid.ToString(), advancedMarkerElements, noDraw);
+    }
+
     public virtual async Task SetMap(Map map)
     {
         await _jsObjectRef.InvokeAsync("setMap", map);
