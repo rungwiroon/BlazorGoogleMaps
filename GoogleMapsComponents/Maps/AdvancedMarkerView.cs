@@ -15,6 +15,15 @@ public class AdvancedMarkerElement : ListableEntityBase<AdvancedMarkerElementOpt
 
     public static async Task<AdvancedMarkerElement> CreateAsync(IJSRuntime jsRuntime, AdvancedMarkerElementOptions? opts = null)
     {
+        if (opts != null)
+        {
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+            if (opts.Content.Value == null)
+            {
+                opts.Content = "<div>&nbsp;</div>";
+            }
+
+        }
         var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, GoogleMapAdvancedMarkerName, opts);
         var obj = new AdvancedMarkerElement(jsObjectRef);
         return obj;
