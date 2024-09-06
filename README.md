@@ -35,7 +35,7 @@ OR (legacy - not recommended) Add google map script HEAD tag to wwwroot/index.ht
 ```
 If you want to use marker clustering add this script as well:
 ```
-<script src="https://unpkg.com/@@googlemaps/markerclusterer/dist/index.min.js"></script>
+<script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
 ```
 
 3. Using the component is the same for both Blazor WASM and Blazor Server
