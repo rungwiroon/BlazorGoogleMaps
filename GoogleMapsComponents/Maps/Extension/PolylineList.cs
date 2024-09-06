@@ -15,7 +15,7 @@ namespace GoogleMapsComponents.Maps.Extension;
 /// </summary>
 public class PolylineList : ListableEntityListBase<Polyline, PolylineOptions>
 {
-    public Dictionary<string, Polyline> Polylines => base.BaseListableEntities;
+    public Dictionary<string, Polyline> Polylines => BaseListableEntities;
 
     /// <summary>
     /// Create polylines list
@@ -47,10 +47,15 @@ public class PolylineList : ListableEntityListBase<Polyline, PolylineOptions>
     /// </param>
     /// <param name="jsRuntime"></param>
     /// <param name="opts"></param>
+    /// <param name="clickCallback"></param>
     /// <returns>
     /// The managed list. Assign to the variable you used as parameter.
     /// </returns>
-    public static async Task<PolylineList> SyncAsync(PolylineList list, IJSRuntime jsRuntime, Dictionary<string, PolylineOptions> opts, Action<MouseEvent, string, Polyline> clickCallback = null)
+    public static async Task<PolylineList> SyncAsync(PolylineList? list,
+        IJSRuntime jsRuntime,
+        Dictionary<string, PolylineOptions> opts,
+        Action<MouseEvent, string,
+            Polyline>? clickCallback = null)
     {
         if (opts.Count == 0)
         {
@@ -67,7 +72,7 @@ public class PolylineList : ListableEntityListBase<Polyline, PolylineOptions>
                 list = await PolylineList.CreateAsync(jsRuntime, new Dictionary<string, PolylineOptions>());
                 if (clickCallback != null)
                 {
-                    list.EntityClicked += (sender, e) =>
+                    list.EntityClicked += (_, e) =>
                     {
                         clickCallback(e.MouseEvent, e.Key, e.Entity);
                     };
@@ -75,6 +80,7 @@ public class PolylineList : ListableEntityListBase<Polyline, PolylineOptions>
             }
             await list.SetMultipleAsync(opts);
         }
+
         return list;
     }
 
@@ -103,7 +109,7 @@ public class PolylineList : ListableEntityListBase<Polyline, PolylineOptions>
         await base.AddMultipleAsync(opts, "google.maps.Polyline");
     }
 
-    public Task<Dictionary<string, LatLngBoundsLiteral>> GetBounds(List<string> filterKeys = null)
+    public Task<Dictionary<string, LatLngBoundsLiteral>> GetBounds(List<string>? filterKeys = null)
     {
         List<string> matchingKeys = ComputeMatchingKeys(filterKeys);
 
@@ -122,7 +128,7 @@ public class PolylineList : ListableEntityListBase<Polyline, PolylineOptions>
         }
     }
 
-    public Task<Dictionary<string, LatLngLiteral>> GetCenters(List<string> filterKeys = null)
+    public Task<Dictionary<string, LatLngLiteral>> GetCenters(List<string>? filterKeys = null)
     {
         List<string> matchingKeys = ComputeMatchingKeys(filterKeys);
 
@@ -141,7 +147,7 @@ public class PolylineList : ListableEntityListBase<Polyline, PolylineOptions>
         }
     }
 
-    public Task<Dictionary<string, bool>> GetEditables(List<string> filterKeys = null)
+    public Task<Dictionary<string, bool>> GetEditables(List<string>? filterKeys = null)
     {
         List<string> matchingKeys = ComputeMatchingKeys(filterKeys);
 
@@ -160,7 +166,7 @@ public class PolylineList : ListableEntityListBase<Polyline, PolylineOptions>
         }
     }
 
-    public Task<Dictionary<string, double>> GetRadiuses(List<string> filterKeys = null)
+    public Task<Dictionary<string, double>> GetRadiuses(List<string>? filterKeys = null)
     {
         List<string> matchingKeys = ComputeMatchingKeys(filterKeys);
 
