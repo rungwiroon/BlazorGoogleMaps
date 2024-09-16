@@ -29,11 +29,7 @@ OR (legacy - not recommended) Add google map script HEAD tag to wwwroot/index.ht
 ```
 
 
-2. Add path to project javascript functions file in wwwroot/index.html for Blazor WASM, or in _Host.cshtml or _HostLayout.cshtml for Blazor Server.
-```
-<script src="_content/BlazorGoogleMaps/js/objectManager.js"></script>
-```
-If you want to use marker clustering add this script as well:
+2. If you want to use marker clustering add this script in wwwroot/index.html for Blazor WASM, or in _Host.cshtml or _HostLayout.cshtml for Blazor Server
 ```
 <script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
 ```
