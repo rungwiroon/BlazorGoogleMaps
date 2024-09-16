@@ -1,21 +1,13 @@
-﻿@using System
-@using Maps
-@using System.Threading.Tasks
-@using Microsoft.AspNetCore.Components
+﻿@using Maps
 @using Microsoft.JSInterop
 
 @inherits MapComponent
-@implements IDisposable
+@implements IAsyncDisposable
 @inject IJSRuntime JSRuntime
 
 <div @ref="@Element" id="@Id" class="@CssClass" style="@StyleStr"></div>
 
 @code {
-    #nullable enable
-    // Load the module and keep a reference to it
-    // You need to use .AsTask() to convert the ValueTask to Task as it may be awaited multiple times
-    //private List<IJSObjectReference> moduleImports = new List<IJSObjectReference>();
-
     [Parameter]
     public string? Id { get; set; }
 
@@ -47,17 +39,20 @@
     private string StyleStr => $"height: {Height};";
 
     private ElementReference Element { get; set; }
+    private IJSObjectReference? _scriptLoaderModule;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            //var tasks = new List<Task<IJSObjectReference>>();
-            //tasks.Add(JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BlazorGoogleMaps/js/objectManager.js").AsTask());
-            //if(!string.IsNullOrWhiteSpace(ApiKey))
-            //    tasks.Add(JSRuntime.InvokeAsync<IJSObjectReference>("import", $"https://maps.googleapis.com/maps/api/js?key={ApiKey}&v=3").AsTask());
-
-            //moduleImports.AddRange(await Task.WhenAll(tasks.ToArray()));
+            try
+            {
+                await LoadScriptAsync("_content/BlazorGoogleMaps/js/objectManager.min.js");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         await InitAsync(Element, Options);
@@ -71,14 +66,27 @@
     {
         return false;
     }
-
-    void IDisposable.Dispose()
+    
+    private async Task<IJSObjectReference> GetJsModuleAsync()
     {
-        //if(moduleImports != null && moduleImports.Count > 0)
-        //{
-        //    foreach (var mi in moduleImports)
-        //        await mi.DisposeAsync();
-        //}
-        base.Dispose();
+        _scriptLoaderModule ??= await JSRuntime.InvokeAsync<IJSObjectReference>("import",
+                "./_content/BlazorGoogleMaps/js/script-loader.min.js").AsTask();
+        return _scriptLoaderModule;
+    }
+
+    private async Task LoadScriptAsync(string scriptPath)
+    {
+        var jsModule = await GetJsModuleAsync();
+        await jsModule.InvokeVoidAsync("BlazorGoogleMaps_LoadScript", scriptPath);
+    }
+
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_scriptLoaderModule != null)
+        {
+            await _scriptLoaderModule.DisposeAsync();
+        }
+        base.DisposeAsync();
     }
 }
