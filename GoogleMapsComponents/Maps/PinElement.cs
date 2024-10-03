@@ -10,7 +10,7 @@ public class PinElement
     public string? BorderColor { get; set; }
     public string? Glyph { get; set; }
     public string? GlyphColor { get; set; }
-    public int? Scale { get; set; }
+    public double? Scale { get; set; }
 
     public PinElement()
     {
