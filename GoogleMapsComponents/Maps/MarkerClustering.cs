@@ -18,7 +18,7 @@ public class MarkerClustering : EventEntityBase, IJsObjectRef
     public static async Task<MarkerClustering> CreateAsync(
         IJSRuntime jsRuntime,
         Map map,
-        IEnumerable<Marker> markers,
+        IEnumerable<IMarker> markers,
         MarkerClustererOptions? options = null
     )
     {
@@ -27,22 +27,6 @@ public class MarkerClustering : EventEntityBase, IJsObjectRef
         var guid = Guid.NewGuid();
         var jsObjectRef = new JsObjectRef(jsRuntime, guid);
         await jsRuntime.InvokeVoidAsync("blazorGoogleMaps.objectManager.createClusteringMarkers", guid.ToString(), map.Guid.ToString(), markers, options);
-        var obj = new MarkerClustering(jsObjectRef);
-        return obj;
-    }
-
-    public static async Task<MarkerClustering> CreateAsync(
-        IJSRuntime jsRuntime,
-        Map map,
-        IEnumerable<AdvancedMarkerElement> advancedMarkerElements,
-        MarkerClustererOptions? options = null
-    )
-    {
-        options ??= new MarkerClustererOptions();
-
-        var guid = Guid.NewGuid();
-        var jsObjectRef = new JsObjectRef(jsRuntime, guid);
-        await jsRuntime.InvokeVoidAsync("blazorGoogleMaps.objectManager.createClusteringMarkers", guid.ToString(), map.Guid.ToString(), advancedMarkerElements, options);
         var obj = new MarkerClustering(jsObjectRef);
         return obj;
     }
@@ -56,7 +40,7 @@ public class MarkerClustering : EventEntityBase, IJsObjectRef
     /// </summary>
     /// <param name="markers"></param>
     /// <param name="noDraw">when true, clusters will not be rerendered on the next map idle event rather than immediately after markers are added</param>
-    public virtual async Task AddMarkers(IEnumerable<Marker>? markers, bool noDraw = false)
+    public virtual async Task AddMarkers(IEnumerable<IMarker>? markers, bool noDraw = false)
     {
         if (markers == null)
         {
@@ -64,16 +48,6 @@ public class MarkerClustering : EventEntityBase, IJsObjectRef
         }
 
         await _jsObjectRef.JSRuntime.InvokeVoidAsync("blazorGoogleMaps.objectManager.addClusteringMarkers", _jsObjectRef.Guid.ToString(), markers, noDraw);
-    }
-
-    public virtual async Task AddMarkers(IEnumerable<AdvancedMarkerElement>? advancedMarkerElements, bool noDraw = false)
-    {
-        if (advancedMarkerElements == null)
-        {
-            return;
-        }
-
-        await _jsObjectRef.JSRuntime.InvokeVoidAsync("blazorGoogleMaps.objectManager.addClusteringMarkers", _jsObjectRef.Guid.ToString(), advancedMarkerElements, noDraw);
     }
 
     public virtual async Task SetMap(Map map)
@@ -110,6 +84,4 @@ public class MarkerClustering : EventEntityBase, IJsObjectRef
     {
         return _jsObjectRef.InvokeAsync("render");
     }
-
-
 }

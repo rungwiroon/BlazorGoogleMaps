@@ -1,0 +1,80 @@
+﻿@using GoogleMapsComponents.Maps
+@using Microsoft.JSInterop
+@implements IAsyncDisposable
+
+<GoogleMap @ref="@MapRef" Id="@Id" Height="@Height" Options="@Options" OnAfterInit="@AfterInit" CssClass="@CssClass" />
+
+@if (MapRef?.InteropObject is not null)
+{
+    <CascadingValue Name="Map" Value="@this" IsFixed="true">
+        @ChildContent
+    </CascadingValue>
+}
+
+@code {
+    // Due to us wrapping the normal map, keep this public to still be able to access the interop.
+    public GoogleMap? MapRef;
+    
+    // Expose this for simplicity.
+    public Map? InteropObject => MapRef?.InteropObject;
+    
+    internal Guid? MapId => MapRef?.InteropObject.Guid;
+    
+    public IEnumerable<IMarker> Markers => MapComponents.Select(x => x.Value.ToMarker());
+    internal readonly Dictionary<Guid, MarkerComponent> MapComponents = [];
+    internal DotNetObjectReference<AdvancedGoogleMap>? callbackRef;
+    
+    [Parameter]
+    public string? Id { get; set; }
+
+    [Parameter]
+    public MapOptions? Options { get; set; }
+
+    [Parameter]
+    public EventCallback OnAfterInit { get; set; }
+
+    [Parameter]
+    public string? CssClass { get; set; }
+
+    [Parameter]
+    public string? Height { get; set; }
+    
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    protected override void OnInitialized()
+    {
+        callbackRef = DotNetObjectReference.Create(this);
+        base.OnInitialized();
+    }
+
+    private async Task AfterInit()
+    {
+        
+        await OnAfterInit.InvokeAsync();
+    }
+    
+    [JSInvokable]
+    public async Task OnMarkerClicked(Guid markerId)
+    {
+        if (MapComponents.TryGetValue(markerId, out var markerComponent))
+            await markerComponent.MarkerClicked();
+    }
+    
+    [JSInvokable]
+    public async Task OnMarkerDrag(Guid markerId, LatLngLiteral position)
+    {
+        if (MapComponents.TryGetValue(markerId, out var markerComponent))
+            await markerComponent.MarkerDragged(position);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        // Mark components as disposed, since they will be removed by disposing the MapRef.
+        foreach (var component in MapComponents)
+            component.Value.IsDisposed = true;
+        if (MapRef != null) await MapRef.DisposeAsync();
+        callbackRef?.Dispose();
+    }
+
+}

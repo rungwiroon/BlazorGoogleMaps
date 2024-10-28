@@ -8,7 +8,7 @@ namespace GoogleMapsComponents.Maps;
 /// 2023-09
 /// Notice: Available only in the v=beta channel.
 /// </summary>
-public class AdvancedMarkerElement : ListableEntityBase<AdvancedMarkerElementOptions>
+public class AdvancedMarkerElement : ListableEntityBase<AdvancedMarkerElementOptions>, IMarker
 {
     // https://developers.google.com/maps/documentation/javascript/reference/3.55/advanced-markers
     public const string GoogleMapAdvancedMarkerName = "google.maps.marker.AdvancedMarkerElement";

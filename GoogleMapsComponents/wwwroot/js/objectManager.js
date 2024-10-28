@@ -347,7 +347,7 @@
                 let args2 = args.slice(2).map(arg => tryParseJson(arg));
 
                 let functionName = args[1];
-                let advancedMarkerElementContent = getAdvancedMarkerElementContent(functionName, args2.length > 0 ? args2[0].content : null);
+                let advancedMarkerElementContent = getAdvancedMarkerElementContent(functionName, args2.length > 0 ? args2[0]?.content : null);
                 if (advancedMarkerElementContent !== null) {
                     args2[0].content = advancedMarkerElementContent;
                 }
@@ -372,8 +372,8 @@
 
                 let guids = JSON.parse(args[0]);
 
-                for (var i = 0, len = args2.length; i < len; i++) {
-                    var constructorArgs = args2[i];
+                for (let i = 0, len = args2.length; i < len; i++) {
+                    const constructorArgs = args2[i];
                     let advancedMarkerElementContent = getAdvancedMarkerElementContent(functionName, constructorArgs.content);
                     if (advancedMarkerElementContent !== null) {
                         constructorArgs.content = advancedMarkerElementContent;
@@ -487,23 +487,25 @@
                 var arr = map.overlayMapTypes.clear();
             },
             disposeMapElements(mapGuid) {
-                var keysToRemove = [];
+                const keysToRemove = [];
 
-                for (var key in mapObjects) {
+                for (const key in mapObjects) {
                     if (mapObjects.hasOwnProperty(key)) {
-                        var element = mapObjects[key];
-                        if (element.hasOwnProperty("map")
-                            && element.hasOwnProperty("guidString")
-                            && element.map !== null
-                            && element.map !== undefined
-                            && element.map.guidString === mapGuid) {
+                        const element = mapObjects[key];
+                        if (
+                            "guidString" in element && // Element has a guidString property (inherited is important for advanced marker)
+                            "map" in element && // Element has a map property (inherited is important for advanced marker)
+                            element.map && // Element has a map
+                            "guidString" in element.map && // Map has a guidString
+                            element.map.guidString === mapGuid // The guidString is matching our current guidString
+                        ) {
                             keysToRemove.push(element.guidString);
                         }
                     }
                 }
-                for (var keyToRemove in keysToRemove) {
+                for (const keyToRemove in keysToRemove) {
                     if (keysToRemove.hasOwnProperty(keyToRemove)) {
-                        var elementToRemove = keysToRemove[keyToRemove];
+                        const elementToRemove = keysToRemove[keyToRemove];
                         delete mapObjects[elementToRemove];
                     }
                 }
@@ -516,7 +518,7 @@
                     delete controlParents[mapGuid];
                 }
 
-                if (controlParents !== null && Object.keys(controlParents) == 0) {
+                if (controlParents !== null && Object.keys(controlParents) === 0) {
                     controlParents = null;
                 }
             },
@@ -878,6 +880,66 @@
                 });
 
                 mapObjects[guid].addMarkers(originalMarkers, noDraw);
+            },
+            updateAdvancedComponent: function (id, options, callbackRef) {
+                const collisionBehaviorMapping = [
+                    google.maps.CollisionBehavior.REQUIRED,
+                    google.maps.CollisionBehavior.REQUIRED_AND_HIDES_OPTIONAL,
+                    google.maps.CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY
+                ];
+                const existingMarker = mapObjects[id];
+                if (existingMarker) {
+                    existingMarker.position = options.position;
+                    existingMarker.title = options.title;
+                    existingMarker.zIndex = options.zIndex;
+                    existingMarker.collisionBehavior = collisionBehaviorMapping[options.collisionBehavior]; 
+                    const clickChanged = existingMarker.gmpClickable !== options.gmpClickable;
+                    const dragChanged = existingMarker.gmpDraggable !== options.gmpDraggable;
+                    existingMarker.gmpClickable = options.gmpClickable;
+                    existingMarker.gmpDraggable = options.gmpDraggable;
+                    if (clickChanged) {
+                        if (options.gmpClickable) {
+                            existingMarker.addEventListener("gmp-click", _ => { 
+                                callbackRef?.invokeMethodAsync('OnMarkerClicked', id);
+                            })
+                        }
+                        else{
+                            existingMarker.removeEventListener("gmp-click")
+                        }
+                    }
+                    return;
+                }
+                const map = mapObjects[options.mapId];
+                const content = document.querySelector(`#${options.componentId}`);
+                if (!content) return null; // Should never be reached?
+                const advancedMarkerElement = new google.maps.marker.AdvancedMarkerElement({
+                    map,
+                    content,
+                    position: options.position,
+                    title: options.title,
+                    zIndex: options.zIndex,
+                    gmpClickable: options.gmpClickable,
+                    gmpDraggable: options.gmpDraggable,
+                    collisionBehavior: collisionBehaviorMapping[options.collisionBehavior]
+                });
+                advancedMarkerElement.guidString = id;
+                if (options.gmpClickable) {
+                    advancedMarkerElement.addEventListener("gmp-click", _ => { 
+                        callbackRef?.invokeMethodAsync('OnMarkerClicked', id);
+                    })
+                }
+                //Always add this event, since it's not removable
+                advancedMarkerElement.addListener('dragend', (event) => {
+                    if (!advancedMarkerElement.gmpDraggable) return;
+                    callbackRef?.invokeMethodAsync('OnMarkerDrag', id, advancedMarkerElement.position);
+                });
+                addMapObject(id, advancedMarkerElement);
+            },
+            disposeAdvancedMarkerComponent: function (id) {
+                const existingMarker = mapObjects[id];
+                if (!existingMarker) return;
+                existingMarker.map = null;
+                this.disposeObject(id);
             }
         }
     };
