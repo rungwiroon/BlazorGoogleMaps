@@ -73,6 +73,64 @@ If you want to use marker clustering add this script as well:
 }
 ```
 
+OR Render markers with Blazor (currently only with `v=beta` version of google-maps, and specify a `MapId`)
+```
+@page "/map"
+@using GoogleMapsComponents
+@using GoogleMapsComponents.Maps
+
+<h1>Google Map</h1>
+<AdvancedGoogleMap @ref="@_map1" Id="map1" Options="@mapOptions">
+    @foreach (var markerRef in Markers)
+    {
+        <MarkerComponent 
+            @key="markerRef.Id" 
+            Lat="@markerRef.Lat" 
+            Lng="@markerRef.Lng" 
+            Clickable="@markerRef.Clickable" 
+            Draggable="@markerRef.Draggable" 
+            OnClick="@(() => markerRef.Active = !markerRef.Active)"
+            OnMove="pos => markerRef.UpdatePosition(pos)">
+            <p>I am a blazor component</p>
+        </MarkerComponent>
+    }
+</AdvancedGoogleMap>
+@code {
+    private List<MarkerData> Markers =
+    [
+        new MarkerData { Id = 1, Lat = 13.505892, Lng = 100.8162 },
+    ];
+	private AdvancedGoogleMap? _map1;
+	private MapOptions mapOptions =new MapOptions()
+	{
+		Zoom = 13,
+		Center = new LatLngLiteral()
+		{
+			Lat = 13.505892,
+			Lng = 100.8162
+		},
+		MapId = "DEMO_MAP_ID", //required for blazor markers
+		MapTypeId = MapTypeId.Roadmap
+	};	
+
+    public class MarkerData
+    {
+        public int Id { get; set; }
+        public double Lat { get; set; }
+        public double Lng { get; set; }
+        public bool Clickable { get; set; } = true;
+        public bool Draggable { get; set; }
+        public bool Active { get; set; }
+        
+        public void UpdatePosition(LatLngLiteral position)
+        {
+            Lat = position.Lat;
+            Lng = position.Lng;
+        }
+    }
+}
+```
+
 ## Samples
  Please check server side samples https://github.com/rungwiroon/BlazorGoogleMaps/tree/master/ServerSideDemo which are most to date
  
