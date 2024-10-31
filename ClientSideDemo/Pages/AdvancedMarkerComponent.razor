@@ -13,7 +13,8 @@
             Clickable="@markerRef.Clickable" 
             Draggable="@markerRef.Draggable" 
             OnClick="@(() => markerRef.Active = !markerRef.Active)"
-            OnMove="pos => markerRef.UpdatePosition(pos)">
+            OnMove="pos => markerRef.UpdatePosition(pos)"
+            data-iscool="@true">
             <CoolMarker Marker="markerRef" />
         </MarkerComponent>
     }

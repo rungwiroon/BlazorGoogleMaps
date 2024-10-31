@@ -887,31 +887,36 @@
                     google.maps.CollisionBehavior.REQUIRED_AND_HIDES_OPTIONAL,
                     google.maps.CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY
                 ];
+                const updateMarkerProperties = (marker, options) => {
+                    marker.position = options.position;
+                    marker.title = options.title;
+                    marker.zIndex = options.zIndex;
+                    marker.collisionBehavior = collisionBehaviorMapping[options.collisionBehavior];
+                    marker.gmpClickable = options.gmpClickable;
+                    marker.gmpDraggable = options.gmpDraggable;
+                };
+                const handleMarkerClick = (marker, options) => {
+                    if (options.gmpClickable) {
+                        marker.addEventListener("gmp-click", () => {
+                            callbackRef?.invokeMethodAsync('OnMarkerClicked', id);
+                        });
+                    } else {
+                        marker.removeEventListener("gmp-click");
+                    }
+                };
                 const existingMarker = mapObjects[id];
                 if (existingMarker) {
-                    existingMarker.position = options.position;
-                    existingMarker.title = options.title;
-                    existingMarker.zIndex = options.zIndex;
-                    existingMarker.collisionBehavior = collisionBehaviorMapping[options.collisionBehavior]; 
                     const clickChanged = existingMarker.gmpClickable !== options.gmpClickable;
                     const dragChanged = existingMarker.gmpDraggable !== options.gmpDraggable;
-                    existingMarker.gmpClickable = options.gmpClickable;
-                    existingMarker.gmpDraggable = options.gmpDraggable;
-                    if (clickChanged) {
-                        if (options.gmpClickable) {
-                            existingMarker.addEventListener("gmp-click", _ => { 
-                                callbackRef?.invokeMethodAsync('OnMarkerClicked', id);
-                            })
-                        }
-                        else{
-                            existingMarker.removeEventListener("gmp-click")
-                        }
-                    }
+                    updateMarkerProperties(existingMarker, options);
+
+                    if (clickChanged) handleMarkerClick(existingMarker, options);
                     return;
                 }
                 const map = mapObjects[options.mapId];
                 const content = document.querySelector(`#${options.componentId}`);
-                if (!content) return null; // Should never be reached?
+                if (!content) console.warn("Marker tried to render without a target component"); // Should never be reached?
+                
                 const advancedMarkerElement = new google.maps.marker.AdvancedMarkerElement({
                     map,
                     content,
@@ -933,6 +938,7 @@
                     if (!advancedMarkerElement.gmpDraggable) return;
                     callbackRef?.invokeMethodAsync('OnMarkerDrag', id, advancedMarkerElement.position);
                 });
+                
                 addMapObject(id, advancedMarkerElement);
             },
             disposeAdvancedMarkerComponent: function (id) {

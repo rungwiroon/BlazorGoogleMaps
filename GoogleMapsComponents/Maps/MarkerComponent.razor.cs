@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using GoogleMapsComponents.Maps.Extension;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
@@ -90,6 +90,13 @@ public partial class MarkerComponent : IAsyncDisposable
     [Parameter]
     public int? ZIndex { get; set; }
     
+    /// <summary>
+    /// Specifies additional custom attributes that will be rendered on the "root" component of the marker.
+    /// </summary>
+    /// <value>The attributes.</value>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object> Attributes { get; set; } = default!;
+    
     public IMarker ToMarker()
     {
         return new MarkerComponentRef()
@@ -177,29 +184,5 @@ public partial class MarkerComponent : IAsyncDisposable
         public bool GmpClickable { get; init; }
         public string? Title { get; init; }
         public int? ZIndex { get; init; }
-    }
-}
-
-/// <summary>
-/// Contains extension methods for <see cref="ParameterView" />.
-/// </summary>
-internal static class ParameterViewExtensions
-{
-    /// <summary>
-    /// Checks if a parameter changed.
-    /// </summary>
-    /// <typeparam name="T">The value type</typeparam>
-    /// <param name="parameters">The parameters.</param>
-    /// <param name="parameterName">Name of the parameter.</param>
-    /// <param name="parameterValue">The parameter value (SHOULD NOT BE ENTERED MANUALLY).</param>
-    /// <returns><c>true</c> if the parameter value has changed, <c>false</c> otherwise.</returns>
-    internal static bool DidParameterChange<T>(this ParameterView parameters, T parameterValue, [CallerArgumentExpression("parameterValue")] string parameterName = "")
-    {
-        if (parameters.TryGetValue(parameterName, out T? value) && value != null)
-        {
-            return !EqualityComparer<T>.Default.Equals(value, parameterValue);
-        }
-
-        return false;
     }
 }
