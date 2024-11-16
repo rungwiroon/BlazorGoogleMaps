@@ -244,7 +244,15 @@ public partial class MapMarker
             Map = _map1.InteropObject,
             //Label = $"Test {markers.Count}",
             ZIndex = ZIndex,
-            Label = "test 01",
+            //Label = "test 01",
+            Label = new MarkerLabel
+            {
+                Text = $"Test {_markers.Count()}",
+                FontWeight = "bold",
+                Color = "#5B32FF",
+                FontSize = "24",
+                ClassName = "map-marker-label",
+            },
             //CollisionBehavior = CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY,//2021-07 supported only in beta google maps version
             //Animation = Animation.Bounce
             //Icon = new Icon()
@@ -270,7 +278,7 @@ public partial class MapMarker
 
         _markers.Push(marker);
 
-        var labelText = await marker.GetLabelText();
+        var labelText = await marker.GetLabelMarkerLabel();
 
         await marker.AddListener<MouseEvent>("click", async e =>
         {

@@ -26,7 +26,7 @@
     private bool DisablePoiInfoWindow { get; set; } = false;
 
 	private Stack<Marker> _markers = new Stack<Marker>();
-	private string _labelText = "";
+	private string? _labelText = "";
 
     protected override void OnInitialized()
     {
@@ -302,7 +302,7 @@
 
 		await marker.AddListener<MouseEvent>("click", async e =>
 		{
-			string markerLabelText = await marker.GetLabelText();
+			var markerLabelText = await marker.GetLabelText();
 			_events.Add("click on " + markerLabelText);
 			StateHasChanged();
 			await e.Stop();
@@ -312,7 +312,7 @@
 
 	private async Task OnMakerDragEnd(Marker m, MouseEvent e)
 		{
-		string markerLabelText = await m.GetLabelText();
+		var markerLabelText = await m.GetLabelText();
 		_events.Insert(0, $"OnMakerDragEnd ({markerLabelText}): ({e.LatLng}).");
 		StateHasChanged();
 		await e.Stop();

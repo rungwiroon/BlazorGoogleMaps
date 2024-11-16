@@ -51,23 +51,44 @@ public class Marker : ListableEntityBase<MarkerOptions>
         return result;
     }
 
-    public Task<OneOf<string, MarkerLabel>> GetLabel()
+    public async Task<OneOf<string, MarkerLabel>> GetLabel()
     {
-        return _jsObjectRef.InvokeAsync<string, MarkerLabel>("getLabel");
+        var markerLabel = await MarkerLabelInternal();
+        return markerLabel;
     }
 
-    public async Task<string> GetLabelText()
+    public async Task<string?> GetLabelText()
     {
-        OneOf<string, MarkerLabel> markerLabel = await GetLabel();
+        OneOf<string, MarkerLabel> markerLabel = await MarkerLabelInternal();
         return markerLabel.IsT0 ? markerLabel.AsT0 : markerLabel.AsT1.Text;
     }
 
     public async Task<MarkerLabel> GetLabelMarkerLabel()
     {
-        OneOf<string, MarkerLabel> markerLabel = await GetLabel();
-        return markerLabel.IsT1 ?
-            markerLabel.AsT1 :
-            new MarkerLabel { Text = markerLabel.AsT0 };
+        var markerLabel = await MarkerLabelInternal();
+
+        return markerLabel.IsT1
+            ? markerLabel.AsT1
+            : new MarkerLabel { Text = markerLabel.AsT0 };
+    }
+
+    private async Task<OneOf<string, MarkerLabel>> MarkerLabelInternal()
+    {
+        var markerLabel = await _jsObjectRef.InvokeAsync<string, MarkerLabel>("getLabel");
+
+        if (markerLabel.IsT0
+            && markerLabel.AsT0.Contains("dotnetTypeName")
+            && markerLabel.AsT0.Contains("GoogleMapsComponents.Maps.MarkerLabel"))
+        {
+            var stringValue = markerLabel.AsT0;
+            var markerLabelObj = Helper.DeSerializeObject<MarkerLabel>(stringValue);
+            if (markerLabelObj != null)
+            {
+                return markerLabelObj;
+            }
+        }
+
+        return markerLabel;
     }
 
     public Task<LatLngLiteral> GetPosition()

@@ -15,7 +15,7 @@
 		<RazorLangVersion>3.0</RazorLangVersion>
 		<AddRazorSupportForMvc>true</AddRazorSupportForMvc>
 		<PackageId>BlazorGoogleMaps</PackageId>
-		<Version>4.7.14</Version>
+		<Version>4.7.15</Version>
 		<Authors>Rungwiroon</Authors>
 		<Company>QueueStack Solution</Company>
 		<Product>BlazorGoogleMaps</Product>
@@ -29,7 +29,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Include="..\README.md" Pack="true" PackagePath="\"/>
+		<None Include="..\README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -55,9 +55,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.6" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.6" />
-		<PackageReference Include="Microsoft.JSInterop" Version="8.0.6" />
+		<PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.11" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.11" />
+		<PackageReference Include="Microsoft.JSInterop" Version="8.0.11" />
 		<PackageReference Include="OneOf" Version="3.0.271" />
 		<PackageReference Include="System.Text.Json" Version="8.0.5" />
 	</ItemGroup>

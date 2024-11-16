@@ -30,7 +30,7 @@
 
     private MapEventList _eventList = default!;
 
-    private string _labelText = "";
+    private string? _labelText = "";
 
     private MarkerClustering _markerClustering = default!;
 
@@ -92,7 +92,7 @@
         await marker.AddListener<MouseEvent>("click", async e =>
         {
             await e.Stop();
-            string markerLabelText = await marker.GetLabelText();
+            var markerLabelText = await marker.GetLabelText();
             _events.Add("click on " + markerLabelText);
             StateHasChanged();
 
