@@ -8,14 +8,15 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net8.0;</TargetFramework>
+		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
 		<IsPackable>true</IsPackable>
 		
 		<LangVersion>latest</LangVersion>
 		<RazorLangVersion>3.0</RazorLangVersion>
 		<AddRazorSupportForMvc>true</AddRazorSupportForMvc>
 		<PackageId>BlazorGoogleMaps</PackageId>
-		<Version>4.7.15</Version>
+		<Version>4.8.0</Version>
 		<Authors>Rungwiroon</Authors>
 		<Company>QueueStack Solution</Company>
 		<Product>BlazorGoogleMaps</Product>
@@ -55,11 +56,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.11" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.11" />
-		<PackageReference Include="Microsoft.JSInterop" Version="8.0.11" />
+		<PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.*" Condition="'$(TargetFramework)' == 'net8.0'" />
+		<PackageReference Include="Microsoft.AspNetCore.Components" Version="9.0.*" Condition="'$(TargetFramework)' == 'net9.0'" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.*" Condition="'$(TargetFramework)' == 'net8.0'" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.*" Condition="'$(TargetFramework)' == 'net9.0'" />
+		<PackageReference Include="Microsoft.JSInterop" Version="8.0.*" Condition="'$(TargetFramework)' == 'net8.0'" />
+		<PackageReference Include="Microsoft.JSInterop" Version="9.0.*" Condition="'$(TargetFramework)' == 'net9.0'" />
+		<PackageReference Include="System.Text.Json" Version="8.0.*" Condition="'$(TargetFramework)' == 'net8.0'" />
+		<PackageReference Include="System.Text.Json" Version="9.0.*" Condition="'$(TargetFramework)' == 'net9.0'" />
+
 		<PackageReference Include="OneOf" Version="3.0.271" />
-		<PackageReference Include="System.Text.Json" Version="8.0.5" />
 	</ItemGroup>
 
 </Project>
