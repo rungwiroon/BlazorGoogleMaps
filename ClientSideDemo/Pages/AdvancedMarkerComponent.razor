@@ -3,7 +3,7 @@
 @using GoogleMapsComponents.Maps
 @using GoogleMapsComponents.Maps.Coordinates
 @using GoogleMapsComponents.Maps.Extension
-<AdvancedGoogleMap @ref="@_map1" Id="map1" Options="@_mapOptions">
+<AdvancedGoogleMap @ref="@_map1" Id="map1" Options="@_mapOptions" OnMarkersChanged="@OnMarkersChanged">
     @foreach (var markerRef in Markers.Where(x => x.Visible))
     {
         <MarkerComponent 
@@ -78,6 +78,15 @@
             });
         }
         else
+        {
+            await _markerClustering.ClearMarkers();
+            await _markerClustering.AddMarkers(_map1.Markers);
+        }
+    }
+    
+    async Task OnMarkersChanged()
+    {
+        if (_markerClustering != null) 
         {
             await _markerClustering.ClearMarkers();
             await _markerClustering.AddMarkers(_map1.Markers);

@@ -897,11 +897,22 @@
                 };
                 const handleMarkerClick = (marker, options) => {
                     if (options.gmpClickable) {
-                        marker.addEventListener("gmp-click", () => {
+                        marker.clickListener = marker.addListener("click", () => {
                             callbackRef?.invokeMethodAsync('OnMarkerClicked', id);
                         });
-                    } else {
-                        marker.removeEventListener("gmp-click");
+                    } else if (marker.clickListener) {
+                        google.maps.event.removeListener(marker.clickListener);
+                        delete marker.clickListener;
+                    }
+                };
+                const handleMarkerDrag = (marker, options) => {
+                    if (options.gmpDraggable) {
+                        marker.dragListener = marker.addListener('dragend', (event) => {
+                            callbackRef?.invokeMethodAsync('OnMarkerDrag', id, marker.position);
+                        });
+                    } else if (marker.dragListener) {
+                        google.maps.event.removeListener(marker.dragListener);
+                        delete marker.dragListener;
                     }
                 };
                 const existingMarker = mapObjects[id];
@@ -911,6 +922,7 @@
                     updateMarkerProperties(existingMarker, options);
 
                     if (clickChanged) handleMarkerClick(existingMarker, options);
+                    if (dragChanged) handleMarkerDrag(existingMarker, options) 
                     return;
                 }
                 const map = mapObjects[options.mapId];
@@ -929,15 +941,15 @@
                 });
                 advancedMarkerElement.guidString = id;
                 if (options.gmpClickable) {
-                    advancedMarkerElement.addEventListener("gmp-click", _ => { 
+                    advancedMarkerElement.clickListener = advancedMarkerElement.addListener("click", _ => { 
                         callbackRef?.invokeMethodAsync('OnMarkerClicked', id);
                     })
                 }
-                //Always add this event, since it's not removable
-                advancedMarkerElement.addListener('dragend', (event) => {
-                    if (!advancedMarkerElement.gmpDraggable) return;
-                    callbackRef?.invokeMethodAsync('OnMarkerDrag', id, advancedMarkerElement.position);
-                });
+                if (advancedMarkerElement.gmpDraggable) {
+                    advancedMarkerElement.dragListener = advancedMarkerElement.addListener('dragend', (event) => {
+                        callbackRef?.invokeMethodAsync('OnMarkerDrag', id, advancedMarkerElement.position);
+                    });
+                }
                 
                 addMapObject(id, advancedMarkerElement);
             },

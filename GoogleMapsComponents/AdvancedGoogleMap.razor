@@ -20,8 +20,9 @@
     
     internal Guid? MapId => MapRef?.InteropObject.Guid;
     
-    public IEnumerable<IMarker> Markers => MapComponents.Select(x => x.Value.ToMarker());
-    internal readonly Dictionary<Guid, MarkerComponent> MapComponents = [];
+    public int MarkerCount => MapComponents.Count;
+    public IEnumerable<MarkerComponent> Markers => MapComponents.Select(x => x.Value);
+    private readonly Dictionary<Guid, MarkerComponent> MapComponents = [];
     internal DotNetObjectReference<AdvancedGoogleMap>? callbackRef;
     
     [Parameter]
@@ -32,6 +33,9 @@
 
     [Parameter]
     public EventCallback OnAfterInit { get; set; }
+    
+    [Parameter]
+    public EventCallback OnMarkersChanged { get; set; }
 
     [Parameter]
     public string? CssClass { get; set; }
@@ -50,7 +54,6 @@
 
     private async Task AfterInit()
     {
-        
         await OnAfterInit.InvokeAsync();
     }
     
@@ -66,6 +69,18 @@
     {
         if (MapComponents.TryGetValue(markerId, out var markerComponent))
             await markerComponent.MarkerDragged(position);
+    }
+    
+    internal void AddMarker(MarkerComponent marker)
+    {
+        MapComponents.TryAdd(marker.Guid, marker);
+        OnMarkersChanged.InvokeAsync();
+    }
+    
+    internal void RemoveMarker(MarkerComponent marker)
+    {
+        MapComponents.Remove(marker.Guid);
+        OnMarkersChanged.InvokeAsync();
     }
 
     public async ValueTask DisposeAsync()

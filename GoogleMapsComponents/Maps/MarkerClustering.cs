@@ -58,12 +58,7 @@ public class MarkerClustering : EventEntityBase, IJsObjectRef
     /// <summary>
     /// Removes provided markers from the clusterer's internal list of source markers.
     /// </summary>
-    public virtual async Task RemoveMarkers(IEnumerable<Marker> markers, bool noDraw = false)
-    {
-        await _jsObjectRef.JSRuntime.InvokeVoidAsync("blazorGoogleMaps.objectManager.removeClusteringMarkers", _jsObjectRef.Guid.ToString(), markers, noDraw);
-    }
-
-    public async Task RemoveMarkers(IEnumerable<AdvancedMarkerElement> markers, bool noDraw = false)
+    public virtual async Task RemoveMarkers(IEnumerable<IMarker> markers, bool noDraw = false)
     {
         await _jsObjectRef.JSRuntime.InvokeVoidAsync("blazorGoogleMaps.objectManager.removeClusteringMarkers", _jsObjectRef.Guid.ToString(), markers, noDraw);
     }
