@@ -17,6 +17,7 @@ public class MapComponent : ComponentBase, IDisposable, IAsyncDisposable
     public IServiceProvider ServiceProvider { get; protected set; } = default!;
 
     private IBlazorGoogleMapsKeyService? _keyService;
+    internal event EventHandler? MapInitialized;
 
     protected override void OnInitialized()
     {
@@ -38,6 +39,7 @@ public class MapComponent : ComponentBase, IDisposable, IAsyncDisposable
         }
 
         InteropObject = await Map.CreateAsync(JsRuntime, element, options);
+        MapInitialized?.Invoke(this, EventArgs.Empty);
     }
 
     public async ValueTask DisposeAsync()

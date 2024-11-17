@@ -1,0 +1,123 @@
+﻿@page "/AdvancedMarkerComponent"
+@using GoogleMapsComponents
+@using GoogleMapsComponents.Maps
+@using GoogleMapsComponents.Maps.Coordinates
+@using GoogleMapsComponents.Maps.Extension
+<AdvancedGoogleMap @ref="@_map1" Id="map1" Options="@_mapOptions" OnMarkersChanged="@OnMarkersChanged">
+    @foreach (var markerRef in Markers.Where(x => x.Visible))
+    {
+        <MarkerComponent 
+            @key="markerRef.Id" 
+            Lat="@markerRef.Lat" 
+            Lng="@markerRef.Lng" 
+            Clickable="@markerRef.Clickable" 
+            Draggable="@markerRef.Draggable" 
+            OnClick="@(() => markerRef.Active = !markerRef.Active)"
+            OnMove="pos => markerRef.UpdatePosition(pos)"
+            data-iscool="@true">
+            <CoolMarker Marker="markerRef" />
+        </MarkerComponent>
+    }
+</AdvancedGoogleMap>
+
+@foreach (var marker in Markers)
+{
+    <div style="display: flex; gap: 8px;">
+        <p style="@(marker.Visible ? "" : "text-decoration: line-through")">@marker.Id -> (@marker.Lat x @marker.Lng)</p>
+        <button @onclick="@(() => marker.Clickable = !marker.Clickable)">Toggle click</button>
+        <button @onclick="@(() => marker.Draggable = !marker.Draggable)">Toggle drag</button>
+        <button @onclick="@(() => marker.Visible = !marker.Visible)">Toggle marker</button>
+    </div>
+}
+
+<button @onclick="@InvokeClustering">Invoke map cluster</button>
+<button @onclick="@ClearClustering">ClearClustering</button>
+
+@code {
+    private List<MarkerData> Markers =
+    [
+        new MarkerData { Id = 1, Lat = 13.505892, Lng = 100.8162 },
+        new MarkerData { Id = 2, Lng = 150.363181, Lat = -33.718234 },
+        new MarkerData { Id = 3, Lng = 150.371124, Lat = -33.727111 },
+        new MarkerData { Id = 4, Lng = 151.209834, Lat = -33.848588 },
+        new MarkerData { Id = 5, Lng = 151.216968, Lat = -33.851702 },
+        new MarkerData { Id = 6, Lng = 150.863657, Lat = -34.671264 },
+        new MarkerData { Id = 7, Lng = 148.662905, Lat = -35.304724 },
+        new MarkerData { Id = 8, Lng = 175.699196, Lat = -36.817685 },
+        new MarkerData { Id = 9, Lng = 175.790222, Lat = -36.828611 },
+        new MarkerData { Id = 10, Lng = 145.116667, Lat = -37.75 }
+    ];
+    
+    private AdvancedGoogleMap _map1 = null!;
+    MarkerClustering? _markerClustering;
+    private readonly MapOptions _mapOptions = new MapOptions()
+    {
+        Zoom = 13,
+        Center = new LatLngLiteral()
+        {
+            Lat = 13.505892,
+            Lng = 100.8162
+        },
+        IsFractionalZoomEnabled = false,
+        HeadingInteractionEnabled = true,
+        CameraControl = true,
+        MapTypeId = MapTypeId.Roadmap,
+        // ColorScheme = ColorScheme.Dark,
+        MapId = "e5asd595q2121"
+    };
+        
+    async Task InvokeClustering()
+    {
+        if (_map1.MapRef is null) return;
+        if (_markerClustering == null)
+        {
+            _markerClustering = await MarkerClustering.CreateAsync(_map1.MapRef.JsRuntime, _map1.InteropObject!, _map1.Markers, new MarkerClustererOptions()
+            {
+                ZoomOnClick = true
+                // RendererObjectName = "customRendererLib.interpolatedRenderer"
+            });
+        }
+        else
+        {
+            await _markerClustering.ClearMarkers();
+            await _markerClustering.AddMarkers(_map1.Markers);
+        }
+    }
+    
+    async Task OnMarkersChanged()
+    {
+        if (_markerClustering != null) 
+        {
+            await _markerClustering.ClearMarkers();
+            await _markerClustering.AddMarkers(_map1.Markers);
+        }
+    }
+    
+    async Task ClearClustering()
+    {
+        if (_markerClustering != null)
+        {
+            await _markerClustering.ClearMarkers();
+            await _markerClustering.DisposeAsync();
+            _markerClustering = null;
+        }
+    }
+        
+    public class MarkerData
+    {
+        public int Id { get; set; }
+        public double Lat { get; set; }
+        public double Lng { get; set; }
+        public bool Clickable { get; set; } = true;
+        public bool Draggable { get; set; }
+        
+        public bool Visible { get; set; } = true;
+        public bool Active { get; set; }
+        
+        public void UpdatePosition(LatLngLiteral position)
+        {
+            Lat = position.Lat;
+            Lng = position.Lng;
+        }
+    }
+}

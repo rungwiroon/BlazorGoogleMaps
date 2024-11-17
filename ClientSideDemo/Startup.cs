@@ -13,7 +13,7 @@ public class Startup
 
         builder.Services.AddBlazorGoogleMaps(new MapApiLoadOptions("AIzaSyBdkgvniMdyFPAcTlcZivr8f30iU-kn1T0")
         {
-            Version = "beta"
+            Version = "weekly"
         });
 
         builder.RootComponents.Add<App>("app");
