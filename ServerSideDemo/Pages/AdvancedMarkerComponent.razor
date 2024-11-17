@@ -28,6 +28,7 @@
     </div>
 }
 
+<button @onclick="@AddMarker">Add Marker</button>
 <button @onclick="@InvokeClustering">Invoke map cluster</button>
 <button @onclick="@ClearClustering">ClearClustering</button>
 
@@ -63,6 +64,19 @@
         // ColorScheme = ColorScheme.Dark,
         MapId = "e5asd595q2121"
     };
+
+    private async Task AddMarker()
+    {
+        var center =await  _map1.InteropObject!.GetCenter();
+        Markers.Add(new MarkerData()
+        {
+            Active = false,
+            Draggable = true,
+            Id = Markers.Count + 1,
+            Lat = center.Lat,
+            Lng = center.Lng
+        });
+    }
         
     async Task InvokeClustering()
     {
@@ -109,4 +123,7 @@
             Lng = position.Lng;
         }
     }
+
+    
+
 }

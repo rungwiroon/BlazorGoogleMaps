@@ -885,72 +885,93 @@
                 const collisionBehaviorMapping = [
                     google.maps.CollisionBehavior.REQUIRED,
                     google.maps.CollisionBehavior.REQUIRED_AND_HIDES_OPTIONAL,
-                    google.maps.CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY
+                    google.maps.CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY,
                 ];
-                const updateMarkerProperties = (marker, options) => {
-                    marker.position = options.position;
-                    marker.title = options.title;
-                    marker.zIndex = options.zIndex;
-                    marker.collisionBehavior = collisionBehaviorMapping[options.collisionBehavior];
-                    marker.gmpClickable = options.gmpClickable;
-                    marker.gmpDraggable = options.gmpDraggable;
+
+                const {
+                    position,
+                    title,
+                    zIndex,
+                    gmpClickable,
+                    gmpDraggable,
+                    collisionBehavior,
+                    mapId,
+                    componentId,
+                } = options;
+
+                const invokeCallback = (method, ...args) => {
+                    callbackRef?.invokeMethodAsync(method, ...args);
                 };
-                const handleMarkerClick = (marker, options) => {
-                    if (options.gmpClickable) {
+
+                const setupClickListener = (marker, isEnabled) => {
+                    if (isEnabled) {
                         marker.clickListener = marker.addListener("click", () => {
-                            callbackRef?.invokeMethodAsync('OnMarkerClicked', id);
+                            invokeCallback('OnMarkerClicked', id);
                         });
                     } else if (marker.clickListener) {
                         google.maps.event.removeListener(marker.clickListener);
                         delete marker.clickListener;
                     }
                 };
-                const handleMarkerDrag = (marker, options) => {
-                    if (options.gmpDraggable) {
-                        marker.dragListener = marker.addListener('dragend', (event) => {
-                            callbackRef?.invokeMethodAsync('OnMarkerDrag', id, marker.position);
+
+                const setupDragListener = (marker, isEnabled) => {
+                    if (isEnabled) {
+                        marker.dragListener = marker.addListener("dragend", (event) => {
+                            invokeCallback('OnMarkerDrag', id, marker.position);
                         });
                     } else if (marker.dragListener) {
                         google.maps.event.removeListener(marker.dragListener);
                         delete marker.dragListener;
                     }
                 };
+
                 const existingMarker = mapObjects[id];
                 if (existingMarker) {
-                    const clickChanged = existingMarker.gmpClickable !== options.gmpClickable;
-                    const dragChanged = existingMarker.gmpDraggable !== options.gmpDraggable;
-                    updateMarkerProperties(existingMarker, options);
+                    const clickChanged = existingMarker.gmpClickable !== gmpClickable;
+                    const dragChanged = existingMarker.gmpDraggable !== gmpDraggable;
 
-                    if (clickChanged) handleMarkerClick(existingMarker, options);
-                    if (dragChanged) handleMarkerDrag(existingMarker, options) 
+                    Object.assign(existingMarker, {
+                        position,
+                        title,
+                        zIndex,
+                        gmpClickable,
+                        gmpDraggable,
+                        collisionBehavior: collisionBehaviorMapping[collisionBehavior],
+                    });
+
+                    if (clickChanged) setupClickListener(existingMarker, gmpClickable);
+                    if (dragChanged) setupDragListener(existingMarker, gmpDraggable);
                     return;
                 }
-                const map = mapObjects[options.mapId];
-                const content = document.querySelector(`#${options.componentId}`);
-                if (!content) console.warn("Marker tried to render without a target component"); // Should never be reached?
-                
+
+                const map = mapObjects[mapId];
+                if (!map) {
+                    console.error(`Map with ID ${mapId} not found.`);
+                    return;
+                }
+
+                const content = document.querySelector(`#${componentId}`);
+                if (!content) {
+                    console.warn("Marker tried to render without a target component");
+                    return;
+                }
+
                 const advancedMarkerElement = new google.maps.marker.AdvancedMarkerElement({
                     map,
                     content,
-                    position: options.position,
-                    title: options.title,
-                    zIndex: options.zIndex,
-                    gmpClickable: options.gmpClickable,
-                    gmpDraggable: options.gmpDraggable,
-                    collisionBehavior: collisionBehaviorMapping[options.collisionBehavior]
+                    position,
+                    title,
+                    zIndex,
+                    gmpClickable,
+                    gmpDraggable,
+                    collisionBehavior: collisionBehaviorMapping[collisionBehavior],
                 });
+
                 advancedMarkerElement.guidString = id;
-                if (options.gmpClickable) {
-                    advancedMarkerElement.clickListener = advancedMarkerElement.addListener("click", _ => { 
-                        callbackRef?.invokeMethodAsync('OnMarkerClicked', id);
-                    })
-                }
-                if (advancedMarkerElement.gmpDraggable) {
-                    advancedMarkerElement.dragListener = advancedMarkerElement.addListener('dragend', (event) => {
-                        callbackRef?.invokeMethodAsync('OnMarkerDrag', id, advancedMarkerElement.position);
-                    });
-                }
-                
+
+                setupClickListener(advancedMarkerElement, gmpClickable);
+                setupDragListener(advancedMarkerElement, gmpDraggable);
+
                 addMapObject(id, advancedMarkerElement);
             },
             disposeAdvancedMarkerComponent: function (id) {
