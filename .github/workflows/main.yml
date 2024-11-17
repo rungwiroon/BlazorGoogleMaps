@@ -23,7 +23,7 @@ jobs:
 
       # Publish the site
       - name: Publish
-        run: dotnet publish BlazorGoogleMaps.sln -c:Release -o:publish -p:GHPages=true
+        run: dotnet publish BlazorGoogleMaps.sln -c:Release -o:publish -p:GHPages=true -f net9.0
 
       # Deploy the site
       - name: Deploy
