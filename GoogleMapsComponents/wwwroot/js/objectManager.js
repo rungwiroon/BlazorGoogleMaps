@@ -945,10 +945,6 @@
                 }
 
                 const map = mapObjects[mapId];
-                if (!map) {
-                    console.error(`Map with ID ${mapId} not found.`);
-                    return;
-                }
 
                 const content = document.querySelector(`#${componentId}`);
                 if (!content) {
