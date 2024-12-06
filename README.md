@@ -12,7 +12,7 @@ services.AddBlazorGoogleMaps("YOUR_KEY_GOES_HERE");
 ```
 OR specify google api libraries and/or version:
 ```
-services.AddBlazorGoogleMaps(new GoogleMapsComponents.Map.MapApiLoadOptions("YOUR_KEY_GOES_HERE")
+services.AddBlazorGoogleMaps(new GoogleMapsComponents.Maps.MapApiLoadOptions("YOUR_KEY_GOES_HERE")
     {
         Version = "beta",
         Libraries = "places,visualization,drawing,marker",
