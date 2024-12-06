@@ -1,4 +1,7 @@
-﻿using Microsoft.JSInterop;
+﻿using GoogleMapsComponents.Extensions;
+using GoogleMapsComponents.Maps.Strings;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using OneOf;
 using System;
 using System.Collections.Generic;
@@ -267,8 +270,18 @@ public class JsObjectRef : IJsObjectRef, IDisposable
         );
     }
 
+    public async Task<JsObjectRef> AddEventCallback<T>(EventCallback<T> callback, params object[] args)
+    {
+        // invokes the function in js creating an object in the map and returns the guid of the object created for future reference
+        var guid = await _jsRuntime.AddListener<string, T>(callback, new object[] { _guid.ToString(), Methods.AddListener }.Concat(args).ToArray());
+        return new JsObjectRef(_jsRuntime, new Guid(guid));
+        //var guid = await _jsRuntime.MyInvokeAsync<string>(Methods.InvokeWithReturnedObjectRef,
+        //    new object[] { _guid.ToString(), "addListener", "eventName", (object)callback });
+    }
+
     public async Task<JsObjectRef> InvokeWithReturnedObjectRefAsync(string functionName, params object[] args)
     {
+        // invokes the function in js creating an object in the map and returns the guid of the object created for future reference
         var guid = await _jsRuntime.MyInvokeAsync<string>(
             "blazorGoogleMaps.objectManager.invokeWithReturnedObjectRef",
             new object[] { _guid.ToString(), functionName }
