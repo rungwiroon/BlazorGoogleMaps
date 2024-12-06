@@ -1,4 +1,5 @@
-﻿using Microsoft.JSInterop;
+﻿using GoogleMapsComponents.Extensions;
+using Microsoft.JSInterop;
 using System;
 using System.Threading.Tasks;
 
@@ -55,7 +56,7 @@ public class DirectionsService : IDisposable
 
         try
         {
-            var dirResult = Helper.DeSerializeObject<DirectionsResult>(response);
+            var dirResult = JsonExtensions.DeSerializeObject<DirectionsResult>(response);
             return dirResult;
         }
         catch (Exception e)

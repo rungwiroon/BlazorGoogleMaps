@@ -1,4 +1,5 @@
-﻿using GoogleMapsComponents.Maps.Extension;
+﻿using GoogleMapsComponents.Extensions;
+using GoogleMapsComponents.Maps.Extension;
 using Microsoft.JSInterop;
 using System;
 using System.Threading.Tasks;
@@ -37,7 +38,7 @@ public class DirectionsRenderer : EventEntityBase, IDisposable
             request, directionsRequestOptions);
         try
         {
-            var dirResult = Helper.DeSerializeObject<DirectionsResult>(response);
+            var dirResult = JsonExtensions.DeSerializeObject<DirectionsResult>(response);
             return dirResult;
         }
         catch (Exception e)
@@ -84,7 +85,7 @@ public class DirectionsRenderer : EventEntityBase, IDisposable
             directionsRequestOptions);
         try
         {
-            var dirResult = Helper.DeSerializeObject<DirectionsResult>(response);
+            var dirResult = JsonExtensions.DeSerializeObject<DirectionsResult>(response);
             return dirResult;
         }
         catch (Exception e)
