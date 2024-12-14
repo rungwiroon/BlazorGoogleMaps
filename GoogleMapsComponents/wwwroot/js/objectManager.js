@@ -134,6 +134,25 @@
                         parsedItem[propertyName] = animationMapping[propertyValue] || propertyValue;
                     }
 
+                    if (propertyName == "icons") {
+                        if (Array.isArray(propertyValue)) {
+                            propertyValue.forEach(item => {
+                                var iconPath = item.icon.path;
+                                if (iconPath) {
+                                    const symbolPathMapping = {
+                                        "BACKWARD_CLOSED_ARROW": google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
+                                        "BACKWARD_OPEN_ARROW": google.maps.SymbolPath.BACKWARD_OPEN_ARROW,
+                                        "CIRCLE": google.maps.SymbolPath.CIRCLE,
+                                        "FORWARD_CLOSED_ARROW": google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                                        "FORWARD_OPEN_ARROW": google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+                                    };
+
+                                    item.icon.path = symbolPathMapping[item.icon.path];
+                                }
+                            });
+                        }
+                    }
+
                     // Convert specific Google Maps CollisionBehavior strings to their corresponding objects
                     if (typeof propertyValue === "string" && propertyValue.startsWith("google.maps.CollisionBehavior")) {
                         const collisionBehaviorMapping = {

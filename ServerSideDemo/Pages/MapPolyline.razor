@@ -70,11 +70,32 @@
 
     private async Task StartDrawingPolyline()
     {
-        _polyline = await Polyline.CreateAsync(_map1.JsRuntime, new PolylineOptions()
+        _polyline = await Polyline.CreateAsync(_map1.JsRuntime, 
+            new PolylineOptions()
             {
                 Draggable = true,
                 Editable = true,
-                Map = _map1.InteropObject
+                Map = _map1.InteropObject,
+                    Icons = new IconSequence[] {
+                        new IconSequence
+                        {
+                            Icon = new Symbol { 
+                                Path = SymbolPath.BACKWARD_CLOSED_ARROW,
+                                Scale = 3f, 
+                                StrokeColor = "green" },
+                            Offset = "0%"
+                        },
+                        new IconSequence
+                        {
+                            Icon = new Symbol
+                            {
+                                Path = SymbolPath.CIRCLE,
+                                Scale = 3f, 
+                                StrokeColor = "red"
+                            },
+                            Offset = "100%"
+                        },
+                    }
             });
 
         _path.Clear();
