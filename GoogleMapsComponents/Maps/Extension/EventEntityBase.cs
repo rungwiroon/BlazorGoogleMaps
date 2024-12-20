@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Components;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,6 +32,25 @@ public abstract class EventEntityBase : IDisposable
     {
         var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
             "addListener", eventName, handler);
+
+        var eventListener = new MapEventListener(listenerRef);
+        AddEvent(eventName, eventListener);
+        return eventListener;
+    }
+
+    public async Task<MapEventListener> AddListener(string eventName, EventCallback callback)
+    {
+        var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
+            "addListener", eventName, callback);
+
+        var eventListener = new MapEventListener(listenerRef);
+        AddEvent(eventName, eventListener);
+        return eventListener;
+    }
+
+    public async Task<MapEventListener> AddListener<T>(string eventName, EventCallback<T> callback)
+    {
+        var listenerRef = await _jsObjectRef.AddEventCallback(callback, eventName);
 
         var eventListener = new MapEventListener(listenerRef);
         AddEvent(eventName, eventListener);
