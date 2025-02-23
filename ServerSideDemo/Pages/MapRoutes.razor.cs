@@ -43,7 +43,18 @@ public partial class MapRoutes : IAsyncDisposable
         //Create instance of DirectionRenderer
         _dirRend = await DirectionsRenderer.CreateAsync(_map1.JsRuntime, new DirectionsRendererOptions()
         {
-            Map = _map1.InteropObject
+            Map = _map1.InteropObject,
+            MarkerOptions = new MarkerOptions()
+            {
+                Icon = new Symbol()
+                {
+                    Path = SymbolPath.BACKWARD_CLOSED_ARROW,
+                    Scale = 4,
+                    StrokeWeight = 2,
+                    FillColor = "white",
+                    FillOpacity = 1
+                }
+            }
         });
     }
 

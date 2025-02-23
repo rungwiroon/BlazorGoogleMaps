@@ -134,24 +134,29 @@
                         parsedItem[propertyName] = animationMapping[propertyValue] || propertyValue;
                     }
 
-                    if (propertyName == "icons") {
+                    if (propertyName == "icons" || propertyName == "markerOptions") {
+                        const symbolPathMapping = {
+                            "BACKWARD_CLOSED_ARROW": google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
+                            "BACKWARD_OPEN_ARROW": google.maps.SymbolPath.BACKWARD_OPEN_ARROW,
+                            "CIRCLE": google.maps.SymbolPath.CIRCLE,
+                            "FORWARD_CLOSED_ARROW": google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                            "FORWARD_OPEN_ARROW": google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+                        };
+
                         if (Array.isArray(propertyValue)) {
                             propertyValue.forEach(item => {
                                 var iconPath = item.icon.path;
                                 if (iconPath) {
-                                    const symbolPathMapping = {
-                                        "BACKWARD_CLOSED_ARROW": google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
-                                        "BACKWARD_OPEN_ARROW": google.maps.SymbolPath.BACKWARD_OPEN_ARROW,
-                                        "CIRCLE": google.maps.SymbolPath.CIRCLE,
-                                        "FORWARD_CLOSED_ARROW": google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-                                        "FORWARD_OPEN_ARROW": google.maps.SymbolPath.FORWARD_OPEN_ARROW,
-                                    };
-
                                     item.icon.path = symbolPathMapping[item.icon.path];
                                 }
                             });
+                        } else if (propertyValue.icon.path) {
+                            var iconPath = propertyValue.icon.path;
+                            if (iconPath) {
+                                propertyValue.icon.path = symbolPathMapping[iconPath];
+                            }
                         }
-                    }
+                    }                   
 
                     // Convert specific Google Maps CollisionBehavior strings to their corresponding objects
                     if (typeof propertyValue === "string" && propertyValue.startsWith("google.maps.CollisionBehavior")) {
