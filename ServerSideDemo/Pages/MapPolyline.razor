@@ -100,32 +100,6 @@
 
         _path.Clear();
 
-        // Add Listener to Paths from Polyline
-        await _polyline.InvokeAsync("AddListeners").ConfigureAwait(true);
-
-        await _polyline.AddListener("insert_at", async () =>
-        {
-            if (_polyline != null)
-            {
-                _path = (await _polyline.GetPath().ConfigureAwait(true)).ToList();
-            }
-        });
-        await _polyline.AddListener("set_at", async () =>
-      {
-          if (_polyline != null)
-          {
-              _path = (await _polyline.GetPath().ConfigureAwait(true)).ToList();
-          }
-      });
-        await _polyline.AddListener("remove_at", async () =>
-        {
-            if (_polyline != null)
-            {
-                _path = (await _polyline.GetPath().ConfigureAwait(true)).ToList();
-            }
-
-        });
-
         await _polyline.AddListener("click", () =>
         {
             _events.Insert(0, "click polyline");
@@ -203,22 +177,6 @@
                 Map = _map1.InteropObject
             });
 
-        // Add Listener to Paths from Polyline
-        await _polygon.InvokeAsync("AddListeners").ConfigureAwait(true);
-
-        await _polygon.AddListener("insert_at", async () =>
-        {
-            _path = (await _polygon.GetPath().ConfigureAwait(true)).ToList();
-        });
-        await _polygon.AddListener("set_at", async () =>
-        {
-            _path = (await _polygon.GetPath().ConfigureAwait(true)).ToList();
-        });
-        await _polygon.AddListener("remove_at", async () =>
-        {
-            _path = (await _polygon.GetPath().ConfigureAwait(true)).ToList();
-        });
-
         _path.Clear();
     }
 
@@ -271,9 +229,6 @@
             //Debug.WriteLine($"Path length : {path.Count()}");
 
             await _polyline.SetPath(_path);
-
-            // Add Listener to Paths from Polyline
-            await _polyline.InvokeAsync("AddListeners").ConfigureAwait(true);
         }
         else if (_polygon != null)
         {
