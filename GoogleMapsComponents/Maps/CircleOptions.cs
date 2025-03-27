@@ -10,7 +10,7 @@ public class CircleOptions : ListableEntityOptionsBase
     /// <summary>
     /// The center of the Circle.
     /// </summary>
-    public LatLngLiteral Center { get; set; }
+    public LatLngLiteral? Center { get; set; }
 
     /// <summary>
     /// If set to true, the user can edit this circle by dragging the control points shown at the center and around the circumference of the circle. 
@@ -22,7 +22,7 @@ public class CircleOptions : ListableEntityOptionsBase
     /// The fill color. 
     /// All CSS3 colors are supported except for extended named colors.
     /// </summary>
-    public string FillColor { get; set; }
+    public string? FillColor { get; set; }
 
     /// <summary>
     /// The fill opacity between 0.0 and 1.0.
@@ -38,7 +38,7 @@ public class CircleOptions : ListableEntityOptionsBase
     /// The stroke color. 
     /// All CSS3 colors are supported except for extended named colors.
     /// </summary>
-    public string StrokeColor { get; set; }
+    public string? StrokeColor { get; set; }
 
     /// <summary>
     /// The stroke opacity between 0.0 and 1.0.
@@ -56,4 +56,10 @@ public class CircleOptions : ListableEntityOptionsBase
     /// The stroke width in pixels.
     /// </summary>
     public int StrokeWeight { get; set; }
+
+    /// <summary>
+    /// Undocumented option
+    /// https://issuetracker.google.com/issues/35821607
+    /// </summary>
+    public bool SuppressUndo { get; set; }
 }
