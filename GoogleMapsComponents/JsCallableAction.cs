@@ -1,4 +1,5 @@
-﻿using Microsoft.JSInterop;
+﻿using GoogleMapsComponents.Extensions;
+using Microsoft.JSInterop;
 using System;
 using System.Linq;
 using System.Text.Json;
@@ -34,7 +35,7 @@ public class JsCallableAction
         var arguments = _argumentTypes.Zip(jArray, (type, jToken) => new { jToken, type })
             .Select(x =>
             {
-                var obj = Helper.DeSerializeObject(x.jToken, x.type);
+                var obj = JsonExtensions.DeSerializeObject(x.jToken, x.type);
                 if (obj is IActionArgument actionArg)
                 {
                     actionArg.JsObjectRef = new JsObjectRef(_jsRuntime, new Guid(guid));
