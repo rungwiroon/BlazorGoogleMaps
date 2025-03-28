@@ -17,7 +17,7 @@ public class PolygonOptions : ListableEntityOptionsBase
     /// <summary>
     /// The fill color. All CSS3 colors are supported except for extended named colors.
     /// </summary>
-    public string FillColor { get; set; }
+    public string? FillColor { get; set; }
 
     /// <summary>
     /// The fill opacity between 0.0 and 1.0
@@ -41,12 +41,12 @@ public class PolygonOptions : ListableEntityOptionsBase
     /// Any simple arrays are converted into MVCArrays.<br/>
     /// Inserting or removing LatLngs from the MVCArray will automatically update the polygon on the map.
     /// </summary>
-    public IEnumerable<IEnumerable<LatLngLiteral>> Paths { get; set; }
+    public IEnumerable<IEnumerable<LatLngLiteral>> Paths { get; set; } = new List<IEnumerable<LatLngLiteral>>();
 
     /// <summary>
     /// The stroke color. All CSS3 colors are supported except for extended named colors.
     /// </summary>
-    public string StrokeColor { get; set; }
+    public string? StrokeColor { get; set; }
 
     /// <summary>
     /// The stroke opacity between 0.0 and 1.0
@@ -63,4 +63,10 @@ public class PolygonOptions : ListableEntityOptionsBase
     /// The stroke width in pixels.
     /// </summary>
     public int? StrokeWeight { get; set; }
+
+    /// <summary>
+    /// Undocumented option
+    /// https://issuetracker.google.com/issues/35821607
+    /// </summary>
+    public bool SuppressUndo { get; set; }
 }
