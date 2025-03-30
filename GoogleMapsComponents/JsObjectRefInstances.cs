@@ -1,23 +1,24 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 
 namespace GoogleMapsComponents;
 
 internal static class JsObjectRefInstances
 {
-    private static readonly Dictionary<string, IJsObjectRef> Instances = new Dictionary<string, IJsObjectRef>();
+    private static readonly ConcurrentDictionary<string, IJsObjectRef> Instances = new();
 
     internal static void Add(IJsObjectRef instance)
     {
-        Instances.Add(instance.Guid.ToString(), instance);
+        Instances.TryAdd(instance.Guid.ToString(), instance);
     }
 
     internal static void Remove(string guid)
     {
-        Instances.Remove(guid);
+        Instances.TryRemove(guid, out _);
     }
 
     internal static IJsObjectRef GetInstance(string guid)
     {
-        return Instances[guid];
+        Instances.TryGetValue(guid, out var instance);
+        return instance;
     }
 }
