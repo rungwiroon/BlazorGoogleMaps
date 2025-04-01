@@ -49,14 +49,17 @@
         //Debug.WriteLine("Start OnAfterRenderAsync");
 
         await _map1.InteropObject.AddListener("bounds_changed", OnBoundsChanged);
+        await _map1.InteropObject.AddListener("bounds_changed", new EventCallbackFactory().Create(this, OnBoundsChangedAsync));
         //Once can be removed before it is triggered, this shows that it is not triggered
         var reference = await _map1.InteropObject.AddListenerOnce("rightclick", OnBoundsChangedOnce);
         await reference.RemoveAsync();
-        
+
 
         await _map1.InteropObject.AddListener("center_changed", OnCenterChanged);
 
         await _map1.InteropObject.AddListener<MouseEvent>("click", async (e) => await OnClick(e));
+
+        await _map1.InteropObject.AddListener<MouseEvent>("click", new EventCallbackFactory().Create<MouseEvent>(this, OnClickAsync));
 
         await _map1.InteropObject.AddListener("dblclick", OnDoubleClick);
 
@@ -70,7 +73,7 @@
 
         await _map1.InteropObject.AddListener("idle", OnIdle);
 
-        
+
     }
 
     private void OnBoundsChanged()
@@ -82,7 +85,15 @@
 
         StateHasChanged();
     }
-    
+
+    private async Task OnBoundsChangedAsync(){
+        await Task.Delay(1000);
+        _events.Insert(0, "Bounds changed async.");
+        _events = _events.Take(100).ToList();
+
+        StateHasChanged();
+    }
+
     private void OnBoundsChangedOnce()
     {
         _events.Insert(0, "Bounds changed once.");
@@ -106,6 +117,22 @@
         //Console.WriteLine("Click.");
 
         _events.Insert(0, $"Click {e.LatLng}.");
+        _events = _events.Take(100).ToList();
+
+        StateHasChanged();
+
+        if (DisablePoiInfoWindow)
+        {
+            await e.Stop();
+        }
+    }
+
+    private async Task OnClickAsync(MouseEvent e)
+    {
+        //Console.WriteLine("Click.");
+
+        await Task.Delay(100);
+        _events.Insert(0, $"Click async {e.LatLng}.");
         _events = _events.Take(100).ToList();
 
         StateHasChanged();
