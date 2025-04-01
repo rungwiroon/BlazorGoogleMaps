@@ -83,7 +83,8 @@
 
     private async Task SetMapHeading()
     {
-        await _map2.SetHeading(await _map2.GetHeading() + 90);
+        double val = await _map2.GetHeading() + 91.261;
+        await _map2.SetHeading(val);
         var heading = await _map2.GetHeading();
 
         Console.WriteLine($"Map2 heading is {heading}");

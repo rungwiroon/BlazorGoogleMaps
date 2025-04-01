@@ -165,9 +165,9 @@ public class Map : EventEntityBase, IJsObjectRef, IAsyncDisposable
     /// The heading value is measured in degrees (clockwise) from cardinal direction North.
     /// </summary>
     /// <returns></returns>
-    public Task<int> GetHeading()
+    public Task<double> GetHeading()
     {
-        return _jsObjectRef.InvokeAsync<int>("getHeading");
+        return _jsObjectRef.InvokeAsync<double>("getHeading");
     }
 
     /// <summary>
@@ -175,7 +175,7 @@ public class Map : EventEntityBase, IJsObjectRef, IAsyncDisposable
     /// </summary>
     /// <param name="heading"></param>
     /// <returns></returns>
-    public Task SetHeading(int heading)
+    public Task SetHeading(double heading)
     {
         return _jsObjectRef.InvokeAsync("setHeading", heading);
     }
