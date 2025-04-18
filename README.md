@@ -138,10 +138,10 @@ OR Render markers with Blazor (currently only with `v=beta` version of google-ma
  https://rungwiroon.github.io/BlazorGoogleMaps/mapEvents
 
 **Breaking change from 4.0.0**
-Migrate to .NET 8 #286.
+Migrate to .NET 8 [#286](https://github.com/rungwiroon/BlazorGoogleMaps/issues/286).
 
 **Breaking change from 3.0.0**
 Migrate from Newtonsoft.Json to System.Text.Json.
 
 **Breaking change from 2.0.0**
-LatLngLiteral constructor's parameters order changed #173
+LatLngLiteral constructor's parameters order changed [#173](https://github.com/rungwiroon/BlazorGoogleMaps/issues/176)
