@@ -10,7 +10,7 @@ public class Autocomplete : EventEntityBase
 {
     public static async Task<Autocomplete> CreateAsync(IJSRuntime jsRuntime, ElementReference inputField, AutocompleteOptions? opts = null)
     {
-        var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.places.PlaceAutocompleteElement", inputField, opts);
+        var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.places.Autocomplete", inputField, opts);
         var obj = new Autocomplete(jsObjectRef);
 
         return obj;
