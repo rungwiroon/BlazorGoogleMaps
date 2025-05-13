@@ -13,6 +13,9 @@ public class Padding
     [JsonPropertyName("left")]
     public int Left { get; set; }
 
+    [JsonPropertyName("bottom")]
+    public int Bottom { get; set; }
+
     public Padding()
     {
 
@@ -23,6 +26,7 @@ public class Padding
         Top = padding;
         Right = padding;
         Left = padding;
+        Bottom = padding;
     }
 
     public Padding(int top, int right, int left)
@@ -30,6 +34,14 @@ public class Padding
         Top = top;
         Right = right;
         Left = left;
+    }
+
+    public Padding(int top, int right, int bottom, int left)
+    {
+        Top = top;
+        Right = right;
+        Left = left;
+        Bottom = bottom;
     }
 
     public Padding(int top, int left)
