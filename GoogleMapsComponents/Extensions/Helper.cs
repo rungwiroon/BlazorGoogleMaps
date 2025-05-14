@@ -1,4 +1,6 @@
-﻿using GoogleMapsComponents.Maps;
+﻿using GoogleMapsComponents.Extensions;
+using GoogleMapsComponents.Maps;
+using GoogleMapsComponents.Maps.Strings;
 using GoogleMapsComponents.Serialization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
@@ -15,17 +17,6 @@ namespace GoogleMapsComponents;
 
 internal static class Helper
 {
-    private static readonly JsonSerializerOptions Options = new JsonSerializerOptions()
-    {
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-    };
-
-    static Helper()
-    {
-        Options.Converters.Add(new OneOfConverterFactory());
-        Options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
-    }
 
     internal static Task MyInvokeAsync(
         this IJSRuntime jsRuntime,
@@ -63,144 +54,17 @@ internal static class Helper
         return default;
     }
 
-    public static object? DeSerializeObject(JsonElement json, Type type)
-    {
-        var obj = json.Deserialize(type, Options);
-        return obj;
-    }
 
-    public static object? DeSerializeObject(string? json, Type type)
-    {
-        if (json == null)
-        {
-            return default;
-        }
+    
 
-        var obj = JsonSerializer.Deserialize(json, type, Options);
-        return obj;
-    }
-
-    public static TObject? DeSerializeObject<TObject>(string? json)
-    {
-        if (json == null)
-        {
-            return default;
-        }
-
-        var value = JsonSerializer.Deserialize<TObject>(json, Options);
-        return value;
-    }
-
-    public static string SerializeObject(object obj)
-    {
-        var value = JsonSerializer.Serialize(obj, Options);
-        return value;
-    }
-
-    private static IEnumerable<object> MakeArgJsFriendly(IJSRuntime jsRuntime, IEnumerable<object?> args)
-    {
-        var jsFriendlyArgs = args
-            .Select(arg =>
-            {
-                if (arg == null)
-                {
-                    return arg;
-                }
-
-                if (arg is IOneOf oneof)
-                {
-                    arg = oneof.Value;
-                }
-
-                var argType = arg.GetType();
-
-                switch (arg)
-                {
-                    case Enum: return GetEnumValue(arg);
-                    case ElementReference _:
-                    case string _:
-                    case int _:
-                    case long _:
-                    case double _:
-                    case float _:
-                    case decimal _:
-                    case DateTime _:
-                    case bool _:
-                        return arg;
-                    case Action action:
-                        return DotNetObjectReference.Create(new JsCallableAction(jsRuntime, action));
-                    default:
-                        {
-                            if (argType.IsGenericType
-                                && (argType.GetGenericTypeDefinition() == typeof(Action<>)))
-                            {
-                                var genericArguments = argType.GetGenericArguments();
-
-                                //Debug.WriteLine($"Generic args : {genericArguments.Count()}");
-
-                                return DotNetObjectReference.Create(new JsCallableAction(jsRuntime, (Delegate)arg, genericArguments));
-                            }
-
-                            switch (arg)
-                            {
-                                case JsCallableAction _:
-                                    return DotNetObjectReference.Create(arg);
-                                case IJsObjectRef jsObjectRef:
-                                    {
-                                        //Debug.WriteLine("Serialize IJsObjectRef");
-
-                                        var guid = jsObjectRef.Guid;
-                                        return SerializeObject(new JsObjectRef1(guid));
-                                    }
-                                default:
-                                    return SerializeObject(arg);
-                            }
-                        }
-                }
-            });
-
-        return jsFriendlyArgs;
-    }
-
-    private static string? GetEnumValue(object? enumItem)
-    {
-        //what happens if enumItem is null.
-        //Shouldnt we take 0 value of enum
-        //Also is it even possible to have null enumItem
-        //So far looks like only MapLegend Add controll reach here
-        if (enumItem == null)
-        {
-            return null;
-        }
-
-        if (enumItem is not Enum enumItem2)
-        {
-            return enumItem.ToString();
-        }
-
-        var memberInfo = enumItem2.GetType().GetMember(enumItem2.ToString());
-        if (memberInfo.Length == 0)
-        {
-            return null;
-        }
-
-        foreach (var attr in memberInfo[0].GetCustomAttributes(false))
-        {
-            if (attr is EnumMemberAttribute val)
-            {
-                return val.Value;
-            }
-        }
-
-        return null;
-    }
+    
 
     internal static async Task<TRes?> MyInvokeAsync<TRes>(
         this IJSRuntime jsRuntime,
         string identifier,
         params object?[] args)
     {
-        var jsFriendlyArgs = MakeArgJsFriendly(jsRuntime, args);
+        var jsFriendlyArgs = jsRuntime.MakeArgJsFriendly(args);
 
         if (typeof(IJsObjectRef).IsAssignableFrom(typeof(TRes)))
         {
@@ -222,7 +86,7 @@ internal static class Helper
                     var typeToken = jo.RootElement.GetProperty("dotnetTypeName").GetString();
                     if (typeToken != null)
                     {
-                        result = DeSerializeObject<TRes>(typeToken);
+                        result = JsonExtensions.DeSerializeObject<TRes>(typeToken);
                     }
                     else
                     {
@@ -248,7 +112,7 @@ internal static class Helper
         string identifier,
         params object[] args)
     {
-        var jsFriendlyArgs = MakeArgJsFriendly(jsRuntime, args);
+        var jsFriendlyArgs = jsRuntime.MakeArgJsFriendly(args);
 
         return await jsRuntime.InvokeAsync<object>(identifier, jsFriendlyArgs);
     }
@@ -299,13 +163,13 @@ internal static class Helper
                 json = jsonElement.GetString();
             }
 
-            var propArray = Helper.DeSerializeObject<Dictionary<string, object>>(json);
+            var propArray = JsonExtensions.DeSerializeObject<Dictionary<string, object>>(json);
             if (propArray?.TryGetValue("dotnetTypeName", out var typeName) ?? false)
             {
                 var asm = typeof(Map).Assembly;
                 var typeNameString = typeName.ToString();
                 var type = asm.GetType(typeNameString);
-                result = Helper.DeSerializeObject(json, type);
+                result = JsonExtensions.DeSerializeObject(json, type);
             }
         }
 
@@ -341,13 +205,13 @@ internal static class Helper
         if (resultObject is JsonElement jsonElement)
         {
             var json = jsonElement.GetString();
-            var propArray = Helper.DeSerializeObject<Dictionary<string, object>>(json);
+            var propArray = JsonExtensions.DeSerializeObject<Dictionary<string, object>>(json);
             if (propArray?.TryGetValue("dotnetTypeName", out var typeName) ?? false)
             {
                 var asm = typeof(Map).Assembly;
                 var typeNameString = typeName.ToString();
                 var type = asm.GetType(typeNameString);
-                result = Helper.DeSerializeObject(json, type);
+                result = JsonExtensions.DeSerializeObject(json, type);
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.JSInterop;
+﻿using GoogleMapsComponents.Extensions;
+using Microsoft.JSInterop;
 using OneOf;
 using System.Threading.Tasks;
 
@@ -81,7 +82,7 @@ public class Marker : ListableEntityBase<MarkerOptions>, IMarker
             && markerLabel.AsT0.Contains("GoogleMapsComponents.Maps.MarkerLabel"))
         {
             var stringValue = markerLabel.AsT0;
-            var markerLabelObj = Helper.DeSerializeObject<MarkerLabel>(stringValue);
+            var markerLabelObj = JsonExtensions.DeSerializeObject<MarkerLabel>(stringValue);
             if (markerLabelObj != null)
             {
                 return markerLabelObj;
