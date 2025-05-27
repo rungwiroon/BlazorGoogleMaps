@@ -304,10 +304,10 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
     /// If map is set to null, the marker will be removed.
     /// </summary>
     /// <param name="maps"></param>
-    public virtual async Task SetMaps(Dictionary<string, Map>? maps)
+    public virtual async Task SetMaps(Dictionary<string, Map?>? maps)
     {
-        maps ??= new Dictionary<string, Map>();
-        Dictionary<Guid, object> dictArgs = maps.ToDictionary(e => BaseListableEntities[e.Key].Guid, e => (object)e.Value);
+        maps ??= new Dictionary<string, Map?>();
+        Dictionary<Guid, object?> dictArgs = maps.ToDictionary(e => BaseListableEntities[e.Key].Guid, e => (object?)e.Value);
         await _jsObjectRef.InvokeMultipleAsync(
             "setMap",
             dictArgs);

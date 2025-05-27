@@ -127,4 +127,20 @@ public partial class MapCircleListPage : ComponentBase
             await _createedPolygons.RemoveAllAsync();
         }
     }
+
+    private async Task RemoveBunchOfCircles()
+    {
+        if (_circleList != null)
+        {
+            Dictionary<string, GoogleMapsComponents.Maps.Map?> maps = [];
+            foreach (var element in _circleList.Circles)
+            {
+                maps.Add(element.Key, null);
+            }
+
+            await _circleList.SetMaps(maps);
+
+            await _circleList.RemoveAllAsync();
+        }
+    }
 }
