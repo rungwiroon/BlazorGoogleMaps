@@ -375,9 +375,32 @@
                 if (advancedMarkerElementContent !== null) {
                     args2[0].content = advancedMarkerElementContent;
                 }
+                
+                let obj;
+                if (functionName === "google.maps.Map") {
+                    const targetElement = args2[0]; // Map div
+                    const options = args2[1]; // Map options
+                    const recycleKey = options.recycle ? options.cacheKey + options.recycle : options.cacheKey
+                    if (options.recycle && mapObjects[recycleKey]) {
+                        targetElement.appendChild(mapObjects[recycleKey].div)
+                        obj = mapObjects[recycleKey].map
+                        obj.setOptions(options)
+                    } else {
+                        obj = new google.maps.Map(targetElement, options)
+                        if (recycleKey)
+                            mapObjects[recycleKey] = { map: obj }
+                    }
+                    // Tag the map with the recycle key to be able to retrieve it in dispose...
+                    if (recycleKey && obj && typeof(obj) === "object" && "set" in obj) {
+                        obj.set("recycleKey", recycleKey);
+                    }
+                }
+                else
+                {
+                    let constructor = stringToFunction(functionName);
+                    obj = new constructor(...args2);
+                }
 
-                let constructor = stringToFunction(functionName);
-                let obj = new constructor(...args2);
                 let guid = args[0];
                 addMapObject(guid, obj)
             },
@@ -527,11 +550,12 @@
                         }
                     }
                 }
-                for (const keyToRemove in keysToRemove) {
-                    if (keysToRemove.hasOwnProperty(keyToRemove)) {
-                        const elementToRemove = keysToRemove[keyToRemove];
-                        delete mapObjects[elementToRemove];
-                    }
+                for (const keyToRemove of keysToRemove) {
+                    const elementToRemove = mapObjects[keyToRemove];
+                    // When we dispose advanced markers and we use recycled maps, make sure to set remove them from the map.
+                    if (google.maps.marker && elementToRemove instanceof google.maps.marker.AdvancedMarkerElement && "recycleKey" in mapObjects[mapGuid])
+                        elementToRemove.map = null;
+                    delete mapObjects[keyToRemove];
                 }
 
                 if (controlParents !== null && controlParents.hasOwnProperty(mapGuid)) {
@@ -548,6 +572,14 @@
             },
 
             disposeObject: function (guid) {
+                const object = mapObjects[guid];
+                if (object instanceof google.maps.Map) {
+                    // store the div.
+                    const recycleKey = object["recycleKey"]
+                    if (recycleKey && mapObjects[recycleKey]) {
+                        mapObjects[recycleKey].div = object.getDiv()
+                    }
+                } 
                 delete mapObjects[guid];
             },
 

@@ -284,4 +284,18 @@ public class MapOptions
     /// page without changing embedded JSON styling in your application code.
     /// </summary>
     public string? MapId { get; set; }
+    
+    /// <summary>
+    /// Optional key to allow for the map to be reused. The key will cause maps loaded with this key to be reused,
+    /// allowing you to store multiple instances. This works in combination with <see cref="Recycle"/> to store the
+    /// map and map div when disposed. When the map is then loaded it will reuse the same instance and div
+    /// to prevent memory leaks and to prevent more billing (Each map is billed on creation).
+    /// </summary>
+    public string? CacheKey { get; set; }
+    /// <summary>
+    /// Optional boolean to allow for the map to be reused.  This works in combination with <see cref="CacheKey"/> to
+    /// store the map and map div when disposed. When the map is then loaded it will reuse the same instance and div
+    /// to prevent memory leaks and to prevent more billing (Each map is billed on creation).
+    /// </summary>
+    public bool Recycle { get; set; }
 }
