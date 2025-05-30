@@ -388,7 +388,7 @@
                     } else {
                         obj = new google.maps.Map(targetElement, options)
                         if (recycleKey)
-                            mapObjects[recycleKey] = { map: obj }
+                            mapObjects[recycleKey] = { map: obj, div: obj.getDiv() }
                     }
                     // Tag the map with the recycle key to be able to retrieve it in dispose...
                     if (recycleKey && obj && typeof(obj) === "object" && "set" in obj) {
