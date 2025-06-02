@@ -11,7 +11,7 @@ public abstract class EventEntityBase : IDisposable
     private readonly Dictionary<string, List<MapEventListener>> EventListeners;
     private bool _isDisposed;
 
-    private void AddEvent(string eventName, MapEventListener listener)
+    protected void AddEvent(string eventName, MapEventListener listener)
     {
         if (!EventListeners.TryGetValue(eventName, out var collection))
         {

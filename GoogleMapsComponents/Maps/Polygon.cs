@@ -1,4 +1,5 @@
 ﻿using Microsoft.JSInterop;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,7 +9,7 @@ namespace GoogleMapsComponents.Maps;
 /// A polygon (like a polyline) defines a series of connected coordinates in an ordered sequence. Additionally, polygons form a closed loop and define a filled region
 /// https://developers.google.com/maps/documentation/javascript/reference/polygon#Polygon
 /// </summary>
-public class Polygon : ListableEntityBase<PolygonOptions>
+public class Polygon : ListableEntityBase<PolygonOptions>, IPolyItem
 {
 
     /// <summary>
@@ -33,32 +34,42 @@ public class Polygon : ListableEntityBase<PolygonOptions>
         : base(jsObjectRef)
     {
     }
+     
+    /// <inheritdoc />
+    public async Task<MapEventListener> AddPolyListener(string eventName, Action handler)
+    {
+        var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync("addPolyListener", eventName, handler);
 
+        var eventListener = new MapEventListener(listenerRef);
+        AddEvent(eventName, eventListener);
+        return eventListener;
+    }
+    
+    /// <inheritdoc />
+    public async Task<MapEventListener> AddPolyListener<T>(string eventName, Action<T> handler) where T : EventArgs
+    {
+        var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync("addPolyListener", eventName, handler);
 
-    /// <summary>
-    /// Returns whether this shape can be dragged by the user.
-    /// </summary>
-    /// <returns></returns>
+        var eventListener = new MapEventListener(listenerRef);
+        AddEvent(eventName, eventListener);
+        return eventListener;
+    }
+
+    /// <inheritdoc />
     public Task<bool> GetDraggable()
     {
         return _jsObjectRef.InvokeAsync<bool>(
             "getDraggable");
     }
 
-    /// <summary>
-    /// Returns whether this shape can be edited by the user.
-    /// </summary>
-    /// <returns></returns>
+    /// <inheritdoc />
     public Task<bool> GetEditable()
     {
         return _jsObjectRef.InvokeAsync<bool>(
             "getEditable");
     }
 
-    /// <summary>
-    /// Retrieves the first path.
-    /// </summary>
-    /// <returns></returns>
+    /// <inheritdoc />
     public Task<IEnumerable<LatLngLiteral>> GetPath()
     {
         return _jsObjectRef.InvokeAsync<IEnumerable<LatLngLiteral>>(
@@ -75,21 +86,14 @@ public class Polygon : ListableEntityBase<PolygonOptions>
             "getPaths");
     }
 
-    /// <summary>
-    /// Returns whether this poly is visible on the map.
-    /// </summary>
-    /// <returns></returns>
+    /// <inheritdoc />
     public Task<bool> GetVisible()
     {
         return _jsObjectRef.InvokeAsync<bool>(
             "getVisible");
     }
 
-    /// <summary>
-    /// If set to true, the user can drag this shape over the map. 
-    /// The geodesic property defines the mode of dragging.
-    /// </summary>
-    /// <param name="draggable"></param>
+    /// <inheritdoc />
     public Task SetDraggable(bool draggable)
     {
         return _jsObjectRef.InvokeAsync(
@@ -97,10 +101,7 @@ public class Polygon : ListableEntityBase<PolygonOptions>
             draggable);
     }
 
-    /// <summary>
-    /// If set to true, the user can edit this shape by dragging the control points shown at the vertices and on each segment.
-    /// </summary>
-    /// <param name="editable"></param>
+    /// <inheritdoc />
     public Task SetEditable(bool editable)
     {
         return _jsObjectRef.InvokeAsync(
@@ -119,10 +120,7 @@ public class Polygon : ListableEntityBase<PolygonOptions>
             options);
     }
 
-    /// <summary>
-    /// Sets the first path. See PolygonOptions for more details.
-    /// </summary>
-    /// <param name="path"></param>
+    /// <inheritdoc />
     public Task SetPath(IEnumerable<LatLngLiteral> path)
     {
         return _jsObjectRef.InvokeAsync(
@@ -141,10 +139,7 @@ public class Polygon : ListableEntityBase<PolygonOptions>
             paths);
     }
 
-    /// <summary>
-    /// Hides this poly if set to false.
-    /// </summary>
-    /// <param name="visible"></param>
+    /// <inheritdoc />
     public Task SetVisible(bool visible)
     {
         return _jsObjectRef.InvokeAsync(
