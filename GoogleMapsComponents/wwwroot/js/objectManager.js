@@ -641,6 +641,11 @@
 
                 try {
                     switch (functionToInvoke) {
+                        case "addPolyListener":
+                            const path = obj.getPath();
+                            const listener = google.maps.event.addListener(path, formattedArgs[0], formattedArgs[1]);
+                            return listener;
+
                         case "blazorGoogleMaps.directionService.route":
                             const responseOrError = await directionService.route.call(obj, formattedArgs[0], formattedArgs[1]);
                             return responseOrError;

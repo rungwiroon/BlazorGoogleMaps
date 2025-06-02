@@ -9,7 +9,7 @@ namespace GoogleMapsComponents.Maps;
 /// A polyline is a linear overlay of connected line segments on the map.
 /// https://developers.google.com/maps/documentation/javascript/reference/polygon#Polyline
 /// </summary>
-public class Polyline : ListableEntityBase<PolylineOptions>
+public class Polyline : ListableEntityBase<PolylineOptions>, IPolyItem
 {
 
     /// <summary>
@@ -34,29 +34,53 @@ public class Polyline : ListableEntityBase<PolylineOptions>
 
 
     /// <summary>
-    /// Returns whether this shape can be dragged by the user.
+    /// Creates an event listener for the vertexes of the polygon. The eventName can be one of the following:
+    /// 'set_at', 'insert_at' or 'remove_at'.
     /// </summary>
-    /// <returns></returns>
-    public Task<bool> GetDraggable()
+    /// <param name="eventName">Event name to include.</param>
+    /// <param name="handler">Handler method</param>
+    /// <returns><see cref="Task"/> completion supplying the <see cref="MapEventListener"/> created for this event.</returns>
+    public async Task<MapEventListener> AddPolyListener(string eventName, Action handler)
     {
-        return _jsObjectRef.InvokeAsync<bool>(
-            "getDraggable");
+        var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync("addPolyListener", eventName, handler);
+
+        var eventListener = new MapEventListener(listenerRef);
+        AddEvent(eventName, eventListener);
+        return eventListener;
     }
 
+
     /// <summary>
-    /// Returns whether this shape can be edited by the user.
+    /// Creates an event listener for the vertexes of the polygon. The eventName can be one of the following:
+    /// 'set_at', 'insert_at' or 'remove_at'.
     /// </summary>
-    /// <returns></returns>
+    /// <typeparam name="T">Event data supplied when the event is invoked.</typeparam>
+    /// <param name="eventName">Event name to include.</param>
+    /// <param name="handler">Handler method</param>
+    /// <returns><see cref="Task"/> completion supplying the <see cref="MapEventListener"/> created for this event.</returns>
+    public async Task<MapEventListener> AddPolyListener<T>(string eventName, Action<T> handler) where T : EventArgs
+    {
+        var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync("addPolyListener", eventName, handler);
+
+        var eventListener = new MapEventListener(listenerRef);
+        AddEvent(eventName, eventListener);
+        return eventListener;
+    }
+
+    /// <inheritdoc />
+    public Task<bool> GetDraggable()
+    {
+        return _jsObjectRef.InvokeAsync<bool>("getDraggable");
+    }
+
+    /// <inheritdoc />
     public Task<bool> GetEditable()
     {
         return _jsObjectRef.InvokeAsync<bool>(
             "getEditable");
     }
 
-    /// <summary>
-    /// Retrieves the path.
-    /// </summary>
-    /// <returns></returns>
+    /// <inheritdoc />
     public Task<IEnumerable<LatLngLiteral>> GetPath()
     {
         return _jsObjectRef.InvokeAsync<IEnumerable<LatLngLiteral>>("getPath");
@@ -74,23 +98,16 @@ public class Polyline : ListableEntityBase<PolylineOptions>
 
         return path;
     }
+    
 
-    /// <summary>
-    /// Returns whether this poly is visible on the map.
-    /// </summary>
-    /// <returns></returns>
+    /// <inheritdoc />
     public Task<bool> GetVisible()
     {
         return _jsObjectRef.InvokeAsync<bool>(
             "getVisible");
     }
 
-    /// <summary>
-    /// If set to true, the user can drag this shape over the map. 
-    /// The geodesic property defines the mode of dragging.
-    /// </summary>
-    /// <param name="draggable"></param>
-    /// <returns></returns>
+    /// <inheritdoc />
     public Task SetDraggable(bool draggable)
     {
         return _jsObjectRef.InvokeAsync(
@@ -117,11 +134,7 @@ public class Polyline : ListableEntityBase<PolylineOptions>
             options);
     }
 
-    /// <summary>
-    /// Sets the path.
-    /// </summary>
-    /// <param name="path"></param>
-    /// <returns></returns>
+    /// <inheritdoc />
     public Task SetPath(IEnumerable<LatLngLiteral> path)
     {
         return _jsObjectRef.InvokeAsync(
@@ -129,11 +142,7 @@ public class Polyline : ListableEntityBase<PolylineOptions>
             path);
     }
 
-    /// <summary>
-    /// Hides this poly if set to false.
-    /// </summary>
-    /// <param name="visible"></param>
-    /// <returns></returns>
+    /// <inheritdoc />
     public Task SetVisible(bool visible)
     {
         return _jsObjectRef.InvokeAsync(
