@@ -94,8 +94,16 @@ public partial class GMap
 #if DEBUG
         Console.WriteLine("GMap Initialized:");
         Console.WriteLine($"\t Height: {Height}");
-        Console.WriteLine($"\t Zoom: {Options.Zoom}");
-        Console.WriteLine($"\t Center: ({Options.Center.Lat}, {Options.Center.Lng})");
+        if (Options != null)
+        {
+            Console.WriteLine($"\t Options: {Options}");
+
+            Console.WriteLine($"\t Zoom: {Options.Zoom}");
+            if (Options.Center.HasValue)
+            {
+                Console.WriteLine($"\t Center: ({Options.Center.Value.Lat}, {Options.Center.Value.Lng})");
+            }
+        }
 #endif
         if (MeMarker != null)
         {

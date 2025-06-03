@@ -17,11 +17,7 @@ public partial class MapHeatMapPage
         mapOptions = new MapOptions()
         {
             Zoom = 13,
-            Center = new LatLngLiteral()
-            {
-                Lat = 13.505892,
-                Lng = 100.8162
-            },
+            Center = new LatLngLiteral(  13.505892, 100.8162),
             MapTypeId = MapTypeId.Roadmap
         };
     }
@@ -35,20 +31,9 @@ public partial class MapHeatMapPage
             Radius = 10,
         });
 
-        var heatPoints = new[] {
-            new LatLngLiteral{
-                Lat = 13.505892,
-                Lng = 100.8162,
-            },
-            new LatLngLiteral{
-                Lat = 13.506892,
-                Lng = 100.8162,
-            },
-        };
-
         var hwp = new List<WeightedLocation>();
-        hwp.Add(new WeightedLocation { Location = new LatLngLiteral { Lat = 13.505892, Lng = 100.8142 }, Weight = 3 });
-        hwp.Add(new WeightedLocation { Location = new LatLngLiteral { Lat = 13.506892, Lng = 100.8132 }, Weight = 5 });
+        hwp.Add(new WeightedLocation { Location = new LatLngLiteral (13.505892, 100.8142), Weight = 3 });
+        hwp.Add(new WeightedLocation { Location = new LatLngLiteral (13.506892, 100.8132), Weight = 5 });
 
         await heatMap.SetData(hwp);
 

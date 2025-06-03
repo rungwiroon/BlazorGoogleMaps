@@ -27,11 +27,7 @@ public partial class DisposeMapCircleListPage : ComponentBase, IDisposable, IAsy
         _mapOptions = new MapOptions()
         {
             Zoom = 13,
-            Center = new LatLngLiteral()
-            {
-                Lat = 48.994249,
-                Lng = 12.190451
-            },
+            Center = new LatLngLiteral( 48.994249,12.190451),
             MapTypeId = MapTypeId.Roadmap
         };
     }
@@ -73,11 +69,10 @@ public partial class DisposeMapCircleListPage : ComponentBase, IDisposable, IAsy
             var circleOptions = new CircleOptions
             {
                 Map = _map1.InteropObject,
-                Center = new LatLngLiteral
-                {
-                    Lat = bounds.South + rnd.NextDouble() * (bounds.North - bounds.South),
-                    Lng = bounds.West + rnd.NextDouble() * (bounds.East - bounds.West)
-                },
+                Center = new LatLngLiteral(
+                    bounds.South + rnd.NextDouble() * (bounds.North - bounds.South),
+                    bounds.West + rnd.NextDouble() * (bounds.East - bounds.West)
+                ),
                 Radius = 2,
                 StrokeColor = color,
                 StrokeOpacity = 0.60f,

@@ -38,11 +38,7 @@
         this.mapOptions = new MapOptions
         {
             Zoom = 13,
-            Center = new LatLngLiteral
-            {
-                Lat = -33.8688,
-                Lng = 151.2195
-            },
+            Center = new LatLngLiteral(-33.8688,151.2195),
             MapTypeId = MapTypeId.Roadmap
         };
     }
@@ -67,14 +63,14 @@
             {
                 this.message = "No results available for " + place?.Name;
             }
-            else if (place.Geometry.Location != null)
+            else if (place.Geometry.Location.HasValue)
             {
-                await this.map1.InteropObject.SetCenter(place.Geometry.Location);
+                await this.map1.InteropObject.SetCenter(place.Geometry.Location.Value);
                 await this.map1.InteropObject.SetZoom(13);
 
                 var marker = await Marker.CreateAsync(this.map1.JsRuntime, new MarkerOptions
                 {
-                    Position = place.Geometry.Location,
+                    Position = place.Geometry.Location.Value,
                     Map = this.map1.InteropObject,
                     Title = place.Name
                 });

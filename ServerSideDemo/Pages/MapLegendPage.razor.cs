@@ -26,11 +26,7 @@ public partial class MapLegendPage
             {
                 Position = ControlPosition.BottomCenter
             },
-            Center = new LatLngLiteral
-            {
-                Lat = 13.505892,
-                Lng = 100.8162
-            },
+            Center = new LatLngLiteral(13.505892,100.8162),
             MapTypeId = MapTypeId.Terrain,
             MapTypeControlOptions = new MapTypeControlOptions
             {

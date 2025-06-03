@@ -26,9 +26,9 @@ public class LatLngBoundsLiteral
         West = latLng1.Lng;
         South = latLng1.Lat;
         North = latLng1.Lat;
-        if (latLng2 != null)
+        if (latLng2.HasValue)
         {
-            Extend(latLng2);
+            Extend(latLng2.Value);
         }
     }
 
@@ -127,6 +127,7 @@ public class LatLngBoundsLiteral
         return (West == East || South == North);
     }
 
+    /// <inheritdoc />
     public override string ToString()
     {
         return $"{North} {East} {South} {West}";
