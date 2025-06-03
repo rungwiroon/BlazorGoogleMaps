@@ -19,12 +19,8 @@
     {
         _mapOptions = new MapOptions()
         {
-            Zoom = 13,
-            Center = new LatLngLiteral()
-            {
-                Lat = 13.505892,
-                Lng = 100.8162
-            },
+            Zoom = 13,          
+            Center = new LatLngLiteral( 13.505892,100.8162),
             MapTypeId = MapTypeId.Roadmap
         };
     }
@@ -42,12 +38,7 @@
 
         var infoWindow = await InfoWindow.CreateAsync(_map1.JsRuntime, new InfoWindowOptions()
         {
-            Position = new LatLngLiteral()
-            {
-                Lat = 13.505892,
-                Lng = 100.8162
-            },
-            //Content = "Test"
+            Position = new LatLngLiteral( 13.505892,100.8162),
         });
 
         var infoWindowContent = $"Test {_markerCount}";

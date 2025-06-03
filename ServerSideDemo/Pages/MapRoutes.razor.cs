@@ -21,11 +21,7 @@ public partial class MapRoutes : IAsyncDisposable
         _mapOptions = new MapOptions()
         {
             Zoom = 13,
-            Center = new LatLngLiteral()
-            {
-                Lat = 40.603629,
-                Lng = -75.472518
-            },
+            Center = new LatLngLiteral(13.505892, 100.8162), 
             MapTypeId = MapTypeId.Roadmap
         };
     }

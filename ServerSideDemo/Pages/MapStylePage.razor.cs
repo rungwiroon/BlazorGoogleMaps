@@ -13,11 +13,7 @@ public partial class MapStylePage
         _mapOptions = new MapOptions()
         {
             Zoom = 13,
-            Center = new LatLngLiteral()
-            {
-                Lat = 13.505892,
-                Lng = 100.8162
-            },
+            Center = new LatLngLiteral(13.505892, 100.8162), 
             MapTypeId = MapTypeId.Roadmap,
             Styles = MapStyle()
         };

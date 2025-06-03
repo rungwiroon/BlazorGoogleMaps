@@ -33,11 +33,7 @@
             var mapOptions1 = new MapOptions()
                 {
                     Zoom = 13,
-                    Center = new LatLngLiteral()
-                    {
-                        Lat = 13.505892,
-                        Lng = 100.8162
-                    },
+                    Center = new LatLngLiteral(13.505892, 100.8162), 
                     MapTypeId = MapTypeId.Roadmap,
                     ApiLoadOptions = await KeyService.GetApiOptions()
                 };
@@ -52,11 +48,7 @@
             var mapOptions2 = new MapOptions()
                 {
                     Zoom = 18,
-                    Center = new LatLngLiteral()
-                    {
-                        Lat = 45.518,
-                        Lng = -122.672
-                    },
+                    Center = new LatLngLiteral(  45.518,  -122.672),
                     MapTypeId = MapTypeId.Satellite,
                     Heading = 90,
                     Tilt = 45,
@@ -83,7 +75,7 @@
 
     private async Task SetMapHeading()
     {
-        double val = await _map2.GetHeading() + 91.261;
+        var val = await _map2.GetHeading() + 91.261;
         await _map2.SetHeading(val);
         var heading = await _map2.GetHeading();
 
