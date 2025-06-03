@@ -37,16 +37,16 @@ internal sealed class LatLngLiteralConverter : JsonConverter<LatLngLiteral>
 
         if (!reader.Read() || reader.TokenType != JsonTokenType.Number)
         {
-            throw new JsonException("Expected latitude value");
+            throw new JsonException("Expected longitude value");
         }
-        var lon = reader.GetDouble();
+        var lng = reader.GetDouble();
 
         if (!reader.Read() || reader.TokenType != JsonTokenType.EndObject)
         {
             throw new JsonException("Expected end of object.");
         }
         
-        return new LatLngLiteral(lat, lon);
+        return new LatLngLiteral(lat, lng);
     }
 
     // <inheritdoc />
