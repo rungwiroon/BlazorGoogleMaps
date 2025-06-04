@@ -17,6 +17,7 @@ public class Rectangle : EventEntityBase, IDisposable
     /// <summary>
     /// Create a rectangle using the passed RectangleOptions, which specify the bounds and style.
     /// </summary>
+    /// <param name="jsRuntime"></param>
     /// <param name="opts"></param>
     public static async Task<Rectangle> CreateAsync(IJSRuntime jsRuntime, RectangleOptions? opts = null)
     {
@@ -30,6 +31,7 @@ public class Rectangle : EventEntityBase, IDisposable
     /// <summary>
     /// Create a rectangle using the passed RectangleOptions, which specify the bounds and style.
     /// </summary>
+    /// <param name="jsObjectRef"></param>
     /// <param name="opts"></param>
     internal Rectangle(JsObjectRef jsObjectRef, RectangleOptions? opts = null) : base(jsObjectRef)
     {
