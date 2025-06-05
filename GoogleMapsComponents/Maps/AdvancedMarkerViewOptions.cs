@@ -11,6 +11,7 @@ public class AdvancedMarkerElementOptions : IListableEntityOptionsBase
     /// Sets the AdvancedMarkerElement's position. An AdvancedMarkerElement may be constructed without a position, but will not be displayed until its position is provided - for example, by a user's actions or choices. An AdvancedMarkerElement's position can be provided by setting AdvancedMarkerElement.position if not provided at the construction.
     /// Note: AdvancedMarkerElement with altitude is only supported on vector maps.
     /// </summary>
+    [JsonConverter(typeof(LatLngLiteralConverter))]
     public LatLngLiteral? Position { get; set; }
 
     [JsonConverter(typeof(JsObjectRefConverter<Map>))]

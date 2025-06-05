@@ -20,7 +20,7 @@ public partial class MapGroundOverlayPage
         _mapOptions = new MapOptions()
         {
             Zoom = 13,
-            Center = new LatLngLiteral(40.719051,-74.166269),
+            Center = new LatLngLiteral(-74.166269, 40.719051),
             MapTypeId = MapTypeId.Roadmap
         };
     }

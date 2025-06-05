@@ -33,18 +33,18 @@
 
     private MapOptions _mapOptions = null!;
 
-    private List<LatLngLiteral> _path = new List<LatLngLiteral>();
+    private List<LatLngLiteral> _path = new();
 
-    private readonly List<Polyline> _polylines = new List<Polyline>();
+    private readonly List<Polyline> _polylines = new();
     private Polyline? _polyline;
 
-    private readonly List<Polygon> _polygons = new List<Polygon>();
+    private readonly List<Polygon> _polygons = new();
     private Polygon? _polygon;
 
     private Rectangle? _rectangle;
     private Circle? _circle;
 
-    private List<string> _events = new List<string>();
+    private List<string> _events = new();
 
     protected override void OnInitialized()
     {
@@ -73,7 +73,7 @@
                 Editable = true,
                 Map = _map1.InteropObject,
                     Icons = new IconSequence[] {
-                        new IconSequence
+                        new()
                         {
                             Icon = new Symbol { 
                                 Path = SymbolPath.BACKWARD_CLOSED_ARROW,
@@ -81,7 +81,7 @@
                                 StrokeColor = "green" },
                             Offset = "0%"
                         },
-                        new IconSequence
+                        new()
                         {
                             Icon = new Symbol
                             {
@@ -142,11 +142,11 @@
             polyline.SetOptions(new PolylineOptions
                 {
                     Icons = new IconSequence[] {
-                    new IconSequence { Icon=new Symbol { Path=SymbolPath.FORWARD_CLOSED_ARROW }, Offset="100%" },
-                    new IconSequence { Icon=new Symbol { Path=SymbolPath.FORWARD_OPEN_ARROW }, Offset="80%" },
-                    new IconSequence { Icon=new Symbol { Path=SymbolPath.FORWARD_OPEN_ARROW }, Offset="60%" },
-                    new IconSequence { Icon=new Symbol { Path=SymbolPath.FORWARD_OPEN_ARROW }, Offset="40%" },
-                    new IconSequence { Icon=new Symbol { Path=SymbolPath.FORWARD_OPEN_ARROW }, Offset="20%" },
+                    new() { Icon=new Symbol { Path=SymbolPath.FORWARD_CLOSED_ARROW }, Offset="100%" },
+                    new() { Icon=new Symbol { Path=SymbolPath.FORWARD_OPEN_ARROW }, Offset="80%" },
+                    new() { Icon=new Symbol { Path=SymbolPath.FORWARD_OPEN_ARROW }, Offset="60%" },
+                    new() { Icon=new Symbol { Path=SymbolPath.FORWARD_OPEN_ARROW }, Offset="40%" },
+                    new() { Icon=new Symbol { Path=SymbolPath.FORWARD_OPEN_ARROW }, Offset="20%" },
                 }
                 });
         }
@@ -271,9 +271,9 @@
 
         var pathLocal = new List<LatLngLiteral>()
 {
-            new LatLngLiteral(100.79645894165039,13.524851660334175 ),
-            new LatLngLiteral( 100.88469288940429,13.501818214607113 ),
-            new LatLngLiteral( 100.87301991577148,13.533864141748618 ),
+            new(13.524851660334175, 100.79645894165039),
+            new( 13.501818214607113, 100.88469288940429),
+            new( 13.533864141748618, 100.87301991577148),
         };
 
         _polygons.Add(polygonForPath);
@@ -291,16 +291,16 @@
     {
         var outerCoords = new List<LatLngLiteral>()
         {
-            new LatLngLiteral(13.501908279929077, 100.69801114196777),
-            new LatLngLiteral(13.491392275719202, 100.74933789367675),
-            new LatLngLiteral(13.465851481053091, 100.71637890930175),
+            new(13.501908279929077, 100.69801114196777),
+            new(13.491392275719202, 100.74933789367675),
+            new(13.465851481053091, 100.71637890930175),
         };
 
         var innerCoords = new List<LatLngLiteral>()
         {
-            new LatLngLiteral(13.487386057049033, 100.72633526916503),
-            new LatLngLiteral(13.48137660307361, 100.719125491333),
-            new LatLngLiteral(13.478705686132331, 100.72959683532714),
+            new(13.487386057049033,100.72633526916503),
+            new(13.48137660307361, 100.719125491333),
+            new(13.478705686132331, 100.72959683532714),
         };
 
         var polygonForPaths = await Polygon.CreateAsync(_map1.JsRuntime, new PolygonOptions()

@@ -39,9 +39,9 @@
 
         var zoom = await map1.InteropObject.GetZoom();
 
-        var topRight = await projection.FromLatLngToPoint(new LatLngLiteral(bounds.East, bounds.North));
+        var topRight = await projection.FromLatLngToPoint(new LatLngLiteral(bounds.North, bounds.East));
 
-        var bottomLeft = await projection.FromLatLngToPoint(new LatLngLiteral(bounds.West, bounds.South));
+        var bottomLeft = await projection.FromLatLngToPoint(new LatLngLiteral(bounds.South, bounds.West));
 
         var scale = Math.Pow(2, zoom);
 
@@ -61,9 +61,9 @@
 
         var zoom = await map1.InteropObject.GetZoom();
 
-        var topRight = await projection.FromLatLngToPoint(new LatLngLiteral(bounds.East, bounds.North));
+        var topRight = await projection.FromLatLngToPoint(new LatLngLiteral(bounds.North, bounds.East));
 
-        var bottomLeft = await projection.FromLatLngToPoint(new LatLngLiteral(bounds.West, bounds.South));
+        var bottomLeft = await projection.FromLatLngToPoint(new LatLngLiteral(bounds.South, bounds.West));
 
         var scale = Math.Pow(2, zoom);
 
