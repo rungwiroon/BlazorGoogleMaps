@@ -23,7 +23,7 @@ public partial class DrawingManagerPage
         _mapOptions = new MapOptions()
         {
             Zoom = 16,
-            Center = new LatLngLiteral( -31.74230723298461,-60.494505564961386),
+            Center = new LatLngLiteral(-31.74230723298461, -60.494505564961386),
             MapTypeId = MapTypeId.Roadmap,
             ZoomControl = true,
             DisableDefaultUI = true

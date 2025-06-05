@@ -29,15 +29,23 @@ public readonly struct LatLngLiteral : IEquatable<LatLngLiteral>
     /// This reflects the fact that longitudes wrap around the globe.
     /// </summary>
     [FieldOffset(sizeof(double))]
-    public readonly double Lng; 
-    
+    public readonly double Lng;
+
     /// <summary>
     /// Default constructor
     /// </summary>
     /// <param name="lat">Latitude value</param>
     /// <param name="lng">Longitude value</param>
+    /// <exception cref="ArgumentException">Invoked if <paramref name="lat"/> is lower than -90 or higher than 90,
+    /// or if <paramref name="lng"/> is lower than -180 or higher than 180.</exception>
     public LatLngLiteral(double lat, double lng)
     {
+        if (lat is < -90 or > 90)
+            throw new ArgumentException("Latitude values can only range from -90 to 90!", nameof(lat));
+
+        if (lng is < -180 or > 180)
+            throw new ArgumentException("Longitude values can only range from -180 to 180!", nameof(lng));
+        
         Lat = lat;
         Lng = lng;
     }

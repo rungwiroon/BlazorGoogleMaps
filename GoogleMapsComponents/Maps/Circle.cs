@@ -102,11 +102,17 @@ public class Circle : ListableEntityBase<CircleOptions>
     /// If set to true, the user can edit this circle by dragging the control points shown at the center and around the circumference of the circle.
     /// </summary>
     /// <param name="editable"></param>
+    /// <returns>Javascript call <see cref="Task"/> to complete</returns>
     public Task SetEditable(bool editable)
     {
         return _jsObjectRef.InvokeAsync("setEditable", editable);
     }
 
+    /// <summary>
+    /// Set the options for this circle. This will replace all existing options.
+    /// </summary>
+    /// <param name="options">Options to set</param>
+    /// <returns>Javascript call <see cref="Task"/> to complete</returns>
     public Task SetOptions(CircleOptions options)
     {
         return _jsObjectRef.InvokeAsync("setOptions", options);

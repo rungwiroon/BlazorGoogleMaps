@@ -19,13 +19,13 @@ internal static class Helper
     {
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        Converters =
+        {
+            new OneOfConverterFactory(),
+            new JsonStringEnumConverter(JsonNamingPolicy.CamelCase),
+            new LatLngLiteralConverter(),
+        }
     };
-
-    static Helper()
-    {
-        Options.Converters.Add(new OneOfConverterFactory());
-        Options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
-    }
 
     internal static Task MyInvokeAsync(
         this IJSRuntime jsRuntime,

@@ -37,12 +37,12 @@ public partial class GMap
         if (meMarker != null)
         {
             MeMarkerOptions.Label = Label;
-            MeMarkerOptions.Position = new LatLngLiteral(Long, Lat);
+            MeMarkerOptions.Position = new LatLngLiteral(Lat, Long);
             await meMarker.SetMap(InteropObject);
         }
         else
         {
-            MeMarkerOptions = new MarkerOptions { Map = InteropObject, Label = Label, Draggable = Draggable, Position = new LatLngLiteral(Long, Lat) };
+            MeMarkerOptions = new MarkerOptions { Map = InteropObject, Label = Label, Draggable = Draggable, Position = new LatLngLiteral(Lat, Long) };
             meMarker = await AddMarker(MeMarkerOptions);
         }
         if (Draggable)
@@ -76,7 +76,7 @@ public partial class GMap
 
     public GMap()
     {
-        Options = new MapOptions() { Zoom = 10, Center = new LatLngLiteral(-105D, 54D), MapTypeId = MapTypeId.Roadmap };
+        Options = new MapOptions() { Zoom = 10, Center = new LatLngLiteral(54D, -105D), MapTypeId = MapTypeId.Roadmap };
     }
 
     protected async Task<Marker> AddMarker(MarkerOptions TheMarkerOptions)
@@ -143,6 +143,6 @@ public partial class GMap
     /// <returns>A Task to wait on.</returns>
     public async Task CenterMap(double Lat, double Long)
     {
-        await CenterMap(new LatLngLiteral(Long, Lat));
+        await CenterMap(new LatLngLiteral(Lat, Long));
     }
 }

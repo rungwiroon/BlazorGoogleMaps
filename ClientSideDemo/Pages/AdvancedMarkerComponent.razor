@@ -36,7 +36,7 @@
 @code {
     private List<MarkerData> Markers =
     [
-        new MarkerData { Id = 1, Lat = 13.505892, Lng = 100.8162 },
+        new MarkerData { Id = 1, Lng = 100.8162, Lat = 13.505892 },
         new MarkerData { Id = 2, Lng = 150.363181, Lat = -33.718234 },
         new MarkerData { Id = 3, Lng = 150.371124, Lat = -33.727111 },
         new MarkerData { Id = 4, Lng = 151.209834, Lat = -33.848588 },
@@ -53,7 +53,7 @@
     private readonly MapOptions _mapOptions = new MapOptions()
     {
         Zoom = 13,
-        Center = new LatLngLiteral(13.505892d, 100.8162d),
+            Center = new LatLngLiteral(13.505892d, 100.8162d),
         IsFractionalZoomEnabled = false,
         HeadingInteractionEnabled = true,
         CameraControl = true,

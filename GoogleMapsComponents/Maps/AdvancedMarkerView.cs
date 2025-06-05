@@ -10,7 +10,9 @@ namespace GoogleMapsComponents.Maps;
 /// </summary>
 public class AdvancedMarkerElement : ListableEntityBase<AdvancedMarkerElementOptions>, IMarker
 {
-    // https://developers.google.com/maps/documentation/javascript/reference/3.55/advanced-markers
+    /// <summary>
+    /// https://developers.google.com/maps/documentation/javascript/reference/3.55/advanced-markers
+    /// </summary>
     public const string GoogleMapAdvancedMarkerName = "google.maps.marker.AdvancedMarkerElement";
 
     public static async Task<AdvancedMarkerElement> CreateAsync(IJSRuntime jsRuntime, AdvancedMarkerElementOptions? opts = null)
