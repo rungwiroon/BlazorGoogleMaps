@@ -1,6 +1,5 @@
 ﻿using GoogleMapsComponents.Serialization;
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.Json.Serialization;
