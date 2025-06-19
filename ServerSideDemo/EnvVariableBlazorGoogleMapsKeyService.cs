@@ -13,7 +13,7 @@ public class EnvVariableBlazorGoogleMapsKeyService : IBlazorGoogleMapsKeyService
         var key = Environment.GetEnvironmentVariable("GOOGLE_MAPS_API_KEY");
         if (string.IsNullOrEmpty(key))
         {
-            key = "AIzaSyBdkgvniMdyFPAcTlcZivr8f30iU-kn1T0";
+            key = "AIzaSyCmIwKIsEjIxZ6EUecb2paIIah8defiDig";
         }
 
         IsApiInitialized = true;

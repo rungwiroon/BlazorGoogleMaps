@@ -1,0 +1,228 @@
+﻿@page "/AdvancedPolygonComponent"
+@using GoogleMapsComponents
+@using GoogleMapsComponents.Maps
+@using GoogleMapsComponents.Maps.Coordinates
+<AdvancedGoogleMap @ref="@_map1" Id="map1" Options="@_mapOptions" OnAfterInit="FitToBounds">
+    @foreach (var item in Polygons)
+    {
+        <PolygonComponent Clickable="item.Clickable"
+        Editable="item.Editable"
+        FillColor="@item.FillColor"
+        StrokeColor="@item.StrokeColour"
+        Visible="item.Visible"
+        OnClick="() => {}"
+        OnPathChanged="(paths) => { item.OnPathChange?.Invoke(this, paths); }"
+        Paths="item.Paths"
+        Id="item.Id" />
+    }
+</AdvancedGoogleMap>
+<button @onclick="@AddPolygon">Add Polygon</button>
+
+@foreach (var item in Polygons)
+{
+    <div style="display: flex; gap: 8px;">
+        <p style="@(item.Visible ? "" : "text-decoration: line-through")">@item.Id</p>
+        <button @onclick="@(() => item.Visible = !item.Visible)">Toggle visible</button>
+        <button @onclick="@(() => item.Editable = !item.Editable)">Toggle editable</button>
+    </div>
+}
+
+<MapEventList @ref="@_eventList" Events="@log"></MapEventList>
+
+@code {
+
+
+    List<LatLngLiteral> extra = new List<LatLngLiteral>
+    {
+        new LatLngLiteral(-36.522319001, 146.682227927),
+        new LatLngLiteral(-36.521092437, 146.684501715),
+        new LatLngLiteral(-36.521432522, 146.684782651),
+        new LatLngLiteral(-36.521863399, 146.684013263),
+        new LatLngLiteral(-36.521949848, 146.68387213),
+        new LatLngLiteral(-36.522068151, 146.683943972),
+        new LatLngLiteral(-36.5227, 146.682719882),
+        new LatLngLiteral(-36.522646155, 146.682514628)
+    };
+
+    public class PolygonData
+    {
+
+        public List<List<LatLngLiteral>> Paths { get; set; } = [];
+
+        public EventHandler<List<List<LatLngLiteral>>>? OnPathChange;
+
+        public bool Clickable { get; set; }
+
+        public bool Editable { get; set; }
+
+        public string StrokeColour { get; set; } = "#000";
+
+        public string FillColor { get; set; } = "#CCC";
+
+        public int StrokeWeight { get; set; } = 2;
+
+        public float StrokeOpacity { get; set; } = 0.8F;
+
+        public float FillOpacity { get; set; } = 0.5F;
+
+        public bool Visible { get; set; } = true;
+
+        public Guid Id { get; set; } = Guid.NewGuid();
+
+    }
+
+    private void PathUpdate(PolygonData item, List<List<LatLngLiteral>> paths)
+    {
+        item.Paths = paths;
+
+        log.Add($"Polygon {item.Id} contains {paths.SelectMany(e => e).Select(e => e).Count()} points");
+
+        StateHasChanged();
+    }
+
+    List<PolygonData> Polygons = new List<PolygonData>() {
+        new PolygonData() {
+            Paths = new List<List<LatLngLiteral>>() {
+                new List<LatLngLiteral>() {
+                    new LatLngLiteral(-36.519305379, 146.679765763),
+                    new LatLngLiteral(-36.518316122, 146.681740629),
+                    new LatLngLiteral(-36.518897173, 146.682194649),
+                    new LatLngLiteral(-36.519080683, 146.681816695),
+                    new LatLngLiteral(-36.519441114, 146.682005743),
+                    new LatLngLiteral(-36.520231042, 146.680455894)
+                }
+            }
+        },
+        new PolygonData() {
+            Paths = new List<List<LatLngLiteral>>() {
+                 new List<LatLngLiteral>() {
+                    new LatLngLiteral(-36.520312533, 146.68055002),
+                    new LatLngLiteral(-36.519525058, 146.682088785),
+                    new LatLngLiteral(-36.519946216, 146.682757773),
+                    new LatLngLiteral(-36.519961954, 146.682988631),
+                    new LatLngLiteral(-36.520244914, 146.683508915),
+                    new LatLngLiteral(-36.520316911, 146.683826422),
+                    new LatLngLiteral(-36.521544469, 146.681474067)
+                }
+            }
+        },
+
+        new PolygonData() {
+            Paths = new List<List<LatLngLiteral>>() {
+                new List<LatLngLiteral>() {
+                    new LatLngLiteral(-36.520312533, 146.68055002),
+                    new LatLngLiteral(-36.519525058, 146.682088785),
+                    new LatLngLiteral(-36.519946216, 146.682757773),
+                    new LatLngLiteral(-36.519961954, 146.682988631),
+                    new LatLngLiteral(-36.520244914, 146.683508915),
+                    new LatLngLiteral(-36.520316911, 146.683826422),
+                    new LatLngLiteral(-36.521544469, 146.681474067)
+                }
+            }
+        },
+        new PolygonData() {
+            Paths = new List<List<LatLngLiteral>>() {
+                new List<LatLngLiteral>() {
+                    new LatLngLiteral(-36.520393807, 146.683756764),
+                    new LatLngLiteral(-36.520744595, 146.684049438),
+                    new LatLngLiteral(-36.521921708, 146.681791396),
+                    new LatLngLiteral(-36.521556801, 146.681504794)
+                }
+            }
+        },
+        new PolygonData() {
+            Paths = new List<List<LatLngLiteral>>() {
+                new List<LatLngLiteral>() {
+                    new LatLngLiteral(-36.521931651, 146.682215453),
+                    new LatLngLiteral(-36.520827776, 146.68428848),
+                    new LatLngLiteral(-36.521082334, 146.684515318),
+                    new LatLngLiteral(-36.522251804, 146.68235212)
+                }
+            }
+        },
+    };
+
+    private MapEventList _eventList;
+    private AdvancedGoogleMap _map1 = null!;
+    private readonly MapOptions _mapOptions = new MapOptions()
+        {
+            Zoom = 6,
+            Center = new LatLngLiteral(-36.521931651, 146.682215453),
+            IsFractionalZoomEnabled = false,
+            HeadingInteractionEnabled = true,
+            CameraControl = true,
+            MapTypeId = MapTypeId.Roadmap,
+            // ColorScheme = ColorScheme.Dark,
+            MapId = "e5asd595q2121",
+            Recycle = true,
+            CacheKey = "coolmap"
+        };
+
+    bool added;
+
+    List<string> log = [];
+
+    private void AddPolygon()
+    {
+        if (added)
+            return;
+
+        Polygons.Add(new PolygonData()
+            {
+                Paths = new List<List<LatLngLiteral>>()
+                {
+                    extra
+                },
+            });
+
+        added = true;
+
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if(firstRender) {
+            foreach (var item in Polygons)
+            {
+                item.OnPathChange = (sender, paths) =>
+                {
+
+                    PathUpdate(item, paths);
+                };
+            }
+        }
+
+        base.OnAfterRender(firstRender);
+    }
+
+    private async Task Init() {
+
+        await FitToBounds();
+    }
+
+    private async Task FitToBounds()
+    {
+        await FitToManyPoints(Polygons.SelectMany(e => e.Paths).SelectMany(point => point));
+    }
+
+    private async Task FitToManyPoints(IEnumerable<LatLngLiteral> polgonsPoints)
+    {
+        if (_map1 == null)
+            return;
+
+        if (_map1.InteropObject == null)
+            return;
+
+        if (!polgonsPoints.Any())
+            return;
+
+        LatLngBoundsLiteral? boundsLiteral = new LatLngBoundsLiteral(polgonsPoints.First());
+        foreach (var item in polgonsPoints.Skip(1))
+        {
+            LatLngBoundsLiteral.CreateOrExtend(ref boundsLiteral, item);
+        }
+
+
+        await _map1.InteropObject.FitBounds(boundsLiteral, OneOf.OneOf<int, Padding>.FromT0(1));
+    }
+}
