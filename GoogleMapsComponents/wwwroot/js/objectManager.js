@@ -28,6 +28,7 @@
 
     let mapObjects = {};
     let controlParents = {};
+    let polygonClickListeners = new Map();
     const dateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
 
 
@@ -550,13 +551,12 @@
                         }
                     }
                 }
-
                 for (const keyToRemove of keysToRemove) {
                     const elementToRemove = mapObjects[keyToRemove];
                     // When we dispose advanced markers and we use recycled maps, make sure to set remove them from the map.
                     if (google.maps.marker && elementToRemove instanceof google.maps.marker.AdvancedMarkerElement && "recycleKey" in mapObjects[mapGuid])
                         elementToRemove.map = null;
-                    //the same goes for polygons, we need to remove them from the map
+                    //the same for polygons, we need to remove them from the map
                     if (google.maps.Polygon && elementToRemove instanceof google.maps.Polygon && "recycleKey" in mapObjects[mapGuid])
                         elementToRemove.setMap(null);
 
@@ -1063,13 +1063,18 @@
                 };
 
                 const setupClickListener = (polygon, clickable) => {
+                    // Remove existing listener if present
+                    if (polygonClickListeners.has(polygon)) {
+                        google.maps.event.removeListener(polygonClickListeners.get(polygon));
+                        polygonClickListeners.delete(polygon);
+                    }
+
+                    // Add listener if polygon is clickable
                     if (clickable) {
-                        polygon.clickListener = polygon.addListener("click", () => {
+                        const listener = polygon.addListener("click", () => {
                             invokeCallback('OnPolygonClicked', id);
                         });
-                    } else if (polygon.clickListener) {
-                        google.maps.event.removeListener(polygon.clickListener);
-                        delete polygon.clickListener;
+                        polygonClickListeners.set(polygon, listener);
                     }
                 };
 

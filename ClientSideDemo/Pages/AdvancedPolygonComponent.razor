@@ -6,15 +6,15 @@
     @foreach (var item in Polygons)
     {
         <PolygonComponent @key="@item"
-                          Clickable="item.Clickable"
-                          Editable="item.Editable"
-                          FillColor="@item.FillColor"
-                          StrokeColor="@item.StrokeColour"
-                          Visible="item.Visible"
-                          Draggable="item.Draggable"
-                          OnClick="() => {}"
-                          OnPathChanged="(paths) => { item.OnPathChange?.Invoke(this, paths); }"
-                          Paths="item.Paths" />
+        Clickable="item.Clickable"
+        Editable="item.Editable"
+        FillColor="@item.FillColor"
+        StrokeColor="@item.StrokeColour"
+        Visible="item.Visible"
+        Draggable="item.Draggable"
+        OnClick="@(() => { item.Click?.Invoke(this, "Click!" ); })"
+        OnPathChanged="(paths) => { item.OnPathChange?.Invoke(this, paths); }"
+        Paths="item.Paths" />
     }
 </AdvancedGoogleMap>
 <button @onclick="@AddPolygon">Add Polygon</button>
@@ -26,6 +26,7 @@
         <button @onclick="@(() => item.Visible = !item.Visible)">Toggle visible</button>
         <button @onclick="@(() => item.Editable = !item.Editable)">Toggle editable</button>
         <button @onclick="@(() => item.Draggable= !item.Draggable)">Toggle draggable</button>
+        <button @onclick="@(() => item.Clickable= !item.Clickable)">Toggle Clickable</button>
         <button @onclick="@(() => Polygons.Remove(item))">Remove</button>
     </div>
 }
@@ -145,6 +146,10 @@
         {
             foreach (var item in Polygons)
             {
+                item.Click = (sender, data) =>
+                {
+                    log.Add(data);
+                };
                 item.OnPathChange = (sender, paths) =>
                 {
 
@@ -196,6 +201,8 @@
         public List<List<LatLngLiteral>> Paths { get; set; } = [];
 
         public EventHandler<List<List<LatLngLiteral>>>? OnPathChange;
+
+        public EventHandler<string>? Click;
 
         public bool Clickable { get; set; }
 
