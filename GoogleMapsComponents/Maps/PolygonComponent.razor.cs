@@ -8,14 +8,13 @@ using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps;
 
-public partial class PolygonComponent : IAsyncDisposable, IPoly
+public partial class PolygonComponent :  IAsyncDisposable, IPoly
 {
     public PolygonComponent()
     {
         _guid = Guid.NewGuid();
-        _componentId = "polygon_" + _guid.ToString("N");
     }
-    private readonly string _componentId;
+
     private bool _hasRendered = false;
     internal bool IsDisposed = false;
     private Guid _guid;
@@ -52,6 +51,9 @@ public partial class PolygonComponent : IAsyncDisposable, IPoly
 
     [Parameter, JsonIgnore]
     public bool Editable { get; set; } = false;
+
+    [Parameter, JsonIgnore]
+    public bool Draggable { get; set; } = false;
 
     [Parameter, JsonIgnore]
     public bool Clickable { get; set; } = false;
@@ -127,6 +129,7 @@ public partial class PolygonComponent : IAsyncDisposable, IPoly
                 FillOpacity = (float)FillOpacity,
                 Clickable = Clickable,
                 Editable = Editable,
+                Draggable = Draggable,
                 Visible = Visible,
                 MapId = MapId ?? MapRef.MapId,
             },
@@ -150,6 +153,7 @@ public partial class PolygonComponent : IAsyncDisposable, IPoly
             parameters.DidParameterChange(FillOpacity) ||
             parameters.DidParameterChange(Clickable) ||
             parameters.DidParameterChange(Editable) ||
+            parameters.DidParameterChange(Draggable) ||
             parameters.DidParameterChange(Visible);
 
         await base.SetParametersAsync(parameters);
@@ -160,12 +164,12 @@ public partial class PolygonComponent : IAsyncDisposable, IPoly
         }
     }
 
-
     public async ValueTask DisposeAsync()
     {
         if (IsDisposed) return;
         IsDisposed = true;
-        await Js.InvokeVoidAsync("blazorGoogleMaps.objectManager.disposeAdvancedMarkerComponent", Guid);
+        Console.WriteLine(Guid);
+        await Js.InvokeVoidAsync("blazorGoogleMaps.objectManager.disposePolygonComponent", Guid);
         MapRef.RemovePolygon(this);
         GC.SuppressFinalize(this);
     }
@@ -180,6 +184,7 @@ public partial class PolygonComponent : IAsyncDisposable, IPoly
         public double? FillOpacity { get; init; }
         public bool? Clickable { get; init; }
         public bool? Editable { get; init; }
+        public bool? Draggable { get; init;  }
         public bool? Visible { get; init; }
         public Guid? MapId { get; init; }
     }

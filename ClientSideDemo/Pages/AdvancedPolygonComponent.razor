@@ -117,8 +117,8 @@
     private void AddPolygon()
     {
         var newPoly = new PolygonData()
-            {
-                Paths = new List<List<LatLngLiteral>>()
+        {
+            Paths = new List<List<LatLngLiteral>>()
             {
                 new List<LatLngLiteral>
                 {
@@ -132,7 +132,7 @@
                     new LatLngLiteral(-36.522646155, 146.682514628)
                 }
             },
-            };
+        };
 
         newPoly.OnPathChange = (sender, paths) => { PathUpdate(newPoly, paths); };
         Polygons.Add(newPoly);

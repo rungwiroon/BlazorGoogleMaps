@@ -550,11 +550,16 @@
                         }
                     }
                 }
+
                 for (const keyToRemove of keysToRemove) {
                     const elementToRemove = mapObjects[keyToRemove];
                     // When we dispose advanced markers and we use recycled maps, make sure to set remove them from the map.
                     if (google.maps.marker && elementToRemove instanceof google.maps.marker.AdvancedMarkerElement && "recycleKey" in mapObjects[mapGuid])
                         elementToRemove.map = null;
+                    //the same goes for polygons, we need to remove them from the map
+                    if (google.maps.Polygon && elementToRemove instanceof google.maps.Polygon && "recycleKey" in mapObjects[mapGuid])
+                        elementToRemove.setMap(null);
+
                     delete mapObjects[keyToRemove];
                 }
 
@@ -1048,6 +1053,7 @@
                     clickable,
                     editable,
                     visible,
+                    draggable,
                     mapId
                 } = options;
 
@@ -1129,6 +1135,7 @@
                         fillOpacity,
                         clickable,
                         editable,
+                        draggable,
                         visible
                     });
 
@@ -1146,6 +1153,7 @@
                     fillOpacity,
                     clickable,
                     editable,
+                    draggable,
                     visible,
                     map
                 });
