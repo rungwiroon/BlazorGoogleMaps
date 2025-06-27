@@ -559,6 +559,10 @@
                     //the same for polygons, we need to remove them from the map
                     if (google.maps.Polygon && elementToRemove instanceof google.maps.Polygon && "recycleKey" in mapObjects[mapGuid])
                         elementToRemove.setMap(null);
+                    //the same for heatmap layers, we need to remove them from the map
+                    if (google.maps.visualization && elementToRemove instanceof google.maps.visualization.HeatmapLayer && "recycleKey" in mapObjects[mapGuid]) {
+                        elementToRemove.setMap(null);
+                    }
 
                     delete mapObjects[keyToRemove];
                 }
@@ -1190,7 +1194,55 @@
 
                 polygon.setMap(null);
                 this.disposeObject(id);
+            },
+
+            addHeatmap: function (id, mapId, options, callbackRef) {
+                const map = mapObjects[mapId];
+                if (!map) return;
+
+                const heatmap = new google.maps.visualization.HeatmapLayer({
+                    data: (options.data || []).map(p => ({
+                        location: new google.maps.LatLng(p.location.lat, p.location.lng),
+                        weight: p.weight
+                    })),
+                    radius: options.radius,
+                    opacity: options.opacity,
+                    dissipating: options.dissipating,
+                    gradient: options.gradient || null,
+                    map: map
+                });
+
+                heatmap.guidString = id;
+
+                addMapObject(id, heatmap);
+            },
+
+            updateHeatmap: function (id, options, callbackRef) {
+                const heatmap = mapObjects[id];
+                if (!heatmap) return;
+
+                const data = (options.data || []).map(p => ({
+                    location: new google.maps.LatLng(p.location.lat, p.location.lng),
+                    weight: p.weight
+                }));
+
+                heatmap.set('data', data);
+                heatmap.set('radius', options.radius);
+                heatmap.set('opacity', options.opacity);
+                heatmap.set('dissipating', options.dissipating);
+                heatmap.set('gradient', options.gradient || null);
+            },
+
+            removeHeatmap: function (id) {
+                const heatmap = mapObjects[id];
+                if (!heatmap) return;
+
+                heatmap.setMap(null);
+                disposeObject(id);
             }
         }
+        
     };
+
+
 }();
