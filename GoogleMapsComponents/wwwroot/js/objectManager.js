@@ -1208,6 +1208,7 @@
                     radius: options.radius,
                     opacity: options.opacity,
                     dissipating: options.dissipating,
+                    maxIntensity: options.maxIntensity,
                     gradient: options.gradient || null,
                     map: map
                 });
@@ -1226,11 +1227,14 @@
                     weight: p.weight
                 }));
 
-                heatmap.set('data', data);
-                heatmap.set('radius', options.radius);
-                heatmap.set('opacity', options.opacity);
-                heatmap.set('dissipating', options.dissipating);
-                heatmap.set('gradient', options.gradient || null);
+                heatmap.setOptions({
+                    data: data,
+                    radius: options.radius,
+                    opacity: options.opacity,
+                    dissipating: options.dissipating,
+                    maxIntensity: options.maxIntensity,
+                    gradient: options.gradient || null
+                });
             },
 
             removeHeatmap: function (id) {

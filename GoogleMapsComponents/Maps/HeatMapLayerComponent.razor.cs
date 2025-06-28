@@ -21,6 +21,11 @@ namespace GoogleMapsComponents.Maps
         [Parameter] public double Opacity { get; set; } = 0.6;
         [Parameter] public bool Dissipating { get; set; } = true;
 
+        [Parameter] public double MaxIntensity { get; set; } = 1.0;
+
+        [Parameter]
+        public RenderFragment? ChildContent { get; set; }
+
         /// <summary>
         /// A gradient array for the heatmap colors, expressed as CSS color strings.
         /// </summary>
@@ -41,7 +46,7 @@ namespace GoogleMapsComponents.Maps
         {
             if (firstRender)
             {
-                await Js.InvokeVoidAsync("blazorGoogleMaps.heatmapManager.addHeatmap",
+                await Js.InvokeVoidAsync("blazorGoogleMaps.objectManager.addHeatmap",
                     _guid, MapRef.MapId, GetOptions(), MapRef.CallbackRef);
                 _hasRendered = true;
             }
@@ -51,7 +56,7 @@ namespace GoogleMapsComponents.Maps
         public async Task Refresh()
         {
             if (!_hasRendered) return;
-            await Js.InvokeVoidAsync("blazorGoogleMaps.heatmapManager.updateHeatmap",
+            await Js.InvokeVoidAsync("blazorGoogleMaps.objectManager.updateHeatmap",
                 _guid, GetOptions(), MapRef.CallbackRef);
         }
 
@@ -61,12 +66,13 @@ namespace GoogleMapsComponents.Maps
             Radius,
             Opacity,
             Dissipating,
+            MaxIntensity,
             Gradient
         };
 
         public async ValueTask DisposeAsync()
         {
-            await Js.InvokeVoidAsync("blazorGoogleMaps.heatmapManager.removeHeatmap", _guid);
+            await Js.InvokeVoidAsync("blazorGoogleMaps.objectManager.removeHeatmap", _guid);
         }
     }
 

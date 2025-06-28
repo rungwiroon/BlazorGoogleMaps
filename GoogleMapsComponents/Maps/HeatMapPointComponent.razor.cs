@@ -1,15 +1,13 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps
 {
     public partial class HeatmapPointComponent : ComponentBase, IAsyncDisposable
     {
-        [CascadingParameter] private HeatMapLayerComponent Heatmap { get; set; } = default!;
+        [CascadingParameter(Name = "Heatmap")] 
+        public HeatMapLayerComponent Heatmap { get; set; } = default!;
 
         [Parameter] public LatLngLiteral Location { get; set; }
         [Parameter] public double Weight { get; set; } = 1;
