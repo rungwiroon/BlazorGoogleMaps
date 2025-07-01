@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps;
 
-public partial class MarkerComponent : IAsyncDisposable, IMarker
+public partial class MarkerComponent : IAsyncDisposable, IMapComponent, IMarker
 {
     public MarkerComponent()
     {
@@ -21,6 +21,7 @@ public partial class MarkerComponent : IAsyncDisposable, IMarker
     private Guid _guid;
 
     public Guid Guid => Id ?? _guid;
+    public MapComponentType ComponentType => MapComponentType.Marker;
 
     [Inject]
     private IJSRuntime Js { get; set; } = default!;
@@ -123,7 +124,7 @@ public partial class MarkerComponent : IAsyncDisposable, IMarker
     {
         if (firstRender)
         {
-            MapRef.AddMarker(this);
+            MapRef.RegisterComponent(this);
             _hasRendered = true;
             await UpdateOptions();
         }
@@ -179,12 +180,17 @@ public partial class MarkerComponent : IAsyncDisposable, IMarker
         }
     }
 
+    public void SetDisposed()
+    {
+        IsDisposed = true;
+    }
+    
     public async ValueTask DisposeAsync()
     {
         if (IsDisposed) return;
         IsDisposed = true;
         await Js.InvokeVoidAsync("blazorGoogleMaps.objectManager.disposeAdvancedMarkerComponent", Guid);
-        MapRef.RemoveMarker(this);
+        MapRef.UnregisterComponent(this);
         GC.SuppressFinalize(this);
     }
 
