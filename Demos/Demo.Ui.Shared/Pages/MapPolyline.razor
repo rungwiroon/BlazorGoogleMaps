@@ -1,0 +1,351 @@
+﻿@page "/mapPolyline"
+@using GoogleMapsComponents
+@using GoogleMapsComponents.Maps
+@using Microsoft.JSInterop
+@inject IJSRuntime JsRuntime
+
+@implements IAsyncDisposable
+
+<h1>Polylines</h1>
+
+<GoogleMap @ref="@_map1" Id="map1" Options="@_mapOptions" OnAfterInit="async () => await OnAfterMapInit()"></GoogleMap>
+<button @onclick="StartDrawingPolyline">Start drawing polyline</button>
+<button @onclick="EndDrawingPolyline">End drawing polyline</button>
+<button @onclick="AppendToPolylinePath">Append to last polyline path</button>
+<button @onclick="ClearPolylinePath">Clear last polyline path</button>
+<br />
+<button @onclick="AddArrowsToPolyline">Add arrow symbols to polyline</button>
+<button @onclick="RemoveArrowsFromPolyline">Remove arrow symbols from polyline</button>
+<br />
+<button @onclick="StartDrawingPolygon">Start drawing polygon</button>
+<button @onclick="EndDrawingPolygon">End drawing polygon</button>
+<button @onclick="SetAndGetPathPolygon">Set and Get path polygon</button>
+<button @onclick="SetAndGetPolygonPaths">Set and Get polygon paths</button>
+<button @onclick="RemovePolygonFromMap">Remove last polygon from map</button>
+<br />
+<button @onclick="DrawingRectangle">Drawing rectangle</button>
+<br />
+<button @onclick="DrawingCircle">Drawing circle</button>
+
+<MapEventList Events="@_events"></MapEventList>
+
+@functions {
+    private GoogleMap _map1 = null!;
+
+    private MapOptions _mapOptions = null!;
+
+    private List<LatLngLiteral> _path = new();
+
+    private readonly List<Polyline> _polylines = new();
+    private Polyline? _polyline;
+
+    private readonly List<Polygon> _polygons = new();
+    private Polygon? _polygon;
+
+    private Rectangle? _rectangle;
+    private Circle? _circle;
+
+    private List<string> _events = new();
+
+    protected override void OnInitialized()
+    {
+        _mapOptions = new MapOptions()
+            {
+                Zoom = 13,
+                Center = new LatLngLiteral(13.505892, 100.8162), 
+                MapTypeId = MapTypeId.Roadmap
+            };
+    }
+
+    private async Task OnAfterMapInit()
+    {
+        await _map1.InteropObject.AddListener<MouseEvent>("click", async (e) => await OnClick(e));
+
+        IJSObjectReference serverSideScripts = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "/js/serverSideScripts.js");
+        await serverSideScripts.InvokeVoidAsync("initServerSideScript");
+    }
+
+    private async Task StartDrawingPolyline()
+    {
+        _polyline = await Polyline.CreateAsync(_map1.JsRuntime, 
+            new PolylineOptions()
+            {
+                Draggable = true,
+                Editable = true,
+                Map = _map1.InteropObject,
+                    Icons = new IconSequence[] {
+                        new()
+                        {
+                            Icon = new Symbol { 
+                                Path = SymbolPath.BACKWARD_CLOSED_ARROW,
+                                Scale = 3f, 
+                                StrokeColor = "green" },
+                            Offset = "0%"
+                        },
+                        new()
+                        {
+                            Icon = new Symbol
+                            {
+                                Path = SymbolPath.CIRCLE,
+                                Scale = 3f, 
+                                StrokeColor = "red"
+                            },
+                            Offset = "100%"
+                        },
+                    }
+            });
+
+        _path.Clear();
+
+        await _polyline.AddListener("click", () =>
+        {
+            _events.Insert(0, "click polyline");
+            _events = _events.Take(100).ToList();
+        });
+    }
+
+    private async Task ClearPolylinePath()
+    {
+        var line = _polylines.LastOrDefault();
+        if (line == null)
+        {
+            return;
+        }
+
+        var polylinePath = await line.CreatePath();
+        await polylinePath.Clear();
+
+    }
+    private async Task AppendToPolylinePath()
+    {
+        var line = _polylines.LastOrDefault();
+        if (line == null)
+        {
+            return;
+        }
+
+        _polyline = line;
+        _path = (await _polyline.GetPath().ConfigureAwait(true)).ToList();
+    }
+    private Task EndDrawingPolyline()
+    {
+        _polylines.Add(_polyline);
+
+        _polyline = null;
+        _path.Clear();
+        return Task.CompletedTask;
+    }
+
+    private void AddArrowsToPolyline()
+    {
+        foreach (var polyline in _polylines)
+        {
+            polyline.SetOptions(new PolylineOptions
+                {
+                    Icons = new IconSequence[] {
+                    new() { Icon=new Symbol { Path=SymbolPath.FORWARD_CLOSED_ARROW }, Offset="100%" },
+                    new() { Icon=new Symbol { Path=SymbolPath.FORWARD_OPEN_ARROW }, Offset="80%" },
+                    new() { Icon=new Symbol { Path=SymbolPath.FORWARD_OPEN_ARROW }, Offset="60%" },
+                    new() { Icon=new Symbol { Path=SymbolPath.FORWARD_OPEN_ARROW }, Offset="40%" },
+                    new() { Icon=new Symbol { Path=SymbolPath.FORWARD_OPEN_ARROW }, Offset="20%" },
+                }
+                });
+        }
+    }
+
+    private void RemoveArrowsFromPolyline()
+    {
+        foreach (var polyline in _polylines)
+        {
+            polyline.SetOptions(new PolylineOptions
+                {
+                    Icons = new IconSequence[] {
+                }
+                });
+        }
+    }
+
+    private async Task StartDrawingPolygon()
+    {
+        _polygon = await Polygon.CreateAsync(_map1.JsRuntime, new PolygonOptions()
+            {
+                Draggable = false,
+                Editable = true,
+                Map = _map1.InteropObject
+            });
+
+        _path.Clear();
+    }
+
+    private async Task EndDrawingPolygon()
+    {
+        _polygons.Add(_polygon);
+        await _polygon.AddListener("click", () =>
+        {
+            Console.WriteLine($"polygon clicked");
+        });
+
+
+        _polygon = null;
+        _path.Clear();
+    }
+
+    private async Task DrawingRectangle()
+    {
+        _rectangle = await Rectangle.CreateAsync(_map1.JsRuntime, new RectangleOptions()
+            {
+                Draggable = true,
+                Editable = true,
+                Map = _map1.InteropObject
+            });
+
+        _path.Clear();
+    }
+
+    private async Task DrawingCircle()
+    {
+        _circle = await Circle.CreateAsync(_map1.JsRuntime, new CircleOptions()
+            {
+                Draggable = true,
+                Editable = true,
+                Map = _map1.InteropObject,
+                Radius = 1000
+            });
+
+        _path.Clear();
+    }
+
+    private async Task OnClick(MouseEvent e)
+    {
+        //Debug.WriteLine($"Onclick : {mouseEvent.LatLng}");
+
+        _path.Add(e.LatLng);
+
+        if (_polyline != null)
+        {
+            //Debug.WriteLine($"Path length : {path.Count()}");
+
+            await _polyline.SetPath(_path);
+        }
+        else if (_polygon != null)
+        {
+            await _polygon.SetPath(_path);
+        }
+        else if (_rectangle != null)
+        {
+            if (_path.Count < 2)
+            {
+                return;
+            }
+
+            var bounds = new LatLngBoundsLiteral()
+                {
+                    East = _path[1].Lng,
+                    North = _path[0].Lat,
+                    South = _path[1].Lat,
+                    West = _path[0].Lng
+                };
+
+            await _rectangle.SetBounds(bounds);
+
+            //path.Clear();
+            _rectangle = null;
+        }
+        else if (_circle != null)
+        {
+            await _circle.SetCenter(_path.First());
+            _circle = null;
+        }
+    }
+
+    private async Task SetAndGetPathPolygon()
+    {
+
+        var polygonForPath = await Polygon.CreateAsync(_map1.JsRuntime, new PolygonOptions()
+            {
+                Draggable = true,
+                Editable = false,
+                Map = _map1.InteropObject,
+                FillColor = "red",
+                ZIndex = 999
+            });
+
+        var pathLocal = new List<LatLngLiteral>()
+{
+            new(13.524851660334175, 100.79645894165039),
+            new( 13.501818214607113, 100.88469288940429),
+            new( 13.533864141748618, 100.87301991577148),
+        };
+
+        _polygons.Add(polygonForPath);
+        await polygonForPath.SetPath(pathLocal);
+
+        var polygonPath = await polygonForPath.GetPath();
+        foreach (var latLngLiteral in polygonPath)
+        {
+            Console.WriteLine(latLngLiteral);
+        }
+    }
+
+    // Reference from https://developers.google.com/maps/documentation/javascript/examples/polygon-hole
+    private async Task SetAndGetPolygonPaths()
+    {
+        var outerCoords = new List<LatLngLiteral>()
+        {
+            new(13.501908279929077, 100.69801114196777),
+            new(13.491392275719202, 100.74933789367675),
+            new(13.465851481053091, 100.71637890930175),
+        };
+
+        var innerCoords = new List<LatLngLiteral>()
+        {
+            new(13.487386057049033,100.72633526916503),
+            new(13.48137660307361, 100.719125491333),
+            new(13.478705686132331, 100.72959683532714),
+        };
+
+        var polygonForPaths = await Polygon.CreateAsync(_map1.JsRuntime, new PolygonOptions()
+        {
+            Paths = new[] { outerCoords, innerCoords },
+            Draggable = true,
+            Editable = false,
+            FillColor = "blue",
+            ZIndex = 999,
+        });
+
+        _polygons.Add(polygonForPaths);
+        await polygonForPaths.SetMap(_map1.InteropObject);
+
+        var polygonPaths = await polygonForPaths.GetPaths();
+        var polygonPathsList = polygonPaths.ToList();
+
+        for (var i = 0; i < polygonPathsList.Count; i++)
+        {
+            Console.WriteLine($"Path: {i}");
+            foreach (var coords in polygonPathsList[i])
+            {
+                Console.WriteLine($"\tLat: {coords.Lat} Lng: {coords.Lng}");
+            }
+        }
+
+    }
+
+    private async Task RemovePolygonFromMap()
+    {
+        var polygon = _polygons.LastOrDefault();
+        if (polygon != null)
+        {
+            await polygon.SetMap(null);
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _map1.DisposeAsync();
+        if (_polyline != null) await _polyline.DisposeAsync();
+        if (_polygon != null) await _polygon.DisposeAsync();
+        if (_rectangle != null) await _rectangle.DisposeAsync();
+        if (_circle != null) await _circle.DisposeAsync();
+    }
+
+}
