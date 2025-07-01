@@ -1,0 +1,194 @@
+﻿@page "/AdvancedHeatMapComponent"
+@using GoogleMapsComponents
+@using GoogleMapsComponents.Maps
+@using GoogleMapsComponents.Maps.Coordinates
+<AdvancedGoogleMap @ref="@_map1" Id="map1" Options="@_mapOptions" OnAfterInit="Init">
+    @foreach (var item in heatMapLayers)
+    {
+        <HeatMapLayerComponent Radius="item.Radius" Dissipating="item.Dissipating" Opacity="item.Opacity" MaxIntensity="item.MaxIntensity">
+            @foreach (var point in item.Points)
+            {
+                <HeatmapPointComponent Location="new LatLngLiteral(point.Location.Item1, point.Location.Item2)" Weight="point.Weight" />
+            }
+        </HeatMapLayerComponent>
+    }
+</AdvancedGoogleMap>
+
+<button @onclick="@ChangeRad">Change Radius</button>
+<button @onclick="@ChangeDis">Change Dissipating</button>
+<button @onclick="@ChangeOpacity">Change Opacity</button>
+<button @onclick="@ChangeMax">Change Max Intensity</button>
+
+@code {
+    private MapEventList _eventList;
+    private AdvancedGoogleMap _map1 = null!;
+    private readonly MapOptions _mapOptions = new MapOptions()
+        {
+            Zoom = 6,
+            Center = new LatLngLiteral(-36.521931651, 146.682215453),
+            IsFractionalZoomEnabled = false,
+            HeadingInteractionEnabled = true,
+            CameraControl = true,
+            MapTypeId = MapTypeId.Roadmap,
+            // ColorScheme = ColorScheme.Dark,
+            MapId = "e5asd595q2121",
+            Recycle = true,
+            CacheKey = "coolmap"
+        };
+
+
+    List<MyHeatMapLayer> heatMapLayers = [];
+
+    private System.Timers.Timer? weightUpdateTimer;
+    private Random rng = new();
+
+    private void ChangeRad()
+    {
+        var current = heatMapLayers.First().Radius;
+        heatMapLayers.First().Radius = current == 40 ? 20 : 40;
+    }
+
+    private void ChangeDis()
+    {
+        var current = heatMapLayers.First().Dissipating;
+        heatMapLayers.First().Dissipating = !current;
+    }
+
+
+    private void ChangeOpacity()
+    {
+        var current = heatMapLayers.First().Opacity;
+        heatMapLayers.First().Opacity = current == 0.6 ? 0.2 : 0.6;
+    }
+
+    private void ChangeMax()
+    {
+        var current = heatMapLayers.First().MaxIntensity;
+        heatMapLayers.First().MaxIntensity = current == 1.0 ? 0.2 : 1.0;
+    }
+
+    protected override void OnInitialized()
+    {
+        heatMapLayers.Add(new MyHeatMapLayer
+            {
+                Points = new List<MyHeatMapPoints>
+                {
+                    new() { Location = (-25.00036, 132.99952), Weight = 0.5f },
+                    new() { Location = (-25.00036, 132.99972), Weight = 0.5f },
+                    new() { Location = (-25.00036, 132.99992), Weight = 0.5f },
+                    new() { Location = (-25.00036, 133.00012), Weight = 0.5f },
+                    new() { Location = (-25.00036, 133.00032), Weight = 0.5f },
+
+                    new() { Location = (-25.00018, 132.99952), Weight = 0.5f },
+                    new() { Location = (-25.00018, 132.99972), Weight = 0.5f },
+                    new() { Location = (-25.00018, 132.99992), Weight = 0.5f },
+                    new() { Location = (-25.00018, 133.00012), Weight = 0.5f },
+                    new() { Location = (-25.00018, 133.00032), Weight = 0.5f },
+
+                    new() { Location = (-25.00000, 132.99952), Weight = 0.5f },
+                    new() { Location = (-25.00000, 132.99972), Weight = 0.5f },
+                    new() { Location = (-25.00000, 132.99992), Weight = 0.5f },
+                    new() { Location = (-25.00000, 133.00012), Weight = 0.5f },
+                    new() { Location = (-25.00000, 133.00032), Weight = 0.5f },
+
+                    new() { Location = (-24.99982, 132.99952), Weight = 0.5f },
+                    new() { Location = (-24.99982, 132.99972), Weight = 0.5f },
+                    new() { Location = (-24.99982, 132.99992), Weight = 0.5f },
+                    new() { Location = (-24.99982, 133.00012), Weight = 0.5f },
+                    new() { Location = (-24.99982, 133.00032), Weight = 0.5f },
+
+                    new() { Location = (-24.99964, 132.99952), Weight = 0.5f },
+                    new() { Location = (-24.99964, 132.99972), Weight = 0.5f },
+                    new() { Location = (-24.99964, 132.99992), Weight = 0.5f },
+                    new() { Location = (-24.99964, 133.00012), Weight = 0.5f },
+                    new() { Location = (-24.99964, 133.00032), Weight = 0.5f }
+                }
+            });
+
+
+
+        base.OnInitialized();
+    }
+
+    private void UpdateRandomPointWeight()
+    {
+        if (!heatMapLayers.Any())
+            return;
+
+        var allPoints = heatMapLayers.SelectMany(l => l.Points).ToList();
+        if (allPoints.Count == 0)
+            return;
+
+        var point = allPoints[rng.Next(allPoints.Count)];
+        point.Weight = (float)rng.NextDouble(); // random float between 0 and 1
+
+        InvokeAsync(StateHasChanged); 
+    }
+
+
+    private async Task Init()
+    {
+        await FitToBounds();
+
+
+        weightUpdateTimer = new System.Timers.Timer(100);
+        weightUpdateTimer.Elapsed += (_, _) => UpdateRandomPointWeight();
+        weightUpdateTimer.AutoReset = true;
+        weightUpdateTimer.Start();
+    }
+
+    private async Task FitToBounds()
+    {
+
+        await FitToManyPoints(heatMapLayers.SelectMany(e => e.Points).Select(e => e.Location).Select(point => new LatLngLiteral(point.Item1, point.Item2)));
+    }
+
+    private async Task FitToManyPoints(IEnumerable<LatLngLiteral> polgonsPoints)
+    {
+        if (_map1 == null)
+            return;
+
+        if (_map1.InteropObject == null)
+            return;
+
+        if (!polgonsPoints.Any())
+            return;
+
+        LatLngBoundsLiteral? boundsLiteral = new LatLngBoundsLiteral(polgonsPoints.First());
+        foreach (var item in polgonsPoints.Skip(1))
+        {
+            LatLngBoundsLiteral.CreateOrExtend(ref boundsLiteral, item);
+        }
+
+
+        await _map1.InteropObject.FitBounds(boundsLiteral, OneOf.OneOf<int, Padding>.FromT0(1));
+    }
+
+
+    public class MyHeatMapLayer
+    {
+
+        public Guid Id { get; set; } = Guid.NewGuid();
+
+        public List<MyHeatMapPoints> Points { get; set; }
+
+        public double Radius { get; set; } = 20;
+
+        public bool Dissipating { get; set; } = true;
+
+        public double Opacity { get; set; } = 0.6;
+
+        public double MaxIntensity { get; set; } = 1.0;
+
+
+    }
+
+    public class MyHeatMapPoints
+    {
+
+        public (double, double) Location { get; set; }
+
+        public float Weight { get; set; }
+
+    }
+}

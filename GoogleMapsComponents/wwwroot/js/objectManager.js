@@ -28,6 +28,7 @@
 
     let mapObjects = {};
     let controlParents = {};
+    let polygonClickListeners = new Map();
     const dateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
 
 
@@ -555,6 +556,14 @@
                     // When we dispose advanced markers and we use recycled maps, make sure to set remove them from the map.
                     if (google.maps.marker && elementToRemove instanceof google.maps.marker.AdvancedMarkerElement && "recycleKey" in mapObjects[mapGuid])
                         elementToRemove.map = null;
+                    //the same for polygons, we need to remove them from the map
+                    if (google.maps.Polygon && elementToRemove instanceof google.maps.Polygon && "recycleKey" in mapObjects[mapGuid])
+                        elementToRemove.setMap(null);
+                    //the same for heatmap layers, we need to remove them from the map
+                    if (google.maps.visualization && elementToRemove instanceof google.maps.visualization.HeatmapLayer && "recycleKey" in mapObjects[mapGuid]) {
+                        elementToRemove.setMap(null);
+                    }
+
                     delete mapObjects[keyToRemove];
                 }
 
@@ -1036,7 +1045,208 @@
                 if (!existingMarker) return;
                 existingMarker.map = null;
                 this.disposeObject(id);
+            },
+            updatePolygonComponent: function (id, options, callbackRef) {
+                const {
+                    paths,
+                    strokeColor,
+                    strokeOpacity,
+                    strokeWeight,
+                    fillColor,
+                    fillOpacity,
+                    clickable,
+                    editable,
+                    visible,
+                    draggable,
+                    mapId
+                } = options;
+
+                const map = mapObjects[mapId];
+                const invokeCallback = (method, ...args) => {
+                    callbackRef?.invokeMethodAsync(method, ...args);
+                };
+
+                const setupClickListener = (polygon, clickable) => {
+                    // Remove existing listener if present
+                    if (polygonClickListeners.has(polygon)) {
+                        google.maps.event.removeListener(polygonClickListeners.get(polygon));
+                        polygonClickListeners.delete(polygon);
+                    }
+
+                    // Add listener if polygon is clickable
+                    if (clickable) {
+                        const listener = polygon.addListener("click", () => {
+                            invokeCallback('OnPolygonClicked', id);
+                        });
+                        polygonClickListeners.set(polygon, listener);
+                    }
+                };
+
+                const setupPathChangeListener = (polygon, editable) => {
+                    const paths = polygon.getPaths();
+
+                    const returnPaths = () => {
+                        const updatedPaths = [];
+                        const allPaths = polygon.getPaths();
+                        for (let i = 0; i < allPaths.getLength(); i++) {
+                            const subPath = allPaths.getAt(i);
+                            const latLngs = [];
+                            for (let j = 0; j < subPath.getLength(); j++) {
+                                const latLng = subPath.getAt(j);
+                                latLngs.push({ lat: latLng.lat(), lng: latLng.lng() });
+                            }
+                            updatedPaths.push(latLngs);
+                        }
+                        invokeCallback("OnPolygonPathChange", polygon.guidString, updatedPaths);
+                    };
+
+                    for (let i = 0; i < paths.getLength(); i++) {
+                        const path = paths.getAt(i);
+
+                        if (editable) {
+                            // Add listeners if not already added
+                            if (!path.insertListener) {
+                                path.insertListener = path.addListener("insert_at", returnPaths);
+                            }
+                            if (!path.setListener) {
+                                path.setListener = path.addListener("set_at", returnPaths);
+                            }
+                            if (!path.removeListener) {
+                                path.removeListener = path.addListener("remove_at", returnPaths);
+                            }
+                        } else {
+                            // Remove if no longer editable
+                            if (path.insertListener) {
+                                google.maps.event.removeListener(path.insertListener);
+                                delete path.insertListener;
+                            }
+                            if (path.setListener) {
+                                google.maps.event.removeListener(path.setListener);
+                                delete path.setListener;
+                            }
+                            if (path.removeListener) {
+                                google.maps.event.removeListener(path.removeListener);
+                                delete path.removeListener;
+                            }
+                        }
+                    }
+                };
+
+                const existingPolygon = mapObjects[id];
+
+                if (existingPolygon) {
+                    existingPolygon.setOptions({
+                        paths,
+                        strokeColor,
+                        strokeOpacity,
+                        strokeWeight,
+                        fillColor,
+                        fillOpacity,
+                        clickable,
+                        editable,
+                        draggable,
+                        visible
+                    });
+
+                    setupClickListener(existingPolygon, clickable);
+                    setupPathChangeListener(existingPolygon, editable);                    
+                    return;
+                }
+
+                const polygon = new google.maps.Polygon({
+                    paths,
+                    strokeColor,
+                    strokeOpacity,
+                    strokeWeight,
+                    fillColor,
+                    fillOpacity,
+                    clickable,
+                    editable,
+                    draggable,
+                    visible,
+                    map
+                });
+
+                polygon.guidString = id;
+
+                setupClickListener(polygon, clickable)
+                setupPathChangeListener(polygon, editable);
+
+                addMapObject(id, polygon);
+            },
+
+            disposePolygonComponent: function (id) {
+                const polygon = mapObjects[id];
+                if (!polygon) return;
+
+                // Remove path listeners
+                const paths = polygon.getPaths();
+                for (let i = 0; i < paths.getLength(); i++) {
+                    const path = paths.getAt(i);
+                    if (path.insertListener) google.maps.event.removeListener(path.insertListener);
+                    if (path.setListener) google.maps.event.removeListener(path.setListener);
+                    if (path.removeListener) google.maps.event.removeListener(path.removeListener);
+                }
+
+                // Remove other listeners
+                if (polygon.clickListener) google.maps.event.removeListener(polygon.clickListener);
+                //if (polygon.dragListener) google.maps.event.removeListener(polygon.dragListener);
+
+                polygon.setMap(null);
+                this.disposeObject(id);
+            },
+
+            addHeatmap: function (id, mapId, options, callbackRef) {
+                const map = mapObjects[mapId];
+                if (!map) return;
+
+                const heatmap = new google.maps.visualization.HeatmapLayer({
+                    data: (options.data || []).map(p => ({
+                        location: new google.maps.LatLng(p.location.lat, p.location.lng),
+                        weight: p.weight
+                    })),
+                    radius: options.radius,
+                    opacity: options.opacity,
+                    dissipating: options.dissipating,
+                    maxIntensity: options.maxIntensity,
+                    gradient: options.gradient || null,
+                    map: map
+                });
+
+                heatmap.guidString = id;
+
+                addMapObject(id, heatmap);
+            },
+
+            updateHeatmap: function (id, options, callbackRef) {
+                const heatmap = mapObjects[id];
+                if (!heatmap) return;
+
+                const data = (options.data || []).map(p => ({
+                    location: new google.maps.LatLng(p.location.lat, p.location.lng),
+                    weight: p.weight
+                }));
+
+                heatmap.setOptions({
+                    data: data,
+                    radius: options.radius,
+                    opacity: options.opacity,
+                    dissipating: options.dissipating,
+                    maxIntensity: options.maxIntensity,
+                    gradient: options.gradient || null
+                });
+            },
+
+            removeHeatmap: function (id) {
+                const heatmap = mapObjects[id];
+                if (!heatmap) return;
+
+                heatmap.setMap(null);
+                disposeObject(id);
             }
         }
+        
     };
+
+
 }();

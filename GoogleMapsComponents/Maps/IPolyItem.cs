@@ -7,7 +7,7 @@ namespace GoogleMapsComponents.Maps;
 /// <summary>
 /// IPolyItem is an interface that represents a <see cref="Polyline"/> or <see cref="Polygon"/> item in the Google Maps API.
 /// </summary>
-public interface IPolyItem
+public interface IPolyItem : IPoly
 {
 
     /// <summary>
@@ -46,7 +46,7 @@ public interface IPolyItem
     /// </summary>
     /// <returns>JavaScript call completion showcasing the positions of the vertexes.</returns>
     public Task<IEnumerable<LatLngLiteral>> GetPath();
-    
+
     /// <summary>
     /// Returns whether this poly is visible on the map.
     /// </summary>
@@ -75,7 +75,7 @@ public interface IPolyItem
     /// <param name="path">New vertexes to apply to the element</param>
     /// <returns>JavaScript call completion</returns>
     public Task SetPath(IEnumerable<LatLngLiteral> path);
-    
+
     /// <summary>
     /// Hides this poly if set to false.
     /// </summary>

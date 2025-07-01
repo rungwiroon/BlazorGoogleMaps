@@ -11,4 +11,10 @@
     <ProjectReference Include="..\Demo.Ui.Shared\Demo.Ui.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Pages\AdvancedHeatMapComponent.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+  </ItemGroup>
+
 </Project>

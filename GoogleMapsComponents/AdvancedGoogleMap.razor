@@ -23,6 +23,12 @@
     public int MarkerCount => _mapComponents.Count;
     public IEnumerable<MarkerComponent> Markers => _mapComponents.Select(x => x.Value);
     private readonly Dictionary<Guid, MarkerComponent> _mapComponents = [];
+
+
+    public int PolygonCount => _mapComponents.Count;
+    public IEnumerable<PolygonComponent> Polygons => _mapPolygonComponents.Select(x => x.Value);
+    private readonly Dictionary<Guid, PolygonComponent> _mapPolygonComponents = [];
+
     internal DotNetObjectReference<AdvancedGoogleMap>? CallbackRef;
     
     [Parameter]
@@ -36,6 +42,10 @@
     
     [Parameter]
     public EventCallback OnMarkersChanged { get; set; }
+
+    [Parameter]
+    public EventCallback OnPolygonsChanged { get; set; }
+
 
     [Parameter]
     public string? CssClass { get; set; }
@@ -65,13 +75,31 @@
             await markerComponent.MarkerClicked();
         }
     }
-    
+
     [JSInvokable]
     public async Task OnMarkerDrag(Guid markerId, LatLngLiteral position)
     {
         if (_mapComponents.TryGetValue(markerId, out var markerComponent))
         {
             await markerComponent.MarkerDragged(position);
+        }
+    }
+
+    [JSInvokable]
+    public async Task OnPolygonClicked(Guid polygonId)
+    {
+        if (_mapPolygonComponents.TryGetValue(polygonId, out var polygonComponent))
+        {
+            await polygonComponent.Click();
+        }
+    }
+
+    [JSInvokable]
+    public async Task OnPolygonPathChange(Guid polygonId, List<List<LatLngLiteral>> paths)
+    {
+        if (_mapPolygonComponents.TryGetValue(polygonId, out var polygonComponent))
+        {
+            await polygonComponent.PathChanged(paths);
         }
     }
     
@@ -87,10 +115,28 @@
         OnMarkersChanged.InvokeAsync();
     }
 
+        internal void AddPolygon(PolygonComponent poly)
+    {
+        _mapPolygonComponents.TryAdd(poly.Guid, poly);
+        OnPolygonsChanged.InvokeAsync();
+    }
+    
+    internal void RemovePolygon(PolygonComponent poly)
+    {
+        _mapPolygonComponents.Remove(poly.Guid);
+        OnPolygonsChanged.InvokeAsync();
+    }
+
+
     public async ValueTask DisposeAsync()
     {
         // Mark components as disposed, since they will be removed by disposing the MapRef.
         foreach (var component in _mapComponents)
+        {
+            component.Value.IsDisposed = true;
+        }
+
+        foreach (var component in _mapPolygonComponents)
         {
             component.Value.IsDisposed = true;
         }
