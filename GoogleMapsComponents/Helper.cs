@@ -24,6 +24,7 @@ internal static class Helper
             new OneOfConverterFactory(),
             new JsonStringEnumConverter(JsonNamingPolicy.CamelCase),
             new LatLngLiteralConverter(),
+            new LatLngAltitudeLiteralConverter(),
         }
     };
 

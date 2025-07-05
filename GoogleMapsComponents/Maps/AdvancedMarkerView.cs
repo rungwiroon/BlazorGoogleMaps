@@ -117,9 +117,9 @@ public class AdvancedMarkerElement : ListableEntityBase<AdvancedMarkerElementOpt
     /// <summary>
     /// Gets the position of the marker.
     /// </summary>
-    /// <returns>A task that represents the asynchronous operation. The task result contains the position as a <see cref="LatLngLiteral"/>.</returns>
-    public async Task<LatLngLiteral> GetPosition()
+    /// <returns>A task that represents the asynchronous operation. The task result contains the position as a <see cref="LatLngAltitudeLiteral"/>.</returns>
+    public async Task<LatLngAltitudeLiteral> GetPosition()
     {
-        return await _jsObjectRef.InvokePropertyAsync<LatLngLiteral>("position");
+        return await _jsObjectRef.InvokePropertyAsync<LatLngAltitudeLiteral>("position");
     }
 }

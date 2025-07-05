@@ -1,7 +1,7 @@
 ﻿using GoogleMapsComponents.Maps;
-using System; 
+using System;
 using System.Text.Json;
-using System.Text.Json.Serialization; 
+using System.Text.Json.Serialization;
 
 namespace GoogleMapsComponents.Serialization;
 
@@ -27,7 +27,7 @@ internal sealed class LatLngLiteralConverter : JsonConverter<LatLngLiteral>
         {
             throw new JsonException("Expected latitude value");
         }
-        
+
         var lat = reader.GetDouble();
 
         if (!reader.Read())
@@ -43,9 +43,10 @@ internal sealed class LatLngLiteralConverter : JsonConverter<LatLngLiteral>
 
         if (!reader.Read() || reader.TokenType != JsonTokenType.EndObject)
         {
-            throw new JsonException("Expected end of object.");
+            string? text = reader.GetString();
+            throw new JsonException($"Expected end of object. Found {text}");
         }
-        
+
         return new LatLngLiteral(lat, lng);
     }
 
