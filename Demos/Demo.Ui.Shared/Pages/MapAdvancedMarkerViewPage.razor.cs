@@ -31,7 +31,7 @@ public sealed partial class MapAdvancedMarkerViewPage
     };
     private LatLngBounds _bounds = null!;
     private readonly List<String> _events = new List<String>();
-    private readonly Stack<AdvancedMarkerElement> _markers = new Stack<AdvancedMarkerElement>();
+    private readonly Stack<AdvancedMarkerElement> _advancedMarkerElements = new Stack<AdvancedMarkerElement>();
     private AdvancedMarkerElementList? _markerElementList;
     private MarkerClustering? _markerClustering;
     private IEnumerable<AdvancedMarkerElement>? _clusteringMarkers;
@@ -56,7 +56,7 @@ public sealed partial class MapAdvancedMarkerViewPage
             Content = Svg
         });
 
-        _markers.Push(marker);
+        _advancedMarkerElements.Push(marker);
         await _bounds.Extend(mapCenter);
 
         await marker.AddListener<MouseEvent>("click", e =>
@@ -171,12 +171,12 @@ public sealed partial class MapAdvancedMarkerViewPage
 
     private async Task RemoveMarker()
     {
-        if (!_markers.Any())
+        if (!_advancedMarkerElements.Any())
         {
             return;
         }
 
-        var lastMarker = _markers.Pop();
+        var lastMarker = _advancedMarkerElements.Pop();
         await lastMarker.SetMap(null);
     }
 
@@ -245,7 +245,7 @@ public sealed partial class MapAdvancedMarkerViewPage
             });
         }
 
-        _markers.Push(marker);
+        _advancedMarkerElements.Push(marker);
 
         await marker.AddListener<MouseEvent>("click", e =>
         {
@@ -257,12 +257,12 @@ public sealed partial class MapAdvancedMarkerViewPage
 
     private async Task UpdatePosition()
     {
-        if (!_markers.Any())
+        if (!_advancedMarkerElements.Any())
         {
             return;
         }
 
-        var lastMarker = _markers.Peek();
+        var lastMarker = _advancedMarkerElements.Peek();
         var mapCenter = await _map1.InteropObject.GetCenter();
         await lastMarker.SetPosition(mapCenter);
         await _bounds.Extend(mapCenter);
@@ -270,7 +270,7 @@ public sealed partial class MapAdvancedMarkerViewPage
 
     private async Task UpdateContent()
     {
-        if (!_markers.Any())
+        if (!_advancedMarkerElements.Any())
         {
             return;
         }
@@ -285,12 +285,12 @@ public sealed partial class MapAdvancedMarkerViewPage
                 Background = "blue",
                 Scale = 2
             };
-            var lastMarker = _markers.Peek();
+            var lastMarker = _advancedMarkerElements.Peek();
             await lastMarker.SetContent(pinElement);
         }
         else
         {
-            var lastMarker = _markers.Peek();
+            var lastMarker = _advancedMarkerElements.Peek();
             await lastMarker.SetContent(newContent);
         }
 
@@ -299,12 +299,12 @@ public sealed partial class MapAdvancedMarkerViewPage
 
     private async Task GetMarkerPosition()
     {
-        if (!_markers.Any())
+        if (!_advancedMarkerElements.Any())
         {
             return;
         }
 
-        var lastMarker = _markers.Peek();
+        var lastMarker = _advancedMarkerElements.Peek();
         var position = await lastMarker.GetPosition();
         _events.Add($"Marker position {position.Lat} {position.Lng}");
 

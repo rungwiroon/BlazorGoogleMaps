@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.Json.Serialization;
+// ReSharper disable CheckNamespace
 
 namespace GoogleMapsComponents.Maps;
 
@@ -45,12 +46,10 @@ public readonly struct LatLngLiteral : IEquatable<LatLngLiteral>
 
         if (lng is < -180 or > 180)
             throw new ArgumentException("Longitude values can only range from -180 to 180!", nameof(lng));
-        
+
         Lat = lat;
         Lng = lng;
     }
-
-    #region Methods
 
     /// <inheritdoc />
     public bool Equals(LatLngLiteral other)
@@ -91,6 +90,4 @@ public readonly struct LatLngLiteral : IEquatable<LatLngLiteral>
     {
         return !left.Equals(right);
     }
-
-    #endregion
 }
