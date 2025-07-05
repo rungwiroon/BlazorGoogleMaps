@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps;
 
-public partial class PolygonComponent :  IAsyncDisposable, IPoly
+public partial class PolygonComponent :  IAsyncDisposable, IMapComponent, IPoly
 {
     public PolygonComponent()
     {
@@ -20,6 +20,7 @@ public partial class PolygonComponent :  IAsyncDisposable, IPoly
     private Guid _guid;
 
     public Guid Guid => Id ?? _guid;
+    public MapComponentType ComponentType => MapComponentType.Polygon;
 
     [Inject]
     private IJSRuntime Js { get; set; } = default!;
@@ -98,8 +99,7 @@ public partial class PolygonComponent :  IAsyncDisposable, IPoly
     {
         if (firstRender)
         {
-            MapRef.AddPolygon(this);
-            _hasRendered = true;
+            MapRef.RegisterComponent(this);
             await UpdateOptions();
         }
         await base.OnAfterRenderAsync(firstRender);
@@ -110,7 +110,6 @@ public partial class PolygonComponent :  IAsyncDisposable, IPoly
     /// </summary>
     public async Task ForceRender()
     {
-        if (!_hasRendered) return;
         await UpdateOptions();
     }
 
@@ -163,13 +162,18 @@ public partial class PolygonComponent :  IAsyncDisposable, IPoly
             await UpdateOptions();
         }
     }
+    
+    public void SetDisposed()
+    {
+        IsDisposed = true;
+    }
 
     public async ValueTask DisposeAsync()
     {
         if (IsDisposed) return;
         IsDisposed = true;
         await Js.InvokeVoidAsync("blazorGoogleMaps.objectManager.disposePolygonComponent", Guid);
-        MapRef.RemovePolygon(this);
+        MapRef.UnregisterComponent(this);
         GC.SuppressFinalize(this);
     }
 
