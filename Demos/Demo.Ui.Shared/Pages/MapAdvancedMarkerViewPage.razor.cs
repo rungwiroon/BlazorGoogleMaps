@@ -306,7 +306,7 @@ public sealed partial class MapAdvancedMarkerViewPage
 
         var lastMarker = _advancedMarkerElements.Peek();
         var position = await lastMarker.GetPosition();
-        _events.Add($"Marker position {position.Lat} {position.Lng} Alt {position.Altitude}");
+        _events.Add($"Marker position {position.Lat:F} {position.Lng:F} Alt {position.Altitude}");
 
         var gmpClickable = await lastMarker.GetGmpClickable();
         await lastMarker.SetGmpClickable(!gmpClickable);

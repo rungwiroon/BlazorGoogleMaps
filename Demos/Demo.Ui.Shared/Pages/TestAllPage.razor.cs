@@ -95,6 +95,15 @@ public partial class TestAllPage
 
         var position = await advancedMarker.GetPosition();
         _events.Add("Advanced marker position: " + position);
+        if (position.Lat == 0 || Math.Abs(mapCenter.Lat - position.Lat) > 0.0001)
+        {
+            throw new Exception("Advanced marker position is not set correctly. Please check the console for errors.");
+        }
+
+        if (position.Lng == 0 || Math.Abs(mapCenter.Lng - position.Lng) > 0.0001)
+        {
+            throw new Exception("Advanced marker position is not set correctly. Please check the console for errors.");
+        }
 
     }
 

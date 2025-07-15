@@ -31,13 +31,13 @@ public readonly struct LatLngAltitudeLiteral : IEquatable<LatLngAltitudeLiteral>
     /// For example, a value of -190 will be converted to 170. A value of 190 will be converted to -170. 
     /// This reflects the fact that longitudes wrap around the globe.
     /// </summary>
-    [FieldOffset(sizeof(double))]
+    [FieldOffset(8)]
     public readonly double Lng;
 
     /// <summary>
     ///
     ///  </summary>
-    [FieldOffset(sizeof(double))]
+    [FieldOffset(16)]
     public readonly double Altitude;
 
     /// <summary>
