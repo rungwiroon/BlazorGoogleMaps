@@ -1,5 +1,4 @@
-﻿using Demo.Ui.Shared.Shared;
-using GoogleMapsComponents;
+﻿using GoogleMapsComponents;
 using GoogleMapsComponents.Maps;
 using GoogleMapsComponents.Maps.Coordinates;
 using GoogleMapsComponents.Maps.Extension;
@@ -15,8 +14,6 @@ public partial class MapMarker
 
     private readonly Stack<Marker> _markers = new Stack<Marker>();
     private readonly List<String> _events = new List<String>();
-
-    private MapEventList _eventList;
 
     private LatLngBounds _bounds;
     private MarkerClustering? _markerClustering;
@@ -311,10 +308,10 @@ public partial class MapMarker
         foreach (var m in _markers)
         {
             var pos = await m.GetPosition();
+            _events.Add($"Recenter {pos.Lat},{pos.Lng}");
             await _bounds.Extend(pos);
         }
     }
-
 
     private async Task SetAnimation()
     {
@@ -327,6 +324,7 @@ public partial class MapMarker
         var position = await lastMarker.GetPosition();
         _events.Add($"SetAnimation {position.Lat},{position.Lng} Animation.Bounce");
     }
+
     private async Task GetAnimation()
     {
         if (!_markers.Any())
@@ -338,6 +336,7 @@ public partial class MapMarker
         var position = await lastMarker.GetPosition();
         _events.Add($"GetAnimation {position.Lat},{position.Lng} {animation?.ToString()}");
     }
+
     private async Task FitBounds()
     {
         if (await this._bounds.IsEmpty())
