@@ -1,12 +1,9 @@
 ﻿@page "/map-advanced-marker"
 @using GoogleMapsComponents
-@using GoogleMapsComponents.Maps
-@using GoogleMapsComponents.Maps.Coordinates
-@using GoogleMapsComponents.Maps.Extension
 
 <h1>Google Map Advanced Markers</h1>
 <smallNotice: Available only in the v=beta channel.></smallNotice:>
-<GoogleMap @ref="@_map1" Id="map1" Options="@_mapOptions" OnAfterInit="OnAfterRenderAsync"></GoogleMap>
+<GoogleMap @ref="@_map1" Id="map1" Options="@_mapOptions" OnAfterInit="@OnAfterRenderAsync"></GoogleMap>
 <button @onclick="@AddMarker">Add marker</button>
 <button @onclick="@UpdatePosition">Recenter last</button>
 <button @onclick="@UpdateContent">Update content</button>

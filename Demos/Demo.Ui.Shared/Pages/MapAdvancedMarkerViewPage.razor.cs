@@ -40,7 +40,7 @@ public sealed partial class MapAdvancedMarkerViewPage
     // ReSharper disable once UnusedAutoPropertyAccessor.Global
     public IJSRuntime JsObjectRef { get; set; } = null!;
 
-    protected async Task OnAfterRenderAsync()
+    private async Task OnAfterRenderAsync()
     {
         _bounds = await LatLngBounds.CreateAsync(_map1.JsRuntime);
     }
@@ -306,7 +306,7 @@ public sealed partial class MapAdvancedMarkerViewPage
 
         var lastMarker = _advancedMarkerElements.Peek();
         var position = await lastMarker.GetPosition();
-        _events.Add($"Marker position {position.Lat} {position.Lng}");
+        _events.Add($"Marker position {position.Lat} {position.Lng} Alt {position.Altitude}");
 
         var gmpClickable = await lastMarker.GetGmpClickable();
         await lastMarker.SetGmpClickable(!gmpClickable);
