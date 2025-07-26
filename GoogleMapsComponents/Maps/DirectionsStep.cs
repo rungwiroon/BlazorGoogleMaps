@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using GoogleMapsComponents.Serialization;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace GoogleMapsComponents.Maps;
@@ -25,6 +26,7 @@ public class DirectionsStep
     /// <summary>
     /// The ending location of this step.
     /// </summary>
+    [JsonPropertyName("end_location")]
     public LatLngLiteral? EndLocation { get; set; }
 
     /// <summary>
@@ -35,6 +37,7 @@ public class DirectionsStep
     /// <summary>
     /// The starting location of this step.
     /// </summary>
+    [JsonPropertyName("start_location")]
     public LatLngLiteral? StartLocation { get; set; }
 
     /// <summary>
@@ -52,9 +55,16 @@ public class DirectionsStep
     /// <summary>
     /// The mode of travel used in this step.
     /// </summary>
+    [JsonPropertyName("travel_mode")]
+    [JsonConverter(typeof(JsonStringEnumConverterEx<TravelMode>))]
     public TravelMode TravelMode { get; set; }
 
-
+    /// <summary>
+    /// The sequence of latitude/longitude coordinates describing the polyline for this step.
+    /// This property provides the detailed path as a collection of <see cref="LatLngLiteral"/> points,
+    /// which can be used to render the step's geometry on a map.
+    /// May be <c>null</c> if the data is unavailable.
+    /// </summary>
     [JsonPropertyName("lat_lngs")]
     public IEnumerable<LatLngLiteral>? LatLngs { get; set; }
 

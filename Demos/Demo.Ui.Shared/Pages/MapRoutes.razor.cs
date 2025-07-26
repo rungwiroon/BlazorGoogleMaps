@@ -6,11 +6,11 @@ namespace Demo.Ui.Shared.Pages;
 public partial class MapRoutes : IAsyncDisposable
 {
     private GoogleMap? _map1;
-    private MapOptions _mapOptions;
+    private MapOptions? _mapOptions;
     private DirectionsRenderer _dirRend;
-    private string _durationTotalString;
-    private string _distanceTotalString;
-    private DirectionsResult _directionsResult;
+    private string? _durationTotalString;
+    private string? _distanceTotalString;
+    private DirectionsResult? _directionsResult;
 
     protected override void OnInitialized()
     {
@@ -86,6 +86,7 @@ public partial class MapRoutes : IAsyncDisposable
 
         if (_directionsResult is null)
         {
+            Console.WriteLine("No directions result. Field _directionsResult");
             return;
         }
         var routes = _directionsResult.Routes.SelectMany(x => x.Legs).ToList();
@@ -93,7 +94,20 @@ public partial class MapRoutes : IAsyncDisposable
         foreach (var route in routes)
         {
             _durationTotalString += route.DurationInTraffic?.Text;
-            _distanceTotalString += route.Distance.Text;
+            _distanceTotalString += route.Distance?.Text;
+
+            if (route.Steps is null)
+            {
+                Console.WriteLine("No steps in route");
+                continue;
+            }
+
+            foreach (var step in route.Steps)
+            {
+                Console.WriteLine($"Step: {step.Instructions}, Distance: {step.Distance?.Text}, Duration: {step.Duration?.Text}");
+                Console.WriteLine(step.StartLocation);
+                Console.WriteLine(step.TravelMode);
+            }
         }
     }
 
@@ -102,7 +116,7 @@ public partial class MapRoutes : IAsyncDisposable
         if (_dirRend is not null)
         {
             await _dirRend.SetMap(null);
-            _dirRend.Dispose();
+            await _dirRend.DisposeAsync();
         }
     }
 
