@@ -116,6 +116,7 @@
                 "google.maps.drawing.OverlayType.POLYLINE": google.maps.drawing.OverlayType.POLYLINE,
                 "google.maps.drawing.OverlayType.RECTANGLE": google.maps.drawing.OverlayType.RECTANGLE
             };
+
             return overlayTypeMapping[item] || item;
         }
 
@@ -184,6 +185,16 @@
                         parsedItem[propertyName] = renderingTypeMap[propertyValue] || google.maps.RenderingType.RASTER;
                     }
 
+                    if (propertyName === "travelMode" && propertyValue !== null) {
+                        const travelModeMap = {
+                            "BICYCLING": google.maps.TravelMode.BICYCLING,
+                            "DRIVING": google.maps.TravelMode.DRIVING,
+                            "TRANSIT": google.maps.TravelMode.TRANSIT,
+                            "WALKING": google.maps.TravelMode.WALKING,
+                        };
+
+                        parsedItem[propertyName] = travelModeMap[propertyValue] || google.maps.TravelMode.DRIVING;
+                    }
                     // Handle nested drawingModes property
                     if (typeof propertyValue === "object" && propertyValue !== null && "drawingModes" in propertyValue) {
                         const drawingModeMapping = {

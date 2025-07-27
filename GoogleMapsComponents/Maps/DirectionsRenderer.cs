@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace GoogleMapsComponents.Maps;
 
+/// <summary>
+/// https://developers.google.com/maps/documentation/javascript/reference/directions#DirectionsRenderer
+/// </summary>
 public class DirectionsRenderer : EventEntityBase, IDisposable
 {
     public static async Task<DirectionsRenderer> CreateAsync(IJSRuntime jsRuntime, DirectionsRendererOptions opts = null)

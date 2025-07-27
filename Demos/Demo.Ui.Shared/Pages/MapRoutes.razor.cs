@@ -68,7 +68,7 @@ public partial class MapRoutes : IAsyncDisposable
         dr.Origin = "Allentown, PA";
         dr.Destination = "Bronx, NY";
         dr.Waypoints = waypoints;
-        dr.TravelMode = TravelMode.Driving;
+        dr.TravelMode = TravelMode.Walking;
         dr.DrivingOptions = new DrivingOptions()
         {
             DepartureTime = DateTime.Now.AddHours(1)
@@ -81,9 +81,10 @@ public partial class MapRoutes : IAsyncDisposable
             StripOverviewPath = false,
             StripOverviewPolyline = false,
             StripLegsStepsPath = false,
-            StripLegsSteps = false
+            StripLegsSteps = false,
         });
 
+        await _dirRend.SetDirections(_directionsResult);
         if (_directionsResult is null)
         {
             Console.WriteLine("No directions result. Field _directionsResult");
