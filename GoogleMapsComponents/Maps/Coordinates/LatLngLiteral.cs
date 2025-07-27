@@ -90,4 +90,14 @@ public readonly struct LatLngLiteral : IEquatable<LatLngLiteral>
     {
         return !left.Equals(right);
     }
+
+    /// <summary>
+    /// Converts a <see cref="LatLngLiteral"/> to a <see cref="LatLngAltitudeLiteral"/>, setting the altitude to 0.
+    /// </summary>
+    /// <param name="value">The <see cref="LatLngLiteral"/> value to convert.</param>
+    /// <returns>A <see cref="LatLngAltitudeLiteral"/> with the same latitude and longitude, and altitude set to 0.</returns>
+    public static explicit operator LatLngAltitudeLiteral(LatLngLiteral value)
+    {
+        return new LatLngAltitudeLiteral(value.Lat, value.Lng, 0);
+    }
 }
