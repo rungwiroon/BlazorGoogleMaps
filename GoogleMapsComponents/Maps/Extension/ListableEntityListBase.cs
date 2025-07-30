@@ -33,7 +33,7 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
         var lToRemove = new List<string>();
         var dictToAdd = new Dictionary<string, TEntityOptionsBase>();
         var dictToChange = new Dictionary<string, TEntityOptionsBase>();
-        foreach (var sKey in this.BaseListableEntities.Keys)
+        foreach (var sKey in BaseListableEntities.Keys)
         {
             if (!opts.ContainsKey(sKey))
             {
@@ -46,7 +46,7 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
         }
         foreach (var sKey in opts.Keys)
         {
-            if (this.BaseListableEntities.ContainsKey(sKey))
+            if (BaseListableEntities.ContainsKey(sKey))
             {
                 dictToChange[sKey] = opts[sKey];
             }
@@ -55,10 +55,19 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
                 dictToAdd[sKey] = opts[sKey];
             }
         }
-        await this.SetVisibles(nonVisibles);
-        await this.RemoveMultipleAsync(lToRemove);
-        await this.AddMultipleAsync(dictToAdd, googleMapListableEntityTypeName);
-        await this.SetOptions(dictToChange);
+
+        var isAdvancedMarker = typeof(TEntityBase) == typeof(AdvancedMarkerElement);
+        if (!isAdvancedMarker)
+        {
+            await SetVisibles(nonVisibles);
+        }
+        await RemoveMultipleAsync(lToRemove);
+        await AddMultipleAsync(dictToAdd, googleMapListableEntityTypeName);
+
+        if (!isAdvancedMarker)
+        {
+            await SetOptions(dictToChange);
+        }
     }
 
     public class EntityMouseEvent

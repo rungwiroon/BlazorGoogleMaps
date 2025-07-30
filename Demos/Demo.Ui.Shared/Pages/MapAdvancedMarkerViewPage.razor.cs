@@ -152,6 +152,11 @@ public sealed partial class MapAdvancedMarkerViewPage
         }
 
         await FitBounds();
+
+        await AdvancedMarkerElementList.SyncAsync(
+            _markerElementList,
+            _map1.JsRuntime,
+            new Dictionary<string, AdvancedMarkerElementOptions>());
     }
 
     private async Task RemoveMarkers()
@@ -246,13 +251,6 @@ public sealed partial class MapAdvancedMarkerViewPage
         }
 
         _advancedMarkerElements.Push(marker);
-
-        await marker.AddListener<MouseEvent>("click", e =>
-        {
-            _events.Add($"Clicked Pin Marker {e.LatLng.Lat} {e.LatLng.Lng}");
-            StateHasChanged();
-            e.Stop();
-        });
     }
 
     private async Task UpdatePosition()

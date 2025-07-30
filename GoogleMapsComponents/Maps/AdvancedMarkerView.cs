@@ -12,7 +12,7 @@ public class AdvancedMarkerElement : ListableEntityBase<AdvancedMarkerElementOpt
 {
     /// <summary>
     /// The name of the Google Maps AdvancedMarkerElement JavaScript class.
-    /// See: https://developers.google.com/maps/documentation/javascript/reference/3.55/advanced-markers
+    /// See: https://developers.google.com/maps/documentation/javascript/reference/advanced-markers
     /// </summary>
     public const string GoogleMapAdvancedMarkerName = "google.maps.marker.AdvancedMarkerElement";
 
