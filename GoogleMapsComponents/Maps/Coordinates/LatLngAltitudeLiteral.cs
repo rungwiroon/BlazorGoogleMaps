@@ -11,6 +11,7 @@ namespace GoogleMapsComponents.Maps;
 /// <summary>
 /// Object literals are accepted in place of LatLngBounds objects throughout the API.
 /// These are automatically converted to LatLngBounds objects. All south, west, north and east must be set, otherwise an exception is thrown.
+/// https://developers.google.com/maps/documentation/javascript/reference/coordinates#LatLngAltitudeLiteral
 /// </summary>
 
 [DebuggerDisplay("{Lat}, {Lng}, {Altitude}")]
