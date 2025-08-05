@@ -18,36 +18,47 @@ internal sealed class LatLngLiteralConverter : JsonConverter<LatLngLiteral>
             throw new JsonException("Expected start of object.");
         }
 
-        if (!reader.Read())
+        double? lat = null;
+        double? lng = null;
+
+        while (reader.Read())
         {
-            throw new JsonException("Expected property name.");
+            if (reader.TokenType == JsonTokenType.EndObject)
+            {
+                break;
+            }
+
+            if (reader.TokenType != JsonTokenType.PropertyName)
+            {
+                throw new JsonException("Expected property name.");
+            }
+
+            var propertyName = reader.GetString();
+            if (!reader.Read())
+            {
+                throw new JsonException("Expected value.");
+            }
+
+            switch (propertyName)
+            {
+                case "lat":
+                    lat = reader.GetDouble();
+                    break;
+                case "lng":
+                    lng = reader.GetDouble();
+                    break;
+                default:
+                    reader.Skip();
+                    break;
+            }
         }
 
-        if (!reader.Read() || reader.TokenType != JsonTokenType.Number)
+        if (lat == null || lng == null)
         {
-            throw new JsonException("Expected latitude value");
+            throw new JsonException("Missing required properties for LatLngLiteral.");
         }
 
-        var lat = reader.GetDouble();
-
-        if (!reader.Read())
-        {
-            throw new JsonException("Expected property name.");
-        }
-
-        if (!reader.Read() || reader.TokenType != JsonTokenType.Number)
-        {
-            throw new JsonException("Expected longitude value");
-        }
-        var lng = reader.GetDouble();
-
-        if (!reader.Read() || reader.TokenType != JsonTokenType.EndObject)
-        {
-            string? text = reader.GetString();
-            throw new JsonException($"Expected end of object. Found {text}");
-        }
-
-        return new LatLngLiteral(lat, lng);
+        return new LatLngLiteral(lat.Value, lng.Value);
     }
 
     // <inheritdoc />
