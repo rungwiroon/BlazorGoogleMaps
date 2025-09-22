@@ -29,6 +29,7 @@
     let mapObjects = {};
     let controlParents = {};
     let polygonClickListeners = new Map();
+    let polygonDragListeners = new Map();
     const dateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
 
 
@@ -1093,6 +1094,33 @@
                     }
                 };
 
+                const setupDragListener = (polygon, isEnabled) => {
+                    // Remove existing listener if present
+                    if (polygonDragListeners.has(polygon)) {
+                        google.maps.event.removeListener(polygonDragListeners.get(polygon));
+                        polygonDragListeners.delete(polygon);
+                    }
+
+                    // Add listener if polygon is draggable
+                    if (isEnabled) {
+                        const listener = polygon.addListener("dragend", () => {
+                            const updatedPaths = [];
+                            const allPaths = polygon.getPaths();
+                            for (let i = 0; i < allPaths.getLength(); i++) {
+                                const subPath = allPaths.getAt(i);
+                                const latLngs = [];
+                                for (let j = 0; j < subPath.getLength(); j++) {
+                                    const latLng = subPath.getAt(j);
+                                    latLngs.push({ lat: latLng.lat(), lng: latLng.lng() });
+                                }
+                                updatedPaths.push(latLngs);
+                            }
+                            invokeCallback('OnPolygonDrag', id, updatedPaths);
+                        });
+                        polygonDragListeners.set(polygon, listener);
+                    }
+                };
+
                 const setupPathChangeListener = (polygon, editable) => {
                     const paths = polygon.getPaths();
 
@@ -1146,6 +1174,8 @@
                 const existingPolygon = mapObjects[id];
 
                 if (existingPolygon) {
+                    const dragChanged = existingPolygon.getDraggable() !== draggable;
+
                     existingPolygon.setOptions({
                         paths,
                         strokeColor,
@@ -1160,7 +1190,8 @@
                     });
 
                     setupClickListener(existingPolygon, clickable);
-                    setupPathChangeListener(existingPolygon, editable);                    
+                    setupPathChangeListener(existingPolygon, editable);
+                    if (dragChanged) setupDragListener(existingPolygon, draggable);
                     return;
                 }
 
@@ -1182,6 +1213,7 @@
 
                 setupClickListener(polygon, clickable)
                 setupPathChangeListener(polygon, editable);
+                setupDragListener(polygon, draggable);
 
                 addMapObject(id, polygon);
             },
@@ -1199,9 +1231,17 @@
                     if (path.removeListener) google.maps.event.removeListener(path.removeListener);
                 }
 
-                // Remove other listeners
-                if (polygon.clickListener) google.maps.event.removeListener(polygon.clickListener);
-                //if (polygon.dragListener) google.maps.event.removeListener(polygon.dragListener);
+                // Remove click listeners
+                if (polygonClickListeners.has(polygon)) {
+                    google.maps.event.removeListener(polygonClickListeners.get(polygon));
+                    polygonClickListeners.delete(polygon);
+                }
+
+                // Remove drag listeners
+                if (polygonDragListeners.has(polygon)) {
+                    google.maps.event.removeListener(polygonDragListeners.get(polygon));
+                    polygonDragListeners.delete(polygon);
+                }
 
                 polygon.setMap(null);
                 this.disposeObject(id);
