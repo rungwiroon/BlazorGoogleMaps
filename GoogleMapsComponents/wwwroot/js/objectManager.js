@@ -33,7 +33,7 @@
     const dateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
 
 
-    // Add the object to the map for "managed" objects, tries to set the guidString to 
+    // Add the object to the map for "managed" objects, tries to set the guidString to
     // be able to dispose of them later on
     function addMapObject(uuid, obj) {
         if (obj && typeof(obj) === "object" && "set" in obj) {
@@ -41,7 +41,7 @@
         }
         mapObjects[uuid] = obj;
     }
-    
+
     //Strip circular dependencies, map object and functions
     //https://stackoverflow.com/questions/11616630/how-can-i-print-a-circular-structure-in-a-json-like-format
     const getCircularReplacer = () => {
@@ -159,7 +159,7 @@
                                 propertyValue.icon.path = symbolPathMapping[iconPath];
                             }
                         }
-                    }                   
+                    }
 
                     // Convert specific Google Maps CollisionBehavior strings to their corresponding objects
                     if (typeof propertyValue === "string" && propertyValue.startsWith("google.maps.CollisionBehavior")) {
@@ -388,7 +388,7 @@
                 if (advancedMarkerElementContent !== null) {
                     args2[0].content = advancedMarkerElementContent;
                 }
-                
+
                 let obj;
                 if (functionName === "google.maps.Map") {
                     const targetElement = args2[0]; // Map div
@@ -418,9 +418,9 @@
                 addMapObject(guid, obj)
             },
 
-            //Used to create multiple objects of the same type passing a set of creation parameters coherent 
-            //with object we need to create 
-            //This allows a single JSInteropt invocation for multiple objects creation with a consistent gain 
+            //Used to create multiple objects of the same type passing a set of creation parameters coherent
+            //with object we need to create
+            //This allows a single JSInteropt invocation for multiple objects creation with a consistent gain
             //in terms of performance
             createMultipleObject: function (args) {
                 mapObjects = mapObjects || [];
@@ -600,7 +600,7 @@
                     if (recycleKey && mapObjects[recycleKey]) {
                         mapObjects[recycleKey].div = object.getDiv()
                     }
-                } 
+                }
                 delete mapObjects[guid];
             },
 
@@ -769,7 +769,7 @@
                 }
             },
 
-            //Function could be extended in future: at the moment it is scoped for 
+            //Function could be extended in future: at the moment it is scoped for
             //simple "Get" and "Set" properties of multiple objects of the same type
             invokeMultiple: async function (args) {
                 const guids = JSON.parse(args[0]);
@@ -866,7 +866,7 @@
                 const obj = mapObjects[objectId];
                 const result = obj?.[property];
                 const uuid = uuidv4();
-                
+
                 addMapObject(uuid, result)
 
                 return uuid;
@@ -1115,7 +1115,7 @@
                                 }
                                 updatedPaths.push(latLngs);
                             }
-                            invokeCallback('OnPolygonDrag', id, updatedPaths);
+                            invokeCallback('OnPolygonPathChange', id, updatedPaths);
                         });
                         polygonDragListeners.set(polygon, listener);
                     }
@@ -1296,7 +1296,7 @@
                 disposeObject(id);
             }
         }
-        
+
     };
 
 

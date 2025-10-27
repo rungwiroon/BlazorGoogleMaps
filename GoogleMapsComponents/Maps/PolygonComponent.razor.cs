@@ -127,7 +127,7 @@ public partial class PolygonComponent :  IAsyncDisposable, IPoly
                 StrokeWeight = StrokeWeight,
                 FillColor = FillColor,
                 FillOpacity = (float)FillOpacity,
-                Clickable = Clickable,
+                Clickable = Clickable || Draggable,
                 Editable = Editable,
                 Draggable = Draggable,
                 Visible = Visible,
@@ -174,7 +174,7 @@ public partial class PolygonComponent :  IAsyncDisposable, IPoly
     }
 
     internal readonly struct PolygonOptions
-    {    
+    {
         public List<List<LatLngLiteral>>? Paths { get; init; }
         public string? StrokeColor { get; init; }
         public double? StrokeOpacity { get; init; }
