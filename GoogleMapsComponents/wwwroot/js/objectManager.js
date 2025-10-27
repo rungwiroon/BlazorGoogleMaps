@@ -29,10 +29,11 @@
     let mapObjects = {};
     let controlParents = {};
     let polygonClickListeners = new Map();
+    let polygonDragListeners = new Map();
     const dateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
 
 
-    // Add the object to the map for "managed" objects, tries to set the guidString to 
+    // Add the object to the map for "managed" objects, tries to set the guidString to
     // be able to dispose of them later on
     function addMapObject(uuid, obj) {
         if (obj && typeof(obj) === "object" && "set" in obj) {
@@ -40,7 +41,7 @@
         }
         mapObjects[uuid] = obj;
     }
-    
+
     //Strip circular dependencies, map object and functions
     //https://stackoverflow.com/questions/11616630/how-can-i-print-a-circular-structure-in-a-json-like-format
     const getCircularReplacer = () => {
@@ -158,7 +159,7 @@
                                 propertyValue.icon.path = symbolPathMapping[iconPath];
                             }
                         }
-                    }                   
+                    }
 
                     // Convert specific Google Maps CollisionBehavior strings to their corresponding objects
                     if (typeof propertyValue === "string" && propertyValue.startsWith("google.maps.CollisionBehavior")) {
@@ -387,7 +388,7 @@
                 if (advancedMarkerElementContent !== null) {
                     args2[0].content = advancedMarkerElementContent;
                 }
-                
+
                 let obj;
                 if (functionName === "google.maps.Map") {
                     const targetElement = args2[0]; // Map div
@@ -417,9 +418,9 @@
                 addMapObject(guid, obj)
             },
 
-            //Used to create multiple objects of the same type passing a set of creation parameters coherent 
-            //with object we need to create 
-            //This allows a single JSInteropt invocation for multiple objects creation with a consistent gain 
+            //Used to create multiple objects of the same type passing a set of creation parameters coherent
+            //with object we need to create
+            //This allows a single JSInteropt invocation for multiple objects creation with a consistent gain
             //in terms of performance
             createMultipleObject: function (args) {
                 mapObjects = mapObjects || [];
@@ -599,7 +600,7 @@
                     if (recycleKey && mapObjects[recycleKey]) {
                         mapObjects[recycleKey].div = object.getDiv()
                     }
-                } 
+                }
                 delete mapObjects[guid];
             },
 
@@ -768,7 +769,7 @@
                 }
             },
 
-            //Function could be extended in future: at the moment it is scoped for 
+            //Function could be extended in future: at the moment it is scoped for
             //simple "Get" and "Set" properties of multiple objects of the same type
             invokeMultiple: async function (args) {
                 const guids = JSON.parse(args[0]);
@@ -865,7 +866,7 @@
                 const obj = mapObjects[objectId];
                 const result = obj?.[property];
                 const uuid = uuidv4();
-                
+
                 addMapObject(uuid, result)
 
                 return uuid;
@@ -1093,6 +1094,33 @@
                     }
                 };
 
+                const setupDragListener = (polygon, isEnabled) => {
+                    // Remove existing listener if present
+                    if (polygonDragListeners.has(polygon)) {
+                        google.maps.event.removeListener(polygonDragListeners.get(polygon));
+                        polygonDragListeners.delete(polygon);
+                    }
+
+                    // Add listener if polygon is draggable
+                    if (isEnabled) {
+                        const listener = polygon.addListener("dragend", () => {
+                            const updatedPaths = [];
+                            const allPaths = polygon.getPaths();
+                            for (let i = 0; i < allPaths.getLength(); i++) {
+                                const subPath = allPaths.getAt(i);
+                                const latLngs = [];
+                                for (let j = 0; j < subPath.getLength(); j++) {
+                                    const latLng = subPath.getAt(j);
+                                    latLngs.push({ lat: latLng.lat(), lng: latLng.lng() });
+                                }
+                                updatedPaths.push(latLngs);
+                            }
+                            invokeCallback('OnPolygonPathChange', id, updatedPaths);
+                        });
+                        polygonDragListeners.set(polygon, listener);
+                    }
+                };
+
                 const setupPathChangeListener = (polygon, editable) => {
                     const paths = polygon.getPaths();
 
@@ -1146,6 +1174,8 @@
                 const existingPolygon = mapObjects[id];
 
                 if (existingPolygon) {
+                    const dragChanged = existingPolygon.getDraggable() !== draggable;
+
                     existingPolygon.setOptions({
                         paths,
                         strokeColor,
@@ -1160,7 +1190,8 @@
                     });
 
                     setupClickListener(existingPolygon, clickable);
-                    setupPathChangeListener(existingPolygon, editable);                    
+                    setupPathChangeListener(existingPolygon, editable);
+                    if (dragChanged) setupDragListener(existingPolygon, draggable);
                     return;
                 }
 
@@ -1182,6 +1213,7 @@
 
                 setupClickListener(polygon, clickable)
                 setupPathChangeListener(polygon, editable);
+                setupDragListener(polygon, draggable);
 
                 addMapObject(id, polygon);
             },
@@ -1199,9 +1231,17 @@
                     if (path.removeListener) google.maps.event.removeListener(path.removeListener);
                 }
 
-                // Remove other listeners
-                if (polygon.clickListener) google.maps.event.removeListener(polygon.clickListener);
-                //if (polygon.dragListener) google.maps.event.removeListener(polygon.dragListener);
+                // Remove click listeners
+                if (polygonClickListeners.has(polygon)) {
+                    google.maps.event.removeListener(polygonClickListeners.get(polygon));
+                    polygonClickListeners.delete(polygon);
+                }
+
+                // Remove drag listeners
+                if (polygonDragListeners.has(polygon)) {
+                    google.maps.event.removeListener(polygonDragListeners.get(polygon));
+                    polygonDragListeners.delete(polygon);
+                }
 
                 polygon.setMap(null);
                 this.disposeObject(id);
@@ -1256,7 +1296,7 @@
                 disposeObject(id);
             }
         }
-        
+
     };
 
 
