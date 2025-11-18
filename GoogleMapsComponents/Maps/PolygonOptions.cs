@@ -41,7 +41,7 @@ public class PolygonOptions : ListableEntityOptionsBase
     /// Any simple arrays are converted into MVCArrays.<br/>
     /// Inserting or removing LatLngs from the MVCArray will automatically update the polygon on the map.
     /// </summary>
-    public IEnumerable<IEnumerable<LatLngLiteral>> Paths { get; set; } = new List<IEnumerable<LatLngLiteral>>();
+    public IEnumerable<IEnumerable<LatLngLiteral>>? Paths { get; set; }
 
     /// <summary>
     /// The stroke color. All CSS3 colors are supported except for extended named colors.
