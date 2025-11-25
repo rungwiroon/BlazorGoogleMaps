@@ -2,6 +2,7 @@
 @using GoogleMapsComponents
 @using GoogleMapsComponents.Maps
 @using GoogleMapsComponents.Maps.Data
+@using System.Runtime.InteropServices
 @*
     The code for this sample was taken from below on 09/02/2020:
     https://developers.google.com/maps/documentation/javascript/earthquakes#maps_earthquake_circles-typescript
@@ -13,6 +14,8 @@
 <button @onclick="@GetMapDataFeature">Get MapData (Feature)</button>
 <button @onclick="@GetMapDataGeoJsonLine">Get MapData (GeoJson Line)</button>
 <button @onclick="@GetMapDataGeoJsonPolygon">Get MapData (GeoJson Polygon)</button>
+<button @onclick="@UseSetStyleInJs">Set Global Style in JS function</button>
+<button @onclick="@UseSetStyleInWASM">Set Global Style in Blazor (WASM)</button>
 <button @onclick="@RemoveFeatures">Remove All Features</button>
 
 <div>
@@ -37,6 +40,29 @@
     private Task OnAfterMapInit()
     {
         return Task.CompletedTask;
+    }
+
+    private async Task UseSetStyleInJs()
+    {
+        await _map1.InteropObject.Data.SetStyle("window.mapDataPage.getFeatureStyle");
+    }
+
+    private async Task UseSetStyleInWASM()
+    {
+        if (RuntimeInformation.ProcessArchitecture == Architecture.Wasm)
+            await _map1.InteropObject.Data.SetStyle((Func<Feature, StyleOptions>)GetStyle);
+    }
+
+    StyleOptions GetStyle(Feature feature)
+    {
+        return new StyleOptions
+        {
+            FillColor = "orange",
+            StrokeColor = "purple",
+            StrokeWeight = 2,
+            StrokeOpacity = 1,
+            FillOpacity = 0.5f
+		};
     }
 
     private async Task GetMapDataFeature()
@@ -122,11 +148,13 @@
                        "  \"features\": [" +
                        "{ \"type\": \"Feature\"," +
                        " \"id\": 3," +
-                       " \"properties\": { \"stroke\": \"#555555\", \"stroke-width\": 2, \"stroke-opacity\": 1 }, " +
                        " \"geometry\": {\"type\": \"Polygon\",  \"coordinates\": [ [ [ 151.219, -33.888], [151.23, -33.888], [151.23, -33.869], [ 151.219, -33.869], [ 151.219, -33.888]]]}}]}";
 
-        await _map1.InteropObject.Data.AddGeoJson(jsonData);
-        await _map1.InteropObject.Data.SetStyle(new StyleOptions { StrokeColor = "magenta", StrokeWeight = 2, FillColor = "magenta", FillOpacity = 0.3f });
+        var features = await _map1.InteropObject.Data.AddGeoJson(jsonData);
+        foreach(Feature feature in features) {
+            await feature.SetProperty("fillColor", "red");
+            await feature.SetProperty("strokeColor", "cyan");
+        }
     }
 
     private async Task RemoveFeatures()

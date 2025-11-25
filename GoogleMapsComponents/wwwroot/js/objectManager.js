@@ -721,6 +721,32 @@
                             const request = tryParseJson(restArgs[1]);
                             return data.overrideStyle(feature, request);
 
+                        case "setStyle":
+                            if (typeof restArgs[0] === 'string') {
+                                return obj.setStyle(formattedArgs[0]);
+                            }
+
+                            //JsCallableFunc
+                            const callback = restArgs[0];
+                            obj.setStyle(feature => {
+                                const uuid = feature.getProperty("UUID");
+                                let style = callback.invokeMethod("Invoke", `["${uuid}"]`, null);
+                                return style;
+                            });
+                            return;
+
+                        case "setStyleCallback":
+                            const jsFuncName = restArgs[0];
+                            //name could be my.namespace.func so split and check function exists
+                            const callbackFunc = jsFuncName.split('.').reduce((obj, key) => {
+                                return (obj && obj[key] !== undefined) ? obj[key] : undefined;
+                            }, window);
+                            if (callbackFunc === undefined)
+                                throw new Error(`callback function for setStyle (${jsFuncName}) is not a function, it's ${typeof (callbackFunc)}'`);
+                            const map = obj.map;
+                            obj.setStyle(f => callbackFunc(map, f));
+                            return;
+
                         default:
                             if (google.maps.places !== undefined && obj instanceof google.maps.places.AutocompleteService ||
                                 (google.maps.places !== undefined && obj instanceof google.maps.places.PlacesService) ||
@@ -747,7 +773,11 @@
                                         return result;
                                     }
                                     if (functionToInvoke === "addGeoJson") {
-                                        return result.map(coords => this.addObject(coords));
+                                        return result.map(feature => {
+                                            const uuid = this.addObject(feature);
+                                            feature.setProperty("UUID", uuid);
+                                            return uuid;
+                                        });
                                     }
                                     if ("get" in result) {
                                         return result.get("guidString");
