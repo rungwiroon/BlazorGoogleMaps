@@ -3,6 +3,9 @@
 @using GoogleMapsComponents.Maps
 @using GoogleMapsComponents.Maps.Data
 @using System.Runtime.InteropServices
+
+@implements IAsyncDisposable
+
 @*
     The code for this sample was taken from below on 09/02/2020:
     https://developers.google.com/maps/documentation/javascript/earthquakes#maps_earthquake_circles-typescript
@@ -37,9 +40,11 @@
             };
     }
 
-    private Task OnAfterMapInit()
+    private async Task OnAfterMapInit()
     {
-        return Task.CompletedTask;
+        await _map1.InteropObject.Data.AddListener<GoogleMapsComponents.Maps.Data.MouseEvent>("click", OnClick);
+        await _map1.InteropObject.Data.AddListener<GoogleMapsComponents.Maps.Data.MouseEvent>("mouseover", OnMouseOver);
+        await _map1.InteropObject.Data.AddListener<GoogleMapsComponents.Maps.Data.MouseEvent>("mouseout", OnMouseOut);
     }
 
     private async Task UseSetStyleInJs()
@@ -63,6 +68,25 @@
             StrokeOpacity = 1,
             FillOpacity = 0.5f
 		};
+    }
+
+    private async void OnClick(GoogleMapsComponents.Maps.Data.MouseEvent e)
+    {
+        string fill = await e.Feature.GetProperty<string>("fillColor");
+        await e.Feature.SetProperty("fillColor", fill == "orange" ? "green" : "orange");
+    }
+
+    private async void OnMouseOver(GoogleMapsComponents.Maps.Data.MouseEvent e)
+    {
+        await _map1.InteropObject.Data.RevertStyle();
+        await _map1.InteropObject.Data.OverrideStyle(e.Feature, new StyleOptions() {
+            StrokeWeight = 8f
+        });
+    }
+
+    private async void OnMouseOut(GoogleMapsComponents.Maps.Data.MouseEvent e)
+    {
+        await _map1.InteropObject.Data.RevertStyle();
     }
 
     private async Task GetMapDataFeature()
@@ -160,6 +184,11 @@
     private async Task RemoveFeatures()
     {
         await _map1.InteropObject.Data.RemoveAll();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _map1.DisposeAsync();
     }
 }
 
