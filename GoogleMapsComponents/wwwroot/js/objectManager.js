@@ -747,6 +747,11 @@
                             obj.setStyle(f => callbackFunc(map, f));
                             return;
 
+                        case "getFeatureById":
+                            const foundFeature = obj.getFeatureById(...formattedArgs);
+                            const featureUuid = typeof (foundFeature) === "object" ? foundFeature.getProperty("UUID") : null;
+                            return featureUuid;
+
                         default:
                             if (google.maps.places !== undefined && obj instanceof google.maps.places.AutocompleteService ||
                                 (google.maps.places !== undefined && obj instanceof google.maps.places.PlacesService) ||

@@ -153,11 +153,17 @@ public class MapData : EventEntityBase, IEnumerable<Feature>
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public Task<Feature> GetFeatureById(OneOf<int, string> id)
+    public async Task<Feature?> GetFeatureById(OneOf<int, string> id)
     {
-        return _jsObjectRef.InvokeAsync<Feature>(
+        string featureUuid = await _jsObjectRef.InvokeAsync<string>(
             "getFeatureById",
             id.Value);
+
+        if (string.IsNullOrEmpty(featureUuid) || !Guid.TryParse(featureUuid, out Guid featureGuid))
+            return null;
+
+        var featureRef = new JsObjectRef(_jsObjectRef.JSRuntime, featureGuid);
+        return new Feature(featureRef);
     }
 
     /// <summary>
