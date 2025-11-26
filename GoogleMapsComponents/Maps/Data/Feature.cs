@@ -66,7 +66,7 @@ public class Feature : IJsObjectRef
     public Task<T> GetProperty<T>(string name)
     {
         return _jsObjectRef.InvokeAsync<T>("getProperty", name);
-	}
+        }
 
     /// <summary>
     /// Removes the property with the given name.
