@@ -326,7 +326,7 @@ public class MapData : EventEntityBase, IEnumerable<Feature>
 	/// <param name="styleFunc"></param>
 	/// <returns></returns>
 	/// <exception cref="PlatformNotSupportedException">
-	/// Throws is not running in WebAssembly as Google API expects the style function to be
+	/// Thrown if not running in WebAssembly as Google API expects the style function to be
 	/// synchronous and that's only possible in WebAssembly. Instead use <seealso cref="SetStyle(string)"/> 
 	/// for client side usage
 	/// </exception>
