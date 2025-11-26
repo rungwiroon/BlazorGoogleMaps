@@ -27,9 +27,9 @@ public class JsCallableAction
             return;
         }
 
-        var jArray = JsonDocument.Parse(args)
-            .RootElement
-            .EnumerateArray();
+        var rootElement = JsonDocument.Parse(args).RootElement;
+        JsonElement.ArrayEnumerator jArray = rootElement.ValueKind == JsonValueKind.Array
+            ? rootElement.EnumerateArray() : [];
 
         var arguments = _argumentTypes.Zip(jArray, (type, jToken) => new { jToken, type })
             .Select(x =>

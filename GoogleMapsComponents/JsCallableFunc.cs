@@ -25,9 +25,9 @@ public class JsCallableFunc
             return _delegate.DynamicInvoke(nullArgs);
         }
 
-        var jArray = JsonDocument.Parse(args)
-            .RootElement
-            .EnumerateArray();
+        var rootElement = JsonDocument.Parse(args).RootElement;
+        JsonElement.ArrayEnumerator jArray = rootElement.ValueKind == JsonValueKind.Array
+            ? rootElement.EnumerateArray() : [];
 
         var arguments = _argumentTypes.SkipLast(1).Zip(jArray, (type, jToken) => new { jToken, type })
             .Select(x =>
