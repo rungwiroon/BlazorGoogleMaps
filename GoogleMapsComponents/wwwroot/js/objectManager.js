@@ -741,7 +741,7 @@
                             const callbackFunc = jsFuncName.split('.').reduce((obj, key) => {
                                 return (obj && obj[key] !== undefined) ? obj[key] : undefined;
                             }, window);
-                            if (callbackFunc === undefined)
+                            if (typeof callbackFunc !== 'function')
                                 throw new Error(`callback function for setStyle (${jsFuncName}) is not a function, it's '${typeof (callbackFunc)}''`);
                             const map = obj.map;
                             obj.setStyle(f => callbackFunc(map, f));
