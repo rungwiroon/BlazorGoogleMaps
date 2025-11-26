@@ -39,21 +39,21 @@ public class JsCallableAction
                 {
                     actionArg.JsObjectRef = new JsObjectRef(_jsRuntime, new Guid(guid));
                 }
-				if (obj is Maps.Data.MouseEvent featureEvent
+                if (obj is Maps.Data.MouseEvent featureEvent
                  && x.jToken.TryGetProperty("feature", out var featureJson) 
                  && featureJson.TryGetProperty("Eg", out var featureEg)
                  && featureEg.TryGetProperty("UUID", out var uuidProp))
-				{
+                {
                     string? uuidStr = uuidProp.GetString();
                     if(!string.IsNullOrWhiteSpace(uuidStr) && Guid.TryParse(uuidStr, out Guid featureUuid))
                     {
-					    var featureObjectRef = new JsObjectRef(_jsRuntime, featureUuid);
+                        var featureObjectRef = new JsObjectRef(_jsRuntime, featureUuid);
                         featureEvent.Feature = new Maps.Data.Feature(featureObjectRef);
 
                     }
                 }
 
-				return obj;
+                return obj;
             })
             .ToArray();
 

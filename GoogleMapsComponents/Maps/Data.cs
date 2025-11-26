@@ -316,26 +316,26 @@ public class MapData : EventEntityBase, IEnumerable<Feature>
             style);
     }
 
-	/// <summary>
-	/// Sets the style for all features in the collection.
-	/// Styles specified on a per-feature basis via overrideStyle() continue to apply.
-	/// The function will be called every time a feature's properties are updated.
+    /// <summary>
+    /// Sets the style for all features in the collection.
+    /// Styles specified on a per-feature basis via overrideStyle() continue to apply.
+    /// The function will be called every time a feature's properties are updated.
     /// WASM Only!
-	/// </summary>
-	/// <param name="styleFunc"></param>
-	/// <returns></returns>
-	/// <exception cref="PlatformNotSupportedException">
-	/// Thrown if not running in WebAssembly as Google API expects the style function to be
-	/// synchronous and that's only possible in WebAssembly. Instead use <seealso cref="SetStyle(string)"/> 
-	/// for client side usage
-	/// </exception>
-	public Task SetStyle(Func<Feature, StyleOptions> styleFunc)
+    /// </summary>
+    /// <param name="styleFunc"></param>
+    /// <returns></returns>
+    /// <exception cref="PlatformNotSupportedException">
+    /// Thrown if not running in WebAssembly as Google API expects the style function to be
+    /// synchronous and that's only possible in WebAssembly. Instead use <seealso cref="SetStyle(string)"/> 
+    /// for client side usage
+    /// </exception>
+    public Task SetStyle(Func<Feature, StyleOptions> styleFunc)
     {
         if (RuntimeInformation.ProcessArchitecture != Architecture.Wasm)
             throw new PlatformNotSupportedException("Cannot be used outside of WebAssembly. Instead use SetStyle(jsFunctionName)");
-		return _jsObjectRef.InvokeAsync(
-			"setStyle",
-			(Delegate)callback);
+        return _jsObjectRef.InvokeAsync(
+            "setStyle",
+            (Delegate)callback);
 
         StyleOptions callback(string featureId)
         {
@@ -343,7 +343,7 @@ public class MapData : EventEntityBase, IEnumerable<Feature>
             var feature = new Feature(new JsObjectRef(_jsObjectRef.JSRuntime, featureGuid));
             return styleFunc(feature);
         }
-	}
+    }
 
     /// <summary>
     /// Sets the style for all features by calling a javascript function
@@ -358,11 +358,11 @@ public class MapData : EventEntityBase, IEnumerable<Feature>
         return _jsObjectRef.InvokeAsync("setStyleCallback", jsFunctionName);
     }
 
-	/// <summary>
-	/// Exports the features in the collection to a GeoJSON object.
-	/// </summary>
-	/// <returns></returns>
-	public Task<object> ToGeoJson()
+    /// <summary>
+    /// Exports the features in the collection to a GeoJSON object.
+    /// </summary>
+    /// <returns></returns>
+    public Task<object> ToGeoJson()
     {
         throw new NotImplementedException();
     }
