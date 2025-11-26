@@ -74,7 +74,7 @@ public class Feature : IJsObjectRef
     /// <param name="name"></param>
     public Task RemoveProperty(string name)
     {
-        return _jsObjectRef.InvokeAsync("removeProperty");
+        return _jsObjectRef.InvokeAsync("removeProperty", name);
     }
 
     /// <summary>
