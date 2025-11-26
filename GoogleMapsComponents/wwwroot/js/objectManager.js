@@ -736,6 +736,8 @@
                             const callback = restArgs[0];
                             obj.setStyle(feature => {
                                 const uuid = feature.getProperty("UUID");
+                                if (typeof uuid !== 'string')
+                                    return;
                                 let style = callback.invokeMethod("Invoke", `["${uuid}"]`, null);
                                 return style;
                             });
