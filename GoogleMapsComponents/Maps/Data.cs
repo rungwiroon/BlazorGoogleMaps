@@ -343,24 +343,24 @@ public class MapData : EventEntityBase, IEnumerable<Feature>
             var feature = new Feature(new JsObjectRef(_jsObjectRef.JSRuntime, featureGuid));
             return styleFunc(feature);
         }
-	}
+    }
 
-	/// <summary>
-	/// Sets the style for all features by calling a javascript function
-	/// </summary>
-	/// <param name="jsFunctionName">The name of the function to call to get the style</param>
-	/// <returns></returns>
-	/// <remarks>
-	/// Example function:
-	/// window.getFeatureStyle = function (mapData, feature) {
-	///     let fillColour = feature.getProperty('fillColor');
-	///     return {
-	///         fillColor: fillColour,
-	///         fillOpacity: 0.3
-	///     };
-	/// }
-	/// </remarks>
-	public Task SetStyle(string jsFunctionName)
+    /// <summary>
+    /// Sets the style for all features by calling a javascript function
+    /// </summary>
+    /// <param name="jsFunctionName">The name of the function to call to get the style</param>
+    /// <returns></returns>
+    /// <remarks>
+    /// Example function:
+    /// window.getFeatureStyle = function (mapData, feature) {
+    ///     let fillColour = feature.getProperty('fillColor');
+    ///     return {
+    ///         fillColor: fillColour,
+    ///         fillOpacity: 0.3
+    ///     };
+    /// }
+    /// </remarks>
+    public Task SetStyle(string jsFunctionName)
     {
         return _jsObjectRef.InvokeAsync("setStyleCallback", jsFunctionName);
     }

@@ -14,6 +14,8 @@ public class JsCallableFunc
     {
         _delegate = @delegate;
         _argumentTypes = argumentTypes;
+        if (argumentTypes.Length == 0)
+            throw new ArgumentException("Must have at least 1 argument type, which would be the return type of the delegate", nameof(argumentTypes));
     }
 
     [JSInvokable]

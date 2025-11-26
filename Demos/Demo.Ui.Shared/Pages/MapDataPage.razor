@@ -70,7 +70,7 @@
         };
     }
 
-    private async void OnClick(GoogleMapsComponents.Maps.Data.MouseEvent e)
+    private async Task OnClick(GoogleMapsComponents.Maps.Data.MouseEvent e)
     {
         if (e.Feature == null)
             return;
@@ -78,7 +78,7 @@
         await e.Feature.SetProperty("fillColor", fill == "orange" ? "green" : "orange");
     }
 
-    private async void OnMouseOver(GoogleMapsComponents.Maps.Data.MouseEvent e)
+    private async Task OnMouseOver(GoogleMapsComponents.Maps.Data.MouseEvent e)
     {
         await _map1.InteropObject.Data.RevertStyle();
         await _map1.InteropObject.Data.OverrideStyle(e.Feature, new StyleOptions() {
@@ -86,7 +86,7 @@
         });
     }
 
-    private async void OnMouseOut(GoogleMapsComponents.Maps.Data.MouseEvent e)
+    private async Task OnMouseOut(GoogleMapsComponents.Maps.Data.MouseEvent e)
     {
         await _map1.InteropObject.Data.RevertStyle();
     }

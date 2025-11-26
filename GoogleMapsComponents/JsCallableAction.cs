@@ -39,12 +39,17 @@ public class JsCallableAction
                 {
                     actionArg.JsObjectRef = new JsObjectRef(_jsRuntime, new Guid(guid));
                 }
-                if (obj is Maps.Data.MouseEvent featureEvent
-                 && x.jToken.TryGetProperty("featureUUID", out var featureUuidProp) 
-                 && Guid.TryParse(featureUuidProp.GetString(), out Guid featureUuid))
+                if (obj is Maps.Data.MouseEvent featureEvent)
                 {
-                    var featureObjectRef = new JsObjectRef(_jsRuntime, featureUuid);
-                    featureEvent.Feature = new Maps.Data.Feature(featureObjectRef);
+                    //null any reference that might have come from the json since it won't be usable
+                    featureEvent.Feature = null;
+
+                    if(x.jToken.TryGetProperty("featureUUID", out var featureUuidProp)
+				      && Guid.TryParse(featureUuidProp.GetString(), out Guid featureUuid))
+                    {
+					    var featureObjectRef = new JsObjectRef(_jsRuntime, featureUuid);
+                        featureEvent.Feature = new Maps.Data.Feature(featureObjectRef);
+                    }
                 }
 
                 return obj;
