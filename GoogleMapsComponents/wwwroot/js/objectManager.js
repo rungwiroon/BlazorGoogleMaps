@@ -83,7 +83,13 @@
                     args[0].marker = null;
                     await item.invokeMethodAsync("Invoke", extendableStringify(args, getCircularReplacer()), guid);
                     args[0].marker = markerBackup;
-                } else {
+                }
+                else if (args.length === 1 && args[0] instanceof Object && "feature" in args[0]) {
+                    const featureUUID = args[0].feature.getProperty("UUID");
+                    args[0].featureUUID = featureUUID;
+                    await item.invokeMethodAsync("Invoke", extendableStringify(args, getCircularReplacer()), guid);
+                }
+                else {
                     await item.invokeMethodAsync("Invoke", extendableStringify(args, getCircularReplacer()), guid);
                 }
 
