@@ -42,9 +42,9 @@
 
     private async Task OnAfterMapInit()
     {
-        await _map1.InteropObject.Data.AddListener<GoogleMapsComponents.Maps.Data.MouseEvent>("click", OnClick);
-        await _map1.InteropObject.Data.AddListener<GoogleMapsComponents.Maps.Data.MouseEvent>("mouseover", OnMouseOver);
-        await _map1.InteropObject.Data.AddListener<GoogleMapsComponents.Maps.Data.MouseEvent>("mouseout", OnMouseOut);
+        await _map1.InteropObject.Data.AddListener<GoogleMapsComponents.Maps.Data.MouseEvent>("click", async e => OnClick(e));
+        await _map1.InteropObject.Data.AddListener<GoogleMapsComponents.Maps.Data.MouseEvent>("mouseover", async e => OnMouseOver(e));
+        await _map1.InteropObject.Data.AddListener<GoogleMapsComponents.Maps.Data.MouseEvent>("mouseout", async e => OnMouseOut(e));
     }
 
     private async Task UseSetStyleInJs()
