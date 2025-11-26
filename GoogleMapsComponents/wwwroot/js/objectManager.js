@@ -755,7 +755,7 @@
 
                         case "getFeatureById":
                             const foundFeature = obj.getFeatureById(...formattedArgs);
-                            const featureUuid = typeof (foundFeature) === "object" ? foundFeature.getProperty("UUID") : null;
+                            const featureUuid = foundFeature != null ? foundFeature.getProperty("UUID") : null;
                             return featureUuid;
 
                         default:
