@@ -55,7 +55,7 @@
     private async Task UseSetStyleInWASM()
     {
         if (RuntimeInformation.ProcessArchitecture == Architecture.Wasm)
-            await _map1.InteropObject.Data.SetStyle((Func<Feature, StyleOptions>)GetStyle);
+            await _map1.InteropObject.Data.SetStyle(GetStyle);
     }
 
     StyleOptions GetStyle(Feature feature)
