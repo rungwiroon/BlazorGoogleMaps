@@ -137,18 +137,18 @@ internal static class Helper
                                 var typeDefinition = argType.GetGenericTypeDefinition();
                                 if (typeDefinition == typeof(Action<>))
                                 {
-									var genericArguments = argType.GetGenericArguments();
+                                    var genericArguments = argType.GetGenericArguments();
 
-									//Debug.WriteLine($"Generic args : {genericArguments.Count()}");
+                                    //Debug.WriteLine($"Generic args : {genericArguments.Count()}");
 
-									return DotNetObjectReference.Create(new JsCallableAction(jsRuntime, (Delegate)arg, genericArguments));
-								}
+                                    return DotNetObjectReference.Create(new JsCallableAction(jsRuntime, (Delegate)arg, genericArguments));
+                                }
                                 if(typeDefinition == typeof(Func<,>))
                                 {
-									var genericArguments = argType.GetGenericArguments();
-									return DotNetObjectReference.Create(new JsCallableFunc((Delegate)arg, genericArguments));
-								}
-							}
+                                    var genericArguments = argType.GetGenericArguments();
+                                    return DotNetObjectReference.Create(new JsCallableFunc((Delegate)arg, genericArguments));
+                                }
+                            }
 
                             switch (arg)
                             {
