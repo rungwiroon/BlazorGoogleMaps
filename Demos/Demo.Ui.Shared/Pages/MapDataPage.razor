@@ -72,6 +72,8 @@
 
     private async void OnClick(GoogleMapsComponents.Maps.Data.MouseEvent e)
     {
+        if (e.Feature == null)
+            return;
         string fill = await e.Feature.GetProperty<string>("fillColor");
         await e.Feature.SetProperty("fillColor", fill == "orange" ? "green" : "orange");
     }
