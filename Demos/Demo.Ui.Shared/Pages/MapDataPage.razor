@@ -18,7 +18,7 @@
 <button @onclick="@GetMapDataGeoJsonLine">Get MapData (GeoJson Line)</button>
 <button @onclick="@GetMapDataGeoJsonPolygon">Get MapData (GeoJson Polygon)</button>
 <button @onclick="@UseSetStyleInJs">Set Global Style in JS function</button>
-<button @onclick="@UseSetStyleInWASM">Set Global Style in Blazor (WASM)</button>
+<button @onclick="@UseSetStyleInWasm">Set Global Style in Blazor (WASM)</button>
 <button @onclick="@RemoveFeatures">Remove All Features</button>
 
 <div>
@@ -52,10 +52,16 @@
         await _map1.InteropObject.Data.SetStyle("window.mapDataPage.getFeatureStyle");
     }
 
-    private async Task UseSetStyleInWASM()
+    private async Task UseSetStyleInWasm()
     {
         if (RuntimeInformation.ProcessArchitecture == Architecture.Wasm)
+        {
             await _map1.InteropObject.Data.SetStyle(GetStyle);
+        }
+        else
+        {
+            _message = "Works only in Blazor WebAssembly."; 
+        }
     }
 
     StyleOptions GetStyle(Feature feature)
@@ -73,7 +79,10 @@
     private async Task OnClick(GoogleMapsComponents.Maps.Data.MouseEvent e)
     {
         if (e.Feature == null)
+        {
             return;
+        }
+
         string fill = await e.Feature.GetProperty<string>("fillColor");
         await e.Feature.SetProperty("fillColor", fill == "orange" ? "green" : "orange");
     }
