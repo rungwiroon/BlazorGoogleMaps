@@ -27,9 +27,9 @@ public class JsCallableAction
             return;
         }
 
-        var jArray = JsonDocument.Parse(args)
-            .RootElement
-            .EnumerateArray();
+        var rootElement = JsonDocument.Parse(args).RootElement;
+        JsonElement.ArrayEnumerator jArray = rootElement.ValueKind == JsonValueKind.Array
+            ? rootElement.EnumerateArray() : [];
 
         var arguments = _argumentTypes.Zip(jArray, (type, jToken) => new { jToken, type })
             .Select(x =>
@@ -38,6 +38,18 @@ public class JsCallableAction
                 if (obj is IActionArgument actionArg)
                 {
                     actionArg.JsObjectRef = new JsObjectRef(_jsRuntime, new Guid(guid));
+                }
+                if (obj is Maps.Data.MouseEvent featureEvent)
+                {
+                    //null any reference that might have come from the json since it won't be usable
+                    featureEvent.Feature = null;
+
+                    if(x.jToken.TryGetProperty("featureUUID", out var featureUuidProp)
+				      && Guid.TryParse(featureUuidProp.GetString(), out Guid featureUuid))
+                    {
+					    var featureObjectRef = new JsObjectRef(_jsRuntime, featureUuid);
+                        featureEvent.Feature = new Maps.Data.Feature(featureObjectRef);
+                    }
                 }
 
                 return obj;

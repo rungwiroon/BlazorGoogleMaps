@@ -83,7 +83,13 @@
                     args[0].marker = null;
                     await item.invokeMethodAsync("Invoke", extendableStringify(args, getCircularReplacer()), guid);
                     args[0].marker = markerBackup;
-                } else {
+                }
+                else if (args.length === 1 && args[0] instanceof Object && "feature" in args[0]) {
+                    const featureUUID = args[0].feature.getProperty("UUID");
+                    args[0].featureUUID = featureUUID;
+                    await item.invokeMethodAsync("Invoke", extendableStringify(args, getCircularReplacer()), guid);
+                }
+                else {
                     await item.invokeMethodAsync("Invoke", extendableStringify(args, getCircularReplacer()), guid);
                 }
 
@@ -721,6 +727,39 @@
                             const request = tryParseJson(restArgs[1]);
                             return data.overrideStyle(feature, request);
 
+                        case "setStyle":
+                            if (typeof restArgs[0] === 'string') {
+                                return obj.setStyle(formattedArgs[0]);
+                            }
+
+                            //JsCallableFunc
+                            const callback = restArgs[0];
+                            obj.setStyle(feature => {
+                                const uuid = feature.getProperty("UUID");
+                                if (typeof uuid !== 'string')
+                                    return;
+                                let style = callback.invokeMethod("Invoke", `["${uuid}"]`, null);
+                                return style;
+                            });
+                            return;
+
+                        case "setStyleCallback":
+                            const jsFuncName = restArgs[0];
+                            //name could be my.namespace.func so split and check function exists
+                            const callbackFunc = jsFuncName.split('.').reduce((obj, key) => {
+                                return (obj && obj[key] !== undefined) ? obj[key] : undefined;
+                            }, window);
+                            if (typeof callbackFunc !== 'function')
+                                throw new Error(`callback function for setStyle (${jsFuncName}) is not a function, it's '${typeof (callbackFunc)}'`);
+                            const map = obj.map;
+                            obj.setStyle(f => callbackFunc(map, f));
+                            return;
+
+                        case "getFeatureById":
+                            const foundFeature = obj.getFeatureById(...formattedArgs);
+                            const featureUuid = foundFeature != null ? foundFeature.getProperty("UUID") : null;
+                            return featureUuid;
+
                         default:
                             if (google.maps.places !== undefined && obj instanceof google.maps.places.AutocompleteService ||
                                 (google.maps.places !== undefined && obj instanceof google.maps.places.PlacesService) ||
@@ -747,7 +786,11 @@
                                         return result;
                                     }
                                     if (functionToInvoke === "addGeoJson") {
-                                        return result.map(coords => this.addObject(coords));
+                                        return result.map(feature => {
+                                            const uuid = this.addObject(feature);
+                                            feature.setProperty("UUID", uuid);
+                                            return uuid;
+                                        });
                                     }
                                     if ("get" in result) {
                                         return result.get("guidString");

@@ -132,19 +132,28 @@ internal static class Helper
                         return DotNetObjectReference.Create(new JsCallableAction(jsRuntime, action));
                     default:
                         {
-                            if (argType.IsGenericType
-                                && (argType.GetGenericTypeDefinition() == typeof(Action<>)))
+                            if(argType.IsGenericType)
                             {
-                                var genericArguments = argType.GetGenericArguments();
+                                var typeDefinition = argType.GetGenericTypeDefinition();
+                                if (typeDefinition == typeof(Action<>))
+                                {
+                                    var genericArguments = argType.GetGenericArguments();
 
-                                //Debug.WriteLine($"Generic args : {genericArguments.Count()}");
+                                    //Debug.WriteLine($"Generic args : {genericArguments.Count()}");
 
-                                return DotNetObjectReference.Create(new JsCallableAction(jsRuntime, (Delegate)arg, genericArguments));
+                                    return DotNetObjectReference.Create(new JsCallableAction(jsRuntime, (Delegate)arg, genericArguments));
+                                }
+                                if(typeDefinition == typeof(Func<,>))
+                                {
+                                    var genericArguments = argType.GetGenericArguments();
+                                    return DotNetObjectReference.Create(new JsCallableFunc((Delegate)arg, genericArguments));
+                                }
                             }
 
                             switch (arg)
                             {
                                 case JsCallableAction _:
+                                case JsCallableFunc _:
                                     return DotNetObjectReference.Create(arg);
                                 case IJsObjectRef jsObjectRef:
                                     {

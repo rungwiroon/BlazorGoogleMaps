@@ -63,18 +63,18 @@ public class Feature : IJsObjectRef
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
-    public object GetProperty(string name)
+    public Task<T> GetProperty<T>(string name)
     {
-        throw new NotImplementedException();
-    }
+        return _jsObjectRef.InvokeAsync<T>("getProperty", name);
+        }
 
     /// <summary>
     /// Removes the property with the given name.
     /// </summary>
     /// <param name="name"></param>
-    public void RemoveProperty(string name)
+    public Task RemoveProperty(string name)
     {
-        throw new NotImplementedException();
+        return _jsObjectRef.InvokeAsync("removeProperty", name);
     }
 
     /// <summary>
@@ -92,9 +92,9 @@ public class Feature : IJsObjectRef
     /// </summary>
     /// <param name="name"></param>
     /// <param name="newValue"></param>
-    public void SetProperty(string name, object newValue)
+    public Task SetProperty(string name, object newValue)
     {
-        throw new NotImplementedException();
+        return _jsObjectRef.InvokeAsync("setProperty", name, newValue);
     }
 
     /// <summary>

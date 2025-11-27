@@ -7,5 +7,5 @@
 /// </summary>
 public class MouseEvent : Maps.MouseEvent
 {
-    public Feature Feature { get; set; }
+    public Feature? Feature { get; set; }
 }
