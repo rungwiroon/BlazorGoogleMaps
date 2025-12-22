@@ -57,6 +57,16 @@ public class AdvancedMarkerElement : ListableEntityBase<AdvancedMarkerElementOpt
     }
 
     /// <summary>
+    /// Sets the z-index of the marker.
+    /// </summary>
+    /// <param name="zIndex"></param>
+    /// <returns></returns>
+    public Task SetZIndex(int? zIndex)
+    {
+        return _jsObjectRef.InvokePropertyAsync("zIndex", zIndex);
+    }
+
+    /// <summary>
     /// Sets the position of the marker.
     /// </summary>
     /// <param name="newPosition">The new position as a <see cref="LatLngLiteral"/>.</param>

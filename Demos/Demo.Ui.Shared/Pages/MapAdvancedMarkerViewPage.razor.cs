@@ -57,6 +57,7 @@ public sealed partial class MapAdvancedMarkerViewPage
         });
 
         _advancedMarkerElements.Push(marker);
+        //await marker.SetZIndex(15);
         await _bounds.Extend(mapCenter);
 
         await marker.AddListener<MouseEvent>("click", e =>
