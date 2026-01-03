@@ -25,6 +25,9 @@ public class AutocompleteSessionToken : IDisposable, IJsObjectRef
         _jsObjectRef = jsObjectRef;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public void Dispose()
     {
         _jsObjectRef.Dispose();

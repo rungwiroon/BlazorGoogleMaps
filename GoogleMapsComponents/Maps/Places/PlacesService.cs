@@ -21,7 +21,8 @@ public class PlacesService
     /// <returns></returns>
     public static async Task<PlacesService> CreateAsync(IJSRuntime jsRuntime, OneOf<ElementReference, Map> attrContainer)
     {
-        var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.places.PlacesService", attrContainer);
+        const string jsObjectName = "google.maps.places.PlacesService";
+        var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, jsObjectName, attrContainer);
         var obj = new PlacesService(jsObjectRef);
 
         return obj;
@@ -68,6 +69,9 @@ public class PlacesService
         return await _jsObjectRef.InvokeAsync<PlaceResponse>("getDetails", request);
     }
 
+    /// <summary>
+    /// Disposes the PlacesService and releases any resources it holds.
+    /// </summary>
     public void Dispose()
     {
         _jsObjectRef.Dispose();

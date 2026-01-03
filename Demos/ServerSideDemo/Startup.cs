@@ -24,7 +24,7 @@ public class Startup
         services.AddServerSideBlazor().AddHubOptions(config => config.MaximumReceiveMessageSize = 1048576);
 
         // Adds the service to use bootstrap loader for Google API JS. 
-       services.AddBlazorGoogleMaps(new EnvVariableBlazorGoogleMapsKeyService());
+        services.AddBlazorGoogleMaps(new EnvVariableBlazorGoogleMapsKeyService());
         //services.AddBlazorGoogleMaps(new MapApiLoadOptions("AIzaSyBdkgvniMdyFPAcTlcZivr8f30iU-kn1T0")
         //{
         //    Version = "beta"
@@ -37,7 +37,6 @@ public class Startup
         //});
     }
 
-    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
         if (env.IsDevelopment())

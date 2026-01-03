@@ -16,11 +16,14 @@ public class EnvVariableBlazorGoogleMapsKeyService : IBlazorGoogleMapsKeyService
             key = "AIzaSyBdkgvniMdyFPAcTlcZivr8f30iU-kn1T0";
         }
 
-        IsApiInitialized = true;
+        Console.WriteLine($"Using google key: {key}");
+
+        //IsApiInitialized = true;
 
         return Task.FromResult(new MapApiLoadOptions(key)
         {
             Version = "beta",
+            Libraries = "places,visualization,drawing,marker"
             // Language = "ja"
         });
     }

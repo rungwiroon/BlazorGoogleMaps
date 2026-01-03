@@ -763,7 +763,19 @@
                         default:
                             if (google.maps.places !== undefined && obj instanceof google.maps.places.AutocompleteService ||
                                 (google.maps.places !== undefined && obj instanceof google.maps.places.PlacesService) ||
+                                (google.maps.places !== undefined && obj instanceof google.maps.places.Place) ||
                                 obj instanceof google.maps.Geocoder) {
+                                
+                                // Handle static methods on Place class
+                                const placeStaticMethods = ['searchByText', 'searchNearby'];
+                                if (google.maps.places !== undefined && 
+                                    obj instanceof google.maps.places.Place && 
+                                    placeStaticMethods.includes(functionToInvoke)) {
+                                    const result = await google.maps.places.Place[functionToInvoke](formattedArgs[0]);
+                                    // These methods return an object with 'places' array, convert to expected format
+                                    return result;
+                                }
+                                
                                 return new Promise((resolve, reject) => {
                                     obj[functionToInvoke](formattedArgs[0], (result, status) => {
                                         if (obj instanceof google.maps.places.AutocompleteService) {
