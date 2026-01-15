@@ -20,14 +20,9 @@
     
     internal Guid? MapId => MapRef?.InteropObject.Guid;
     
-    public int MarkerCount => _mapComponents.Count;
-    public IEnumerable<MarkerComponent> Markers => _mapComponents.Select(x => x.Value);
-    private readonly Dictionary<Guid, MarkerComponent> _mapComponents = [];
-
-
-    public int PolygonCount => _mapComponents.Count;
-    public IEnumerable<PolygonComponent> Polygons => _mapPolygonComponents.Select(x => x.Value);
-    private readonly Dictionary<Guid, PolygonComponent> _mapPolygonComponents = [];
+    public int ComponentCount => _mapComponents.Count;
+    public IEnumerable<IMapComponent> Components => _mapComponents.Select(x => x.Value);
+    private readonly Dictionary<Guid, IMapComponent> _mapComponents = [];
 
     internal DotNetObjectReference<AdvancedGoogleMap>? CallbackRef;
     
@@ -70,7 +65,7 @@
     [JSInvokable]
     public async Task OnMarkerClicked(Guid markerId)
     {
-        if (_mapComponents.TryGetValue(markerId, out var markerComponent))
+        if (_mapComponents.TryGetValue(markerId, out var component) && component is MarkerComponent markerComponent)
         {
             await markerComponent.MarkerClicked();
         }
@@ -79,7 +74,7 @@
     [JSInvokable]
     public async Task OnMarkerDrag(Guid markerId, LatLngLiteral position)
     {
-        if (_mapComponents.TryGetValue(markerId, out var markerComponent))
+        if (_mapComponents.TryGetValue(markerId, out var component) && component is MarkerComponent markerComponent)
         {
             await markerComponent.MarkerDragged(position);
         }
@@ -88,7 +83,7 @@
     [JSInvokable]
     public async Task OnPolygonClicked(Guid polygonId)
     {
-        if (_mapPolygonComponents.TryGetValue(polygonId, out var polygonComponent))
+        if (_mapComponents.TryGetValue(polygonId, out var component) && component is PolygonComponent polygonComponent)
         {
             await polygonComponent.Click();
         }
@@ -97,48 +92,31 @@
     [JSInvokable]
     public async Task OnPolygonPathChange(Guid polygonId, List<List<LatLngLiteral>> paths)
     {
-        if (_mapPolygonComponents.TryGetValue(polygonId, out var polygonComponent))
+        if (_mapComponents.TryGetValue(polygonId, out var component) && component is PolygonComponent polygonComponent)
         {
             await polygonComponent.PathChanged(paths);
         }
     }
     
-    internal void AddMarker(MarkerComponent marker)
+    internal void RegisterComponent(IMapComponent component)
     {
-        _mapComponents.TryAdd(marker.Guid, marker);
+        _mapComponents.TryAdd(component.Guid, component);
+        //TODO: New callback.
         OnMarkersChanged.InvokeAsync();
     }
     
-    internal void RemoveMarker(MarkerComponent marker)
+    internal void UnregisterComponent(IMapComponent component)
     {
-        _mapComponents.Remove(marker.Guid);
+        _mapComponents.Remove(component.Guid);
         OnMarkersChanged.InvokeAsync();
     }
-
-        internal void AddPolygon(PolygonComponent poly)
-    {
-        _mapPolygonComponents.TryAdd(poly.Guid, poly);
-        OnPolygonsChanged.InvokeAsync();
-    }
-    
-    internal void RemovePolygon(PolygonComponent poly)
-    {
-        _mapPolygonComponents.Remove(poly.Guid);
-        OnPolygonsChanged.InvokeAsync();
-    }
-
 
     public async ValueTask DisposeAsync()
     {
         // Mark components as disposed, since they will be removed by disposing the MapRef.
         foreach (var component in _mapComponents)
         {
-            component.Value.IsDisposed = true;
-        }
-
-        foreach (var component in _mapPolygonComponents)
-        {
-            component.Value.IsDisposed = true;
+            component.Value.SetDisposed();
         }
 
         if (MapRef != null)
