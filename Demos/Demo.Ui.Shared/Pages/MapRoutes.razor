@@ -11,3 +11,7 @@
     Duration: @_durationTotalString <br />
     Distance: @_distanceTotalString <br />
 </p>
+@if (!string.IsNullOrWhiteSpace(_lastError))
+{
+    <p style="color: #c00;">@_lastError</p>
+}

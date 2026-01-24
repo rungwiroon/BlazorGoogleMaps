@@ -31,11 +31,54 @@ public class MapComponent : ComponentBase, IDisposable, IAsyncDisposable
 
     public async Task InitAsync(ElementReference element, MapOptions? options = null)
     {
-        if (options?.ApiLoadOptions == null && _keyService != null && !_keyService.IsApiInitialized)
+        MapApiLoadOptions? loadedApiOptions = options?.ApiLoadOptions;
+        if (options?.ApiLoadOptions == null && _keyService != null)
         {
-            _keyService.IsApiInitialized = true;
-            options ??= new MapOptions();
-            options.ApiLoadOptions = await _keyService.GetApiOptions();
+            bool isGoogleReady = false;
+            try
+            {
+                isGoogleReady = await JsRuntime.InvokeAsync<bool>("blazorGoogleMaps.objectManager.isGoogleMapsReady");
+            }
+            catch
+            {
+                // Ignore JS exceptions; we'll try loading if needed.
+            }
+
+            if (!_keyService.IsApiInitialized || !isGoogleReady)
+            {
+                _keyService.IsApiInitialized = true;
+                options ??= new MapOptions();
+                loadedApiOptions = await _keyService.GetApiOptions();
+                options.ApiLoadOptions = loadedApiOptions;
+            }
+        }
+
+        if (options != null && string.IsNullOrWhiteSpace(options.MapId))
+        {
+            // If styles are set, avoid auto-applying MapId to prevent conflicts.
+            if (options.Styles != null && options.Styles.Length > 0)
+            {
+                InteropObject = await Map.CreateAsync(JsRuntime, element, options);
+                MapInitialized?.Invoke(this, EventArgs.Empty);
+                return;
+            }
+
+            var mapIds = loadedApiOptions?.MapIds;
+            if (mapIds == null && _keyService != null)
+            {
+                try
+                {
+                    mapIds = (await _keyService.GetApiOptions()).MapIds;
+                }
+                catch
+                {
+                    mapIds = null;
+                }
+            }
+            if (mapIds != null && mapIds.Length == 1 && !string.IsNullOrWhiteSpace(mapIds[0]))
+            {
+                options.MapId = mapIds[0];
+            }
         }
 
         InteropObject = await Map.CreateAsync(JsRuntime, element, options);

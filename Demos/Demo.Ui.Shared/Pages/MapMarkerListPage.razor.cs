@@ -14,14 +14,14 @@ public partial class MapMarkerListPage
 
     private MapOptions mapOptions;
 
-    private Stack<Marker> markers = new Stack<Marker>();
+    private Stack<AdvancedMarkerElement> markers = new Stack<AdvancedMarkerElement>();
 
     private List<String> _events = new List<String>();
 
     private MapEventList eventList;
 
     private LatLngBounds bounds;
-    private MarkerList _markerList;
+    private AdvancedMarkerElementList _markerList;
 
     [Inject]
     public IJSRuntime JsObjectRef { get; set; }
@@ -78,22 +78,22 @@ public partial class MapMarkerListPage
         //await JsObjectRef.InvokeAsync<object>("initMap", map1.InteropObject.Guid.ToString(), markers);
     }
 
-    private async Task<IEnumerable<Marker>> GetMarkers(IEnumerable<LatLngLiteral> coords, Map map)
+    private async Task<IEnumerable<AdvancedMarkerElement>> GetMarkers(IEnumerable<LatLngLiteral> coords, Map map)
     {
-        var result = new List<Marker>(coords.Count());
+        var result = new List<AdvancedMarkerElement>(coords.Count());
         var index = 1;
         foreach (var latLngLiteral in coords)
         {
-            var marker = await Marker.CreateAsync(map1.JsRuntime, new MarkerOptions()
+            var marker = await AdvancedMarkerElement.CreateAsync(map1.JsRuntime, new AdvancedMarkerElementOptions()
             {
                 Position = latLngLiteral,
                 Map = map,
-                Label = $"Test {index++}",
-                //Icon = new Icon()
-                //{
-                //    Url = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
-                //}
-                //Icon = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
+                Title = $"Test {index}",
+                GmpClickable = true,
+                Content = new PinElement
+                {
+                    Glyph = $"Test {index++}"
+                }
             });
 
             result.Add(marker);
@@ -156,29 +156,27 @@ public partial class MapMarkerListPage
     {
         if (_markerList == null)
         {
-            _markerList = await MarkerList.CreateAsync(
+            _markerList = await AdvancedMarkerElementList.CreateAsync(
                 map1.JsRuntime,
-                coordinates.ToDictionary(s => Guid.NewGuid().ToString(), y => new MarkerOptions()
+                coordinates.ToDictionary(s => Guid.NewGuid().ToString(), y => new AdvancedMarkerElementOptions()
                 {
                     Position = y,
                     Map = map1.InteropObject,
-                    //Icon = new Icon() { Url = s.MarkerIconPath, ScaledSize = iconSize, Anchor = iconAnchor },
-                    Clickable = true,
+                    GmpClickable = true,
                     Title = Guid.NewGuid().ToString(),
-                    Visible = true
+                    Content = new PinElement()
                 })
             );
         }
         else
         {
-            var cordDic = coordinates.ToDictionary(s => Guid.NewGuid().ToString(), y => new MarkerOptions()
+            var cordDic = coordinates.ToDictionary(s => Guid.NewGuid().ToString(), y => new AdvancedMarkerElementOptions()
             {
                 Position = y,
                 Map = map1.InteropObject,
-                //Icon = new Icon() { Url = s.MarkerIconPath, ScaledSize = iconSize, Anchor = iconAnchor },
-                Clickable = true,
+                GmpClickable = true,
                 Title = Guid.NewGuid().ToString(),
-                Visible = true
+                Content = new PinElement()
             });
 
             await _markerList.AddMultipleAsync(cordDic);

@@ -28,8 +28,9 @@
 
     private bool DisablePoiInfoWindow { get; set; } = false;
 
-    private Stack<Marker> _markers = new Stack<Marker>();
+    private Stack<AdvancedMarkerElement> _markers = new Stack<AdvancedMarkerElement>();
     private string _labelText = "";
+    private readonly Dictionary<Guid, string> _markerLabels = new();
 
     protected override void OnInitialized()
     {
@@ -268,48 +269,30 @@
     }
     private async Task AddMarker()
     {
-        var marker = await Marker.CreateAsync(_map1.JsRuntime,
-            new MarkerOptions()
+        var labelText = $"Test {_markers.Count()}";
+        var marker = await AdvancedMarkerElement.CreateAsync(_map1.JsRuntime,
+            new AdvancedMarkerElementOptions()
             {
                 Position = await _map1.InteropObject.GetCenter(),
                 Map = _map1.InteropObject,
-                Label = new MarkerLabel { Text = $"Test {_markers.Count()}", FontWeight = "bold" },
-                Draggable = true,
-                Icon = new Icon()
+                Title = labelText,
+                GmpDraggable = true,
+                GmpClickable = true,
+                Content = new PinElement
                 {
-                    Url = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
+                    Glyph = labelText
                 }
-            //Icon = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
-        });
-
-        //await marker.SetMap(map1);
-
-        //var map = await marker.GetMap();
-
-        var icon = await marker.GetIcon();
-
-        Console.WriteLine($"Get icon result type is : {icon.Value.GetType()}");
-
-        icon.Switch(
-            s => Console.WriteLine(s),
-            i => Console.WriteLine(i.Url),
-            _ => { });
-
-        //if (map == map1.InteropObject)
-        //{
-        //    Console.WriteLine("Yess");
-        //}
-        //else
-        //{
-        //    Console.WriteLine("Nooo");
-        //}
+            });
 
         _markers.Push(marker);
-        _labelText = await marker.GetLabelText();
+        _markerLabels[marker.Guid] = labelText;
+        _labelText = labelText;
 
         await marker.AddListener<MouseEvent>("click", async e =>
         {
-            string markerLabelText = await marker.GetLabelText();
+            var markerLabelText = _markerLabels.TryGetValue(marker.Guid, out var storedLabel)
+                ? storedLabel
+                : "marker";
             _events.Add("click on " + markerLabelText);
             StateHasChanged();
             await e.Stop();
@@ -317,9 +300,11 @@
         await marker.AddListener<MouseEvent>("dragend", async e => await OnMakerDragEnd(marker, e));
     }
 
-    private async Task OnMakerDragEnd(Marker m, MouseEvent e)
+    private async Task OnMakerDragEnd(AdvancedMarkerElement m, MouseEvent e)
     {
-        string markerLabelText = await m.GetLabelText();
+        var markerLabelText = _markerLabels.TryGetValue(m.Guid, out var storedLabel)
+            ? storedLabel
+            : "marker";
         _events.Insert(0, $"OnMakerDragEnd ({markerLabelText}): ({e.LatLng}).");
         StateHasChanged();
         await e.Stop();
@@ -334,7 +319,10 @@
 
         var lastMarker = _markers.Pop();
         await lastMarker.SetMap(null);
-        _labelText = _markers.Any() ? await _markers.Peek().GetLabelText() : "";
+        _markerLabels.Remove(lastMarker.Guid);
+        _labelText = _markers.Any() && _markerLabels.TryGetValue(_markers.Peek().Guid, out var label)
+            ? label
+            : "";
     }
 
     public async ValueTask DisposeAsync()

@@ -44,7 +44,6 @@ public partial class DrawingManagerPage
         List<OverlayType> overlayTypes = new List<OverlayType>();
         overlayTypes.Add(OverlayType.Polygon);
         overlayTypes.Add(OverlayType.Polyline);
-        overlayTypes.Add(OverlayType.Marker);
 
         var drawingControlOptions = new DrawingControlOptions()
         {

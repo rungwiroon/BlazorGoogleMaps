@@ -1,5 +1,6 @@
 ﻿using GoogleMapsComponents;
 using GoogleMapsComponents.Maps;
+using Microsoft.JSInterop;
 
 namespace Demo.Ui.Shared.Pages;
 
@@ -11,6 +12,8 @@ public partial class MapRoutes : IAsyncDisposable
     private string? _durationTotalString;
     private string? _distanceTotalString;
     private DirectionsResult? _directionsResult;
+    private readonly Stack<AdvancedMarkerElement> _routeMarkers = new();
+    private string? _lastError;
 
     protected override void OnInitialized()
     {
@@ -24,10 +27,22 @@ public partial class MapRoutes : IAsyncDisposable
 
     private async Task RemoveRoute()
     {
-        await _dirRend.SetMap(null);
+        _lastError = null;
+        try
+        {
+            if (_dirRend is not null)
+            {
+                await _dirRend.SetMap(null);
+            }
+            await ClearRouteMarkersAsync();
 
-        _durationTotalString = null;
-        _distanceTotalString = null;
+            _durationTotalString = null;
+            _distanceTotalString = null;
+        }
+        catch (Exception ex)
+        {
+            _lastError = ex.Message;
+        }
     }
 
     private async Task OnAfterInitAsync()
@@ -36,17 +51,7 @@ public partial class MapRoutes : IAsyncDisposable
         _dirRend = await DirectionsRenderer.CreateAsync(_map1.JsRuntime, new DirectionsRendererOptions()
         {
             Map = _map1.InteropObject,
-            MarkerOptions = new MarkerOptions()
-            {
-                Icon = new Symbol()
-                {
-                    Path = SymbolPath.BACKWARD_CLOSED_ARROW,
-                    Scale = 4,
-                    StrokeWeight = 2,
-                    FillColor = "white",
-                    FillOpacity = 1
-                }
-            }
+            SuppressMarkers = true
         });
     }
 
@@ -54,70 +59,169 @@ public partial class MapRoutes : IAsyncDisposable
     {
         _durationTotalString = null;
         _distanceTotalString = null;
-        if (await _dirRend.GetMap() is null)
-        {
-            await _dirRend.SetMap(_map1!.InteropObject);
-        }
+        _lastError = null;
 
-        //Adding a waypoint
-        var waypoints = new List<DirectionsWaypoint>();
-        waypoints.Add(new DirectionsWaypoint() { Location = "Bethlehem, PA", Stopover = true });
-
-        //Direction Request
-        var dr = new DirectionsRequest();
-        dr.Origin = "Allentown, PA";
-        dr.Destination = "Bronx, NY";
-        dr.Waypoints = waypoints;
-        dr.TravelMode = TravelMode.Walking;
-        dr.DrivingOptions = new DrivingOptions()
+        if (_map1 is null)
         {
-            DepartureTime = DateTime.Now.AddHours(1)
-        };
-
-        //Calculate Route
-        _directionsResult = await _dirRend.Route(dr, new DirectionsRequestOptions()
-        {
-            StripLegsStepsLatLngs = false,
-            StripOverviewPath = false,
-            StripOverviewPolyline = false,
-            StripLegsStepsPath = false,
-            StripLegsSteps = false,
-        });
-
-        await _dirRend.SetDirections(_directionsResult);
-        if (_directionsResult is null)
-        {
-            Console.WriteLine("No directions result. Field _directionsResult");
+            _lastError = "Map is not initialized yet.";
             return;
         }
-        var routes = _directionsResult.Routes.SelectMany(x => x.Legs).ToList();
 
-        foreach (var route in routes)
+        if (_dirRend is null)
         {
-            _durationTotalString += route.DurationInTraffic?.Text;
-            _distanceTotalString += route.Distance?.Text;
+            _lastError = "Directions renderer is not initialized yet.";
+            return;
+        }
 
-            if (route.Steps is null)
+        try
+        {
+            if (await _dirRend.GetMap() is null)
             {
-                Console.WriteLine("No steps in route");
-                continue;
+                await _dirRend.SetMap(_map1.InteropObject);
             }
 
-            foreach (var step in route.Steps)
+            //Adding a waypoint
+            var waypoints = new List<DirectionsWaypoint>
             {
-                Console.WriteLine($"Step: {step.Instructions}, Distance: {step.Distance?.Text}, Duration: {step.Duration?.Text}");
-                Console.WriteLine(step.StartLocation);
-                Console.WriteLine(step.TravelMode);
+                new() { Location = "Bethlehem, PA", Stopover = true }
+            };
+
+            //Direction Request
+            var dr = new DirectionsRequest
+            {
+                Origin = "Allentown, PA",
+                Destination = "Bronx, NY",
+                Waypoints = waypoints,
+                TravelMode = TravelMode.Walking,
+                DrivingOptions = new DrivingOptions
+                {
+                    DepartureTime = DateTime.Now.AddHours(1)
+                }
+            };
+
+            //Calculate Route
+            _directionsResult = await _dirRend.Route(dr, new DirectionsRequestOptions()
+            {
+                StripLegsStepsLatLngs = true,
+                StripOverviewPath = true,
+                StripOverviewPolyline = true,
+                StripLegsStepsPath = true,
+                StripLegsSteps = true,
+            });
+
+            if (_directionsResult is null)
+            {
+                _lastError = "No directions result.";
+                return;
             }
+
+            await RenderRouteMarkersAsync();
+            var routes = _directionsResult.Routes.SelectMany(x => x.Legs).ToList();
+
+            foreach (var route in routes)
+            {
+                _durationTotalString += route.DurationInTraffic?.Text;
+                _distanceTotalString += route.Distance?.Text;
+
+                if (route.Steps is null)
+                {
+                    Console.WriteLine("No steps in route");
+                    continue;
+                }
+
+                foreach (var step in route.Steps)
+                {
+                    Console.WriteLine($"Step: {step.Instructions}, Distance: {step.Distance?.Text}, Duration: {step.Duration?.Text}");
+                    Console.WriteLine(step.StartLocation);
+                    Console.WriteLine(step.TravelMode);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _lastError = ex.ToString();
         }
     }
 
     public async ValueTask DisposeAsync()
     {
-        if (_dirRend is not null)
+        try
         {
-            await _dirRend.SetMap(null);
-            await _dirRend.DisposeAsync();
+            if (_dirRend is not null)
+            {
+                await _dirRend.SetMap(null);
+                await _dirRend.DisposeAsync();
+            }
+
+            await ClearRouteMarkersAsync();
+        }
+        catch (JSDisconnectedException)
+        {
+            // Ignore: circuit is already disconnected.
+        }
+        catch (TaskCanceledException)
+        {
+            // Ignore: circuit is shutting down.
+        }
+        catch (ObjectDisposedException)
+        {
+            // Ignore: circuit is disposed.
+        }
+    }
+
+    private async Task RenderRouteMarkersAsync()
+    {
+        await ClearRouteMarkersAsync();
+
+        var firstLeg = _directionsResult?.Routes?.FirstOrDefault()?.Legs?.FirstOrDefault();
+        if (firstLeg == null)
+        {
+            return;
+        }
+
+        await AddRouteMarkerAsync(firstLeg.StartLocation, "Start");
+        await AddRouteMarkerAsync(firstLeg.EndLocation, "End");
+    }
+
+    private async Task AddRouteMarkerAsync(LatLngLiteral position, string title)
+    {
+        var marker = await AdvancedMarkerElement.CreateAsync(_map1!.JsRuntime, new AdvancedMarkerElementOptions()
+        {
+            Position = position,
+            Map = _map1.InteropObject,
+            Title = title,
+            GmpClickable = true,
+            Content = new PinElement
+            {
+                Glyph = title
+            }
+        });
+
+        _routeMarkers.Push(marker);
+    }
+
+    private async Task ClearRouteMarkersAsync()
+    {
+        while (_routeMarkers.Count > 0)
+        {
+            var marker = _routeMarkers.Pop();
+            try
+            {
+                await marker.SetMap(null);
+                await marker.DisposeAsync();
+            }
+            catch (JSDisconnectedException)
+            {
+                break;
+            }
+            catch (TaskCanceledException)
+            {
+                break;
+            }
+            catch (ObjectDisposedException)
+            {
+                break;
+            }
         }
     }
 

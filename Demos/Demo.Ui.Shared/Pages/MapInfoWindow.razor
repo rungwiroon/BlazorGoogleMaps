@@ -29,11 +29,16 @@
     {
         var position = await map1.InteropObject.GetCenter();
 
-        var marker = await Marker.CreateAsync(map1.JsRuntime, new MarkerOptions()
+        var marker = await AdvancedMarkerElement.CreateAsync(map1.JsRuntime, new AdvancedMarkerElementOptions()
         {
             Position = position,
             Map = map1.InteropObject,
-            Label = $"Test {markerCount}"
+            Title = $"Test {markerCount}",
+            GmpClickable = true,
+            Content = new PinElement
+            {
+                Glyph = $"Test {markerCount}"
+            }
         });
 
         //var tableClass = "\" table table-striped table-dark\"";
@@ -56,7 +61,7 @@
 
         var infoWindow = await InfoWindow.CreateAsync(map1.JsRuntime, new InfoWindowOptions()
         {
-            Position = new LatLngLiteral( 100.8162, 13.505892)
+            Position = new LatLngLiteral(13.505892, 100.8162)
         });
 
 

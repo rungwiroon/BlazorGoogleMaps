@@ -7,25 +7,40 @@ namespace ServerSideDemo;
 
 public class EnvVariableBlazorGoogleMapsKeyService : IBlazorGoogleMapsKeyService
 {
+    private readonly Action<MapApiLoadOptions>? _configureOptions;
+
+    public EnvVariableBlazorGoogleMapsKeyService(Action<MapApiLoadOptions>? configureOptions = null)
+    {
+        _configureOptions = configureOptions;
+    }
+
     public Task<MapApiLoadOptions> GetApiOptions()
     {
 
         var key = Environment.GetEnvironmentVariable("GOOGLE_MAPS_API_KEY");
         if (string.IsNullOrEmpty(key))
         {
-            key = "AIzaSyBdkgvniMdyFPAcTlcZivr8f30iU-kn1T0";
+            key = "GOOGLE_MAPS_API_KEY";
         }
 
-        Console.WriteLine($"Using google key: {key}");
+        var mapId = Environment.GetEnvironmentVariable("GOOGLE_MAPS_MAP_ID");
+        if (string.IsNullOrEmpty(mapId))
+        {
+            mapId = "MAP_ID";
+        }
 
         //IsApiInitialized = true;
 
-        return Task.FromResult(new MapApiLoadOptions(key)
+        var options = new MapApiLoadOptions(key)
         {
             Version = "beta",
-            Libraries = "places,visualization,drawing,marker"
+            Libraries = "places,visualization,drawing,marker",
+            MapId = mapId
             // Language = "ja"
-        });
+        };
+ 
+        _configureOptions?.Invoke(options);
+        return Task.FromResult(options);
     }
 
     public bool IsApiInitialized { get; set; }

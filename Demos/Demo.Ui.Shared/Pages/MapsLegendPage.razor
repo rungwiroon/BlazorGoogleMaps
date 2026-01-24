@@ -91,21 +91,41 @@
 
     private async Task AddLegendMap1()
     {
+        if (_map1 is null)
+        {
+            return;
+        }
+
         await _map1.AddControl(ControlPosition.BottomCenter, _legendReferenceMap1);
     }
 
     private async Task RemoveLegendMap1()
     {
+        if (_map1 is null)
+        {
+            return;
+        }
+
         await _map1.RemoveControl(ControlPosition.BottomCenter, _legendReferenceMap1);
     }
 
     private async Task AddLegendMap2()
     {
+        if (_map2 is null)
+        {
+            return;
+        }
+
         await _map2.AddControl(ControlPosition.BottomCenter, _legendReferenceMap2);
     }
 
     private async Task RemoveLegendMap2()
     {
+        if (_map2 is null)
+        {
+            return;
+        }
+
         await _map2.RemoveControl(ControlPosition.BottomCenter, _legendReferenceMap2);
     }
 
