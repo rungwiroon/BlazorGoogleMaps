@@ -11,7 +11,7 @@ public partial class TestAllPage
     [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
     private GoogleMap _map1 = default!;
     private MapOptions _mapOptions = default!;
-    private readonly Stack<Marker> _markers = new Stack<Marker>();
+    private readonly Stack<AdvancedMarkerElement> _markers = new Stack<AdvancedMarkerElement>();
     private MarkerClustering? _markerClustering;
     private readonly List<string> _events = [];
     protected override void OnInitialized()
@@ -20,8 +20,7 @@ public partial class TestAllPage
         {
             Zoom = 13,
             Center = new LatLngLiteral(13.505892, 100.8162),
-            MapTypeId = MapTypeId.Roadmap,
-            MapId = "3a3b33f0edd6ed2a"
+            MapTypeId = MapTypeId.Roadmap
         };
     }
 
@@ -156,27 +155,18 @@ public partial class TestAllPage
 
     private async Task TestMarkers()
     {
-        var marker = await Marker.CreateAsync(_map1.JsRuntime, new MarkerOptions()
+        var labelText = $"Test {_markers.Count}";
+        var marker = await AdvancedMarkerElement.CreateAsync(_map1.JsRuntime, new AdvancedMarkerElementOptions()
         {
             Position = await GeRandomLatLng(),
             Map = _map1.InteropObject,
             ZIndex = 10,
-            //Icon = new Symbol()
-            //{
-            //    Path = "M10.453 14.016l6.563-6.609-1.406-1.406-5.156 5.203-2.063-2.109-1.406 1.406zM12 2.016q2.906 0 4.945 2.039t2.039 4.945q0 1.453-0.727 3.328t-1.758 3.516-2.039 3.070-1.711 2.273l-0.75 0.797q-0.281-0.328-0.75-0.867t-1.688-2.156-2.133-3.141-1.664-3.445-0.75-3.375q0-2.906 2.039-4.945t4.945-2.039z"
-            //},
-            //Note that font properties are overriden in class
-            //Please be cautious about versioning issues and some issues when using other tools
-            //https://developers.google.com/maps/documentation/javascript/reference/marker#MarkerLabel.className
-            Label = new MarkerLabel
+            Title = labelText,
+            GmpClickable = true,
+            Content = new PinElement
             {
-                Text = $"Test {_markers.Count}",
-                FontWeight = "bold",
-                Color = "#5B32FF",
-                FontSize = "24",
-                ClassName = "map-marker-label",
-
-            },
+                Glyph = labelText
+            }
         });
 
         _markers.Push(marker);
@@ -199,7 +189,7 @@ public partial class TestAllPage
             // Clustering happens immediately upon adding markers, so including markers with the init 
             // creates a race condition with JSInterop adding a listener. If not adding a listener, pass markers
             // to CreateAsync to eliminate the latency of a second JSInterop call to AddMarkers.
-            _markerClustering = await MarkerClustering.CreateAsync(_map1.JsRuntime, _map1.InteropObject, new List<Marker>(), new MarkerClustererOptions()
+            _markerClustering = await MarkerClustering.CreateAsync(_map1.JsRuntime, _map1.InteropObject, new List<AdvancedMarkerElement>(), new MarkerClustererOptions()
             {
                 // RendererObjectName = "customRendererLib.interpolatedRenderer"
             });
@@ -216,23 +206,23 @@ public partial class TestAllPage
 
     }
 
-    private async Task<IEnumerable<Marker>> GetMarkers(ICollection<LatLngLiteral> coords, Map map)
+    private async Task<IEnumerable<AdvancedMarkerElement>> GetMarkers(ICollection<LatLngLiteral> coords, Map map)
     {
-        var result = new List<Marker>(coords.Count());
+        var result = new List<AdvancedMarkerElement>(coords.Count());
         var index = 1;
         foreach (var latLngLiteral in coords)
         {
-            var marker = await Marker.CreateAsync(_map1.JsRuntime, new MarkerOptions()
+            var labelText = $"Test {index++}";
+            var marker = await AdvancedMarkerElement.CreateAsync(_map1.JsRuntime, new AdvancedMarkerElementOptions()
             {
                 Position = latLngLiteral,
                 Map = map,
-                Label = $"Test {index++}",
-
-                //Icon = new Icon()
-                //{
-                //    Url = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
-                //}
-                //Icon = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
+                Title = labelText,
+                GmpClickable = true,
+                Content = new PinElement
+                {
+                    Glyph = labelText
+                }
             });
 
             result.Add(marker);

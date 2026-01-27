@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31912.275
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11222.15 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GoogleMapsComponents", "GoogleMapsComponents\GoogleMapsComponents.csproj", "{EEFC0113-D075-4F36-ABC8-EAAB3A138079}"
 EndProject
@@ -14,8 +14,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientSideDemo", "Demos\ClientSideDemo\ClientSideDemo.csproj", "{101D4021-9338-498D-834D-0335F6B8175B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo.Ui.Shared", "Demos\Demo.Ui.Shared\Demo.Ui.Shared.csproj", "{E4B94850-6D34-4A87-848A-9AC64553C013}"
 EndProject
@@ -33,10 +31,6 @@ Global
 		{4529EAF0-F632-485C-B76D-3B908767D0ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4529EAF0-F632-485C-B76D-3B908767D0ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4529EAF0-F632-485C-B76D-3B908767D0ED}.Release|Any CPU.Build.0 = Release|Any CPU
-		{101D4021-9338-498D-834D-0335F6B8175B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{101D4021-9338-498D-834D-0335F6B8175B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{101D4021-9338-498D-834D-0335F6B8175B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{101D4021-9338-498D-834D-0335F6B8175B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E4B94850-6D34-4A87-848A-9AC64553C013}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E4B94850-6D34-4A87-848A-9AC64553C013}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E4B94850-6D34-4A87-848A-9AC64553C013}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -47,7 +41,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{4529EAF0-F632-485C-B76D-3B908767D0ED} = {575D69F2-3102-4FE1-A094-23A553B772AA}
-		{101D4021-9338-498D-834D-0335F6B8175B} = {575D69F2-3102-4FE1-A094-23A553B772AA}
 		{E4B94850-6D34-4A87-848A-9AC64553C013} = {575D69F2-3102-4FE1-A094-23A553B772AA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

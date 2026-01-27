@@ -12,30 +12,34 @@
 <h1>Google Map Autocomplete</h1>
 
 <div style="margin-bottom: 10px;">
-    <input type="text" @ref="this.searchBox" id="searchBox" />
+    <gmp-place-autocomplete @ref="_placeAutocompleteElement" id="searchBox"></gmp-place-autocomplete>
     <button @onclick="Search">Search</button>
 </div>
 
 <div>
-    <p style="font-weight: bold; font-size: 1.2em">@this.message</p>
+    <p style="font-weight: bold; font-size: 1.2em">@_message</p>
 </div>
 
-<GoogleMap @ref="@(this.map1)" Id="map1" Options="@(this.mapOptions)" OnAfterInit="async () => await OnAfterMapInit()"></GoogleMap>
+<GoogleMap @ref="@(_map1)" Id="map1" Options="@(_mapOptions)" OnAfterInit="async () => await OnAfterMapInit()"></GoogleMap>
 
 @functions {
-    private readonly Stack<Marker> markers = new Stack<Marker>();
+    private readonly Stack<AdvancedMarkerElement> _markers = new Stack<AdvancedMarkerElement>();
 
-    private GoogleMap map1;
-    private MapOptions mapOptions;
-    private Autocomplete autocomplete;
+    private GoogleMap _map1;
+    private MapOptions _mapOptions;
+    private PlaceAutocompleteElement _placeAutocomplete;
+    private PlaceService _placeSearchService;
+    private Geocoder _geocoder;
 
-    private string message;
+    private string _message;
 
-    private ElementReference searchBox;
+    private ElementReference _placeAutocompleteElement;
+    private PlacePrediction? _lastPrediction;
+    private string? _lastQuery;
 
     protected override void OnInitialized()
     {
-        this.mapOptions = new MapOptions
+        _mapOptions = new MapOptions
         {
             Zoom = 13,
             Center = new LatLngLiteral(-33.8688, 151.2195),
@@ -45,52 +49,161 @@
 
     private async Task OnAfterMapInit()
     {
-
-        this.autocomplete = await Autocomplete.CreateAsync(this.map1.JsRuntime, this.searchBox, new AutocompleteOptions
+        _placeAutocomplete = await PlaceAutocompleteElement.FromElementAsync(_map1.JsRuntime, _placeAutocompleteElement);
+        _placeSearchService = await PlaceService.CreateAsync(_map1.JsRuntime, new PlaceOptions
         {
-            StrictBounds = false,
-            //ComponentRestrictions = new ComponentRestrictions { Country = new[] { "us" } }
+            Id = Guid.NewGuid().ToString()
         });
+        _geocoder = await Geocoder.CreateAsync(_map1.JsRuntime);
 
-        //await autocomplete.SetFields(new []{ "address_components", "geometry", "icon", "name" });
-        await this.autocomplete.SetFields(new[] { "address_components", "geometry", "name" });
-
-        await this.autocomplete.AddListener("place_changed", async () =>
+        await _placeAutocomplete.AddListener<PlaceAutocompleteElementSelectEvent>("gmp-select", async (selectEvent) =>
         {
-            var place = await this.autocomplete.GetPlace();
-
-            if (place?.Geometry == null)
+            var prediction = selectEvent.PlacePrediction;
+            _lastPrediction = prediction;
+            if (string.IsNullOrWhiteSpace(prediction?.PlaceId))
             {
-                this.message = "No results available for " + place?.Name;
-            }
-            else if (place.Geometry.Location.HasValue)
-            {
-                await this.map1.InteropObject.SetCenter(place.Geometry.Location.Value);
-                await this.map1.InteropObject.SetZoom(13);
-
-                var marker = await Marker.CreateAsync(this.map1.JsRuntime, new MarkerOptions
-                {
-                    Position = place.Geometry.Location.Value,
-                    Map = this.map1.InteropObject,
-                    Title = place.Name
-                });
-
-                this.markers.Push(marker);
-
-                this.message = "Displaying result for " + place.Name;
-            }
-            else if (place.Geometry.Viewport != null)
-            {
-                await this.map1.InteropObject.FitBounds(place.Geometry.Viewport, 5);
-                this.message = "Displaying result for " + place.Name;
+                _message = "No results available";
+                StateHasChanged();
+                return;
             }
 
-            this.StateHasChanged();
+            _lastQuery = prediction.Text ?? prediction.MainText;
+            await ApplyPredictionAsync(prediction);
         });
     }
 
-    private void Search()
+    private async Task Search()
     {
+        if (_lastPrediction == null || string.IsNullOrWhiteSpace(_lastPrediction.PlaceId))
+        {
+            var textQuery = await _placeAutocomplete.GetInputValueAsync();
+            if (string.IsNullOrWhiteSpace(textQuery))
+            {
+                _message = "Please select a place from the list first.";
+                StateHasChanged();
+                return;
+            }
 
+            _lastQuery = textQuery;
+            var response = await _placeSearchService.SearchByText(new SearchByTextRequest
+            {
+                TextQuery = textQuery,
+                Fields = new[] { "displayName", "location" }
+            });
+
+            var place = response.Places != null && response.Places.Length > 0 ? response.Places[0] : null;
+            if (place == null)
+            {
+                _message = "No results available";
+                StateHasChanged();
+                return;
+            }
+
+            await ApplyPlaceAsync(place);
+            return;
+        }
+
+        _lastQuery = _lastPrediction.Text ?? _lastPrediction.MainText;
+        await ApplyPredictionAsync(_lastPrediction);
+    }
+
+    private async Task ApplyPredictionAsync(PlacePrediction prediction)
+    {
+        var placeService = await PlaceService.CreateAsync(_map1.JsRuntime, new PlaceOptions
+        {
+            Id = prediction.PlaceId!
+        });
+
+        var place = await placeService.FetchFields(new FetchFieldsRequest
+        {
+            Fields = new[] { "displayName", "location" }
+        });
+
+        if (place?.Location == null)
+        {
+            _message = "No results available";
+        }
+        else
+        {
+            await ApplyPlaceAsync(place);
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task ApplyPlaceAsync(GoogleMapsComponents.Maps.Places.Place place)
+    {
+        if (place.Location == null && !string.IsNullOrWhiteSpace(place.Id))
+        {
+            var placeService = await PlaceService.CreateAsync(_map1.JsRuntime, new PlaceOptions
+            {
+                Id = place.Id
+            });
+
+            place = await placeService.FetchFields(new FetchFieldsRequest
+            {
+                Fields = new[] { "displayName", "location" }
+            });
+        }
+
+        if (place.Location == null)
+        {
+            if (!string.IsNullOrWhiteSpace(_lastQuery) && _geocoder != null)
+            {
+                var geoResponse = await _geocoder.Geocode(new GeocoderRequest
+                {
+                    Address = _lastQuery
+                });
+
+                if (geoResponse.Status == GeocoderStatus.Ok && geoResponse.Results.Length > 0)
+                {
+                    var geoLocation = geoResponse.Results[0].Geometry.Location;
+                    await _map1.InteropObject.SetCenter(geoLocation);
+                    await _map1.InteropObject.SetZoom(13);
+
+                    await ClearMarkersAsync();
+                    var geoMarker = await AdvancedMarkerElement.CreateAsync(_map1.JsRuntime, new AdvancedMarkerElementOptions
+                    {
+                        Position = geoLocation,
+                        Map = _map1.InteropObject,
+                        Title = _lastQuery,
+                        Content = new PinElement()
+                    });
+
+                    _markers.Push(geoMarker);
+                    _message = "Displaying result for " + _lastQuery;
+                    return;
+                }
+            }
+
+            _message = "No results available";
+            return;
+        }
+
+        var location = place.Location.Value;
+        await _map1.InteropObject.SetCenter(location);
+        await _map1.InteropObject.SetZoom(13);
+
+        await ClearMarkersAsync();
+        var marker = await AdvancedMarkerElement.CreateAsync(_map1.JsRuntime, new AdvancedMarkerElementOptions
+        {
+            Position = location,
+            Map = _map1.InteropObject,
+            Title = place.DisplayName,
+            Content = new PinElement()
+        });
+
+        _markers.Push(marker);
+
+        _message = "Displaying result for " + (place.DisplayName ?? "Selected place");
+    }
+
+    private async Task ClearMarkersAsync()
+    {
+        while (_markers.Count > 0)
+        {
+            var marker = _markers.Pop();
+            await marker.SetMap(null);
+        }
     }
 }

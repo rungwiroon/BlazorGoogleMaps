@@ -22,23 +22,36 @@ public partial class GMap
         base.OnAfterRender(firstRender);
     }
 
-    public MarkerOptions MeMarkerOptions;
-    public async Task<Marker> AddMeMarker()
+    public AdvancedMarkerElementOptions MeMarkerOptions;
+    public async Task<AdvancedMarkerElement> AddMeMarker()
     {
         return meMarker = await AddMarker(MeMarkerOptions);
     }
 
-    public async Task<Marker> AddMeMarker(double Lat, double Long, string Label, bool Draggable = false)
+    public async Task<AdvancedMarkerElement> AddMeMarker(double Lat, double Long, string Label, bool Draggable = false)
     {
+        var position = new LatLngLiteral(Lat, Long);
         if (meMarker != null)
         {
-            MeMarkerOptions.Label = Label;
-            MeMarkerOptions.Position = new LatLngLiteral(Lat, Long);
+            MeMarkerOptions.Title = Label;
+            MeMarkerOptions.Position = position;
+            MeMarkerOptions.GmpDraggable = Draggable;
+            await meMarker.SetPosition(position);
+            await meMarker.SetGmpDraggable(Draggable);
+            await meMarker.SetContent(new PinElement { Glyph = Label });
             await meMarker.SetMap(InteropObject);
         }
         else
         {
-            MeMarkerOptions = new MarkerOptions { Map = InteropObject, Label = Label, Draggable = Draggable, Position = new LatLngLiteral(Lat, Long) };
+            MeMarkerOptions = new AdvancedMarkerElementOptions
+            {
+                Map = InteropObject,
+                Title = Label,
+                GmpClickable = true,
+                GmpDraggable = Draggable,
+                Position = position,
+                Content = new PinElement { Glyph = Label }
+            };
             meMarker = await AddMarker(MeMarkerOptions);
         }
         if (Draggable)
@@ -49,38 +62,38 @@ public partial class GMap
         return meMarker;
     }
 
-    private async Task OnMakerDragEnd(Marker meMarker, MouseEvent e)
+    private async Task OnMakerDragEnd(AdvancedMarkerElement marker, MouseEvent e)
     {
         MeMarkerOptions.Position = e.LatLng;
         await MeDragEnd.InvokeAsync(e);
     }
 
-    private Marker meMarker;
+    private AdvancedMarkerElement meMarker;
     /// <summary>
     /// Where I am
     /// </summary>
-    public Marker MeMarker => meMarker;
+    public AdvancedMarkerElement MeMarker => meMarker;
 
     /// <summary>
     /// Where I want to go.
     /// </summary>
-    public Marker DestMarker;
+    public AdvancedMarkerElement DestMarker;
     /// <summary>
     /// Where the truck is.
     /// </summary>
-    public Marker TruckMarker;
+    public AdvancedMarkerElement TruckMarker;
 
     public GMap()
     {
         Options = new MapOptions() { Zoom = 10, Center = new LatLngLiteral(54D, -105D), MapTypeId = MapTypeId.Roadmap };
     }
 
-    protected async Task<Marker> AddMarker(MarkerOptions TheMarkerOptions)
+    protected async Task<AdvancedMarkerElement> AddMarker(AdvancedMarkerElementOptions TheMarkerOptions)
     {
-        return await Marker.CreateAsync(JsRuntime, TheMarkerOptions);
+        return await AdvancedMarkerElement.CreateAsync(JsRuntime, TheMarkerOptions);
     }
 
-    protected async Task RemoveMarker(Marker TheMarker)
+    protected async Task RemoveMarker(AdvancedMarkerElement TheMarker)
     {
         await TheMarker.SetMap(null);
     }

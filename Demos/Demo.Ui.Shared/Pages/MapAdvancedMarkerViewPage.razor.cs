@@ -21,7 +21,6 @@ public sealed partial class MapAdvancedMarkerViewPage
         CameraControl = true,
         MapTypeId = MapTypeId.Roadmap,
         // ColorScheme = ColorScheme.Dark,
-        MapId = "e5asd595q2121",
         RenderingType = RenderingType.Vector,
         ZoomControl = true,
         ZoomControlOptions = new ZoomControlOptions()

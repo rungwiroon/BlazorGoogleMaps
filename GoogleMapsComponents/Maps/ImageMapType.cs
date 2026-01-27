@@ -12,30 +12,15 @@ public class ImageMapType : EventEntityBase, IDisposable
 
     public static async Task<ImageMapType> CreateAsync(IJSRuntime jsRuntime, string baseUrlFormat, int minZoom, int maxZoom, string name, float opacity)
     {
-        var realUrl = baseUrlFormat.Replace("{z}", "' + zoom + '").Replace("{x}", "' + coord.x + '").Replace("{y}", "' + coord.y + '");
-        string initOpts = @"{
-                'getTileUrl': (coord, zoom) => {
-                            return '" + realUrl + @"'
-                        },
-                'tileSize': new google.maps.Size(256, 256),
-                'maxZoom': " + maxZoom.ToString() + @",
-                'minZoom': " + minZoom.ToString() + @",
-                'opacity': " + opacity.ToString() + @",
-                'name': '" + name + @"'
-            }";
-
-        //string initOpts = @"{
-        //    'getTileUrl': (coord, zoom) => {
-        //                return '" + baseUrl + @"' + zoom + '/' + coord.x + '/' + coord.y;
-        //            },
-        //    'tileSize': new google.maps.Size(256, 256),
-        //    'maxZoom': " + maxZoom.ToString() + @",
-        //    'minZoom': " + minZoom.ToString() + @",
-        //    'opacity': " + opacity.ToString() + @",
-        //    'name': '" + name + @"'
-        //}";
-
-        var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.ImageMapType", initOpts);
+        var jsObjectRef = await JsObjectRef.CreateAsync(
+            jsRuntime,
+            "blazorGoogleMaps.objectManager.createImageMapType",
+            baseUrlFormat,
+            minZoom,
+            maxZoom,
+            name,
+            opacity,
+            null);
         var to = new ImageMapType(jsObjectRef)
         {
             Name = name
@@ -56,22 +41,15 @@ public class ImageMapType : EventEntityBase, IDisposable
             return await CreateAsync(jsRuntime, baseUrlFormat, minZoom, maxZoom, name, opacity);
         }
 
-        var realUrl = baseUrlFormat.Replace("{z}", "' + zoom + '").Replace("{x}", "' + coord.x + '").Replace("{y}", "' + coord.y + '");
-        string initOpts = @"{
-                'getTileUrl': (coord, zoom) => {
-                            var subDomains = ['" + String.Join("','", subDomains) + @"'];
-                            var ndx = coord.y % " + subDomains.Length + @";
-                            var tUrl = '" + realUrl + @"'
-                            return tUrl.replace('{domain}', subDomains[ndx]);
-                        },
-                'tileSize': new google.maps.Size(256, 256),
-                'maxZoom': " + maxZoom.ToString() + @",
-                'minZoom': " + minZoom.ToString() + @",
-                'opacity': " + opacity.ToString() + @",
-                'name': '" + name + @"'
-            }";
-
-        var jsObjectRef = await JsObjectRef.CreateAsync(jsRuntime, "google.maps.ImageMapType", initOpts);
+        var jsObjectRef = await JsObjectRef.CreateAsync(
+            jsRuntime,
+            "blazorGoogleMaps.objectManager.createImageMapType",
+            baseUrlFormat,
+            minZoom,
+            maxZoom,
+            name,
+            opacity,
+            subDomains);
         var to = new ImageMapType(jsObjectRef)
         {
             Name = name

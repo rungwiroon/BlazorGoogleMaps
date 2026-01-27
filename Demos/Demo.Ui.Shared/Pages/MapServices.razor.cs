@@ -7,7 +7,7 @@ namespace Demo.Ui.Shared.Pages;
 
 public partial class MapServices
 {
-    private readonly Stack<Marker> _markers = new Stack<Marker>();
+    private readonly Stack<AdvancedMarkerElement> _markers = new Stack<AdvancedMarkerElement>();
 
     private string? _search;
     private GoogleMap _map1 = null!;
@@ -164,12 +164,13 @@ public partial class MapServices
 
     private async Task RenderLocationAsync(string title, LatLngLiteral location)
     {
-        var marker = await Marker.CreateAsync(_map1.JsRuntime, new MarkerOptions
-        {
-            Position = location,
-            Map = _map1.InteropObject,
-            Title = title
-        });
+            var marker = await AdvancedMarkerElement.CreateAsync(_map1.JsRuntime, new AdvancedMarkerElementOptions
+            {
+                Position = location,
+                Map = _map1.InteropObject,
+                Title = title,
+                Content = new PinElement()
+            });
 
         _markers.Push(marker);
     }
@@ -179,11 +180,12 @@ public partial class MapServices
         //Below code borrowed from MapAutocomplete.razor "place_changed" event handler
         if (place?.Location is not null)
         {
-            var marker = await Marker.CreateAsync(_map1.JsRuntime, new MarkerOptions
+            var marker = await AdvancedMarkerElement.CreateAsync(_map1.JsRuntime, new AdvancedMarkerElementOptions
             {
                 Position = place.Location.Value,
                 Map = _map1.InteropObject,
-                Title = place.DisplayName ?? "No name"
+                Title = place.DisplayName ?? "No name",
+                Content = new PinElement()
             });
 
             _markers.Push(marker);

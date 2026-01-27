@@ -67,6 +67,17 @@ public class AdvancedMarkerElement : ListableEntityBase<AdvancedMarkerElementOpt
     }
 
     /// <summary>
+    /// Sets the map of the marker.
+    /// AdvancedMarkerElement uses the map property instead of setMap.
+    /// </summary>
+    /// <param name="map"></param>
+    /// <returns></returns>
+    public override Task SetMap(Map? map)
+    {
+        return _jsObjectRef.InvokePropertyAsync("map", map);
+    }
+
+    /// <summary>
     /// Sets the position of the marker.
     /// </summary>
     /// <param name="newPosition">The new position as a <see cref="LatLngLiteral"/>.</param>

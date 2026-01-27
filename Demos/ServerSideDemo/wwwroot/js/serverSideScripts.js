@@ -83,22 +83,30 @@ export function initServerSideScript() {
                     countText = String(count);
                 }
 
-                // create marker using svg icon
-                return new google.maps.Marker({
+                // create advanced marker using svg icon
+                const container = document.createElement("div");
+                container.style.position = "relative";
+                container.style.width = "50px";
+                container.style.height = "50px";
+                container.innerHTML = "<svg fill=\"#0000ff\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 240 240\"><circle cx=\"120\" cy=\"120\" opacity=\".6\" r=\"70\"></circle><circle cx=\"120\" cy=\"120\" opacity=\".3\" r=\"90\"></circle><circle cx=\"120\" cy=\"120\" opacity=\".2\" r=\"110\"></circle></svg>";
+
+                const label = document.createElement("div");
+                label.textContent = countText;
+                label.style.position = "absolute";
+                label.style.top = "50%";
+                label.style.left = "50%";
+                label.style.transform = "translate(-50%, -50%)";
+                label.style.color = "#ffffff";
+                label.style.fontSize = "16px";
+                label.style.fontWeight = "bold";
+                label.style.fontFamily = "Poppins";
+                container.appendChild(label);
+
+                return new google.maps.marker.AdvancedMarkerElement({
                     position,
-                    icon: {
-                        url: "data:image/svg+xml;base64,CiAgPHN2ZyBmaWxsPSIjMDAwMGZmIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNDAgMjQwIj4KICAgIDxjaXJjbGUgY3g9IjEyMCIgY3k9IjEyMCIgb3BhY2l0eT0iLjYiIHI9IjcwIiAvPgogICAgPGNpcmNsZSBjeD0iMTIwIiBjeT0iMTIwIiBvcGFjaXR5PSIuMyIgcj0iOTAiIC8+CiAgICA8Y2lyY2xlIGN4PSIxMjAiIGN5PSIxMjAiIG9wYWNpdHk9Ii4yIiByPSIxMTAiIC8+CiAgPC9zdmc+",
-                        scaledSize: new google.maps.Size(50, 50),
-                    },
-                    label: {
-                        text: countText,
-                        color: "#ffffff",
-                        fontSize: "16px",
-                        fontWeight: "bold",
-                        fontFamily: "Poppins"
-                    },
+                    content: container,
                     // adjust zIndex to be above other markers
-                    zIndex: Number(google.maps.Marker.MAX_ZINDEX) + count,
+                    zIndex: 100000 + count,
                 });
             },
         }

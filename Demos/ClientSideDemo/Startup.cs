@@ -12,7 +12,7 @@ public class Startup
     {
         var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
-        var apiOptions = new MapApiLoadOptions("AIzaSyBdkgvniMdyFPAcTlcZivr8f30iU-kn1T0")
+        var apiOptions = new MapApiLoadOptions("GOOGLE_MAPS_API_KEY")
         {
             Version = "weekly"
         };

@@ -54,6 +54,26 @@ public class MapApiLoadOptions(string key)
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string[]? MapIds { get; set; }
+
+    /// <summary>
+    /// Convenience property for a single map Id. Sets <see cref="MapIds"/> when provided.
+    /// </summary>
+    [JsonIgnore]
+    public string? MapId
+    {
+        get => MapIds != null && MapIds.Length == 1 ? MapIds[0] : null;
+        set
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                MapIds = null;
+            }
+            else
+            {
+                MapIds = new[] { value };
+            }
+        }
+    }
     
     /// <summary>
     /// See Usage tracking per channel.

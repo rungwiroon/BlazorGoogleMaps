@@ -25,15 +25,17 @@ public class Startup
 
         // Adds the service to use bootstrap loader for Google API JS. 
         services.AddBlazorGoogleMaps(new EnvVariableBlazorGoogleMapsKeyService());
-        //services.AddBlazorGoogleMaps(new MapApiLoadOptions("AIzaSyBdkgvniMdyFPAcTlcZivr8f30iU-kn1T0")
-        //{
-        //    Version = "beta"
-        //});
-        // Or manually set version and libraries for entire app:
-        //services.AddBlazorGoogleMaps(new GoogleMapsComponents.Maps.MapApiLoadOptions("AIzaSyCmIwKIsEjIxZ6EUecb2paIIah8defiDig")
+        //services.AddBlazorGoogleMaps(new MapApiLoadOptions("GOOGLE_MAPS_API_KEY")
         //{
         //    Version = "beta",
-        //    Libraries = "places,visualization,drawing,marker"
+        //    MapId = "MAP_ID"
+        //});
+        // Or manually set version and libraries for entire app:
+        //services.AddBlazorGoogleMaps(new GoogleMapsComponents.Maps.MapApiLoadOptions("GOOGLE_MAPS_API_KEY")
+        //{
+        //    Version = "beta",
+        //    Libraries = "places,visualization,drawing,marker",
+        //    MapId = "MAP_ID"
         //});
     }
 

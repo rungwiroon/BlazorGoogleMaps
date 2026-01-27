@@ -12,8 +12,9 @@ public partial class MapMarker
     private GoogleMap _map1;
     private MapOptions _mapOptions;
 
-    private readonly Stack<Marker> _markers = new Stack<Marker>();
+    private readonly Stack<AdvancedMarkerElement> _markers = new Stack<AdvancedMarkerElement>();
     private readonly List<String> _events = new List<String>();
+    private readonly Dictionary<Guid, string> _markerLabels = new Dictionary<Guid, string>();
 
     private LatLngBounds _bounds;
     private MarkerClustering? _markerClustering;
@@ -28,8 +29,7 @@ public partial class MapMarker
         {
             Zoom = 13,
             Center = new LatLngLiteral(13.505892, 100.8162),
-            MapTypeId = MapTypeId.Roadmap,
-            MapId = "3a3b33f0edd6ed2a"
+            MapTypeId = MapTypeId.Roadmap
         };
     }
 
@@ -59,7 +59,7 @@ public partial class MapMarker
             // Clustering happens immediately upon adding markers, so including markers with the init 
             // creates a race condition with JSInterop adding a listener. If not adding a listener, pass markers
             // to CreateAsync to eliminate the latency of a second JSInterop call to AddMarkers.
-            _markerClustering = await MarkerClustering.CreateAsync(_map1.JsRuntime, _map1.InteropObject, new List<Marker>(), new MarkerClustererOptions()
+            _markerClustering = await MarkerClustering.CreateAsync(_map1.JsRuntime, _map1.InteropObject, new List<AdvancedMarkerElement>(), new MarkerClustererOptions()
             {
                 // RendererObjectName = "customRendererLib.interpolatedRenderer"
             });
@@ -96,7 +96,7 @@ public partial class MapMarker
         }
 
         // Among markers not in clusters, find those which don't yet have a listener
-        MarkerList deafLoneMarkersList = await MarkerList.CreateAsync(JsObjectRef, new Dictionary<string, MarkerOptions>());
+        AdvancedMarkerElementList deafLoneMarkersList = await AdvancedMarkerElementList.CreateAsync(JsObjectRef, new Dictionary<string, AdvancedMarkerElementOptions>());
         foreach (var key in guidStrings)
         {
             var markr = _markers.First(x => key == x.Guid.ToString());
@@ -171,23 +171,20 @@ public partial class MapMarker
         };
     }
 
-    private async Task<IEnumerable<Marker>> GetMarkers(ICollection<LatLngLiteral> coords, Map map)
+    private async Task<IEnumerable<AdvancedMarkerElement>> GetMarkers(ICollection<LatLngLiteral> coords, Map map)
     {
-        var result = new List<Marker>(coords.Count());
+        var result = new List<AdvancedMarkerElement>(coords.Count());
         var index = 1;
         foreach (var latLngLiteral in coords)
         {
-            var marker = await Marker.CreateAsync(_map1.JsRuntime, new MarkerOptions()
+            var labelText = $"Test {index++}";
+            var marker = await AdvancedMarkerElement.CreateAsync(_map1.JsRuntime, new AdvancedMarkerElementOptions()
             {
                 Position = latLngLiteral,
                 Map = map,
-                Label = $"Test {index++}",
-
-                //Icon = new Icon()
-                //{
-                //    Url = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
-                //}
-                //Icon = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
+                Title = labelText,
+                GmpClickable = true,
+                Content = $"<div class='map-marker-label'>{labelText}</div>"
             });
 
             result.Add(marker);
@@ -201,24 +198,19 @@ public partial class MapMarker
     {
         var mapCenter = await _map1.InteropObject.GetCenter();
         ZIndex++;
-
-        var marker = await Marker.CreateAsync(_map1.JsRuntime, new MarkerOptions()
+        var labelText = $"Test {_markers.Count()}";
+        var marker = await AdvancedMarkerElement.CreateAsync(_map1.JsRuntime, new AdvancedMarkerElementOptions()
         {
             Position = mapCenter,
             Map = _map1.InteropObject,
             ZIndex = ZIndex,
-            Label = new MarkerLabel
-            {
-                Text = $"Test {_markers.Count()}",
-                FontWeight = "bold",
-                Color = "#5B32FF",
-                FontSize = "24",
-                ClassName = "map-marker-label",
-
-            },
+            Title = labelText,
+            GmpClickable = true,
+            Content = $"<div class='map-marker-label'>{labelText}</div>"
         });
 
         _markers.Push(marker);
+        _markerLabels[marker.Guid] = labelText;
 
         return;
     }
@@ -226,57 +218,32 @@ public partial class MapMarker
     {
         var mapCenter = await _map1.InteropObject.GetCenter();
         ZIndex++;
-
-        var marker = await Marker.CreateAsync(_map1.JsRuntime, new MarkerOptions()
+        var labelText = $"Test {_markers.Count()}";
+        var marker = await AdvancedMarkerElement.CreateAsync(_map1.JsRuntime, new AdvancedMarkerElementOptions()
         {
             Position = mapCenter,
             Map = _map1.InteropObject,
-            //Label = $"Test {markers.Count}",
             ZIndex = ZIndex,
-            //Label = "test 01",
-            Label = new MarkerLabel
+            Title = labelText,
+            GmpClickable = true,
+            Content = new PinElement
             {
-                Text = $"Test {_markers.Count()}",
-                FontWeight = "bold",
-                Color = "#5B32FF",
-                FontSize = "24",
-                ClassName = "map-marker-label",
-            },
-            //CollisionBehavior = CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY,//2021-07 supported only in beta google maps version
-            //Animation = Animation.Bounce
-            //Icon = new Icon()
-            //{
-            //    Url = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
-            //}
-            //Icon = "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
+                Glyph = labelText
+            }
         });
 
         _markers.Push(marker);
+        _markerLabels[marker.Guid] = labelText;
 
         //return;
         await _bounds.Extend(mapCenter);
 
-        var icon = await marker.GetIcon();
-
-        Console.WriteLine($"Get icon result type is : {icon.Value?.GetType()}");
-
-        icon.Switch(
-            s => Console.WriteLine(s),
-            i => Console.WriteLine(i.Url),
-            _ => { });
-
-        _markers.Push(marker);
-
-        var labelText = await marker.GetLabelMarkerLabel();
-
         await marker.AddListener<MouseEvent>("click", async e =>
         {
-            //https://github.com/rungwiroon/BlazorGoogleMaps/issues/246
-            //var before = marker.EventListeners;
-            //await marker.ClearListeners("click");
-            //var after = marker.EventListeners;
             await e.Stop();
-            var markerLabel = await marker.GetLabel();
+            var markerLabel = _markerLabels.TryGetValue(marker.Guid, out var storedLabel)
+                ? storedLabel
+                : "marker";
             _events.Add("click on " + markerLabel);
             StateHasChanged();
 
@@ -293,6 +260,7 @@ public partial class MapMarker
 
         var lastMarker = _markers.Pop();
         await lastMarker.SetMap(null);
+        _markerLabels.Remove(lastMarker.Guid);
     }
 
     private async Task Recenter()
@@ -309,32 +277,8 @@ public partial class MapMarker
         {
             var pos = await m.GetPosition();
             _events.Add($"Recenter {pos.Lat},{pos.Lng}");
-            await _bounds.Extend(pos);
+            await _bounds.Extend(new LatLngLiteral(pos.Lat, pos.Lng));
         }
-    }
-
-    private async Task SetAnimation()
-    {
-        if (!_markers.Any())
-        {
-            return;
-        }
-        var lastMarker = _markers.Peek();
-        await lastMarker.SetAnimation(Animation.Bounce);
-        var position = await lastMarker.GetPosition();
-        _events.Add($"SetAnimation {position.Lat},{position.Lng} Animation.Bounce");
-    }
-
-    private async Task GetAnimation()
-    {
-        if (!_markers.Any())
-        {
-            return;
-        }
-        var lastMarker = _markers.Peek();
-        var animation = await lastMarker.GetAnimation();
-        var position = await lastMarker.GetPosition();
-        _events.Add($"GetAnimation {position.Lat},{position.Lng} {animation?.ToString()}");
     }
 
     private async Task FitBounds()

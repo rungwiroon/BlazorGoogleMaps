@@ -338,22 +338,44 @@
                     template.innerHTML = content.trim();
                     return template.content.firstChild;
                 } else {
-                    let pin = new google.maps.marker.PinElement({
+                    const pinOptions = {
                         background: content.background,
                         borderColor: content.borderColor,
                         glyphColor: content.glyphColor,
-                        scale: content.scale,
-                    });
+                        scale: content.scale
+                    };
+
+                    if (content.glyphText) {
+                        pinOptions.glyphText = content.glyphText;
+                    }
+
+                    if (content.glyphSrc) {
+                        pinOptions.glyphSrc = content.glyphSrc;
+                    }
+
+                    let pin = new google.maps.marker.PinElement(pinOptions);
 
                     let glyph = content.glyph;
-                    if (glyph) {
+                    if (glyph && !content.glyphText && !content.glyphSrc) {
                         const isGlyphHtmlContent = typeof glyph === 'string' && glyph.startsWith("<");
                         if (isGlyphHtmlContent) {
                             let template = document.createElement('div');
                             template.innerHTML = glyph.trim();
                             pin.glyph = template;
+                        } else if (typeof glyph === 'string' && glyph.startsWith("http")) {
+                            if ("glyphSrc" in pin) {
+                                pin.glyphSrc = glyph;
+                            } else {
+                                pin.glyph = new URL(glyph);
+                            }
+                        } else if (typeof glyph === 'string') {
+                            if ("glyphText" in pin) {
+                                pin.glyphText = glyph;
+                            } else {
+                                pin.glyph = glyph;
+                            }
                         } else {
-                            pin.glyph = glyph.startsWith("http") ? new URL(glyph) : glyph;
+                            pin.glyph = glyph;
                         }
                     }
 
@@ -363,6 +385,95 @@
         }
 
         return null;
+    }
+
+    function isPlaceAutocompleteElement(obj) {
+        const placeAutocompleteCtor = google?.maps?.places?.PlaceAutocompleteElement;
+        if (placeAutocompleteCtor && obj instanceof placeAutocompleteCtor) {
+            return true;
+        }
+        return obj && obj.tagName && obj.tagName.toLowerCase() === "gmp-place-autocomplete";
+    }
+
+    function mapPlacePrediction(prediction) {
+        if (!prediction) return null;
+        const normalizeTextValue = (value) => {
+            if (value === null || typeof value === "undefined") return null;
+            if (typeof value === "string") return value;
+            if (typeof value === "object") {
+                if (typeof value.text === "string") return value.text;
+                if (typeof value.value === "string") return value.value;
+            }
+            return null;
+        };
+
+        return {
+            distanceMeters: prediction.distanceMeters ?? prediction.distanceInMeters ?? null,
+            mainText: normalizeTextValue(prediction.mainText ?? prediction.structuredFormatting?.mainText),
+            secondaryText: normalizeTextValue(prediction.secondaryText ?? prediction.structuredFormatting?.secondaryText),
+            text: normalizeTextValue(prediction.text ?? prediction.description),
+            placeId: prediction.placeId ?? prediction.place_id ?? null,
+            types: prediction.types ?? null
+        };
+    }
+
+    function normalizeLatLngLiteral(value) {
+        if (!value) return null;
+        if (typeof value.lat === "function" && typeof value.lng === "function") {
+            return { lat: value.lat(), lng: value.lng() };
+        }
+        if (typeof value.lat === "number" && typeof value.lng === "number") {
+            return { lat: value.lat, lng: value.lng };
+        }
+        return null;
+    }
+
+    function normalizeDisplayName(value) {
+        if (!value) return null;
+        if (typeof value === "string") return value;
+        if (typeof value === "object") {
+            if (typeof value.text === "string") return value.text;
+            if (typeof value.value === "string") return value.value;
+        }
+        return null;
+    }
+
+    function normalizePlaceObject(place) {
+        if (!place || typeof place !== "object") return place;
+        const findLatLngInObject = (obj, depth) => {
+            if (!obj || typeof obj !== "object" || depth > 2) return null;
+            for (const key of Object.keys(obj)) {
+                const value = obj[key];
+                const direct = normalizeLatLngLiteral(value);
+                if (direct) return direct;
+                if (value && typeof value === "object") {
+                    const nested = findLatLngInObject(value, depth + 1);
+                    if (nested) return nested;
+                }
+            }
+            return null;
+        };
+
+        const location = normalizeLatLngLiteral(place.location)
+            ?? normalizeLatLngLiteral(place.geometry?.location)
+            ?? findLatLngInObject(place, 0);
+        const displayName = normalizeDisplayName(place.displayName)
+            ?? normalizeDisplayName(place.name);
+        return {
+            id: place.id ?? place.placeId ?? place.place_id ?? null,
+            requestedLanguage: place.requestedLanguage ?? null,
+            requestedRegion: place.requestedRegion ?? null,
+            displayName: displayName,
+            location: location
+        };
+    }
+
+    function buildPlaceAutocompleteEventPayload(event) {
+        const prediction = event?.placePrediction ?? event?.detail?.placePrediction;
+        if (prediction) {
+            return { placePrediction: mapPlacePrediction(prediction) };
+        }
+        return event;
     }
 
 
@@ -382,6 +493,31 @@
                     var library = libArray[i];
                     await google.maps.importLibrary(library);
                 }
+            },
+            createImageMapType: function (baseUrlFormat, minZoom, maxZoom, name, opacity, subDomains) {
+                const safeFormat = typeof baseUrlFormat === "string" ? baseUrlFormat : "";
+                const hasSubDomains = Array.isArray(subDomains) && subDomains.length > 0;
+
+                const getTileUrl = (coord, zoom) => {
+                    let url = safeFormat
+                        .replace("{z}", zoom)
+                        .replace("{x}", coord.x)
+                        .replace("{y}", coord.y);
+                    if (hasSubDomains) {
+                        const ndx = Math.abs(coord.y) % subDomains.length;
+                        url = url.replace("{domain}", subDomains[ndx]);
+                    }
+                    return url;
+                };
+
+                return new google.maps.ImageMapType({
+                    getTileUrl: getTileUrl,
+                    tileSize: new google.maps.Size(256, 256),
+                    maxZoom: maxZoom,
+                    minZoom: minZoom,
+                    opacity: opacity,
+                    name: name
+                });
             },
 
             createObject: function (args) {
@@ -616,6 +752,12 @@
                 }
             },
 
+            isGoogleMapsReady: function () {
+                return typeof google !== "undefined"
+                    && google.maps
+                    && typeof google.maps.Map === "function";
+            },
+
             invokeProperty: async function (args) {
                 const args2 = args.slice(2).map(arg => tryParseJson(arg));
                 const obj = mapObjects[args[0]];
@@ -658,6 +800,14 @@
                 const obj = mapObjects[objectId];
                 const args2 = restArgs.map(arg => tryParseJson(arg));
 
+                if (!obj) {
+                    if (functionToInvoke === "remove") {
+                        this.disposeObject(objectId);
+                        return null;
+                    }
+                    return null;
+                }
+
                 // Handle LatLng objects
                 const formattedArgs = args2.map(arg => {
                     if (arg && arg.hasOwnProperty("lat") && arg.hasOwnProperty("lng")) {
@@ -665,6 +815,26 @@
                     }
                     return arg;
                 });
+
+                if (functionToInvoke === "addListener" && isPlaceAutocompleteElement(obj)) {
+                    const eventName = formattedArgs[0];
+                    const handler = formattedArgs[1];
+                    const wrappedHandler = (event) => handler(buildPlaceAutocompleteEventPayload(event));
+                    obj.addEventListener(eventName, wrappedHandler);
+                    return {
+                        remove: () => obj.removeEventListener(eventName, wrappedHandler)
+                    };
+                }
+
+                if (functionToInvoke === "addListenerOnce" && isPlaceAutocompleteElement(obj)) {
+                    const eventName = formattedArgs[0];
+                    const handler = formattedArgs[1];
+                    const onceHandler = (event) => handler(buildPlaceAutocompleteEventPayload(event));
+                    obj.addEventListener(eventName, onceHandler, { once: true });
+                    return {
+                        remove: () => obj.removeEventListener(eventName, onceHandler)
+                    };
+                }
 
                 try {
                     switch (functionToInvoke) {
@@ -761,21 +931,31 @@
                             return featureUuid;
 
                         default:
-                            if (google.maps.places !== undefined && obj instanceof google.maps.places.AutocompleteService ||
-                                (google.maps.places !== undefined && obj instanceof google.maps.places.PlacesService) ||
-                                (google.maps.places !== undefined && obj instanceof google.maps.places.Place) ||
-                                obj instanceof google.maps.Geocoder) {
-                                
+                            if (google.maps.places !== undefined && obj instanceof google.maps.places.Place) {
                                 // Handle static methods on Place class
                                 const placeStaticMethods = ['searchByText', 'searchNearby'];
-                                if (google.maps.places !== undefined && 
-                                    obj instanceof google.maps.places.Place && 
-                                    placeStaticMethods.includes(functionToInvoke)) {
+                                if (placeStaticMethods.includes(functionToInvoke)) {
                                     const result = await google.maps.places.Place[functionToInvoke](formattedArgs[0]);
-                                    // These methods return an object with 'places' array, convert to expected format
+                                    if (result && Array.isArray(result.places)) {
+                                        return { places: result.places.map(p => normalizePlaceObject(p)) };
+                                    }
                                     return result;
                                 }
-                                
+
+                                const result = obj[functionToInvoke](...formattedArgs);
+                                if (result && typeof result.then === "function") {
+                                    const awaited = await result;
+                                    return normalizePlaceObject(awaited ?? obj);
+                                }
+                                if (result && typeof result === "object") {
+                                    return normalizePlaceObject(result);
+                                }
+                                return normalizePlaceObject(obj);
+                            }
+
+                            if (google.maps.places !== undefined && obj instanceof google.maps.places.AutocompleteService ||
+                                (google.maps.places !== undefined && obj instanceof google.maps.places.PlacesService) ||
+                                obj instanceof google.maps.Geocoder) {
                                 return new Promise((resolve, reject) => {
                                     obj[functionToInvoke](formattedArgs[0], (result, status) => {
                                         if (obj instanceof google.maps.places.AutocompleteService) {
@@ -786,6 +966,10 @@
                                     });
                                 });
                             } else {
+                                if (functionToInvoke === "remove" && typeof obj.remove !== "function") {
+                                    this.disposeObject(objectId);
+                                    return null;
+                                }
                                 const result = obj[functionToInvoke](...formattedArgs);
                                 if (result && typeof result === "object") {
                                     if (result.hasOwnProperty("geocoded_waypoints") && result.hasOwnProperty("routes")) {
@@ -940,6 +1124,15 @@
                 }
 
                 return result;
+            },
+
+            readPlaceAutocompleteInputValue: function (guid) {
+                const elem = mapObjects[guid];
+                if (!elem) return null;
+                if (typeof elem.value === "string") return elem.value;
+                if (typeof elem.inputValue === "string") return elem.inputValue;
+                const input = elem.querySelector?.("input") || elem.shadowRoot?.querySelector?.("input");
+                return input?.value ?? null;
             },
 
             //based on https://googlemaps.github.io/js-markerclusterer/
