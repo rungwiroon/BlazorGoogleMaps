@@ -62,7 +62,7 @@ public partial class GMap
         return meMarker;
     }
 
-    private async Task OnMakerDragEnd(AdvancedMarkerElement meMarker, MouseEvent e)
+    private async Task OnMakerDragEnd(AdvancedMarkerElement marker, MouseEvent e)
     {
         MeMarkerOptions.Position = e.LatLng;
         await MeDragEnd.InvokeAsync(e);
