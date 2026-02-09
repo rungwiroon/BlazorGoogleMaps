@@ -1,39 +1,38 @@
-name: Deploy Blazor WASM
+# This is ".github/workflows/gh-pages.yml" file.
+# This is an EXAMPLE of "GitHub Actions Workflow file".
+
+name: github pages
 
 on:
   push:
-    branches: [ main, master ]
-  workflow_dispatch:
+    branches:
+      - master
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
-    
     steps:
-    - uses: actions/checkout@v6
-    
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '10.0.x'
-    
-    - name: Inject Google Maps API Key
-      run: |
-        sed -i 's/YOUR_API_KEY_HERE/${{ secrets.GOOGLE_MAPS_API_KEY }}/g' Demos/ClientSideDemo/wwwroot/appsettings.json
-    
-    - name: Restore dependencies
-      run: dotnet restore
-    
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
-    
-    - name: Publish
-      run: dotnet publish Demos/ClientSideDemo/ClientSideDemo.csproj -c Release -o release --nologo
-    
+      # Checkout the code
+      - uses: actions/checkout@v6
+
+      # Install .NET Core SDK
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Inject Google Maps API Key
+        run: |
+          sed -i 's/YOUR_API_KEY_HERE/${{ secrets.GOOGLE_MAPS_API_KEY }}/g' Demos/ClientSideDemo/wwwroot/appsettings.json
+		
+      # Publish the site
+      - name: Publish
+        run: dotnet publish BlazorGoogleMaps.sln -c:Release -o:publish -p:GHPages=true -f net10.0
+
       # Deploy the site
-    - name: Deploy
-      uses: peaceiris/actions-gh-pages@v4
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: publish/wwwroot
-        force_orphan: true
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: publish/wwwroot
+          force_orphan: true
