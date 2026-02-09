@@ -1,0 +1,39 @@
+name: Deploy Blazor WASM
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0.x'
+    
+    - name: Inject Google Maps API Key
+      run: |
+        sed -i 's/YOUR_API_KEY_HERE/${{ secrets.GOOGLE_MAPS_API_KEY }}/g' Demos/ClientSideDemo/wwwroot/appsettings.json
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    
+    - name: Publish
+      run: dotnet publish Demos/ClientSideDemo/ClientSideDemo.csproj -c Release -o release --nologo
+    
+      # Deploy the site
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: publish/wwwroot
+        force_orphan: true

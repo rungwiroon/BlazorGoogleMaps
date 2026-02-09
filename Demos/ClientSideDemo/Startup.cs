@@ -2,6 +2,7 @@
 using GoogleMapsComponents.Maps;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Threading.Tasks;
 
 namespace ClientSideDemo;
@@ -12,7 +13,9 @@ public class Startup
     {
         var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
-        var apiOptions = new MapApiLoadOptions("GOOGLE_MAPS_API_KEY")
+        var apiKey = builder.Configuration["GoogleMaps:ApiKey"] ?? throw new InvalidOperationException("Google Maps API key not configured");
+
+        var apiOptions = new MapApiLoadOptions(apiKey)
         {
             Version = "weekly"
         };
