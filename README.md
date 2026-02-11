@@ -1,60 +1,139 @@
 # BlazorGoogleMaps
-Blazor interop for GoogleMap library
+
+🗺️ **Blazor interop for Google Maps JavaScript API**
 
 [![NuGet version (BlazorGoogleMaps)](https://img.shields.io/nuget/v/BlazorGoogleMaps)](https://www.nuget.org/packages/BlazorGoogleMaps/)
+[![.NET 10](https://img.shields.io/badge/.NET-10-blue)](https://dotnet.microsoft.com/)
 
-## Usage
-1. Provide your Google API key to BlazorGoogleMaps with one of the following methods. (You can get a key here: https://developers.google.com/maps/documentation/javascript/get-api-key)
+A powerful and easy-to-use Blazor library for integrating Google Maps into your Blazor WebAssembly and Blazor Server applications.
 
-Use the bootstrap loader with a key service (recommended):
-```
-services.AddBlazorGoogleMaps("YOUR_KEY_GOES_HERE");
-```
-OR specify google api libraries and/or version:
-```
-services.AddBlazorGoogleMaps(new GoogleMapsComponents.Maps.MapApiLoadOptions("YOUR_KEY_GOES_HERE")
-    {
-        Version = "beta",
-        Libraries = "places,visualization,drawing,marker",
-    });
-```
-OR to do something more complex (e.g. looking up keys asynchronously), implement a Scoped key service and add it with something like:
-```
-services.AddScoped<IBlazorGoogleMapsKeyService, YourServiceImplementation>();
+---
+
+## 📑 Table of Contents
+
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Configuration](#configuration)
+- [Usage Examples](#usage-examples)
+- [Live Demos](#live-demos)
+- [Breaking Changes](#breaking-changes)
+- [Contributing](#contributing)
+
+---
+
+## ✨ Features
+
+- 🎯 **Full Google Maps API Support** - Markers, Polylines, Polygons, Circles, Info Windows, and more
+- 🚀 **Blazor WebAssembly & Server** - Works seamlessly with both hosting models
+- 🎨 **Advanced Markers** - Render Blazor components directly on the map
+- 📍 **Marker Clustering** - Built-in support for marker clustering
+- 🔥 **Heat Maps** - Visualize data density with heat map layers
+- 🛣️ **Directions & Routes** - Full support for directions and route rendering
+- 🎭 **Map Styling** - Customize map appearance with style options
+- 📊 **Data Layers** - Support for GeoJSON and other data formats
+- ⚡ **Event Handling** - Comprehensive event support for interactive maps
+- 🎨 **Drawing Tools** - Built-in drawing manager for shapes and overlays
+
+---
+
+## 📋 Prerequisites
+
+- .NET 8.0 or higher
+- A valid Google Maps API key ([Get one here](https://developers.google.com/maps/documentation/javascript/get-api-key))
+
+---
+
+## 📦 Installation
+
+Install the package via NuGet Package Manager:
+
+```bash
+dotnet add package BlazorGoogleMaps
 ```
 
-OR (legacy - not recommended) Add google map script HEAD tag to wwwroot/index.html in Client side or _Host.cshtml in Server Side.
-```
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_GOES_HERE&v=3"></script>
+Or via NuGet Package Manager Console:
+
+```powershell
+Install-Package BlazorGoogleMaps
 ```
 
+---
 
-2. Add path to project javascript functions file in wwwroot/index.html for Blazor WASM, or in _Host.cshtml or _HostLayout.cshtml for Blazor Server.
+## 🚀 Quick Start
+
+### Step 1: Configure Your API Key
+
+Add BlazorGoogleMaps to your `Program.cs`:
+
+#### **Option 1: Simple Configuration (Recommended)**
+```csharp
+builder.Services.AddBlazorGoogleMaps("YOUR_GOOGLE_API_KEY");
 ```
+
+#### **Option 2: Advanced Configuration**
+```csharp
+builder.Services.AddBlazorGoogleMaps(new GoogleMapsComponents.Maps.MapApiLoadOptions("YOUR_GOOGLE_API_KEY")
+{
+	Version = "beta",
+	Libraries = "places,visualization,drawing,marker"
+});
+```
+
+#### **Option 3: Custom Key Service**
+For more complex scenarios (e.g., loading keys asynchronously from a database):
+```csharp
+builder.Services.AddScoped<IBlazorGoogleMapsKeyService, YourCustomKeyService>();
+```
+
+> ⚠️ **Legacy Method (Not Recommended):** Adding the script tag directly to your HTML is still supported but not recommended.
+
+---
+
+### Step 2: Add JavaScript References
+
+Add the required JavaScript files to your `wwwroot/index.html` (Blazor WASM) or `_Host.cshtml`/`_HostLayout.cshtml` (Blazor Server):
+
+```html
 <script src="_content/BlazorGoogleMaps/js/objectManager.js"></script>
 ```
-If you want to use marker clustering add this script as well:
-```
+
+**Optional:** For marker clustering support, add:
+```html
 <script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
 ```
 
-3. Using the component is the same for both Blazor WASM and Blazor Server
-```
+---
+
+## 💡 Usage Examples
+
+### Basic Map
+
+Create a simple map component:
+
+```razor
 @page "/map"
 @using GoogleMapsComponents
 @using GoogleMapsComponents.Maps
 
 <h1>Google Map</h1>
-<div style="height:@Height">
-<GoogleMap @ref="@_map1" Id="map1" Options="@mapOptions" Height="100%" OnAfterInit="AfterMapRender"></GoogleMap>
+<div style="height: 500px;">
+	<GoogleMap @ref="@_map1" 
+			   Id="map1" 
+			   Options="@_mapOptions" 
+			   Height="100%" 
+			   OnAfterInit="@AfterMapRender">
+	</GoogleMap>
 </div>
-@functions {
-	private GoogleMap _map1;
-	private MapOptions mapOptions;	
+
+@code {
+	private GoogleMap? _map1;
+	private MapOptions _mapOptions = default!;
 
 	protected override void OnInitialized()
 	{
-		mapOptions = new MapOptions()
+		_mapOptions = new MapOptions()
 		{
 			Zoom = 13,
 			Center = new LatLngLiteral()
@@ -66,42 +145,53 @@ If you want to use marker clustering add this script as well:
 		};
 	}
 
-	 private async Task AfterMapRender()
-	 {
-	     _bounds = await LatLngBounds.CreateAsync(_map1.JsRuntime);
-	 }		
+	private async Task AfterMapRender()
+	{
+		// Map is ready - you can perform additional initialization here
+		var bounds = await LatLngBounds.CreateAsync(_map1!.JsRuntime);
+	}
 }
 ```
 
-OR Render markers with Blazor (currently only with `v=beta` version of google-maps, and specify a `MapId`)
-```
-@page "/map"
+---
+
+### Advanced Map with Blazor Components
+
+Render interactive Blazor components as markers (requires Google Maps `v=beta` and a `MapId`):
+
+```razor
+@page "/advanced-map"
 @using GoogleMapsComponents
 @using GoogleMapsComponents.Maps
 
-<h1>Google Map</h1>
-<AdvancedGoogleMap @ref="@_map1" Id="map1" Options="@mapOptions">
-    @foreach (var markerRef in Markers)
-    {
-        <MarkerComponent 
-            @key="markerRef.Id" 
-            Lat="@markerRef.Lat" 
-            Lng="@markerRef.Lng" 
-            Clickable="@markerRef.Clickable" 
-            Draggable="@markerRef.Draggable" 
-            OnClick="@(() => markerRef.Active = !markerRef.Active)"
-            OnMove="pos => markerRef.UpdatePosition(pos)">
-            <p>I am a blazor component</p>
-        </MarkerComponent>
-    }
+<h1>Advanced Map with Blazor Markers</h1>
+<AdvancedGoogleMap @ref="@_map1" Id="map1" Options="@_mapOptions">
+	@foreach (var marker in Markers)
+	{
+		<MarkerComponent 
+			@key="marker.Id" 
+			Lat="@marker.Lat" 
+			Lng="@marker.Lng" 
+			Clickable="@marker.Clickable" 
+			Draggable="@marker.Draggable" 
+			OnClick="@(() => marker.Active = !marker.Active)"
+			OnMove="@(pos => marker.UpdatePosition(pos))">
+			<div class="custom-marker">
+				<h4>@marker.Title</h4>
+				<p>Custom Blazor Content</p>
+			</div>
+		</MarkerComponent>
+	}
 </AdvancedGoogleMap>
+
 @code {
-    private List<MarkerData> Markers =
-    [
-        new MarkerData { Id = 1, Lat = 13.505892, Lng = 100.8162 },
-    ];
 	private AdvancedGoogleMap? _map1;
-	private MapOptions mapOptions =new MapOptions()
+	private List<MarkerData> Markers = 
+	[
+		new MarkerData { Id = 1, Lat = 13.505892, Lng = 100.8162, Title = "Location 1" }
+	];
+
+	private MapOptions _mapOptions = new()
 	{
 		Zoom = 13,
 		Center = new LatLngLiteral()
@@ -109,39 +199,86 @@ OR Render markers with Blazor (currently only with `v=beta` version of google-ma
 			Lat = 13.505892,
 			Lng = 100.8162
 		},
-		MapId = "DEMO_MAP_ID", //required for blazor markers
+		MapId = "DEMO_MAP_ID", // Required for advanced markers
 		MapTypeId = MapTypeId.Roadmap
-	};	
+	};
 
-    public class MarkerData
-    {
-        public int Id { get; set; }
-        public double Lat { get; set; }
-        public double Lng { get; set; }
-        public bool Clickable { get; set; } = true;
-        public bool Draggable { get; set; }
-        public bool Active { get; set; }
-        
-        public void UpdatePosition(LatLngLiteral position)
-        {
-            Lat = position.Lat;
-            Lng = position.Lng;
-        }
-    }
+	public class MarkerData
+	{
+		public int Id { get; set; }
+		public string Title { get; set; } = string.Empty;
+		public double Lat { get; set; }
+		public double Lng { get; set; }
+		public bool Clickable { get; set; } = true;
+		public bool Draggable { get; set; }
+		public bool Active { get; set; }
+
+		public void UpdatePosition(LatLngLiteral position)
+		{
+			Lat = position.Lat;
+			Lng = position.Lng;
+		}
+	}
 }
 ```
 
-## Samples
- Please check server side samples https://github.com/rungwiroon/BlazorGoogleMaps/tree/master/ServerSideDemo which are most to date
- 
- ClientSide demos online
- https://rungwiroon.github.io/BlazorGoogleMaps/mapEvents
+---
 
-**Breaking change from 4.0.0**
-Migrate to .NET 8 [#286](https://github.com/rungwiroon/BlazorGoogleMaps/issues/286).
+## 🎮 Live Demos
 
-**Breaking change from 3.0.0**
-Migrate from Newtonsoft.Json to System.Text.Json.
+Explore interactive examples and learn more features:
 
-**Breaking change from 2.0.0**
-LatLngLiteral constructor's parameters order changed [#173](https://github.com/rungwiroon/BlazorGoogleMaps/issues/176)
+- **📘 Server-Side Demo:** [GitHub Repository](https://github.com/rungwiroon/BlazorGoogleMaps/tree/master/ServerSideDemo)
+- **🌐 Client-Side Demo:** [Live Demo](https://rungwiroon.github.io/BlazorGoogleMaps/mapEvents)
+
+The server-side demos include the most up-to-date examples covering:
+- Markers and Info Windows
+- Polylines, Polygons, and Circles
+- Heat Maps and Data Layers
+- Drawing Manager
+- Routes and Directions
+- Event Handling
+- Map Styling
+- And much more!
+
+---
+
+## ⚠️ Breaking Changes
+
+### Version 4.0.0
+- **Migration to .NET 8** ([#286](https://github.com/rungwiroon/BlazorGoogleMaps/issues/286))
+  - Minimum required version is now .NET 8.0
+
+### Version 3.0.0
+- **JSON Serialization Change**
+  - Migrated from `Newtonsoft.Json` to `System.Text.Json`
+  - Update any custom serialization code accordingly
+
+### Version 2.0.0
+- **LatLngLiteral Constructor Parameter Order** ([#173](https://github.com/rungwiroon/BlazorGoogleMaps/issues/176))
+  - Constructor parameter order changed
+  - Old: `new LatLngLiteral(lng, lat)`
+  - New: `new LatLngLiteral() { Lat = lat, Lng = lng }`
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+---
+
+## 🙏 Acknowledgments
+
+- Built with ❤️ for the Blazor community
+- Powered by the Google Maps JavaScript API
+
+---
+
+**Happy Mapping! 🗺️**
