@@ -9,6 +9,7 @@
 public class DirectionsRequestOptions
 {
     public bool StripOverviewPath { get; set; } = true;
+
     public bool StripOverviewPolyline { get; set; } = true;
 
     /// <summary>
@@ -25,5 +26,5 @@ public class DirectionsRequestOptions
     /// If StripLegsSteps true then StripLegsStepsLatLngs and StripLegsStepsPath always be stripped
     /// </summary>
     public bool StripLegsStepsPath { get; set; } = true;
-        
+
 }

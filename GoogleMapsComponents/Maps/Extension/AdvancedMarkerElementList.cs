@@ -48,6 +48,9 @@ namespace GoogleMapsComponents.Maps.Extension;
 /// </summary>
 public class AdvancedMarkerElementList : ListableEntityListBase<AdvancedMarkerElement, AdvancedMarkerElementOptions>
 {
+    /// <summary>
+    /// Gets the dictionary of markers indexed by their unique string keys.
+    /// </summary>
     public Dictionary<string, AdvancedMarkerElement> Markers => BaseListableEntities;
 
     /// <summary>
@@ -91,11 +94,13 @@ public class AdvancedMarkerElementList : ListableEntityListBase<AdvancedMarkerEl
     {
         if (opts.Count == 0)
         {
-            if (list != null)
+            if (list == null)
             {
-                await list.SetMultipleAsync(opts);
-                list = null;
+                return list;
             }
+
+            await list.SetMultipleAsync(opts);
+            list = null;
         }
         else
         {
@@ -112,6 +117,7 @@ public class AdvancedMarkerElementList : ListableEntityListBase<AdvancedMarkerEl
             }
             await list.SetMultipleAsync(opts);
         }
+
         return list;
     }
 
@@ -139,6 +145,11 @@ public class AdvancedMarkerElementList : ListableEntityListBase<AdvancedMarkerEl
         await base.AddMultipleAsync(opts, AdvancedMarkerElement.GoogleMapAdvancedMarkerName);
     }
 
+    /// <summary>
+    /// Gets the animation state for the specified markers.
+    /// </summary>
+    /// <param name="filterKeys">Optional list of marker keys to filter. If null, all markers are included.</param>
+    /// <returns>A dictionary mapping marker keys to their animation states.</returns>
     public Task<Dictionary<string, Animation>> GetAnimations(List<string>? filterKeys = null)
     {
         var matchingKeys = ComputeMatchingKeys(filterKeys);
@@ -158,6 +169,11 @@ public class AdvancedMarkerElementList : ListableEntityListBase<AdvancedMarkerEl
         }
     }
 
+    /// <summary>
+    /// Gets the clickable state for the specified markers.
+    /// </summary>
+    /// <param name="filterKeys">Optional list of marker keys to filter. If null, all markers are included.</param>
+    /// <returns>A dictionary mapping marker keys to their clickable states.</returns>
     public Task<Dictionary<string, bool>> GetClickables(List<string>? filterKeys = null)
     {
         var matchingKeys = ComputeMatchingKeys(filterKeys);
@@ -177,6 +193,11 @@ public class AdvancedMarkerElementList : ListableEntityListBase<AdvancedMarkerEl
         }
     }
 
+    /// <summary>
+    /// Gets the cursor style for the specified markers.
+    /// </summary>
+    /// <param name="filterKeys">Optional list of marker keys to filter. If null, all markers are included.</param>
+    /// <returns>A dictionary mapping marker keys to their cursor styles.</returns>
     public Task<Dictionary<string, string>> GetCursors(List<string>? filterKeys = null)
     {
         var matchingKeys = ComputeMatchingKeys(filterKeys);
@@ -196,6 +217,11 @@ public class AdvancedMarkerElementList : ListableEntityListBase<AdvancedMarkerEl
         }
     }
 
+    /// <summary>
+    /// Gets the icons for the specified markers.
+    /// </summary>
+    /// <param name="filterKeys">Optional list of marker keys to filter. If null, all markers are included.</param>
+    /// <returns>A dictionary mapping marker keys to their icons (as string URL, Icon, or Symbol).</returns>
     public Task<Dictionary<string, OneOf<string, Icon, Symbol>>> GetIcons(List<string>? filterKeys = null)
     {
         var matchingKeys = ComputeMatchingKeys(filterKeys);
@@ -215,6 +241,11 @@ public class AdvancedMarkerElementList : ListableEntityListBase<AdvancedMarkerEl
         }
     }
 
+    /// <summary>
+    /// Gets the labels for the specified markers.
+    /// </summary>
+    /// <param name="filterKeys">Optional list of marker keys to filter. If null, all markers are included.</param>
+    /// <returns>A dictionary mapping marker keys to their label text.</returns>
     public Task<Dictionary<string, string>> GetLabels(List<string>? filterKeys = null)
     {
         var matchingKeys = ComputeMatchingKeys(filterKeys);
@@ -234,6 +265,11 @@ public class AdvancedMarkerElementList : ListableEntityListBase<AdvancedMarkerEl
         }
     }
 
+    /// <summary>
+    /// Gets the positions for the specified markers.
+    /// </summary>
+    /// <param name="filterKeys">Optional list of marker keys to filter. If null, all markers are included.</param>
+    /// <returns>A dictionary mapping marker keys to their geographical positions.</returns>
     public Task<Dictionary<string, LatLngLiteral>> GetPositions(List<string>? filterKeys = null)
     {
         var matchingKeys = ComputeMatchingKeys(filterKeys);
@@ -253,6 +289,11 @@ public class AdvancedMarkerElementList : ListableEntityListBase<AdvancedMarkerEl
         }
     }
 
+    /// <summary>
+    /// Gets the shapes for the specified markers.
+    /// </summary>
+    /// <param name="filterKeys">Optional list of marker keys to filter. If null, all markers are included.</param>
+    /// <returns>A dictionary mapping marker keys to their marker shapes.</returns>
     public Task<Dictionary<string, MarkerShape>> GetShapes(List<string>? filterKeys = null)
     {
         var matchingKeys = ComputeMatchingKeys(filterKeys);
@@ -272,6 +313,11 @@ public class AdvancedMarkerElementList : ListableEntityListBase<AdvancedMarkerEl
         }
     }
 
+    /// <summary>
+    /// Gets the titles for the specified markers.
+    /// </summary>
+    /// <param name="filterKeys">Optional list of marker keys to filter. If null, all markers are included.</param>
+    /// <returns>A dictionary mapping marker keys to their title text.</returns>
     public Task<Dictionary<string, string>> GetTitles(List<string>? filterKeys = null)
     {
         var matchingKeys = ComputeMatchingKeys(filterKeys);
@@ -291,6 +337,11 @@ public class AdvancedMarkerElementList : ListableEntityListBase<AdvancedMarkerEl
         }
     }
 
+    /// <summary>
+    /// Gets the z-index values for the specified markers.
+    /// </summary>
+    /// <param name="filterKeys">Optional list of marker keys to filter. If null, all markers are included.</param>
+    /// <returns>A dictionary mapping marker keys to their z-index values.</returns>
     public Task<Dictionary<string, int>> GetZIndexes(List<string>? filterKeys = null)
     {
         var matchingKeys = ComputeMatchingKeys(filterKeys);
@@ -323,6 +374,11 @@ public class AdvancedMarkerElementList : ListableEntityListBase<AdvancedMarkerEl
         return _jsObjectRef.InvokeMultipleAsync("setAnimation", dictArgs);
     }
 
+    /// <summary>
+    /// Converts an Animation enum value to its corresponding numeric code.
+    /// </summary>
+    /// <param name="animation">The animation type to convert.</param>
+    /// <returns>The numeric code representing the animation (null for no animation, 1 for Bounce, 2 for Drop).</returns>
     public int? GetAnimationCode(Animation? animation)
     {
         switch (animation)
@@ -345,6 +401,11 @@ public class AdvancedMarkerElementList : ListableEntityListBase<AdvancedMarkerEl
         return _jsObjectRef.InvokeMultipleAsync("setClickable", dictArgs);
     }
 
+    /// <summary>
+    /// Sets the cursor style for the specified markers.
+    /// </summary>
+    /// <param name="cursors">A dictionary mapping marker keys to cursor style strings.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public Task SetCursors(Dictionary<string, string> cursors)
     {
         var dictArgs = cursors.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
@@ -409,6 +470,11 @@ public class AdvancedMarkerElementList : ListableEntityListBase<AdvancedMarkerEl
             dictArgs);
     }
 
+    /// <summary>
+    /// Sets the opacity for the specified markers.
+    /// </summary>
+    /// <param name="opacities">A dictionary mapping marker keys to opacity values (0.0 to 1.0).</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public Task SetOpacities(Dictionary<string, float> opacities)
     {
         var dictArgs = opacities.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
@@ -417,24 +483,44 @@ public class AdvancedMarkerElementList : ListableEntityListBase<AdvancedMarkerEl
             dictArgs);
     }
 
+    /// <summary>
+    /// Sets the geographical positions for the specified markers.
+    /// </summary>
+    /// <param name="latLngs">A dictionary mapping marker keys to their geographical positions.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public Task SetPositions(Dictionary<string, LatLngLiteral> latLngs)
     {
         var dictArgs = latLngs.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
         return _jsObjectRef.InvokeMultipleAsync("setPosition", dictArgs);
     }
 
+    /// <summary>
+    /// Sets the shapes for the specified markers.
+    /// </summary>
+    /// <param name="shapes">A dictionary mapping marker keys to their marker shapes.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public Task SetShapes(Dictionary<string, MarkerShape> shapes)
     {
         var dictArgs = shapes.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
         return _jsObjectRef.InvokeMultipleAsync("setShape", dictArgs);
     }
 
+    /// <summary>
+    /// Sets the titles for the specified markers.
+    /// </summary>
+    /// <param name="titles">A dictionary mapping marker keys to their title text.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public Task SetTitles(Dictionary<string, string> titles)
     {
         var dictArgs = titles.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);
         return _jsObjectRef.InvokeMultipleAsync("setTitle", dictArgs);
     }
 
+    /// <summary>
+    /// Sets the z-index values for the specified markers.
+    /// </summary>
+    /// <param name="zIndexes">A dictionary mapping marker keys to their z-index values.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public Task SetZIndexes(Dictionary<string, int> zIndexes)
     {
         var dictArgs = zIndexes.ToDictionary(e => Markers[e.Key].Guid, e => (object)e.Value);

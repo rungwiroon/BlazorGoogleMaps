@@ -1,5 +1,5 @@
-﻿using System.Text.Json.Serialization;
-using GoogleMapsComponents.Serialization;
+﻿using GoogleMapsComponents.Serialization;
+using System.Text.Json.Serialization;
 
 namespace GoogleMapsComponents.Maps;
 
@@ -9,7 +9,7 @@ namespace GoogleMapsComponents.Maps;
 public class DirectionsRendererOptions
 {
     /// <summary>
-    /// The directions to display on the map and/or in a <div> panel, retrieved as a DirectionsResult object from DirectionsService.
+    /// The directions to display on the map and/or in a < div > panel, retrieved as a DirectionsResult object from DirectionsService.
     /// </summary>
     public DirectionsResult Directions { get; set; }
 
@@ -38,12 +38,6 @@ public class DirectionsRendererOptions
     /// Options for the markers. All markers rendered by the DirectionsRenderer will use these options.
     /// </summary>
     public MarkerOptions MarkerOptions { get; set; }
-
-    //TODO Figure out what a "Node" type is.
-    /// <summary>
-    /// The <div> in which to display the directions steps.
-    /// </summary>
-    //public Node Panel { get; set; }
 
     /// <summary>
     /// Options for the polylines. All polylines rendered by the DirectionsRenderer will use these options.
