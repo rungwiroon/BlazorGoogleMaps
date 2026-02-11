@@ -1,5 +1,4 @@
-﻿using Demo.Ui.Shared.Shared;
-using GoogleMapsComponents;
+﻿using GoogleMapsComponents;
 using GoogleMapsComponents.Maps;
 using GoogleMapsComponents.Maps.Coordinates;
 using GoogleMapsComponents.Maps.Extension;
@@ -10,25 +9,21 @@ namespace Demo.Ui.Shared.Pages;
 
 public partial class MapMarkerListPage
 {
-    private GoogleMap map1;
+    private GoogleMap _map1;
 
-    private MapOptions mapOptions;
+    private MapOptions _mapOptions;
 
-    private Stack<AdvancedMarkerElement> markers = new Stack<AdvancedMarkerElement>();
+    private Stack<AdvancedMarkerElement> _markers = new Stack<AdvancedMarkerElement>();
 
-    private List<String> _events = new List<String>();
-
-    private MapEventList eventList;
-
-    private LatLngBounds bounds;
-    private AdvancedMarkerElementList _markerList;
+    private LatLngBounds _bounds;
+    private AdvancedMarkerElementList? _markerList;
 
     [Inject]
-    public IJSRuntime JsObjectRef { get; set; }
+    public IJSRuntime JsObjectRef { get; set; } = null!;
 
     protected override void OnInitialized()
     {
-        mapOptions = new MapOptions()
+        _mapOptions = new MapOptions()
         {
             Zoom = 13,
             Center = new LatLngLiteral(13.505892, 100.8162),
@@ -38,7 +33,7 @@ public partial class MapMarkerListPage
 
     protected async Task OnAfterInit()
     {
-        bounds = await LatLngBounds.CreateAsync(map1.JsRuntime);
+        _bounds = await LatLngBounds.CreateAsync(_map1.JsRuntime);
     }
 
     private async Task InvokeClustering()
@@ -70,21 +65,22 @@ public partial class MapMarkerListPage
             new(-43.999792, 170.463352),
         };
 
-        var markers = await GetMarkers(coordinates, map1.InteropObject);
+        var markers = await GetMarkers(coordinates, _map1.InteropObject);
 
-        await MarkerClustering.CreateAsync(map1.JsRuntime, map1.InteropObject, markers);
+        await MarkerClustering.CreateAsync(_map1.JsRuntime, _map1.InteropObject, markers);
 
         //initMap
         //await JsObjectRef.InvokeAsync<object>("initMap", map1.InteropObject.Guid.ToString(), markers);
     }
 
-    private async Task<IEnumerable<AdvancedMarkerElement>> GetMarkers(IEnumerable<LatLngLiteral> coords, Map map)
+    private async Task<IEnumerable<AdvancedMarkerElement>> GetMarkers(IReadOnlyList<LatLngLiteral> coords, Map map)
     {
         var result = new List<AdvancedMarkerElement>(coords.Count());
         var index = 1;
+
         foreach (var latLngLiteral in coords)
         {
-            var marker = await AdvancedMarkerElement.CreateAsync(map1.JsRuntime, new AdvancedMarkerElementOptions()
+            var marker = await AdvancedMarkerElement.CreateAsync(_map1.JsRuntime, new AdvancedMarkerElementOptions()
             {
                 Position = latLngLiteral,
                 Map = map,
@@ -152,16 +148,16 @@ public partial class MapMarkerListPage
 
 
 
-    private async Task AddMarkersGroup(IEnumerable<LatLngLiteral> coordinates)
+    private async Task AddMarkersGroup(IReadOnlyList<LatLngLiteral> coordinates)
     {
         if (_markerList == null)
         {
             _markerList = await AdvancedMarkerElementList.CreateAsync(
-                map1.JsRuntime,
+                _map1.JsRuntime,
                 coordinates.ToDictionary(s => Guid.NewGuid().ToString(), y => new AdvancedMarkerElementOptions()
                 {
                     Position = y,
-                    Map = map1.InteropObject,
+                    Map = _map1.InteropObject,
                     GmpClickable = true,
                     Title = Guid.NewGuid().ToString(),
                     Content = new PinElement()
@@ -173,7 +169,7 @@ public partial class MapMarkerListPage
             var cordDic = coordinates.ToDictionary(s => Guid.NewGuid().ToString(), y => new AdvancedMarkerElementOptions()
             {
                 Position = y,
-                Map = map1.InteropObject,
+                Map = _map1.InteropObject,
                 GmpClickable = true,
                 Title = Guid.NewGuid().ToString(),
                 Content = new PinElement()
@@ -185,7 +181,7 @@ public partial class MapMarkerListPage
 
         foreach (var latLngLiteral in coordinates)
         {
-            await bounds.Extend(latLngLiteral);
+            await _bounds.Extend(latLngLiteral);
         }
 
 
@@ -203,35 +199,35 @@ public partial class MapMarkerListPage
     }
     private async Task RemoveMarker()
     {
-        if (!markers.Any())
+        if (!_markers.Any())
         {
             return;
         }
 
-        var lastMarker = markers.Pop();
+        var lastMarker = _markers.Pop();
         await lastMarker.SetMap(null);
     }
 
     private async Task Recenter()
     {
-        if (!markers.Any())
+        if (!_markers.Any())
         {
             return;
         }
 
-        var lastMarker = markers.Peek();
-        var center = await map1.InteropObject.GetCenter();
+        var lastMarker = _markers.Peek();
+        var center = await _map1.InteropObject.GetCenter();
         await lastMarker.SetPosition(center);
     }
 
     private async Task FitBounds()
     {
-        if (await this.bounds.IsEmpty())
+        if (await _bounds.IsEmpty())
         {
             return;
         }
 
-        var boundsLiteral = await bounds.ToJson();
-        await map1.InteropObject.FitBounds(boundsLiteral, OneOf.OneOf<int, Padding>.FromT0(5));
+        var boundsLiteral = await _bounds.ToJson();
+        await _map1.InteropObject.FitBounds(boundsLiteral, OneOf.OneOf<int, Padding>.FromT0(5));
     }
 }

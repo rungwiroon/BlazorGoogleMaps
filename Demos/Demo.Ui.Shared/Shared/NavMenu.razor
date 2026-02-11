@@ -1,156 +1,227 @@
 ﻿<div class="top-row pl-4 navbar navbar-dark">
-    <a class="navbar-brand" href="">Demo</a>
+    <a class="navbar-brand" href="">
+        <span class="oi oi-globe" aria-hidden="true"></span> Blazor Google Maps
+    </a>
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
     </button>
 </div>
 
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <ul class="nav flex-column">
-        <li class="nav-item px-3">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                 <span class="oi oi-home" aria-hidden="true"></span> Home
             </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="mapServices">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Services
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="mapAutocomplete">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Autocomplete
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="maps">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Maps
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="map-image-overlay">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Image Overlay
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="mapEvents">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Events
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="mapMarker">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Markers
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="map-advanced-marker">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Advanced Marker Element
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="mapInfoWindow">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Info window
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="mapPolyline">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Polyline
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="mapRoutes">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Routes
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="map-style">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Style
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="map-heat-map">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Heat map
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="ground-overlay">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Ground overlay
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="map-legend">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Map Legend
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="maps-legend">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Maps Legend
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="map-marker-list">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Map Marker List
-            </NavLink>
-        </li>
-        
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="map-circle-list">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Map Circle List
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="drawing-manager">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Drawing Manager
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="projection">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Map projection
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="map-control-events">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> MapControl Events
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="map-data">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> MapData
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="map-layer">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Map Layers
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="dispose-circle-list">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Dispose Circle List
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="AdvancedMarkerComponent">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Advanced marker components
-            </NavLink>
-        </li>
+        </div>
 
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="AdvancedPolygonComponent">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Advanced polygon components
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="AdvancedHeatMapComponent">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Advanced Heatmap components
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="test-all">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Test things
-            </NavLink>
-        </li>
-    </ul>
+        <div class="nav-section">
+            <h6 class="nav-section-header px-3 mt-3 mb-2 text-muted">
+                <span class="oi oi-cog" aria-hidden="true"></span> Core Features
+            </h6>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="mapServices">
+                    <span class="oi oi-wrench" aria-hidden="true"></span> Services
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="mapAutocomplete">
+                    <span class="oi oi-magnifying-glass" aria-hidden="true"></span> Autocomplete
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="maps">
+                    <span class="oi oi-map" aria-hidden="true"></span> Maps
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="map-style">
+                    <span class="oi oi-brush" aria-hidden="true"></span> Style
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="projection">
+                    <span class="oi oi-compass" aria-hidden="true"></span> Map Projection
+                </NavLink>
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <h6 class="nav-section-header px-3 mt-3 mb-2 text-muted">
+                <span class="oi oi-location" aria-hidden="true"></span> Markers & Info
+            </h6>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="mapMarker">
+                    <span class="oi oi-map-marker" aria-hidden="true"></span> Markers
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="map-marker-list">
+                    <span class="oi oi-list" aria-hidden="true"></span> Marker List
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="map-advanced-marker">
+                    <span class="oi oi-target" aria-hidden="true"></span> Advanced Marker
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="AdvancedMarkerComponent">
+                    <span class="oi oi-star" aria-hidden="true"></span> Advanced Marker Components
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="mapInfoWindow">
+                    <span class="oi oi-comment-square" aria-hidden="true"></span> Info Window
+                </NavLink>
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <h6 class="nav-section-header px-3 mt-3 mb-2 text-muted">
+                <span class="oi oi-pencil" aria-hidden="true"></span> Shapes & Drawing
+            </h6>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="mapPolyline">
+                    <span class="oi oi-minus" aria-hidden="true"></span> Polyline
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="AdvancedPolygonComponent">
+                    <span class="oi oi-dashboard" aria-hidden="true"></span> Advanced Polygon
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="map-circle-list">
+                    <span class="oi oi-aperture" aria-hidden="true"></span> Circle List
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="drawing-manager">
+                    <span class="oi oi-pencil" aria-hidden="true"></span> Drawing Manager
+                </NavLink>
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <h6 class="nav-section-header px-3 mt-3 mb-2 text-muted">
+                <span class="oi oi-layers" aria-hidden="true"></span> Overlays & Layers
+            </h6>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="map-image-overlay">
+                    <span class="oi oi-image" aria-hidden="true"></span> Image Overlay
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="ground-overlay">
+                    <span class="oi oi-map" aria-hidden="true"></span> Ground Overlay
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="map-heat-map">
+                    <span class="oi oi-fire" aria-hidden="true"></span> Heat Map
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="AdvancedHeatMapComponent">
+                    <span class="oi oi-fire" aria-hidden="true"></span> Advanced Heatmap
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="map-layer">
+                    <span class="oi oi-layers" aria-hidden="true"></span> Map Layers
+                </NavLink>
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <h6 class="nav-section-header px-3 mt-3 mb-2 text-muted">
+                <span class="oi oi-map-marker" aria-hidden="true"></span> Navigation & Routes
+            </h6>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="mapRoutes">
+                    <span class="oi oi-signpost" aria-hidden="true"></span> Routes
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="map-legend">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Map Legend
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="maps-legend">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Maps Legend
+                </NavLink>
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <h6 class="nav-section-header px-3 mt-3 mb-2 text-muted">
+                <span class="oi oi-bolt" aria-hidden="true"></span> Events & Data
+            </h6>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="mapEvents">
+                    <span class="oi oi-flash" aria-hidden="true"></span> Map Events
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="map-control-events">
+                    <span class="oi oi-media-play" aria-hidden="true"></span> Control Events
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="map-data">
+                    <span class="oi oi-data-transfer-download" aria-hidden="true"></span> Map Data
+                </NavLink>
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <h6 class="nav-section-header px-3 mt-3 mb-2 text-muted">
+                <span class="oi oi-beaker" aria-hidden="true"></span> Testing & Advanced
+            </h6>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="dispose-circle-list">
+                    <span class="oi oi-trash" aria-hidden="true"></span> Dispose Circle List
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="test-all">
+                    <span class="oi oi-check" aria-hidden="true"></span> Test All
+                </NavLink>
+            </div>
+        </div>
+    </nav>
 </div>
+
+<style>
+    .nav-section-header {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 0.5rem;
+    }
+
+    .nav-section-header .oi {
+        font-size: 0.7rem;
+        margin-right: 0.25rem;
+    }
+
+    .nav-section .nav-link {
+        padding-left: 2rem;
+        font-size: 0.9rem;
+    }
+
+    .nav-section .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .navbar-brand .oi {
+        margin-right: 0.5rem;
+    }
+</style>
 
 @code {
     bool _collapseNavMenu = true;
