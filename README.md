@@ -241,26 +241,6 @@ The server-side demos include the most up-to-date examples covering:
 - Map Styling
 - And much more!
 
----
-
-## ⚠️ Breaking Changes
-
-### Version 4.0.0
-- **Migration to .NET 8** ([#286](https://github.com/rungwiroon/BlazorGoogleMaps/issues/286))
-  - Minimum required version is now .NET 8.0
-
-### Version 3.0.0
-- **JSON Serialization Change**
-  - Migrated from `Newtonsoft.Json` to `System.Text.Json`
-  - Update any custom serialization code accordingly
-
-### Version 2.0.0
-- **LatLngLiteral Constructor Parameter Order** ([#173](https://github.com/rungwiroon/BlazorGoogleMaps/issues/176))
-  - Constructor parameter order changed
-  - Old: `new LatLngLiteral(lng, lat)`
-  - New: `new LatLngLiteral() { Lat = lat, Lng = lng }`
-
----
 
 ## 🤝 Contributing
 
