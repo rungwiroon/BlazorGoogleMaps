@@ -16,24 +16,10 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
-      - name: Debug - List files
-        run: |
-          echo "Current directory:"
-          pwd
-          echo "Files in current directory:"
-          ls -la
-          echo "Searching for appsettings.json:"
-          find . -name "appsettings.json"
-
       - name: Inject Google Maps API Key
         run: |
           # Update this path based on the find command output
-          sed -i 's/YOUR_API_KEY_HERE/${{ secrets.MAP_API_KEY }}/g' ./Demos/ClientSideDemo/wwwroot/appsettings.json
-          
-      - name: Verify API Key Injection
-        run: |
-          echo "Checking if API key was injected..."
-          grep -n "${{ secrets.MAP_API_KEY }}" Demos/ClientSideDemo/wwwroot/appsettings.json || echo "WARNING: API key not found in file!"
+          sed -i 's/YOUR_API_KEY_HERE/${{ secrets.MAP_API_KEY }}/g' ./Demos/ClientSideDemo/wwwroot/appsettings.json          
 
       - name: Publish
         run: dotnet publish BlazorGoogleMaps.sln -c:Release -o:publish -p:GHPages=true -f net10.0
