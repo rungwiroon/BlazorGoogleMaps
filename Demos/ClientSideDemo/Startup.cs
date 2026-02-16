@@ -17,7 +17,8 @@ public class Startup
 
         var apiOptions = new MapApiLoadOptions(apiKey)
         {
-            Version = "weekly"
+            Version = "weekly",
+            MapId = Guid.NewGuid().ToString()
         };
         builder.Services.AddSingleton(apiOptions);
         builder.Services.AddBlazorGoogleMaps(apiOptions);
