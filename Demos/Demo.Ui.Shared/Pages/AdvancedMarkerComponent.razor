@@ -2,7 +2,7 @@
 @using GoogleMapsComponents
 @using GoogleMapsComponents.Maps
 <AdvancedGoogleMap @ref="@_map1" Id="map1" Options="@_mapOptions">
-    @foreach (var markerRef in Markers.Where(x => x.Visible))
+    @foreach (var markerRef in _markers.Where(x => x.Visible))
     {
         <MarkerComponent 
             @key="markerRef.Id" 
@@ -18,7 +18,7 @@
     }
 </AdvancedGoogleMap>
 
-@foreach (var marker in Markers)
+@foreach (var marker in _markers)
 {
     <div style="display: flex; gap: 8px;">
         <p style="@(marker.Visible ? "" : "text-decoration: line-through")">@marker.Id -> (@marker.Lat x @marker.Lng)</p>
@@ -33,7 +33,7 @@
 <button @onclick="@ClearClustering">ClearClustering</button>
 
 @code {
-    private List<MarkerData> Markers =
+    private readonly List<MarkerData> _markers =
     [
         new MarkerData { Id = 1, Lat = 13.505892, Lng = 100.8162 },
         new MarkerData { Id = 2, Lng = 150.363181, Lat = -33.718234 },
@@ -65,11 +65,11 @@
     private async Task AddMarker()
     {
         var center =await  _map1.InteropObject!.GetCenter();
-        Markers.Add(new MarkerData()
+        _markers.Add(new MarkerData()
         {
             Active = false,
             Draggable = true,
-            Id = Markers.Count + 1,
+            Id = _markers.Count + 1,
             Lat = center.Lat,
             Lng = center.Lng
         });

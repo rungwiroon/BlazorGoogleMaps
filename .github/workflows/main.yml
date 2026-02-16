@@ -29,6 +29,11 @@ jobs:
         run: |
           # Update this path based on the find command output
           sed -i 's/YOUR_API_KEY_HERE/${{ secrets.GOOGLE_MAPS_API_KEY }}/g' ./Demos/ClientSideDemo/wwwroot/appsettings.json
+          
+      - name: Verify API Key Injection
+        run: |
+          echo "Checking if API key was injected..."
+          grep -n "${{ secrets.GOOGLE_MAPS_API_KEY }}" Demos/ClientSideDemo/wwwroot/appsettings.json || echo "WARNING: API key not found in file!"
 
       - name: Publish
         run: dotnet publish BlazorGoogleMaps.sln -c:Release -o:publish -p:GHPages=true -f net10.0
