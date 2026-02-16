@@ -1,7 +1,5 @@
 ﻿@page "/mapServices"
 @using GoogleMapsComponents
-@using GoogleMapsComponents.Maps
-@using GoogleMapsComponents.Maps.Places
 
 @implements IAsyncDisposable
 
@@ -15,7 +13,7 @@
 <div style="margin-bottom: 10px;">
     <input type="text" id="searchBox" @bind-value="_search" @bind-value:event="oninput"/>
     <button @onclick="SearchAsync">Search</button>
-    <button @onclick="() => _suggestions = null">Clear Suggestions</button>
+    <button @onclick="() => _suggestions = []">Clear Suggestions</button>
     <button @onclick="GeocodeAsync">Geocode</button>
     <button @onclick="ClearMarkersAsync">Clear Markers</button>
     <div>
