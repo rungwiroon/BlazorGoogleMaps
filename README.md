@@ -228,7 +228,7 @@ Render interactive Blazor components as markers (requires Google Maps `v=beta` a
 
 Explore interactive examples and learn more features:
 
-- **📘 Server-Side Demo:** [GitHub Repository](https://github.com/rungwiroon/BlazorGoogleMaps/tree/master/ServerSideDemo)
+- **📘 Server-Side Demo:** [GitHub Repository](https://github.com/rungwiroon/BlazorGoogleMaps/tree/master/Demos/Demo.Ui.Shared/Pages)
 - **🌐 Client-Side Demo:** [Live Demo](https://rungwiroon.github.io/BlazorGoogleMaps/mapEvents)
 
 The server-side demos include the most up-to-date examples covering:
