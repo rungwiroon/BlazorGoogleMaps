@@ -1,27 +1,37 @@
-﻿@using System
-@using Maps
-@using System.Threading.Tasks
-@using Microsoft.AspNetCore.Components
-@using Microsoft.JSInterop
+﻿@using Maps
 
 @inherits MapComponent
-@inject IJSRuntime JSRuntime
 
 <div @ref="@Element" id="@Id" class="@CssClass" style="@StyleStr"></div>
 
 @code {
+    /// <summary>
+    /// Gets or sets the HTML element ID for the map container.
+    /// </summary>
     [Parameter]
     public string? Id { get; set; }
 
+    /// <summary>
+    /// Gets or sets the Google Maps API key required for authentication.
+    /// </summary>
     [Parameter]
     public string ApiKey { get; set; } = string.Empty;
 
+    /// <summary>
+    /// Gets or sets the configuration options for the Google Map.
+    /// </summary>
     [Parameter]
     public MapOptions? Options { get; set; }
 
+    /// <summary>
+    /// Gets or sets the callback that is invoked after the map has been initialized.
+    /// </summary>
     [Parameter]
     public EventCallback OnAfterInit { get; set; }
 
+    /// <summary>
+    /// Gets or sets the CSS class(es) to apply to the map container element.
+    /// </summary>
     [Parameter]
     public string? CssClass { get; set; }
 
@@ -42,6 +52,9 @@
 
     private ElementReference Element { get; set; }
 
+    /// <summary>
+    /// Initializes the map after the first render and invokes the OnAfterInit callback.
+    /// </summary>
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -53,5 +66,8 @@
         await base.OnAfterRenderAsync(firstRender);
     }
 
+    /// <summary>
+    /// Prevents re-rendering of the component after initialization to avoid interference with JavaScript map state.
+    /// </summary>
     protected override bool ShouldRender() => false;
 }

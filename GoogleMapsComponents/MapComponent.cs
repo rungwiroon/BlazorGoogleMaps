@@ -7,18 +7,35 @@ using System.Threading.Tasks;
 
 namespace GoogleMapsComponents;
 
+/// <summary>
+/// Base component for Google Maps integration that handles map initialization, lifecycle, and cleanup.
+/// </summary>
 public class MapComponent : ComponentBase, IDisposable, IAsyncDisposable
 {
     private bool _isDisposed;
 
+    /// <summary>
+    /// Gets or sets the JavaScript runtime for interop operations.
+    /// </summary>
     [Inject]
-    public IJSRuntime JsRuntime { get; protected set; } = default!;
+    public IJSRuntime JsRuntime { get; protected set; } = null!;
+
+    /// <summary>
+    /// Gets or sets the service provider for dependency resolution.
+    /// </summary>
     [Inject]
-    public IServiceProvider ServiceProvider { get; protected set; } = default!;
+    public IServiceProvider ServiceProvider { get; protected set; } = null!;
 
     private IBlazorGoogleMapsKeyService? _keyService;
+
+    /// <summary>
+    /// Occurs when the map has been initialized.
+    /// </summary>
     internal event EventHandler? MapInitialized;
 
+    /// <summary>
+    /// Initializes the component and retrieves the Google Maps API key service if available.
+    /// </summary>
     protected override void OnInitialized()
     {
         // get the service from the provider instead of with [Inject] in case no 
@@ -27,8 +44,16 @@ public class MapComponent : ComponentBase, IDisposable, IAsyncDisposable
         base.OnInitialized();
     }
 
-    public Map InteropObject { get; private set; } = default!;
+    /// <summary>
+    /// Gets the underlying Google Maps interop object.
+    /// </summary>
+    public Map InteropObject { get; private set; } = null!;
 
+    /// <summary>
+    /// Initializes the Google Map asynchronously with the specified element and options.
+    /// </summary>
+    /// <param name="element">The HTML element reference to host the map.</param>
+    /// <param name="options">Optional map configuration options.</param>
     public async Task InitAsync(ElementReference element, MapOptions? options = null)
     {
         MapApiLoadOptions? loadedApiOptions = options?.ApiLoadOptions;
@@ -85,6 +110,9 @@ public class MapComponent : ComponentBase, IDisposable, IAsyncDisposable
         MapInitialized?.Invoke(this, EventArgs.Empty);
     }
 
+    /// <summary>
+    /// Performs asynchronous cleanup of the map component.
+    /// </summary>
     public async ValueTask DisposeAsync()
     {
         // Perform async cleanup.
@@ -97,6 +125,9 @@ public class MapComponent : ComponentBase, IDisposable, IAsyncDisposable
         GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// Core asynchronous disposal logic that cleans up the map interop object.
+    /// </summary>
     protected virtual async ValueTask DisposeAsyncCore()
     {
         if (InteropObject is not null)
@@ -124,7 +155,10 @@ public class MapComponent : ComponentBase, IDisposable, IAsyncDisposable
         }
     }
 
-
+    /// <summary>
+    /// Releases the resources used by the component.
+    /// </summary>
+    /// <param name="disposing">True if called from Dispose(); false if called from finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
         if (!_isDisposed)
@@ -140,6 +174,9 @@ public class MapComponent : ComponentBase, IDisposable, IAsyncDisposable
         }
     }
 
+    /// <summary>
+    /// Performs cleanup of managed and unmanaged resources.
+    /// </summary>
     public void Dispose()
     {
         // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
