@@ -1,0 +1,95 @@
+﻿@page "/retry"
+@using GoogleMapsComponents
+@using GoogleMapsComponents.Maps
+
+@inject NavigationManager Navigation
+
+<script>
+    // Sketcy monkey patch to make sure that we don't allow loading the map once.
+    (function blockGoogleMapsOnce() {
+      if (window.hasMonkeyPatched) return;
+      const descriptor = Object.getOwnPropertyDescriptor(
+        HTMLScriptElement.prototype,
+        "src"
+      );
+
+      let blocked = false;
+      console.log("monkey patching")
+
+      Object.defineProperty(HTMLScriptElement.prototype, "src", {
+        set(value) {
+          if (
+            !blocked &&
+            value.includes("maps.googleapis.com/maps/api/js")
+          ) {
+            blocked = true;
+            console.log("blocked maps request");
+
+            setTimeout(() => {
+              this.onerror?.(new Event("error"));
+            }, 0);
+
+            return;
+          }
+
+          descriptor.set.call(this, value);
+        },
+        get: descriptor.get,
+      });
+      window.hasMonkeyPatched = true;
+    })();
+</script>
+
+@if (HasRendered)
+{
+  <ErrorBoundary @ref="@boundaryRef">
+    <ChildContent>
+      <GoogleMap Options="_mapOptions" Id="map1"></GoogleMap>
+      <p>The google map will fail the first time (due to block on loading the api). This will only happen if this was the first page visisted with a map. To try it out. Refresh the site by clicking below and see it in action.</p>
+      <button @onclick="@Refresh">Refresh</button>
+    </ChildContent>
+    <ErrorContent>
+      <p>Failed to load the map due to http error. This way you can catch it in a ErrorBoundary and try to recover (try again)</p>
+      <button @onclick="@(Recover)">attempt to recover</button>
+    </ErrorContent>
+  </ErrorBoundary>
+  
+}
+
+
+@code {
+  bool HasRendered = false;
+  ErrorBoundary? boundaryRef;
+  private readonly MapOptions _mapOptions = new MapOptions()
+  {
+      Zoom = 6,
+      Center = new LatLngLiteral(-36.521931651, 146.682215453),
+      IsFractionalZoomEnabled = false,
+      HeadingInteractionEnabled = true,
+      CameraControl = true,
+      MapTypeId = MapTypeId.Roadmap,
+      // ColorScheme = ColorScheme.Dark,
+      Recycle = true,
+      CacheKey = "coolmap"
+  };
+  
+  void Refresh()
+  {
+    Navigation.Refresh(true);
+  }
+  
+  void Recover()
+  {
+    boundaryRef?.Recover();
+  }
+  
+  protected override void OnAfterRender(bool firstRender)
+  {
+    if (firstRender)
+    {
+      HasRendered = true;
+      StateHasChanged();
+    }
+    base.OnAfterRender(firstRender);
+  }
+}
