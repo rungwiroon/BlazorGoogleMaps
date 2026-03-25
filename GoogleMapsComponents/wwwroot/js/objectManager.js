@@ -67,13 +67,18 @@
         return value;
     }
 
-    function stripDotnetTypeName(value) {
+    function stripDotnetTypeName(value, visited = new WeakSet()) {
         if (value === null || typeof value !== "object") {
             return;
         }
 
+        if (visited.has(value)) {
+            return;
+        }
+        visited.add(value);
+
         if (Array.isArray(value)) {
-            value.forEach(stripDotnetTypeName);
+            value.forEach(entry => stripDotnetTypeName(entry, visited));
             return;
         }
 
@@ -81,8 +86,8 @@
             delete value.dotnetTypeName;
         }
 
-        for (let propertyName in value) {
-            stripDotnetTypeName(value[propertyName]);
+        for (const propertyName of Object.keys(value)) {
+            stripDotnetTypeName(value[propertyName], visited);
         }
     }
 
