@@ -67,6 +67,25 @@
         return value;
     }
 
+    function stripDotnetTypeName(value) {
+        if (value === null || typeof value !== "object") {
+            return;
+        }
+
+        if (Array.isArray(value)) {
+            value.forEach(stripDotnetTypeName);
+            return;
+        }
+
+        if ("dotnetTypeName" in value) {
+            delete value.dotnetTypeName;
+        }
+
+        for (let propertyName in value) {
+            stripDotnetTypeName(value[propertyName]);
+        }
+    }
+
 
     function tryParseJson(item) {
         // Check if the item is a DotNet object reference with the "invokeMethodAsync" method
@@ -131,6 +150,7 @@
             if ("guidString" in parsedItem) {
                 return mapObjects[parsedItem.guidString];
             } else {
+                stripDotnetTypeName(parsedItem);
                 for (let propertyName in parsedItem) {
                     let propertyValue = parsedItem[propertyName];
 
