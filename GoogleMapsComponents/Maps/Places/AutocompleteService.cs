@@ -41,6 +41,10 @@ public class AutocompleteService : IDisposable
         return await _jsObjectRef.InvokeAsync<QueryAutocompleteResponse>("getQueryPredictions", request);
     }
 
+    /// <summary>
+    /// Releases the resources used by the <see cref="AutocompleteService"/> instance,
+    /// including the underlying JavaScript object reference.
+    /// </summary>
     public void Dispose()
     {
         _jsObjectRef.Dispose();

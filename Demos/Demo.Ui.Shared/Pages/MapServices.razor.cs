@@ -164,13 +164,13 @@ public partial class MapServices
 
     private async Task RenderLocationAsync(string title, LatLngLiteral location)
     {
-            var marker = await AdvancedMarkerElement.CreateAsync(_map1.JsRuntime, new AdvancedMarkerElementOptions
-            {
-                Position = location,
-                Map = _map1.InteropObject,
-                Title = title,
-                Content = new PinElement()
-            });
+        var marker = await AdvancedMarkerElement.CreateAsync(_map1.JsRuntime, new AdvancedMarkerElementOptions
+        {
+            Position = location,
+            Map = _map1.InteropObject,
+            Title = title,
+            Content = new PinElement()
+        });
 
         _markers.Push(marker);
     }
