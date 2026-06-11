@@ -1255,6 +1255,28 @@
                     }
                 };
 
+                const setupMouseOverListener = (marker, isEnabled) => {
+                    if (isEnabled) {
+                        marker.mouseOverListener = marker.addListener("mouseover", () => {
+                            invokeCallback('OnMarkerMouseOver', id);
+                        });
+                    } else if (marker.mouseOverListener) {
+                        google.maps.event.removeListener(marker.mouseOverListener);
+                        delete marker.mouseOverListener;
+                    }
+                };
+
+                const setupMouseOutListener = (marker, isEnabled) => {
+                    if (isEnabled) {
+                        marker.mouseOutListener = marker.addListener("mouseout", () => {
+                            invokeCallback('OnMarkerMouseOut', id);
+                        });
+                    } else if (marker.mouseOutListener) {
+                        google.maps.event.removeListener(marker.mouseOutListener);
+                        delete marker.mouseOutListener;
+                    }
+                };
+
                 const existingMarker = mapObjects[id];
                 if (existingMarker) {
                     const clickChanged = existingMarker.gmpClickable !== gmpClickable;
@@ -1271,6 +1293,8 @@
 
                     if (clickChanged) setupClickListener(existingMarker, gmpClickable);
                     if (dragChanged) setupDragListener(existingMarker, gmpDraggable);
+                    if (clickChanged) setupMouseOverListener(existingMarker, gmpClickable);
+                    if (clickChanged) setupMouseOutListener(existingMarker, gmpClickable);
                     return;
                 }
 
@@ -1297,6 +1321,8 @@
 
                 setupClickListener(advancedMarkerElement, gmpClickable);
                 setupDragListener(advancedMarkerElement, gmpDraggable);
+                setupMouseOverListener(advancedMarkerElement, gmpClickable);
+                setupMouseOutListener(advancedMarkerElement, gmpClickable);
 
                 addMapObject(id, advancedMarkerElement);
             },

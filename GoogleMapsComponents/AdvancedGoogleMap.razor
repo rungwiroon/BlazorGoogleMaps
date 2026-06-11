@@ -86,6 +86,24 @@
     }
 
     [JSInvokable]
+    public async Task OnMarkerMouseOver(Guid markerId)
+    {
+        if (_mapComponents.TryGetValue(markerId, out var markerComponent))
+        {
+            await markerComponent.MarkerMouseOver();
+        }
+    }
+
+    [JSInvokable]
+    public async Task OnMarkerMouseOut(Guid markerId)
+    {
+        if (_mapComponents.TryGetValue(markerId, out var markerComponent))
+        {
+            await markerComponent.MarkerMouseOut();
+        }
+    }
+
+    [JSInvokable]
     public async Task OnPolygonClicked(Guid polygonId)
     {
         if (_mapPolygonComponents.TryGetValue(polygonId, out var polygonComponent))

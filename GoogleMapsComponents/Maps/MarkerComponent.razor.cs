@@ -84,6 +84,20 @@ public partial class MarkerComponent : IAsyncDisposable, IMarker
     public EventCallback OnClick { get; set; }
 
     /// <summary>
+    /// This event is fired when the mouse enters the marker area.
+    /// Requires <see cref="Clickable"/> to be true.
+    /// </summary>
+    [Parameter, JsonIgnore]
+    public EventCallback OnMouseOver { get; set; }
+
+    /// <summary>
+    /// This event is fired when the mouse leaves the marker area.
+    /// Requires <see cref="Clickable"/> to be true.
+    /// </summary>
+    [Parameter, JsonIgnore]
+    public EventCallback OnMouseOut { get; set; }
+
+    /// <summary>
     /// Rollover text. If provided, an accessibility text (e.g. for use with screen readers) will be added to the
     /// </summary>
     [Parameter, JsonIgnore]
@@ -117,6 +131,16 @@ public partial class MarkerComponent : IAsyncDisposable, IMarker
     internal async Task MarkerDragged(LatLngLiteral position)
     {
         await OnMove.InvokeAsync(position);
+    }
+
+    internal async Task MarkerMouseOver()
+    {
+        await OnMouseOver.InvokeAsync();
+    }
+
+    internal async Task MarkerMouseOut()
+    {
+        await OnMouseOut.InvokeAsync();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
