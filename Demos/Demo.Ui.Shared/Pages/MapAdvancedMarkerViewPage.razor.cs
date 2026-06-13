@@ -52,7 +52,8 @@ public sealed partial class MapAdvancedMarkerViewPage
         {
             Position = mapCenter,
             Map = _map1.InteropObject,
-            Content = Svg
+            GmpClickable = true,
+            Content = Svg,
         });
 
         _advancedMarkerElements.Push(marker);
@@ -64,6 +65,18 @@ public sealed partial class MapAdvancedMarkerViewPage
             _events.Add($"Clicked {e.LatLng.Lat} {e.LatLng.Lng}");
             StateHasChanged();
             e.Stop();
+        });
+
+        await marker.AddListener("mouseenter", () =>
+        {
+            _events.Add("MouseOver");
+            StateHasChanged();
+        });
+
+        await marker.AddListener("mouseleave", () =>
+        {
+            _events.Add("MouseOut");
+            StateHasChanged();
         });
     }
 
