@@ -826,6 +826,40 @@
                     };
                 }
 
+                if (functionToInvoke === "addListener" && obj.content && obj.tagName === "GMP-ADVANCED-MARKER") {
+                    const eventName = formattedArgs[0];
+                    const handler = formattedArgs[1];
+
+                    // Initialize listener tracking if not exists
+                    if (!obj.content._listeners) {
+                        obj.content._listeners = {};
+                    }
+
+                    // Check and add mouseenter listener
+                    if (!obj.content._listeners.mouseenter && "mouseenter" === eventName) {
+                        const mouseEnterHandler = function (e) {
+                            handler(e);
+                        };
+                        obj.content.addEventListener('mouseenter', mouseEnterHandler);
+                        obj.content._listeners.mouseenter = mouseEnterHandler;
+                        return {
+                            remove: () => obj.content.removeEventListener('mouseenter', mouseEnterHandler)
+                        };
+                    }
+
+                    // Check and add mouseleave listener
+                    if (!obj.content._listeners.mouseleave && "mouseleave" === eventName) {
+                        const mouseLeaveHandler = function (e) {
+                            handler(e);
+                        };
+                        obj.content.addEventListener('mouseleave', mouseLeaveHandler);
+                        obj.content._listeners.mouseleave = mouseLeaveHandler;
+                        return {
+                            remove: () => obj.content.removeEventListener('mouseleave', mouseLeaveHandler)
+                        };
+                    }
+                }
+
                 if (functionToInvoke === "addListenerOnce" && isPlaceAutocompleteElement(obj)) {
                     const eventName = formattedArgs[0];
                     const handler = formattedArgs[1];
@@ -1255,6 +1289,28 @@
                     }
                 };
 
+                const setupMouseOverListener = (marker, isEnabled) => {
+                    if (isEnabled) {
+                        marker.mouseOverListener = marker.addListener("mouseover", () => {
+                            invokeCallback('OnMarkerMouseOver', id);
+                        });
+                    } else if (marker.mouseOverListener) {
+                        google.maps.event.removeListener(marker.mouseOverListener);
+                        delete marker.mouseOverListener;
+                    }
+                };
+
+                const setupMouseOutListener = (marker, isEnabled) => {
+                    if (isEnabled) {
+                        marker.mouseOutListener = marker.addListener("mouseout", () => {
+                            invokeCallback('OnMarkerMouseOut', id);
+                        });
+                    } else if (marker.mouseOutListener) {
+                        google.maps.event.removeListener(marker.mouseOutListener);
+                        delete marker.mouseOutListener;
+                    }
+                };
+
                 const existingMarker = mapObjects[id];
                 if (existingMarker) {
                     const clickChanged = existingMarker.gmpClickable !== gmpClickable;
@@ -1271,6 +1327,8 @@
 
                     if (clickChanged) setupClickListener(existingMarker, gmpClickable);
                     if (dragChanged) setupDragListener(existingMarker, gmpDraggable);
+                    if (clickChanged) setupMouseOverListener(existingMarker, gmpClickable);
+                    if (clickChanged) setupMouseOutListener(existingMarker, gmpClickable);
                     return;
                 }
 
@@ -1297,6 +1355,8 @@
 
                 setupClickListener(advancedMarkerElement, gmpClickable);
                 setupDragListener(advancedMarkerElement, gmpDraggable);
+                setupMouseOverListener(advancedMarkerElement, gmpClickable);
+                setupMouseOutListener(advancedMarkerElement, gmpClickable);
 
                 addMapObject(id, advancedMarkerElement);
             },

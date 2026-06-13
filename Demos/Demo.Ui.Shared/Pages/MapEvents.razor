@@ -298,6 +298,22 @@
             await e.Stop();
         });
         await marker.AddListener<MouseEvent>("dragend", async e => await OnMakerDragEnd(marker, e));
+        await marker.AddListener<MouseEvent>("mouseover", e =>
+        {
+            var markerLabelText = _markerLabels.TryGetValue(marker.Guid, out var storedLabel)
+                ? storedLabel
+                : "marker";
+            _events.Add("mouseover on " + markerLabelText);
+            StateHasChanged();
+        });
+        await marker.AddListener<MouseEvent>("mouseout", e =>
+        {
+            var markerLabelText = _markerLabels.TryGetValue(marker.Guid, out var storedLabel)
+                ? storedLabel
+                : "marker";
+            _events.Add("mouseout on " + markerLabelText);
+            StateHasChanged();
+        });
     }
 
     private async Task OnMakerDragEnd(AdvancedMarkerElement m, MouseEvent e)
