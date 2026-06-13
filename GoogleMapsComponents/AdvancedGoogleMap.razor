@@ -12,50 +12,95 @@
 }
 
 @code {
-    // Due to us wrapping the normal map, keep this public to still be able to access the interop.
+    /// <summary>
+    /// The underlying GoogleMap component reference. Exposed to allow direct access to the map interop object.
+    /// </summary>
     public GoogleMap? MapRef;
-    
-    // Expose this for simplicity.
+
+    /// <summary>
+    /// Gets the underlying Google Maps JavaScript interop object.
+    /// </summary>
     public Map? InteropObject => MapRef?.InteropObject;
-    
+
     internal Guid? MapId => MapRef?.InteropObject.Guid;
-    
+
+    /// <summary>
+    /// Gets the total number of markers currently added to the map.
+    /// </summary>
     public int MarkerCount => _mapComponents.Count;
+
+    /// <summary>
+    /// Gets all marker components currently added to the map.
+    /// </summary>
     public IEnumerable<MarkerComponent> Markers => _mapComponents.Select(x => x.Value);
     private readonly Dictionary<Guid, MarkerComponent> _mapComponents = [];
 
 
-    public int PolygonCount => _mapComponents.Count;
+    /// <summary>
+    /// Gets the total number of polygons currently added to the map.
+    /// </summary>
+    public int PolygonCount => _mapPolygonComponents.Count;
+
+    /// <summary>
+    /// Gets all polygon components currently added to the map.
+    /// </summary>
     public IEnumerable<PolygonComponent> Polygons => _mapPolygonComponents.Select(x => x.Value);
     private readonly Dictionary<Guid, PolygonComponent> _mapPolygonComponents = [];
 
     internal DotNetObjectReference<AdvancedGoogleMap>? CallbackRef;
-    
+
+    /// <summary>
+    /// The HTML id attribute for the map container element.
+    /// </summary>
     [Parameter]
     public string? Id { get; set; }
 
+    /// <summary>
+    /// Configuration options for the Google Map.
+    /// </summary>
     [Parameter]
     public MapOptions? Options { get; set; }
 
+    /// <summary>
+    /// Callback invoked after the map has been initialized.
+    /// </summary>
     [Parameter]
     public EventCallback OnAfterInit { get; set; }
-    
+
+    /// <summary>
+    /// Callback invoked when markers are added or removed from the map.
+    /// </summary>
     [Parameter]
     public EventCallback OnMarkersChanged { get; set; }
 
+    /// <summary>
+    /// Callback invoked when polygons are added or removed from the map.
+    /// </summary>
     [Parameter]
     public EventCallback OnPolygonsChanged { get; set; }
 
 
+    /// <summary>
+    /// CSS class name(s) to apply to the map container element.
+    /// </summary>
     [Parameter]
     public string? CssClass { get; set; }
 
+    /// <summary>
+    /// CSS height value for the map container (e.g., "400px", "100%").
+    /// </summary>
     [Parameter]
     public string? Height { get; set; }
-    
+
+    /// <summary>
+    /// Child content containing map components (markers, polygons, etc.).
+    /// </summary>
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 
+    /// <summary>
+    /// 
+    /// </summary>
     protected override void OnInitialized()
     {
         CallbackRef = DotNetObjectReference.Create(this);
@@ -66,7 +111,11 @@
     {
         await OnAfterInit.InvokeAsync();
     }
-    
+
+    /// <summary>
+    /// Invoked from JavaScript when a marker is clicked. Routes the event to the corresponding marker component.
+    /// </summary>
+    /// <param name="markerId">The unique identifier of the clicked marker.</param>
     [JSInvokable]
     public async Task OnMarkerClicked(Guid markerId)
     {
@@ -76,6 +125,11 @@
         }
     }
 
+    /// <summary>
+    /// Invoked from JavaScript when a marker is dragged. Routes the event to the corresponding marker component.
+    /// </summary>
+    /// <param name="markerId">The unique identifier of the dragged marker.</param>
+    /// <param name="position">The new position of the marker.</param>
     [JSInvokable]
     public async Task OnMarkerDrag(Guid markerId, LatLngLiteral position)
     {
@@ -85,6 +139,10 @@
         }
     }
 
+    /// <summary>
+    /// Invoked from JavaScript when the mouse enters a marker. Routes the event to the corresponding marker component.
+    /// </summary>
+    /// <param name="markerId">The unique identifier of the marker.</param>
     [JSInvokable]
     public async Task OnMarkerMouseOver(Guid markerId)
     {
@@ -94,6 +152,10 @@
         }
     }
 
+    /// <summary>
+    /// Invoked from JavaScript when the mouse leaves a marker. Routes the event to the corresponding marker component.
+    /// </summary>
+    /// <param name="markerId">The unique identifier of the marker.</param>
     [JSInvokable]
     public async Task OnMarkerMouseOut(Guid markerId)
     {
@@ -103,6 +165,10 @@
         }
     }
 
+    /// <summary>
+    /// Invoked from JavaScript when a polygon is clicked. Routes the event to the corresponding polygon component.
+    /// </summary>
+    /// <param name="polygonId">The unique identifier of the clicked polygon.</param>
     [JSInvokable]
     public async Task OnPolygonClicked(Guid polygonId)
     {
@@ -112,6 +178,11 @@
         }
     }
 
+    /// <summary>
+    /// Invoked from JavaScript when a polygon's path is modified. Routes the event to the corresponding polygon component.
+    /// </summary>
+    /// <param name="polygonId">The unique identifier of the polygon.</param>
+    /// <param name="paths">The updated polygon path coordinates.</param>
     [JSInvokable]
     public async Task OnPolygonPathChange(Guid polygonId, List<List<LatLngLiteral>> paths)
     {
@@ -145,7 +216,9 @@
         OnPolygonsChanged.InvokeAsync();
     }
 
-
+    /// <summary>
+    /// Disposes the map and all associated components, cleaning up JavaScript interop resources.
+    /// </summary>
     public async ValueTask DisposeAsync()
     {
         // Mark components as disposed, since they will be removed by disposing the MapRef.

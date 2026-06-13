@@ -826,6 +826,40 @@
                     };
                 }
 
+                if (functionToInvoke === "addListener" && obj.content && obj.tagName === "GMP-ADVANCED-MARKER") {
+                    const eventName = formattedArgs[0];
+                    const handler = formattedArgs[1];
+
+                    // Initialize listener tracking if not exists
+                    if (!obj.content._listeners) {
+                        obj.content._listeners = {};
+                    }
+
+                    // Check and add mouseenter listener
+                    if (!obj.content._listeners.mouseenter && "mouseenter" === eventName) {
+                        const mouseEnterHandler = function (e) {
+                            handler(e);
+                        };
+                        obj.content.addEventListener('mouseenter', mouseEnterHandler);
+                        obj.content._listeners.mouseenter = mouseEnterHandler;
+                        return {
+                            remove: () => obj.content.removeEventListener('mouseenter', mouseEnterHandler)
+                        };
+                    }
+
+                    // Check and add mouseleave listener
+                    if (!obj.content._listeners.mouseleave && "mouseleave" === eventName) {
+                        const mouseLeaveHandler = function (e) {
+                            handler(e);
+                        };
+                        obj.content.addEventListener('mouseleave', mouseLeaveHandler);
+                        obj.content._listeners.mouseleave = mouseLeaveHandler;
+                        return {
+                            remove: () => obj.content.removeEventListener('mouseleave', mouseLeaveHandler)
+                        };
+                    }
+                }
+
                 if (functionToInvoke === "addListenerOnce" && isPlaceAutocompleteElement(obj)) {
                     const eventName = formattedArgs[0];
                     const handler = formattedArgs[1];
