@@ -69,13 +69,13 @@ public sealed partial class MapAdvancedMarkerViewPage
 
         await marker.AddListener("mouseenter", () =>
         {
-            _events.Add($"MouseOver");
+            _events.Add("MouseOver");
             StateHasChanged();
         });
 
         await marker.AddListener("mouseleave", () =>
         {
-            _events.Add($"MouseOut");
+            _events.Add("MouseOut");
             StateHasChanged();
         });
     }
