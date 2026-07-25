@@ -35,6 +35,7 @@ A powerful and easy-to-use Blazor library for integrating Google Maps into your 
 - 📊 **Data Layers** - Support for GeoJSON and other data formats
 - ⚡ **Event Handling** - Comprehensive event support for interactive maps
 - 🎨 **Drawing Tools** - Built-in drawing manager for shapes and overlays
+- 🖼️ **Static Maps** - Render maps as plain images, with no JavaScript involved
 
 ---
 
@@ -221,6 +222,83 @@ Render interactive Blazor components as markers (requires Google Maps `v=beta` a
 	}
 }
 ```
+
+---
+
+### Static Maps
+
+The [Maps Static API](https://developers.google.com/maps/documentation/maps-static) returns a map as an ordinary
+image. No JavaScript is loaded and no interop object is created, which makes it a good fit for thumbnails,
+previews, e-mails, print views and pages that must stay lightweight. The trade-off is that the result is a
+picture: it cannot be panned or zoomed.
+
+```razor
+@page "/static-map"
+@using GoogleMapsComponents.Maps
+@using GoogleMapsComponents.Maps.StaticMaps
+
+<StaticMap Options="@_options" Alt="Map of Bangkok" class="border" />
+
+@code {
+	private StaticMapOptions _options = new()
+	{
+		Center = new LatLngLiteral(13.505892, 100.8162),
+		Zoom = 13,
+		Width = 600,
+		Height = 400,
+		MapType = MapTypeId.Roadmap
+	};
+}
+```
+
+Markers, paths and polygons are added through the options. Locations accept either coordinates or a geocodable
+address, and locations that share a style belong in a single `StaticMapMarker` so that the URL stays short:
+
+```csharp
+var options = new StaticMapOptions
+{
+	Width = 600,
+	Height = 400,
+	Markers =
+	[
+		new StaticMapMarker(new LatLngLiteral(13.7563, 100.5018), new LatLngLiteral(13.7367, 100.5232))
+		{
+			Color = StaticMapColors.Blue,
+			Size = StaticMapMarkerSize.Mid
+		},
+		new StaticMapMarker("Don Mueang International Airport, Bangkok") { Label = 'A' }
+	],
+	Paths =
+	[
+		// Encode = true compresses the points, which matters because a request URL is limited to 16384 characters.
+		new StaticMapPath(routePoints) { Encode = true, Color = "#0000FF", Weight = 4 },
+
+		// A path with a FillColor becomes a polygon; the API closes it for you.
+		new StaticMapPath(areaPoints) { Color = "0x00000000", FillColor = "0xFF000033" }
+	],
+	// Built with the same GoogleMapStyleBuilder as an interactive map.
+	Styles = new GoogleMapStyleBuilder()
+		.AddColor(MapStyleFeatures.Water, MapStyleElements.Geometry, "#1d2c4d")
+		.AddVisibility(MapStyleFeatures.Poi, MapStyleElements.Labels, false)
+		.Build()
+};
+```
+
+To build a URL outside of a component — to embed a map in an e-mail, a PDF or a report — inject
+`StaticMapService`, which is registered by `AddBlazorGoogleMaps` and uses the same API key as the rest of the
+library:
+
+```csharp
+@inject StaticMapService StaticMaps
+
+var url = await StaticMaps.GetUrlAsync(options);
+```
+
+`EncodedPolyline` accepts an already encoded polyline, so the `OverviewPolyline` of a route returned by the
+Directions API can be drawn on a static map directly. `PolylineEncoder` encodes and decodes those values.
+
+Requests may optionally be signed. Signing needs the URL signing secret, which must never be shipped to a
+browser, so `StaticMapUrlSigner.Sign` and `StaticMapService.GetSignedUrlAsync` belong in server-side code only.
 
 ---
 

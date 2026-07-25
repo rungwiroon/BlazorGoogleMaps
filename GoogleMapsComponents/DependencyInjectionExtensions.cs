@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using GoogleMapsComponents.Maps.StaticMaps;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace GoogleMapsComponents;
 
@@ -14,19 +15,29 @@ public static class DependencyInjectionExtensions
     public static IServiceCollection AddBlazorGoogleMaps(this IServiceCollection services, string key)
     {
         services.AddScoped<IBlazorGoogleMapsKeyService>(_ => new BlazorGoogleMapsKeyService(key));
-        return services;
+        return services.AddStaticMapService();
     }
 
     /// <inheritdoc cref="AddBlazorGoogleMaps(IServiceCollection, string)"/>
     public static IServiceCollection AddBlazorGoogleMaps(this IServiceCollection services, Maps.MapApiLoadOptions opts)
     {
         services.AddScoped<IBlazorGoogleMapsKeyService>(_ => new BlazorGoogleMapsKeyService(opts));
-        return services;
+        return services.AddStaticMapService();
     }
 
     public static IServiceCollection AddBlazorGoogleMaps(this IServiceCollection services, IBlazorGoogleMapsKeyService blazorGoogleMapsKeyService)
     {
         services.AddScoped(_ => blazorGoogleMapsKeyService);
+        return services.AddStaticMapService();
+    }
+
+    /// <summary>
+    /// Registers <see cref="StaticMapService"/>, which builds Maps Static API URLs from the key provided
+    /// by the registered <see cref="IBlazorGoogleMapsKeyService"/>.
+    /// </summary>
+    private static IServiceCollection AddStaticMapService(this IServiceCollection services)
+    {
+        services.AddScoped<StaticMapService>();
         return services;
     }
 }

@@ -1,0 +1,8 @@
+@if (!string.IsNullOrEmpty(Url))
+{
+    <img src="@Url"
+         alt="@Alt"
+         width="@Options.Width"
+         height="@Options.Height"
+         @attributes="@AdditionalAttributes" />
+}

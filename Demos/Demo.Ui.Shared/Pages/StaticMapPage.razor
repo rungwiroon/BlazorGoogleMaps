@@ -1,0 +1,77 @@
+@page "/static-map"
+@using GoogleMapsComponents.Maps
+@using GoogleMapsComponents.Maps.StaticMaps
+
+<h1>Maps Static API</h1>
+<p>
+    A static map is a plain image, so it needs no JavaScript and cannot be panned or zoomed.
+    More info in the <a href="https://developers.google.com/maps/documentation/maps-static">Google documentation</a>.
+</p>
+
+<h3>Interactive</h3>
+<div class="row mb-2">
+    <div class="col-auto">
+        <label class="form-label">Zoom: @_zoom</label>
+        <input type="range" class="form-range" min="1" max="20" value="@_zoom"
+               @oninput="@(e => Rebuild(zoom: int.Parse(e.Value?.ToString() ?? "13")))" />
+    </div>
+    <div class="col-auto">
+        <label class="form-label">Map type</label>
+        <select class="form-select" value="@_mapType"
+                @onchange="@(e => Rebuild(mapType: Enum.Parse<MapTypeId>(e.Value?.ToString() ?? nameof(MapTypeId.Roadmap))))">
+            @foreach (var mapType in Enum.GetValues<MapTypeId>())
+            {
+                <option value="@mapType">@mapType</option>
+            }
+        </select>
+    </div>
+    <div class="col-auto">
+        <label class="form-label">Format</label>
+        <select class="form-select" value="@_format"
+                @onchange="@(e => Rebuild(format: Enum.Parse<StaticMapImageFormat>(e.Value?.ToString() ?? nameof(StaticMapImageFormat.Png))))">
+            @foreach (var format in Enum.GetValues<StaticMapImageFormat>())
+            {
+                <option value="@format">@format</option>
+            }
+        </select>
+    </div>
+    <div class="col-auto">
+        <label class="form-label">Scale</label>
+        <select class="form-select" value="@_scale"
+                @onchange="@(e => Rebuild(scale: int.Parse(e.Value?.ToString() ?? "1")))">
+            <option value="1">1</option>
+            <option value="2">2 (retina)</option>
+        </select>
+    </div>
+</div>
+
+<StaticMap Options="@_interactiveOptions" Alt="Interactive static map" OnUrlChanged="@(url => _interactiveUrl = url)" class="border" />
+
+<p class="text-muted mt-2" style="word-break: break-all;"><small>@_interactiveUrl</small></p>
+
+<h3>Markers</h3>
+<p>Locations that share a style belong in one <code>StaticMapMarker</code>, which keeps the URL short.</p>
+<StaticMap Options="@_markerOptions" Alt="Static map with markers" class="border" />
+
+<h3>Paths and polygons</h3>
+<p>Setting <code>FillColor</code> turns a path into a polygon; the API closes it for you.</p>
+<StaticMap Options="@_pathOptions" Alt="Static map with a path and a polygon" class="border" />
+
+<h3>Encoded path</h3>
+<p>
+    <code>Encode = true</code> compresses the points into an encoded polyline. This circle of
+    @_encodedPointCount points would need @_unencodedLength characters unencoded, and takes @_encodedLength here.
+    Pass an <code>EncodedPolyline</code> directly to reuse the <code>OverviewPolyline</code> of a Directions API route.
+</p>
+<StaticMap Options="@_encodedOptions" Alt="Static map with an encoded path" class="border" />
+
+<h3>Styled</h3>
+<p>Styles are built with the same <code>GoogleMapStyleBuilder</code> as an interactive map.</p>
+<StaticMap Options="@_styledOptions" Alt="Styled static map" class="border" />
+
+<h3>Building URLs in code</h3>
+<p>
+    Inject <code>StaticMapService</code> to build a URL outside of a component, for example to embed a map
+    in an e-mail. It uses the API key of the registered key service.
+</p>
+<p style="word-break: break-all;"><small>@_serviceUrl</small></p>
