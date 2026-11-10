@@ -32,6 +32,76 @@
     let polygonDragListeners = new Map();
     const dateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
 
+    // The lookups below translate the strings sent from .NET into Google Maps enum values.
+    // They are built on first use (the Google Maps API is not loaded yet when this script runs)
+    // and then reused, instead of being rebuilt on every call.
+    function lazy(build) {
+        let value;
+        return () => value || (value = build());
+    }
+
+    const getOverlayTypeLookup = lazy(() => ({
+        "google.maps.drawing.OverlayType.CIRCLE": google.maps.drawing.OverlayType.CIRCLE,
+        "google.maps.drawing.OverlayType.MARKER": google.maps.drawing.OverlayType.MARKER,
+        "google.maps.drawing.OverlayType.POLYGON": google.maps.drawing.OverlayType.POLYGON,
+        "google.maps.drawing.OverlayType.POLYLINE": google.maps.drawing.OverlayType.POLYLINE,
+        "google.maps.drawing.OverlayType.RECTANGLE": google.maps.drawing.OverlayType.RECTANGLE
+    }));
+
+    const getAnimationLookup = lazy(() => ({
+        "google.maps.Animation.DROP": google.maps.Animation.DROP,
+        "google.maps.Animation.BOUNCE": google.maps.Animation.BOUNCE
+    }));
+
+    const getSymbolPathLookup = lazy(() => ({
+        "BACKWARD_CLOSED_ARROW": google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
+        "BACKWARD_OPEN_ARROW": google.maps.SymbolPath.BACKWARD_OPEN_ARROW,
+        "CIRCLE": google.maps.SymbolPath.CIRCLE,
+        "FORWARD_CLOSED_ARROW": google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+        "FORWARD_OPEN_ARROW": google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+    }));
+
+    const getCollisionBehaviorLookup = lazy(() => ({
+        "google.maps.CollisionBehavior.REQUIRED": google.maps.CollisionBehavior.REQUIRED,
+        "google.maps.CollisionBehavior.REQUIRED_AND_HIDES_OPTIONAL": google.maps.CollisionBehavior.REQUIRED_AND_HIDES_OPTIONAL,
+        "google.maps.CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY": google.maps.CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY
+    }));
+
+    const getRenderingTypeLookup = lazy(() => ({
+        "google.maps.RenderingType.RASTER": google.maps.RenderingType.RASTER,
+        "google.maps.RenderingType.UNINITIALIZED": google.maps.RenderingType.UNINITIALIZED,
+        "google.maps.RenderingType.VECTOR": google.maps.RenderingType.VECTOR
+    }));
+
+    const getTravelModeLookup = lazy(() => ({
+        "BICYCLING": google.maps.TravelMode.BICYCLING,
+        "DRIVING": google.maps.TravelMode.DRIVING,
+        "TRANSIT": google.maps.TravelMode.TRANSIT,
+        "WALKING": google.maps.TravelMode.WALKING,
+    }));
+
+    //https://developers.google.com/maps/documentation/javascript/reference/control#ControlPosition
+    const getControlPositionLookup = lazy(() => ({
+        "BOTTOM_CENTER": google.maps.ControlPosition.BOTTOM_CENTER,
+        "BOTTOM_LEFT": google.maps.ControlPosition.BOTTOM_LEFT,
+        "BOTTOM_RIGHT": google.maps.ControlPosition.BOTTOM_RIGHT,
+        "LEFT_BOTTOM": google.maps.ControlPosition.LEFT_BOTTOM,
+        "LEFT_CENTER": google.maps.ControlPosition.LEFT_CENTER,
+        "LEFT_TOP": google.maps.ControlPosition.LEFT_TOP,
+        "RIGHT_BOTTOM": google.maps.ControlPosition.RIGHT_BOTTOM,
+        "RIGHT_CENTER": google.maps.ControlPosition.RIGHT_CENTER,
+        "RIGHT_TOP": google.maps.ControlPosition.RIGHT_TOP,
+        "TOP_CENTER": google.maps.ControlPosition.TOP_CENTER,
+        "TOP_LEFT": google.maps.ControlPosition.TOP_LEFT,
+        "TOP_RIGHT": google.maps.ControlPosition.TOP_RIGHT
+    }));
+
+    // JSON.parse can only succeed when the text starts like a JSON value. Plain strings such as
+    // event names ("click") never do, so they can skip the guaranteed exception.
+    function mayBeJson(text) {
+        return /^\s*(?:[{\["\-\d]|true|false|null)/.test(text);
+    }
+
 
     // Add the object to the map for "managed" objects, tries to set the guidString to
     // be able to dispose of them later on
@@ -102,10 +172,18 @@
         }
 
         let parsedItem;
+        let isParsed = false;
 
-        try {
-            parsedItem = JSON.parse(item, dateObjectReviver);
-        } catch (e) {
+        if (mayBeJson(item)) {
+            try {
+                parsedItem = JSON.parse(item, dateObjectReviver);
+                isParsed = true;
+            } catch (e) {
+                // Not valid JSON, use the fallback below
+            }
+        }
+
+        if (!isParsed) {
             try {
                 // Fallback to using eval to handle cases with functions in the JSON string
                 parsedItem = eval(`(${item})`);
@@ -115,16 +193,8 @@
             }
         }
 
-        if (typeof item === "string" && item.startsWith("google.maps.drawing.OverlayType")) {
-            const overlayTypeMapping = {
-                "google.maps.drawing.OverlayType.CIRCLE": google.maps.drawing.OverlayType.CIRCLE,
-                "google.maps.drawing.OverlayType.MARKER": google.maps.drawing.OverlayType.MARKER,
-                "google.maps.drawing.OverlayType.POLYGON": google.maps.drawing.OverlayType.POLYGON,
-                "google.maps.drawing.OverlayType.POLYLINE": google.maps.drawing.OverlayType.POLYLINE,
-                "google.maps.drawing.OverlayType.RECTANGLE": google.maps.drawing.OverlayType.RECTANGLE
-            };
-
-            return overlayTypeMapping[item] || item;
+        if (item.startsWith("google.maps.drawing.OverlayType")) {
+            return getOverlayTypeLookup()[item] || item;
         }
 
         if (typeof parsedItem === "object" && parsedItem !== null) {
@@ -136,21 +206,11 @@
 
                     // Convert specific Google Maps Animation strings to their corresponding objects
                     if (typeof propertyValue === "string" && propertyValue.startsWith("google.maps.Animation")) {
-                        const animationMapping = {
-                            "google.maps.Animation.DROP": google.maps.Animation.DROP,
-                            "google.maps.Animation.BOUNCE": google.maps.Animation.BOUNCE
-                        };
-                        parsedItem[propertyName] = animationMapping[propertyValue] || propertyValue;
+                        parsedItem[propertyName] = getAnimationLookup()[propertyValue] || propertyValue;
                     }
 
                     if (propertyName == "icons" || propertyName == "markerOptions") {
-                        const symbolPathMapping = {
-                            "BACKWARD_CLOSED_ARROW": google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
-                            "BACKWARD_OPEN_ARROW": google.maps.SymbolPath.BACKWARD_OPEN_ARROW,
-                            "CIRCLE": google.maps.SymbolPath.CIRCLE,
-                            "FORWARD_CLOSED_ARROW": google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-                            "FORWARD_OPEN_ARROW": google.maps.SymbolPath.FORWARD_OPEN_ARROW,
-                        };
+                        const symbolPathMapping = getSymbolPathLookup();
 
                         if (Array.isArray(propertyValue)) {
                             propertyValue.forEach(item => {
@@ -169,12 +229,7 @@
 
                     // Convert specific Google Maps CollisionBehavior strings to their corresponding objects
                     if (typeof propertyValue === "string" && propertyValue.startsWith("google.maps.CollisionBehavior")) {
-                        const collisionBehaviorMapping = {
-                            "google.maps.CollisionBehavior.REQUIRED": google.maps.CollisionBehavior.REQUIRED,
-                            "google.maps.CollisionBehavior.REQUIRED_AND_HIDES_OPTIONAL": google.maps.CollisionBehavior.REQUIRED_AND_HIDES_OPTIONAL,
-                            "google.maps.CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY": google.maps.CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY
-                        };
-                        parsedItem[propertyName] = collisionBehaviorMapping[propertyValue] || propertyValue;
+                        parsedItem[propertyName] = getCollisionBehaviorLookup()[propertyValue] || propertyValue;
                     }
 
                     // Convert position strings to Google Maps positions
@@ -183,34 +238,15 @@
                     }
 
                     if (propertyName === "renderingType" && propertyValue !== null) {
-                        const renderingTypeMap = {
-                            "google.maps.RenderingType.RASTER": google.maps.RenderingType.RASTER,
-                            "google.maps.RenderingType.UNINITIALIZED": google.maps.RenderingType.UNINITIALIZED,
-                            "google.maps.RenderingType.VECTOR": google.maps.RenderingType.VECTOR
-                        };
-
-                        parsedItem[propertyName] = renderingTypeMap[propertyValue] || google.maps.RenderingType.RASTER;
+                        parsedItem[propertyName] = getRenderingTypeLookup()[propertyValue] || google.maps.RenderingType.RASTER;
                     }
 
                     if (propertyName === "travelMode" && propertyValue !== null) {
-                        const travelModeMap = {
-                            "BICYCLING": google.maps.TravelMode.BICYCLING,
-                            "DRIVING": google.maps.TravelMode.DRIVING,
-                            "TRANSIT": google.maps.TravelMode.TRANSIT,
-                            "WALKING": google.maps.TravelMode.WALKING,
-                        };
-
-                        parsedItem[propertyName] = travelModeMap[propertyValue] || google.maps.TravelMode.DRIVING;
+                        parsedItem[propertyName] = getTravelModeLookup()[propertyValue] || google.maps.TravelMode.DRIVING;
                     }
                     // Handle nested drawingModes property
                     if (typeof propertyValue === "object" && propertyValue !== null && "drawingModes" in propertyValue) {
-                        const drawingModeMapping = {
-                            "google.maps.drawing.OverlayType.CIRCLE": google.maps.drawing.OverlayType.CIRCLE,
-                            "google.maps.drawing.OverlayType.MARKER": google.maps.drawing.OverlayType.MARKER,
-                            "google.maps.drawing.OverlayType.POLYGON": google.maps.drawing.OverlayType.POLYGON,
-                            "google.maps.drawing.OverlayType.POLYLINE": google.maps.drawing.OverlayType.POLYLINE,
-                            "google.maps.drawing.OverlayType.RECTANGLE": google.maps.drawing.OverlayType.RECTANGLE
-                        };
+                        const drawingModeMapping = getOverlayTypeLookup();
 
                         propertyValue.drawingModes = propertyValue.drawingModes.map(drawingMode => drawingModeMapping[drawingMode] || drawingMode);
                     }
@@ -229,6 +265,11 @@
 
 
     function uuidv4() {
+        // Native and much faster, but only available in secure contexts (https, localhost)
+        if (typeof crypto.randomUUID === "function") {
+            return crypto.randomUUID();
+        }
+
         return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
             (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
         );
@@ -238,58 +279,61 @@
     //Strips the DirectionResult from some of the heaviest collections.
     //ServerSide (Client Side have no issues) reach MaximumReceiveMessageSize (32kb) and crash if we return all data
     //Workaround is to increase limit MaximumReceiveMessageSize
+    //The heavy collections are dropped before the result is serialized (only the levels that change are copied,
+    //the original result is left untouched), so they are never stringified just to be thrown away.
     function cleanDirectionResult(dirResponse, dirRequestOptions) {
-        let tmpdirobj = JSON.parse(extendableStringify(dirResponse));
+        const stripAll = dirRequestOptions == undefined;
+        const stripOverviewPath = stripAll || dirRequestOptions.stripOverviewPath;
+        const stripOverviewPolyline = stripAll || dirRequestOptions.stripOverviewPolyline;
+        const stripLegsSteps = stripAll || dirRequestOptions.stripLegsSteps;
+        const stripLegsStepsLatLngs = stripAll || dirRequestOptions.stripLegsStepsLatLngs;
+        const stripLegsStepsPath = stripAll || dirRequestOptions.stripLegsStepsPath;
 
-        tmpdirobj.routes.forEach((r) => {
-            if (dirRequestOptions == undefined || dirRequestOptions.stripOverviewPath) {
-                r.overview_path = [];
+        const routes = dirResponse.routes.map((r) => {
+            const route = { ...r };
+
+            if (stripOverviewPath) {
+                route.overview_path = [];
             }
 
-            if (dirRequestOptions == undefined || dirRequestOptions.stripOverviewPolyline) {
-                r.overview_polyline = ''; // overview_polyline is a string, not an array
+            if (stripOverviewPolyline) {
+                route.overview_polyline = ''; // overview_polyline is a string, not an array
             }
 
-            r.legs.forEach((l) => {
-                if (dirRequestOptions == undefined || dirRequestOptions.stripLegsSteps) {
-                    l.steps = [];
+            route.legs = r.legs.map((l) => {
+                const leg = { ...l };
+
+                if (stripLegsSteps) {
+                    leg.steps = [];
                 } else {
-                    l.steps.forEach((step) => {
-                        if (dirRequestOptions == undefined || dirRequestOptions.stripLegsStepsLatLngs) {
+                    leg.steps = l.steps.map((s) => {
+                        const step = { ...s };
+
+                        if (stripLegsStepsLatLngs) {
                             step.lat_lngs = [];
                         }
 
-                        if (dirRequestOptions == undefined || dirRequestOptions.stripLegsStepsPath) {
+                        if (stripLegsStepsPath) {
                             step.path = [];
                         }
+
+                        return step;
                     });
                 }
+
+                return leg;
             });
+
+            return route;
         });
 
-        return tmpdirobj;
+        return { ...dirResponse, routes };
     }
 
 
     function getGooglePositionFromString(positionString) {
-        //https://developers.google.com/maps/documentation/javascript/reference/control#ControlPosition
-        const positionMap = {
-            "BOTTOM_CENTER": google.maps.ControlPosition.BOTTOM_CENTER,
-            "BOTTOM_LEFT": google.maps.ControlPosition.BOTTOM_LEFT,
-            "BOTTOM_RIGHT": google.maps.ControlPosition.BOTTOM_RIGHT,
-            "LEFT_BOTTOM": google.maps.ControlPosition.LEFT_BOTTOM,
-            "LEFT_CENTER": google.maps.ControlPosition.LEFT_CENTER,
-            "LEFT_TOP": google.maps.ControlPosition.LEFT_TOP,
-            "RIGHT_BOTTOM": google.maps.ControlPosition.RIGHT_BOTTOM,
-            "RIGHT_CENTER": google.maps.ControlPosition.RIGHT_CENTER,
-            "RIGHT_TOP": google.maps.ControlPosition.RIGHT_TOP,
-            "TOP_CENTER": google.maps.ControlPosition.TOP_CENTER,
-            "TOP_LEFT": google.maps.ControlPosition.TOP_LEFT,
-            "TOP_RIGHT": google.maps.ControlPosition.TOP_RIGHT
-        };
-
         // Return the corresponding ControlPosition or default to BOTTOM_CENTER if not found
-        return positionMap[positionString] || google.maps.ControlPosition.BOTTOM_CENTER;
+        return getControlPositionLookup()[positionString] || google.maps.ControlPosition.BOTTOM_CENTER;
     }
 
     let directionService = {
@@ -488,11 +532,9 @@
                     apiOptions
                 );
 
-                var libArray = librariesToLoad.split(',');
-                for (var i = 0; i < libArray.length; i++) {
-                    var library = libArray[i];
-                    await google.maps.importLibrary(library);
-                }
+                // Request all libraries at once: the loader then fetches them with a single script request
+                // and loads them in parallel, instead of one network round trip after another.
+                await Promise.all(librariesToLoad.split(',').map(library => google.maps.importLibrary(library)));
             },
             createImageMapType: function (baseUrlFormat, minZoom, maxZoom, name, opacity, subDomains) {
                 const safeFormat = typeof baseUrlFormat === "string" ? baseUrlFormat : "";
@@ -521,8 +563,6 @@
             },
 
             createObject: function (args) {
-                mapObjects = mapObjects || [];
-
                 let args2 = args.slice(2).map(arg => tryParseJson(arg));
 
                 let functionName = args[1];
@@ -565,8 +605,6 @@
             //This allows a single JSInteropt invocation for multiple objects creation with a consistent gain
             //in terms of performance
             createMultipleObject: function (args) {
-                mapObjects = mapObjects || [];
-
                 let args2 = args.slice(2).map(arg => tryParseJson(arg));
                 //console.log(args2);
                 let functionName = args[1];
@@ -593,7 +631,6 @@
                     guid = uuidv4();
                 }
 
-                mapObjects = mapObjects || [];
                 addMapObject(guid, obj);
 
                 return guid;
@@ -695,6 +732,7 @@
                     if (mapObjects.hasOwnProperty(key)) {
                         const element = mapObjects[key];
                         if (
+                            element !== null && typeof element === "object" && // Skip entries that cannot have properties (undefined, primitives)
                             "guidString" in element && // Element has a guidString property (inherited is important for advanced marker)
                             "map" in element && // Element has a map property (inherited is important for advanced marker)
                             element.map && // Element has a map
@@ -705,17 +743,23 @@
                         }
                     }
                 }
+                // Only recycled maps need their elements detached, so check that once instead of per element
+                const mapObject = mapObjects[mapGuid];
+                const isRecycledMap = mapObject !== null && typeof mapObject === "object" && "recycleKey" in mapObject;
+
                 for (const keyToRemove of keysToRemove) {
-                    const elementToRemove = mapObjects[keyToRemove];
-                    // When we dispose advanced markers and we use recycled maps, make sure to set remove them from the map.
-                    if (google.maps.marker && elementToRemove instanceof google.maps.marker.AdvancedMarkerElement && "recycleKey" in mapObjects[mapGuid])
-                        elementToRemove.map = null;
-                    //the same for polygons, we need to remove them from the map
-                    if (google.maps.Polygon && elementToRemove instanceof google.maps.Polygon && "recycleKey" in mapObjects[mapGuid])
-                        elementToRemove.setMap(null);
-                    //the same for heatmap layers, we need to remove them from the map
-                    if (google.maps.visualization && elementToRemove instanceof google.maps.visualization.HeatmapLayer && "recycleKey" in mapObjects[mapGuid]) {
-                        elementToRemove.setMap(null);
+                    if (isRecycledMap) {
+                        const elementToRemove = mapObjects[keyToRemove];
+                        // When we dispose advanced markers and we use recycled maps, make sure to set remove them from the map.
+                        if (google.maps.marker && elementToRemove instanceof google.maps.marker.AdvancedMarkerElement)
+                            elementToRemove.map = null;
+                        //the same for polygons, we need to remove them from the map
+                        if (google.maps.Polygon && elementToRemove instanceof google.maps.Polygon)
+                            elementToRemove.setMap(null);
+                        //the same for heatmap layers, we need to remove them from the map
+                        if (google.maps.visualization && elementToRemove instanceof google.maps.visualization.HeatmapLayer) {
+                            elementToRemove.setMap(null);
+                        }
                     }
 
                     delete mapObjects[keyToRemove];
@@ -1050,7 +1094,6 @@
                 const args2 = args.slice(2).map(arg => tryParseJson(arg));
 
                 const results = {};
-                const objs = guids.map(guid => mapObjects[guid]);
 
                 // Collect promises
                 const promises = guids.map((guid, index) => {
@@ -1116,7 +1159,6 @@
 
                 // Using Promise.all to handle multiple async operations if needed
                 await Promise.all(guids.map((guid, index) => {
-                    const obj = mapObjects[guid];
                     const additionalArgs = Array.isArray(args2[index]) ? args2[index] : [args2[index]];
                     const args3 = [guid, "addListener", eventName, ...additionalArgs];
 
@@ -1186,7 +1228,7 @@
                     const splits = options.rendererObjectName.split(".");
                     try {
                         let renderer = window[splits[0]];
-                        for (i = 1, len = splits.length; i < len; i++) {
+                        for (let i = 1, len = splits.length; i < len; i++) {
                             renderer = renderer[splits[i]];
                         }
                         markerClustererOptions.renderer = renderer;
@@ -1199,7 +1241,7 @@
                     const splits = options.algorithmObjectName.split(".");
                     try {
                         let algorithm = window[splits[0]];
-                        for (i = 1, len = splits.length; i < len; i++) {
+                        for (let i = 1, len = splits.length; i < len; i++) {
                             algorithm = algorithm[splits[i]];
                         }
                         markerClustererOptions.algorithm = algorithm;
@@ -1601,7 +1643,7 @@
                 if (!heatmap) return;
 
                 heatmap.setMap(null);
-                disposeObject(id);
+                this.disposeObject(id);
             }
         }
 
