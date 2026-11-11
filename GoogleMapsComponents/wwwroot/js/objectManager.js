@@ -102,6 +102,24 @@
         return /^\s*(?:[{\["\-\d]|true|false|null)/.test(text);
     }
 
+    function mayBeObjectLiteral(text) {
+        return /^\s*[{\[]/.test(text);
+    }
+
+    // Replaces a named symbol path ("CIRCLE") in holder.icon with its google.maps.SymbolPath value.
+    // Anything else, such as a custom SVG path or an icon given as an url, is left as it is.
+    function resolveSymbolPath(holder) {
+        const icon = holder && holder.icon;
+        if (!icon || typeof icon !== "object" || !icon.path) {
+            return;
+        }
+
+        const symbolPathLookup = getSymbolPathLookup();
+        if (Object.prototype.hasOwnProperty.call(symbolPathLookup, icon.path)) {
+            icon.path = symbolPathLookup[icon.path];
+        }
+    }
+
 
     // Add the object to the map for "managed" objects, tries to set the guidString to
     // be able to dispose of them later on
@@ -142,28 +160,29 @@
         // Check if the item is a DotNet object reference with the "invokeMethodAsync" method
         if (item !== null && typeof item === "object" && "invokeMethodAsync" in item) {
             return async function (...args) {
-                if (args === null || typeof args === "undefined") {
-                    await item.invokeMethodAsync("Invoke");
-                }
-
+                // The event argument is registered only for the duration of the .NET call
                 const guid = blazorGoogleMaps.objectManager.addObject(args[0]);
 
-                if (args.length === 1 && typeof args[0].marker !== "undefined") {
-                    const markerBackup = args[0].marker;
-                    args[0].marker = null;
-                    await item.invokeMethodAsync("Invoke", extendableStringify(args, getCircularReplacer()), guid);
-                    args[0].marker = markerBackup;
-                }
-                else if (args.length === 1 && args[0] instanceof Object && "feature" in args[0]) {
-                    const featureUUID = args[0].feature.getProperty("UUID");
-                    args[0].featureUUID = featureUUID;
-                    await item.invokeMethodAsync("Invoke", extendableStringify(args, getCircularReplacer()), guid);
-                }
-                else {
-                    await item.invokeMethodAsync("Invoke", extendableStringify(args, getCircularReplacer()), guid);
-                }
+                const hasMarker = args.length === 1 && args[0] != null && typeof args[0].marker !== "undefined";
+                const markerBackup = hasMarker ? args[0].marker : undefined;
 
-                blazorGoogleMaps.objectManager.disposeObject(guid);
+                try {
+                    if (hasMarker) {
+                        args[0].marker = null;
+                    }
+                    else if (args.length === 1 && args[0] instanceof Object && "feature" in args[0]) {
+                        args[0].featureUUID = args[0].feature.getProperty("UUID");
+                    }
+
+                    await item.invokeMethodAsync("Invoke", extendableStringify(args, getCircularReplacer()), guid);
+                } finally {
+                    // Also runs when the .NET call fails (e.g. the circuit is gone), so nothing is left behind
+                    if (hasMarker) {
+                        args[0].marker = markerBackup;
+                    }
+
+                    blazorGoogleMaps.objectManager.disposeObject(guid);
+                }
             };
         }
 
@@ -184,17 +203,29 @@
         }
 
         if (!isParsed) {
+            if (item.startsWith("google.maps.drawing.OverlayType")) {
+                try {
+                    return getOverlayTypeLookup()[item] || item;
+                } catch (e) {
+                    // The drawing library is not loaded
+                    return item;
+                }
+            }
+
+            // Everything else that is not JSON is plain text, such as an event name or a title,
+            // and is returned as it is. It must never be run as code.
+            if (!mayBeObjectLiteral(item)) {
+                return item;
+            }
+
             try {
-                // Fallback to using eval to handle cases with functions in the JSON string
+                // Fallback to using eval to handle object literals that are not strict JSON,
+                // e.g. options with functions in them
                 parsedItem = eval(`(${item})`);
             } catch (e2) {
                 // Return the item as is if parsing fails
                 return item;
             }
-        }
-
-        if (item.startsWith("google.maps.drawing.OverlayType")) {
-            return getOverlayTypeLookup()[item] || item;
         }
 
         if (typeof parsedItem === "object" && parsedItem !== null) {
@@ -210,20 +241,10 @@
                     }
 
                     if (propertyName == "icons" || propertyName == "markerOptions") {
-                        const symbolPathMapping = getSymbolPathLookup();
-
                         if (Array.isArray(propertyValue)) {
-                            propertyValue.forEach(item => {
-                                var iconPath = item.icon.path;
-                                if (iconPath) {
-                                    item.icon.path = symbolPathMapping[item.icon.path];
-                                }
-                            });
-                        } else if (propertyValue.icon.path) {
-                            var iconPath = propertyValue.icon.path;
-                            if (iconPath) {
-                                propertyValue.icon.path = symbolPathMapping[iconPath];
-                            }
+                            propertyValue.forEach(iconHolder => resolveSymbolPath(iconHolder));
+                        } else {
+                            resolveSymbolPath(propertyValue);
                         }
                     }
 
@@ -839,10 +860,12 @@
                 }
             },
 
-            invoke: async function (args) {
+            //parsedRestArgs is only passed by the batch functions below: they have parsed the arguments
+            //already, once for the whole batch, so they are not parsed again for every object
+            invoke: async function (args, parsedRestArgs) {
                 const [objectId, functionToInvoke, ...restArgs] = args;
                 const obj = mapObjects[objectId];
-                const args2 = restArgs.map(arg => tryParseJson(arg));
+                const args2 = parsedRestArgs || restArgs.map(arg => tryParseJson(arg));
 
                 if (!obj) {
                     if (functionToInvoke === "remove") {
@@ -1098,7 +1121,7 @@
                 // Collect promises
                 const promises = guids.map((guid, index) => {
                     const args3 = [guid, otherArg, args2[index]];
-                    const result = blazorGoogleMaps.objectManager.invoke(args3);
+                    const result = blazorGoogleMaps.objectManager.invoke(args3, [args2[index]]);
 
                     // Return a promise that resolves to the result
                     return Promise.resolve(result).then(resolvedResult => {
@@ -1155,6 +1178,7 @@
             addMultipleListeners: async function (args) {
                 const guids = JSON.parse(args[0]);
                 const eventName = args[1];
+                const parsedEventName = tryParseJson(eventName);
                 const args2 = args.slice(2).map(arg => tryParseJson(arg));
 
                 // Using Promise.all to handle multiple async operations if needed
@@ -1162,7 +1186,7 @@
                     const additionalArgs = Array.isArray(args2[index]) ? args2[index] : [args2[index]];
                     const args3 = [guid, "addListener", eventName, ...additionalArgs];
 
-                    return blazorGoogleMaps.objectManager.invoke(args3);
+                    return blazorGoogleMaps.objectManager.invoke(args3, [parsedEventName, ...additionalArgs]);
                 }));
 
                 return true;
