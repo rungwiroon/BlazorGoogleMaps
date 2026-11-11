@@ -19,13 +19,13 @@ namespace GoogleMapsComponents.Maps
 
         protected override async Task OnParametersSetAsync()
         {
-            await Heatmap.Refresh();
+            await Heatmap.RequestRefresh();
         }
 
         public async ValueTask DisposeAsync()
         {
             Heatmap.UnregisterPoint(this);
-            await Heatmap.Refresh();
+            await Heatmap.RequestRefresh();
         }
     }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text.Json;
@@ -8,20 +9,50 @@ namespace GoogleMapsComponents;
 
 internal class EnumMemberConverter<T> : JsonConverter<T> where T : IComparable, IFormattable, IConvertible
 {
-    public override T? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-    {
-        var jsonValue = reader.GetString();
+    // The enum members are read with reflection once per enum type, not for every value that is (de)serialized.
+    // Only the members that have an EnumMember attribute are kept, in declaration order.
+    private static readonly (string Name, string? MemberValue, T Value)[] Members = GetMembers();
 
-        foreach (var fi in typeToConvert.GetFields())
+    private static readonly Dictionary<string, string?> MemberValuesByName = GetMemberValuesByName();
+
+    private static (string Name, string? MemberValue, T Value)[] GetMembers()
+    {
+        var members = new List<(string Name, string? MemberValue, T Value)>();
+
+        foreach (var fi in typeof(T).GetFields(BindingFlags.Public | BindingFlags.Static))
         {
             var description = (EnumMemberAttribute?)fi.GetCustomAttribute(typeof(EnumMemberAttribute), false);
 
             if (description != null)
             {
-                if (string.Equals(description.Value, jsonValue, StringComparison.OrdinalIgnoreCase))
-                {
-                    return (T?)fi.GetValue(null);
-                }
+                members.Add((fi.Name, description.Value, (T)fi.GetValue(null)!));
+            }
+        }
+
+        return members.ToArray();
+    }
+
+    private static Dictionary<string, string?> GetMemberValuesByName()
+    {
+        var memberValues = new Dictionary<string, string?>(Members.Length);
+
+        foreach (var member in Members)
+        {
+            memberValues[member.Name] = member.MemberValue;
+        }
+
+        return memberValues;
+    }
+
+    public override T? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        var jsonValue = reader.GetString();
+
+        foreach (var member in Members)
+        {
+            if (string.Equals(member.MemberValue, jsonValue, StringComparison.OrdinalIgnoreCase))
+            {
+                return member.Value;
             }
         }
 
@@ -30,10 +61,8 @@ internal class EnumMemberConverter<T> : JsonConverter<T> where T : IComparable, 
 
     public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
     {
-        var fi = value.GetType().GetField(value.ToString() ?? string.Empty);
+        MemberValuesByName.TryGetValue(value.ToString() ?? string.Empty, out var memberValue);
 
-        var description = (EnumMemberAttribute?)fi?.GetCustomAttribute(typeof(EnumMemberAttribute), false);
-
-        writer.WriteStringValue(description?.Value);
+        writer.WriteStringValue(memberValue);
     }
 }

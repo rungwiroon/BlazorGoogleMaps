@@ -36,23 +36,15 @@ public class Polygon : ListableEntityBase<PolygonOptions>, IPolyItem
     }
      
     /// <inheritdoc />
-    public async Task<MapEventListener> AddPolyListener(string eventName, Action handler)
+    public Task<MapEventListener> AddPolyListener(string eventName, Action handler)
     {
-        var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync("addPolyListener", eventName, handler);
-
-        var eventListener = new MapEventListener(listenerRef);
-        AddEvent(eventName, eventListener);
-        return eventListener;
+        return AddListenerAsync("addPolyListener", eventName, new JsCallableAction(_jsObjectRef.JSRuntime, handler));
     }
     
     /// <inheritdoc />
-    public async Task<MapEventListener> AddPolyListener<T>(string eventName, Action<T> handler) where T : EventArgs
+    public Task<MapEventListener> AddPolyListener<T>(string eventName, Action<T> handler) where T : EventArgs
     {
-        var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync("addPolyListener", eventName, handler);
-
-        var eventListener = new MapEventListener(listenerRef);
-        AddEvent(eventName, eventListener);
-        return eventListener;
+        return AddListenerAsync("addPolyListener", eventName, new JsCallableAction(_jsObjectRef.JSRuntime, handler, typeof(T)));
     }
 
     /// <inheritdoc />

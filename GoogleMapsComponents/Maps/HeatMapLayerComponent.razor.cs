@@ -10,8 +10,11 @@ namespace GoogleMapsComponents.Maps
 {
     public partial class HeatMapLayerComponent : ComponentBase, IAsyncDisposable
     {
-        private readonly List<HeatmapPointComponent> _points = new();
+        // A set, so that registering and unregistering a point does not scan all the other points
+        private readonly HashSet<HeatmapPointComponent> _points = new();
         private bool _hasRendered;
+        private bool _isDisposed;
+        private Task? _pendingRefresh;
         private Guid _guid = Guid.NewGuid();
 
         [Inject] private IJSRuntime Js { get; set; } = default!;
@@ -33,8 +36,7 @@ namespace GoogleMapsComponents.Maps
 
         internal void RegisterPoint(HeatmapPointComponent point)
         {
-            if (!_points.Contains(point))
-                _points.Add(point);
+            _points.Add(point);
         }
 
         internal void UnregisterPoint(HeatmapPointComponent point)
@@ -55,9 +57,28 @@ namespace GoogleMapsComponents.Maps
 
         public async Task Refresh()
         {
-            if (!_hasRendered) return;
+            if (!_hasRendered || _isDisposed) return;
             await Js.InvokeVoidAsync("blazorGoogleMaps.objectManager.updateHeatmap",
                 _guid, GetOptions(), MapRef.CallbackRef);
+        }
+
+        /// <summary>
+        /// Used by the points. All the points that change in the same render share a single refresh,
+        /// instead of each of them sending the whole data set to JavaScript.
+        /// </summary>
+        internal Task RequestRefresh()
+        {
+            if (!_hasRendered || _isDisposed) return Task.CompletedTask;
+
+            return _pendingRefresh ??= RefreshOnceAsync();
+        }
+
+        private async Task RefreshOnceAsync()
+        {
+            // Runs after the current render, when every point has already reported its change
+            await Task.Yield();
+            _pendingRefresh = null;
+            await Refresh();
         }
 
         private object GetOptions() => new
@@ -72,6 +93,8 @@ namespace GoogleMapsComponents.Maps
 
         public async ValueTask DisposeAsync()
         {
+            // The points are disposed together with the layer, there is nothing left for them to refresh
+            _isDisposed = true;
             await Js.InvokeVoidAsync("blazorGoogleMaps.objectManager.removeHeatmap", _guid);
         }
     }

@@ -10,12 +10,14 @@ namespace GoogleMapsComponents.Maps;
 public class MapEventListener : IJsObjectRef, IDisposable, IAsyncDisposable
 {
     private readonly JsObjectRef _jsObjectRef;
+    private IDisposable? _callback;
     public bool IsRemoved;
     private bool isDisposed;
 
-    internal MapEventListener(JsObjectRef jsObjectRef)
+    internal MapEventListener(JsObjectRef jsObjectRef, IDisposable? callback = null)
     {
         _jsObjectRef = jsObjectRef;
+        _callback = callback;
     }
 
     /// <summary>
@@ -27,6 +29,10 @@ public class MapEventListener : IJsObjectRef, IDisposable, IAsyncDisposable
         await _jsObjectRef.InvokeAsync("remove");
         await _jsObjectRef.DisposeAsync();
         IsRemoved = true;
+
+        //The listener can not fire anymore, so the .NET callback behind it is released as well
+        _callback?.Dispose();
+        _callback = null;
     }
 
 

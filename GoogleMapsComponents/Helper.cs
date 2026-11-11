@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using OneOf;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -51,12 +52,12 @@ internal static class Helper
             return null;
         }
 
-        foreach (var name in Enum.GetNames(enumType))
+        foreach (var member in EnumMembers<T>.Members)
         {
-            var enumMemberAttribute = ((EnumMemberAttribute[])enumType.GetField(name).GetCustomAttributes(typeof(EnumMemberAttribute), true)).Single();
+            var enumMemberAttribute = member.Attributes.Single();
             if (enumMemberAttribute.Value == str)
             {
-                return (T)Enum.Parse(enumType, name);
+                return member.Value;
             }
         }
 
@@ -152,7 +153,9 @@ internal static class Helper
 
                             switch (arg)
                             {
-                                case JsCallableAction _:
+                                case JsCallableAction callableAction:
+                                    //The owner of the callback keeps it, to be able to release the reference later
+                                    return callableAction.GetReference();
                                 case JsCallableFunc _:
                                     return DotNetObjectReference.Create(arg);
                                 case IJsObjectRef jsObjectRef:
@@ -188,6 +191,14 @@ internal static class Helper
             return enumItem.ToString();
         }
 
+        //The reflection below is done once per enum value, not on every interop call
+        return EnumMemberValues.GetOrAdd(enumItem2, static value => ReadEnumMemberValue(value));
+    }
+
+    private static readonly ConcurrentDictionary<Enum, string?> EnumMemberValues = new();
+
+    private static string? ReadEnumMemberValue(Enum enumItem2)
+    {
         var memberInfo = enumItem2.GetType().GetMember(enumItem2.ToString());
         if (memberInfo.Length == 0)
         {
@@ -376,22 +387,41 @@ internal static class Helper
 
     internal static T? ToEnum<T>(string str)
     {
-        var enumType = typeof(T);
-        foreach (var name in Enum.GetNames(enumType))
+        foreach (var member in EnumMembers<T>.Members)
         {
-            var enumMemberAttribute = ((EnumMemberAttribute[])enumType.GetField(name).GetCustomAttributes(typeof(EnumMemberAttribute), true)).Single();
+            var enumMemberAttribute = member.Attributes.Single();
             if (enumMemberAttribute.Value == str)
             {
-                return (T)Enum.Parse(enumType, name);
+                return member.Value;
             }
 
-            if (string.Equals(name, str, StringComparison.InvariantCultureIgnoreCase))
+            if (string.Equals(member.Name, str, StringComparison.InvariantCultureIgnoreCase))
             {
-                return (T)Enum.Parse(enumType, name);
+                return member.Value;
             }
         }
 
         //throw exception or whatever handling you want
         return default;
+    }
+
+    /// <summary>
+    /// The names, values and EnumMember attributes of an enum, read with reflection once per enum type.
+    /// </summary>
+    private static class EnumMembers<T>
+    {
+        internal static readonly (string Name, T Value, EnumMemberAttribute[] Attributes)[] Members = GetMembers();
+
+        private static (string Name, T Value, EnumMemberAttribute[] Attributes)[] GetMembers()
+        {
+            var enumType = typeof(T);
+
+            return Enum.GetNames(enumType)
+                .Select(name => (
+                    Name: name,
+                    Value: (T)Enum.Parse(enumType, name),
+                    Attributes: (EnumMemberAttribute[])enumType.GetField(name)!.GetCustomAttributes(typeof(EnumMemberAttribute), true)))
+                .ToArray();
+        }
     }
 }

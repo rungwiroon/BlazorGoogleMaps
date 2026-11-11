@@ -5,11 +5,17 @@ using System.Text.Json;
 
 namespace GoogleMapsComponents;
 
-public class JsCallableAction
+public class JsCallableAction : IDisposable
 {
     private readonly Delegate _delegate;
     private readonly Type[] _argumentTypes;
     private readonly IJSRuntime _jsRuntime;
+    private DotNetObjectReference<JsCallableAction>? _reference;
+
+    /// <summary>
+    /// When true the callback releases itself after the first call. Used for listeners that fire only once.
+    /// </summary>
+    internal bool DisposeAfterInvoke { get; init; }
 
     public JsCallableAction(IJSRuntime jsRuntime, Delegate @delegate, params Type[] argumentTypes)
     {
@@ -18,8 +24,43 @@ public class JsCallableAction
         _argumentTypes = argumentTypes;
     }
 
+    /// <summary>
+    /// The reference JavaScript uses to call back. It is created once and kept,
+    /// so that <see cref="Dispose"/> can release it when the callback is not needed anymore.
+    /// </summary>
+    internal DotNetObjectReference<JsCallableAction> GetReference()
+    {
+        return _reference ??= DotNetObjectReference.Create(this);
+    }
+
+    /// <summary>
+    /// Releases the reference held by the JS runtime. Without it the callback, and everything
+    /// its delegate captures, stays alive for as long as the JS runtime does.
+    /// </summary>
+    public void Dispose()
+    {
+        _reference?.Dispose();
+        _reference = null;
+        GC.SuppressFinalize(this);
+    }
+
     [JSInvokable]
     public void Invoke(string args, string guid)
+    {
+        try
+        {
+            InvokeDelegate(args, guid);
+        }
+        finally
+        {
+            if (DisposeAfterInvoke)
+            {
+                Dispose();
+            }
+        }
+    }
+
+    private void InvokeDelegate(string args, string guid)
     {
         if (string.IsNullOrWhiteSpace(args) || !_argumentTypes.Any())
         {

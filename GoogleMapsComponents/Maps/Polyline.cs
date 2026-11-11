@@ -40,13 +40,9 @@ public class Polyline : ListableEntityBase<PolylineOptions>, IPolyItem
     /// <param name="eventName">Event name to include.</param>
     /// <param name="handler">Handler method</param>
     /// <returns><see cref="Task"/> completion supplying the <see cref="MapEventListener"/> created for this event.</returns>
-    public async Task<MapEventListener> AddPolyListener(string eventName, Action handler)
+    public Task<MapEventListener> AddPolyListener(string eventName, Action handler)
     {
-        var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync("addPolyListener", eventName, handler);
-
-        var eventListener = new MapEventListener(listenerRef);
-        AddEvent(eventName, eventListener);
-        return eventListener;
+        return AddListenerAsync("addPolyListener", eventName, new JsCallableAction(_jsObjectRef.JSRuntime, handler));
     }
 
 
@@ -58,13 +54,9 @@ public class Polyline : ListableEntityBase<PolylineOptions>, IPolyItem
     /// <param name="eventName">Event name to include.</param>
     /// <param name="handler">Handler method</param>
     /// <returns><see cref="Task"/> completion supplying the <see cref="MapEventListener"/> created for this event.</returns>
-    public async Task<MapEventListener> AddPolyListener<T>(string eventName, Action<T> handler) where T : EventArgs
+    public Task<MapEventListener> AddPolyListener<T>(string eventName, Action<T> handler) where T : EventArgs
     {
-        var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync("addPolyListener", eventName, handler);
-
-        var eventListener = new MapEventListener(listenerRef);
-        AddEvent(eventName, eventListener);
-        return eventListener;
+        return AddListenerAsync("addPolyListener", eventName, new JsCallableAction(_jsObjectRef.JSRuntime, handler, typeof(T)));
     }
 
     /// <inheritdoc />

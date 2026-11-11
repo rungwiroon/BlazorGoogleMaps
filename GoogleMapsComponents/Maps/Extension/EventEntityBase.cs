@@ -51,14 +51,9 @@ public abstract class EventEntityBase : IDisposable
     /// <param name="eventName">The name of the event to listen for.</param>
     /// <param name="handler">The callback to invoke when the event fires.</param>
     /// <returns>A <see cref="MapEventListener"/> that can be used to remove the listener.</returns>
-    public async Task<MapEventListener> AddListener(string eventName, Action handler)
+    public Task<MapEventListener> AddListener(string eventName, Action handler)
     {
-        var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
-            "addListener", eventName, handler);
-
-        var eventListener = new MapEventListener(listenerRef);
-        AddEvent(eventName, eventListener);
-        return eventListener;
+        return AddListenerAsync("addListener", eventName, new JsCallableAction(_jsObjectRef.JSRuntime, handler));
     }
 
     /// <summary>
@@ -68,14 +63,9 @@ public abstract class EventEntityBase : IDisposable
     /// <param name="eventName">The name of the event to listen for.</param>
     /// <param name="handler">The callback to invoke when the event fires.</param>
     /// <returns>A <see cref="MapEventListener"/> that can be used to remove the listener.</returns>
-    public async Task<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
+    public Task<MapEventListener> AddListener<T>(string eventName, Action<T> handler)
     {
-        var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
-            "addListener", eventName, handler);
-
-        var eventListener = new MapEventListener(listenerRef);
-        AddEvent(eventName, eventListener);
-        return eventListener;
+        return AddListenerAsync("addListener", eventName, new JsCallableAction(_jsObjectRef.JSRuntime, handler, typeof(T)));
     }
 
     /// <summary>
@@ -86,14 +76,10 @@ public abstract class EventEntityBase : IDisposable
     /// <param name="eventName">The name of the event to listen for.</param>
     /// <param name="handler">The callback to invoke when the event fires.</param>
     /// <returns>A <see cref="MapEventListener"/> that can be used to remove the listener before it fires.</returns>
-    public async Task<MapEventListener> AddListenerOnce(string eventName, Action handler)
+    public Task<MapEventListener> AddListenerOnce(string eventName, Action handler)
     {
-        var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
-            "addListenerOnce", eventName, handler);
-
-        var eventListener = new MapEventListener(listenerRef);
-        AddEvent(eventName, eventListener);
-        return eventListener;
+        return AddListenerAsync("addListenerOnce", eventName,
+            new JsCallableAction(_jsObjectRef.JSRuntime, handler) { DisposeAfterInvoke = true });
     }
 
     /// <summary>
@@ -104,12 +90,34 @@ public abstract class EventEntityBase : IDisposable
     /// <param name="eventName">The name of the event to listen for.</param>
     /// <param name="handler">The callback to invoke when the event fires.</param>
     /// <returns>A <see cref="MapEventListener"/> that can be used to remove the listener before it fires.</returns>
-    public async Task<MapEventListener> AddListenerOnce<T>(string eventName, Action<T> handler)
+    public Task<MapEventListener> AddListenerOnce<T>(string eventName, Action<T> handler)
     {
-        var listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(
-            "addListenerOnce", eventName, handler);
+        return AddListenerAsync("addListenerOnce", eventName,
+            new JsCallableAction(_jsObjectRef.JSRuntime, handler, typeof(T)) { DisposeAfterInvoke = true });
+    }
 
-        var eventListener = new MapEventListener(listenerRef);
+    /// <summary>
+    /// Adds a listener and hands its callback over to the returned <see cref="MapEventListener"/>,
+    /// which releases the callback when the listener is removed.
+    /// </summary>
+    /// <param name="functionName">The JavaScript function that adds the listener.</param>
+    /// <param name="eventName">The name of the event to listen for.</param>
+    /// <param name="callback">The callback JavaScript invokes when the event fires.</param>
+    private protected async Task<MapEventListener> AddListenerAsync(string functionName, string eventName, JsCallableAction callback)
+    {
+        JsObjectRef listenerRef;
+        try
+        {
+            listenerRef = await _jsObjectRef.InvokeWithReturnedObjectRefAsync(functionName, eventName, callback);
+        }
+        catch
+        {
+            //No listener was added, nothing will ever call back
+            callback.Dispose();
+            throw;
+        }
+
+        var eventListener = new MapEventListener(listenerRef, callback);
         AddEvent(eventName, eventListener);
         return eventListener;
     }

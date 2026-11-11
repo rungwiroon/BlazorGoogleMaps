@@ -10,9 +10,17 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
     where TEntityBase : ListableEntityBase<TEntityOptionsBase>
     where TEntityOptionsBase : IListableEntityOptionsBase
 {
+    // Looked up once per entity type instead of once per created entity
+    private static readonly ConstructorInfo? EntityConstructor =
+        typeof(TEntityBase).GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault();
+
     protected readonly JsObjectRef _jsObjectRef;
 
     public readonly Dictionary<string, TEntityBase> BaseListableEntities;
+
+    // The .NET callbacks behind the listeners added with AddListeners, by entity guid.
+    // They are released together with their entity, otherwise they stay alive as long as the JS runtime.
+    private readonly Dictionary<Guid, List<JsCallableAction>> _listenerCallbacks = new();
     private bool _isDisposed;
 
     protected ListableEntityListBase(JsObjectRef jsObjectRef, Dictionary<string, TEntityBase> baseListableEntities)
@@ -112,7 +120,7 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
             {
                 //Alternate if there are more constructors
                 //var ctor = typeof(TEntityBase).GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(c => !c.GetParameters().Any());
-                var ctor = typeof(TEntityBase).GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault();
+                var ctor = EntityConstructor;
                 //BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Instance;
                 return (TEntityBase)ctor.Invoke(new object[] { e.Value });
                 //Old version which didnt catched internal consturctors
@@ -154,11 +162,23 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
     {
         if ((filterKeys != null) && (filterKeys.Count > 0))
         {
-            List<string> foundKeys = BaseListableEntities.Keys.Intersect(filterKeys).ToList();
+            //One dictionary lookup per requested key, instead of comparing every entity with every key
+            var foundKeys = new List<string>(filterKeys.Count);
+            var foundGuids = new List<Guid>(filterKeys.Count);
+            var seenKeys = new HashSet<string>();
+            foreach (string key in filterKeys)
+            {
+                if (key != null && seenKeys.Add(key) && BaseListableEntities.TryGetValue(key, out var entity))
+                {
+                    foundKeys.Add(key);
+                    foundGuids.Add(entity.Guid);
+                }
+            }
+
             if (foundKeys.Count > 0)
             {
-                List<Guid> foundGuids = BaseListableEntities.Where(e => foundKeys.Contains(e.Key)).Select(e => e.Value.Guid).ToList();
                 await _jsObjectRef.DisposeMultipleAsync(foundGuids);
+                ReleaseListenerCallbacks(foundGuids);
 
                 foreach (string key in foundKeys)
                 {
@@ -175,11 +195,22 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
     {
         if (guids.Count > 0)
         {
-            List<string> foundKeys = BaseListableEntities.Where(e => guids.Contains(e.Value.Guid)).Select(e => e.Key).ToList();
+            var guidSet = new HashSet<Guid>(guids);
+            var foundKeys = new List<string>();
+            var foundGuids = new List<Guid>();
+            foreach (var e in BaseListableEntities)
+            {
+                if (guidSet.Contains(e.Value.Guid))
+                {
+                    foundKeys.Add(e.Key);
+                    foundGuids.Add(e.Value.Guid);
+                }
+            }
+
             if (foundKeys.Count > 0)
             {
-                List<Guid> foundGuids = BaseListableEntities.Values.Where(e => guids.Contains(e.Guid)).Select(e => e.Guid).ToList();
                 await _jsObjectRef.DisposeMultipleAsync(foundGuids);
+                ReleaseListenerCallbacks(foundGuids);
 
                 foreach (string key in foundKeys)
                 {
@@ -210,7 +241,8 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
         }
         else
         {
-            matchingKeys = BaseListableEntities.Keys.Where(filterKeys.Contains).ToList();
+            var filterSet = new HashSet<string>(filterKeys);
+            matchingKeys = BaseListableEntities.Keys.Where(filterSet.Contains).ToList();
         }
 
         return matchingKeys;
@@ -225,7 +257,8 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
     //Creates mapping between matching keys and markers Guid
     protected virtual Dictionary<Guid, string> ComputeInternalMapping(List<string> matchingKeys)
     {
-        return BaseListableEntities.Where(e => matchingKeys.Contains(e.Key)).ToDictionary(e => BaseListableEntities[e.Key].Guid, e => e.Key);
+        var keySet = new HashSet<string>(matchingKeys);
+        return BaseListableEntities.Where(e => keySet.Contains(e.Key)).ToDictionary(e => e.Value.Guid, e => e.Key);
     }
 
     /// <summary>
@@ -235,7 +268,8 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
     /// <returns></returns>
     protected virtual Dictionary<Guid, object> ComputeDictArgs(List<string> matchingKeys)
     {
-        return BaseListableEntities.Where(e => matchingKeys.Contains(e.Key)).ToDictionary(e => e.Value.Guid, _ => (object)(new object[] { }));
+        var keySet = new HashSet<string>(matchingKeys);
+        return BaseListableEntities.Where(e => keySet.Contains(e.Key)).ToDictionary(e => e.Value.Guid, _ => (object)Array.Empty<object>());
     }
 
     /// <summary>
@@ -245,7 +279,7 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
     /// <returns></returns>
     protected virtual Task<Dictionary<string, T>> ComputeEmptyResult<T>()
     {
-        return Task<Dictionary<string, T>>.Factory.StartNew(() => new Dictionary<string, T>());
+        return Task.FromResult(new Dictionary<string, T>());
     }
 
     public virtual Task<Dictionary<string, Map>> GetMaps(List<string>? filterKeys = null)
@@ -348,11 +382,50 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
 
     public virtual async Task AddListeners<V>(IEnumerable<string> enitityKeys, string eventName, Action<V, string> handler)
     {
-        Dictionary<Guid, object> dictArgs = enitityKeys.ToDictionary(key => BaseListableEntities[key].Guid, key => (object)new Action<V>((e) =>
+        var jsRuntime = _jsObjectRef.JSRuntime;
+        Dictionary<Guid, JsCallableAction> callbacks = enitityKeys.ToDictionary(
+            key => BaseListableEntities[key].Guid,
+            key => new JsCallableAction(jsRuntime, new Action<V>(e => handler(e, key)), typeof(V)));
+
+        try
         {
-            handler(e, key);
-        }));
-        await _jsObjectRef.AddMultipleListenersAsync(eventName, dictArgs);
+            await _jsObjectRef.AddMultipleListenersAsync(eventName, callbacks.ToDictionary(e => e.Key, e => (object)e.Value));
+        }
+        catch
+        {
+            //No listener was added, nothing will ever call back
+            foreach (var callback in callbacks.Values)
+            {
+                callback.Dispose();
+            }
+
+            throw;
+        }
+
+        foreach (var (guid, callback) in callbacks)
+        {
+            if (!_listenerCallbacks.TryGetValue(guid, out var entityCallbacks))
+            {
+                entityCallbacks = new List<JsCallableAction>();
+                _listenerCallbacks.Add(guid, entityCallbacks);
+            }
+
+            entityCallbacks.Add(callback);
+        }
+    }
+
+    private void ReleaseListenerCallbacks(IEnumerable<Guid> guids)
+    {
+        foreach (var guid in guids)
+        {
+            if (_listenerCallbacks.Remove(guid, out var entityCallbacks))
+            {
+                foreach (var callback in entityCallbacks)
+                {
+                    callback.Dispose();
+                }
+            }
+        }
     }
 
     public async ValueTask DisposeAsync()
@@ -374,6 +447,8 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
             await _jsObjectRef.DisposeMultipleAsync(BaseListableEntities.Select(e => e.Value.Guid).ToList());
             BaseListableEntities.Clear();
         }
+
+        ReleaseListenerCallbacks(_listenerCallbacks.Keys.ToList());
     }
 
     protected virtual void Dispose(bool disposing)
