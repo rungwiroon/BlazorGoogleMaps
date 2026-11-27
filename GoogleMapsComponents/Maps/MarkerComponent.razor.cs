@@ -207,8 +207,19 @@ public partial class MarkerComponent : IAsyncDisposable, IMarker
     {
         if (IsDisposed) return;
         IsDisposed = true;
-        await Js.InvokeVoidAsync("blazorGoogleMaps.objectManager.disposeAdvancedMarkerComponent", Guid);
         MapRef.RemoveMarker(this);
+        try
+        {
+            await Js.InvokeVoidAsync("blazorGoogleMaps.objectManager.disposeAdvancedMarkerComponent", Guid);
+        }
+        catch (JSDisconnectedException)
+        {
+            // Blazor Server: the circuit is gone, and the browser-side marker with it
+        }
+        catch (OperationCanceledException)
+        {
+            // Blazor Server: the browser didn't answer in time (e.g. a suspended mobile tab)
+        }
         GC.SuppressFinalize(this);
     }
 
