@@ -22,7 +22,7 @@ jobs:
           sed -i 's/YOUR_API_KEY_HERE/${{ secrets.MAP_API_KEY }}/g' ./Demos/ClientSideDemo/wwwroot/appsettings.json          
 
       - name: Publish
-        run: dotnet publish BlazorGoogleMaps.sln -c:Release -o:publish -p:GHPages=true -f net10.0
+        run: dotnet publish Demos/ClientSideDemo/ClientSideDemo.csproj -c:Release -o:publish -p:GHPages=true
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
