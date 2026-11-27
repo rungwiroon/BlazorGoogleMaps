@@ -232,12 +232,17 @@
             component.Value.IsDisposed = true;
         }
 
-        if (MapRef != null)
+        try
         {
-            await MapRef.DisposeAsync();
+            if (MapRef != null)
+            {
+                await MapRef.DisposeAsync();
+            }
         }
-
-        CallbackRef?.Dispose();
+        finally
+        {
+            CallbackRef?.Dispose();
+        }
     }
 
 }

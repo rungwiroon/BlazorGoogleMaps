@@ -183,7 +183,8 @@ public class JsObjectRef : IJsObjectRef, IDisposable
     /// <summary>Releases the underlying JavaScript object. Prefer <see cref="DisposeAsync"/> in async contexts.</summary>
     public virtual void Dispose()
     {
-        DisposeAsync();
+        // Fire and forget: failures caused by a gone circuit must not surface as unobserved exceptions
+        _ = JsInteropDisposal.SwallowAsync(async () => await DisposeAsync());
     }
 
     /// <summary>Asynchronously releases the underlying JavaScript object from the object manager.</summary>

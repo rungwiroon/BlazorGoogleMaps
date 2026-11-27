@@ -168,8 +168,9 @@ public partial class PolygonComponent :  IAsyncDisposable, IPoly
     {
         if (IsDisposed) return;
         IsDisposed = true;
-        await Js.InvokeVoidAsync("blazorGoogleMaps.objectManager.disposePolygonComponent", Guid);
         MapRef.RemovePolygon(this);
+        await JsInteropDisposal.SwallowAsync(async () =>
+            await Js.InvokeVoidAsync("blazorGoogleMaps.objectManager.disposePolygonComponent", Guid));
         GC.SuppressFinalize(this);
     }
 

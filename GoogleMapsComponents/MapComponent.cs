@@ -137,20 +137,11 @@ public class MapComponent : ComponentBase, IDisposable, IAsyncDisposable
                 await InteropObject.DisposeAsync();
                 InteropObject = null;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex.HasInnerExceptionsOfType<TaskCanceledException>()
+                                       || ex.HasInnerExceptionsOfType<ObjectDisposedException>()
+                                       || ex.HasInnerExceptionsOfType<JSDisconnectedException>())
             {
-                var isPossibleRefreshError = ex.HasInnerExceptionsOfType<TaskCanceledException>();
-                isPossibleRefreshError |= ex.HasInnerExceptionsOfType<ObjectDisposedException>();
-                //Unfortunately, JSDisconnectedException is available in dotnet >= 6.0, and not in dotnet standard.
-                isPossibleRefreshError |= true;
-                //If we get an exception here, we can assume that the page was refreshed. So assentialy, we swallow all exception here...
-                //isPossibleRefreshError = isPossibleRefreshError || ex.HasInnerExceptionsOfType<JSDisconnectedException>();
-
-
-                if (!isPossibleRefreshError)
-                {
-                    throw;
-                }
+                // The page was refreshed or the circuit is gone, so there is nothing left to clean up
             }
         }
     }

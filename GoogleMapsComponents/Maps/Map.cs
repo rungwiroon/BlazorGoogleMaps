@@ -248,9 +248,16 @@ public class Map : EventEntityBase, IJsObjectRef, IAsyncDisposable
 
     protected override async ValueTask DisposeAsyncCore()
     {
-        await _jsObjectRef.JSRuntime.InvokeAsync<object>("blazorGoogleMaps.objectManager.disposeMapElements", Guid.ToString());
-        await base.DisposeAsyncCore();
-        JsObjectRefInstances.Remove(_jsObjectRef.Guid.ToString());
+        try
+        {
+            await JsInteropDisposal.SwallowAsync(async () =>
+                await _jsObjectRef.JSRuntime.InvokeAsync<object>("blazorGoogleMaps.objectManager.disposeMapElements", Guid.ToString()));
+            await base.DisposeAsyncCore();
+        }
+        finally
+        {
+            JsObjectRefInstances.Remove(_jsObjectRef.Guid.ToString());
+        }
     }
 
     protected override void Dispose(bool disposing)

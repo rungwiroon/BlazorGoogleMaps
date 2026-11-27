@@ -177,7 +177,7 @@ public abstract class EventEntityBase : IDisposable
         }
 
         _eventListeners.Clear();
-        await _jsObjectRef.DisposeAsync();
+        await JsInteropDisposal.SwallowAsync(async () => await _jsObjectRef.DisposeAsync());
     }
 
     /// <summary>

@@ -442,13 +442,15 @@ public class ListableEntityListBase<TEntityBase, TEntityOptionsBase> : IDisposab
 
     protected virtual async ValueTask DisposeAsyncCore()
     {
+        // Release the .NET side first, so it is released even when the JS call fails
+        ReleaseListenerCallbacks(_listenerCallbacks.Keys.ToList());
+
         if (BaseListableEntities.Count > 0)
         {
-            await _jsObjectRef.DisposeMultipleAsync(BaseListableEntities.Select(e => e.Value.Guid).ToList());
+            var guids = BaseListableEntities.Select(e => e.Value.Guid).ToList();
             BaseListableEntities.Clear();
+            await JsInteropDisposal.SwallowAsync(async () => await _jsObjectRef.DisposeMultipleAsync(guids));
         }
-
-        ReleaseListenerCallbacks(_listenerCallbacks.Keys.ToList());
     }
 
     protected virtual void Dispose(bool disposing)

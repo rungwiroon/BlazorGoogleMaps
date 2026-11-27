@@ -95,7 +95,8 @@ namespace GoogleMapsComponents.Maps
         {
             // The points are disposed together with the layer, there is nothing left for them to refresh
             _isDisposed = true;
-            await Js.InvokeVoidAsync("blazorGoogleMaps.objectManager.removeHeatmap", _guid);
+            await JsInteropDisposal.SwallowAsync(async () =>
+                await Js.InvokeVoidAsync("blazorGoogleMaps.objectManager.removeHeatmap", _guid));
         }
     }
 

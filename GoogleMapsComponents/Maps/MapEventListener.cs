@@ -26,13 +26,22 @@ public class MapEventListener : IJsObjectRef, IDisposable, IAsyncDisposable
     public Guid Guid => _jsObjectRef.Guid;
     public async Task RemoveAsync()
     {
-        await _jsObjectRef.InvokeAsync("remove");
-        await _jsObjectRef.DisposeAsync();
-        IsRemoved = true;
+        try
+        {
+            await JsInteropDisposal.SwallowAsync(async () =>
+            {
+                await _jsObjectRef.InvokeAsync("remove");
+                await _jsObjectRef.DisposeAsync();
+            });
+        }
+        finally
+        {
+            IsRemoved = true;
 
-        //The listener can not fire anymore, so the .NET callback behind it is released as well
-        _callback?.Dispose();
-        _callback = null;
+            //The listener can not fire anymore, so the .NET callback behind it is released as well
+            _callback?.Dispose();
+            _callback = null;
+        }
     }
 
 

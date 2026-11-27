@@ -25,7 +25,7 @@ namespace GoogleMapsComponents.Maps
         public async ValueTask DisposeAsync()
         {
             Heatmap.UnregisterPoint(this);
-            await Heatmap.RequestRefresh();
+            await JsInteropDisposal.SwallowAsync(async () => await Heatmap.RequestRefresh());
         }
     }
 
